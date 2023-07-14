@@ -1,0 +1,21 @@
+info:
+  version: 
+  title: resource_huaweicloud_gaussdb_mysql_proxy
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: GaussDBforMySQL
+paths:
+  /v3/{project_id}/instances/{instanceID}/proxy/enlarge:
+    post:
+      tag: GaussDBforMySQL
+      operationId: EnlargeProxy
+  /v3/{project_id}/instances/{instanceID}/proxy:
+    delete:
+      tag: GaussDBforMySQL
+      operationId: DeleteProxy
+    post:
+      tag: GaussDBforMySQL
+      operationId: EnableProxy

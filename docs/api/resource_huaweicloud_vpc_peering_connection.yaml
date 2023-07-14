@@ -1,0 +1,24 @@
+info:
+  version: 
+  title: resource_huaweicloud_vpc_peering_connection
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: VPC
+paths:
+  /v2.0/vpc/peerings/{id}:
+    delete:
+      tag: VPC
+      operationId: Delete
+    get:
+      tag: VPC
+      operationId: Get
+    put:
+      tag: VPC
+      operationId: Update
+  /v2.0/vpc/peerings:
+    post:
+      tag: VPC
+      operationId: Create

@@ -1,0 +1,37 @@
+{
+  "provider_schemas": {
+    "huaweicloud/huaweicloud": {
+      "resource_schemas": {
+        "huaweicloud_identity_group_membership": {
+          "block": {
+            "attributes": {
+              "group": {
+                "type": "string",
+                "required": true,
+                "forcenew": true
+              },
+              "id": {
+                "type": "string",
+                "computed": true
+              },
+              "users": {
+                "type": [
+                  "set",
+                  "string"
+                ],
+                "required": true
+              }
+            }
+          },
+          "product": {
+            "short": "IAM",
+            "name": "Identity and Access Management",
+            "catalog": "Management & Governance",
+            "name_cn": "统一身份认证服务",
+            "catalog_cn": "管理与监管"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+info:
+  version: 
+  title: data_source_huaweicloud_compute_flavors
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: ECS
+paths:
+  /v1/{project_id}/cloudservers/flavors:
+    get:
+      tag: ECS
+      operationId: List

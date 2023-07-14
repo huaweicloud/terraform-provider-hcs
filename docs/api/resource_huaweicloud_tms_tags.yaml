@@ -1,0 +1,18 @@
+info:
+  version: 
+  title: resource_huaweicloud_tms_tags
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: TMS
+paths:
+  /v1.0/predefine_tags/action:
+    post:
+      tag: TMS
+      operationId: CreatePredefineTags
+  /v1.0/predefine_tags:
+    get:
+      tag: TMS
+      operationId: ListPredefineTags

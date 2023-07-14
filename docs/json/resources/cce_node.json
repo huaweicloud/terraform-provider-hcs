@@ -1,0 +1,401 @@
+{
+  "provider_schemas": {
+    "huaweicloud/huaweicloud": {
+      "resource_schemas": {
+        "huaweicloud_cce_node": {
+          "block": {
+            "attributes": {
+              "auto_renew": {
+                "type": "string",
+                "optional": true
+              },
+              "availability_zone": {
+                "type": "string",
+                "required": true,
+                "forcenew": true
+              },
+              "bandwidth_charge_mode": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "bandwidth_size": {
+                "type": "number",
+                "optional": true,
+                "forcenew": true
+              },
+              "charging_mode": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "cluster_id": {
+                "type": "string",
+                "required": true,
+                "forcenew": true
+              },
+              "ecs_group_id": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "eip_id": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "extend_param": {
+                "type": [
+                  "map",
+                  "string"
+                ],
+                "optional": true,
+                "forcenew": true
+              },
+              "fixed_ip": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "flavor_id": {
+                "type": "string",
+                "required": true,
+                "forcenew": true
+              },
+              "id": {
+                "type": "string",
+                "computed": true
+              },
+              "iptype": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "key_pair": {
+                "type": "string",
+                "optional": true
+              },
+              "labels": {
+                "type": [
+                  "map",
+                  "string"
+                ],
+                "optional": true,
+                "forcenew": true
+              },
+              "max_pods": {
+                "type": "number",
+                "optional": true,
+                "forcenew": true
+              },
+              "name": {
+                "type": "string",
+                "optional": true,
+                "computed": true
+              },
+              "os": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "password": {
+                "type": "string",
+                "optional": true,
+                "sensitive": true
+              },
+              "period": {
+                "type": "number",
+                "optional": true,
+                "forcenew": true
+              },
+              "period_unit": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "postinstall": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "preinstall": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "private_ip": {
+                "type": "string",
+                "computed": true
+              },
+              "private_key": {
+                "type": "string",
+                "optional": true,
+                "sensitive": true
+              },
+              "public_ip": {
+                "type": "string",
+                "computed": true
+              },
+              "region": {
+                "type": "string",
+                "computed": true
+              },
+              "runtime": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "server_id": {
+                "type": "string",
+                "computed": true
+              },
+              "sharetype": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "status": {
+                "type": "string",
+                "computed": true
+              },
+              "subnet_id": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "tags": {
+                "type": [
+                  "map",
+                  "string"
+                ],
+                "optional": true
+              }
+            },
+            "block_types": {
+              "data_volumes": {
+                "block": {
+                  "attributes": {
+                    "extend_params": {
+                      "type": [
+                        "map",
+                        "string"
+                      ],
+                      "optional": true,
+                      "computed": true,
+                      "forcenew": true
+                    },
+                    "kms_key_id": {
+                      "type": "string",
+                      "optional": true,
+                      "computed": true,
+                      "forcenew": true
+                    },
+                    "size": {
+                      "type": "number",
+                      "required": true,
+                      "forcenew": true
+                    },
+                    "volumetype": {
+                      "type": "string",
+                      "required": true,
+                      "forcenew": true
+                    }
+                  }
+                },
+                "nesting_mode": "list",
+                "forcenew": true,
+                "min_items": 1
+              },
+              "root_volume": {
+                "block": {
+                  "attributes": {
+                    "extend_params": {
+                      "type": [
+                        "map",
+                        "string"
+                      ],
+                      "optional": true,
+                      "computed": true,
+                      "forcenew": true
+                    },
+                    "kms_key_id": {
+                      "type": "string",
+                      "optional": true,
+                      "computed": true,
+                      "forcenew": true
+                    },
+                    "size": {
+                      "type": "number",
+                      "required": true,
+                      "forcenew": true
+                    },
+                    "volumetype": {
+                      "type": "string",
+                      "required": true,
+                      "forcenew": true
+                    }
+                  }
+                },
+                "nesting_mode": "list",
+                "forcenew": true,
+                "min_items": 1,
+                "max_items": 1
+              },
+              "storage": {
+                "block": {
+                  "block_types": {
+                    "groups": {
+                      "block": {
+                        "attributes": {
+                          "cce_managed": {
+                            "type": "bool",
+                            "optional": true,
+                            "forcenew": true
+                          },
+                          "name": {
+                            "type": "string",
+                            "required": true,
+                            "forcenew": true
+                          },
+                          "selector_names": {
+                            "type": [
+                              "list",
+                              "string"
+                            ],
+                            "required": true,
+                            "forcenew": true
+                          }
+                        },
+                        "block_types": {
+                          "virtual_spaces": {
+                            "block": {
+                              "attributes": {
+                                "lvm_lv_type": {
+                                  "type": "string",
+                                  "optional": true,
+                                  "forcenew": true
+                                },
+                                "lvm_path": {
+                                  "type": "string",
+                                  "optional": true,
+                                  "forcenew": true
+                                },
+                                "name": {
+                                  "type": "string",
+                                  "required": true,
+                                  "forcenew": true
+                                },
+                                "runtime_lv_type": {
+                                  "type": "string",
+                                  "optional": true,
+                                  "forcenew": true
+                                },
+                                "size": {
+                                  "type": "string",
+                                  "required": true,
+                                  "forcenew": true
+                                }
+                              }
+                            },
+                            "nesting_mode": "list",
+                            "forcenew": true,
+                            "min_items": 1
+                          }
+                        }
+                      },
+                      "nesting_mode": "list",
+                      "forcenew": true,
+                      "min_items": 1
+                    },
+                    "selectors": {
+                      "block": {
+                        "attributes": {
+                          "match_label_count": {
+                            "type": "string",
+                            "optional": true,
+                            "forcenew": true
+                          },
+                          "match_label_metadata_cmkid": {
+                            "type": "string",
+                            "optional": true,
+                            "forcenew": true
+                          },
+                          "match_label_metadata_encrypted": {
+                            "type": "string",
+                            "optional": true,
+                            "forcenew": true
+                          },
+                          "match_label_size": {
+                            "type": "string",
+                            "optional": true,
+                            "forcenew": true
+                          },
+                          "match_label_volume_type": {
+                            "type": "string",
+                            "optional": true,
+                            "forcenew": true
+                          },
+                          "name": {
+                            "type": "string",
+                            "required": true,
+                            "forcenew": true
+                          },
+                          "type": {
+                            "type": "string",
+                            "optional": true,
+                            "forcenew": true,
+                            "default": "evs"
+                          }
+                        }
+                      },
+                      "nesting_mode": "list",
+                      "forcenew": true,
+                      "min_items": 1
+                    }
+                  }
+                },
+                "nesting_mode": "list",
+                "forcenew": true,
+                "max_items": 1
+              },
+              "taints": {
+                "block": {
+                  "attributes": {
+                    "effect": {
+                      "type": "string",
+                      "required": true,
+                      "forcenew": true
+                    },
+                    "key": {
+                      "type": "string",
+                      "required": true,
+                      "forcenew": true
+                    },
+                    "value": {
+                      "type": "string",
+                      "required": true,
+                      "forcenew": true
+                    }
+                  }
+                },
+                "nesting_mode": "list",
+                "forcenew": true
+              }
+            }
+          },
+          "product": {
+            "short": "CCE",
+            "name": "Cloud Container Engine",
+            "catalog": "Containers",
+            "name_cn": "云容器引擎",
+            "catalog_cn": "容器"
+          }
+        }
+      }
+    }
+  }
+}

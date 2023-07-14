@@ -1,0 +1,272 @@
+{
+  "provider_schemas": {
+    "huaweicloud/huaweicloud": {
+      "resource_schemas": {
+        "huaweicloud_rds_instance": {
+          "block": {
+            "attributes": {
+              "auto_renew": {
+                "type": "string",
+                "optional": true
+              },
+              "availability_zone": {
+                "type": [
+                  "list",
+                  "string"
+                ],
+                "required": true,
+                "forcenew": true
+              },
+              "charging_mode": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "collation": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "created": {
+                "type": "string",
+                "computed": true
+              },
+              "enterprise_project_id": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "fixed_ip": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "flavor": {
+                "type": "string",
+                "required": true
+              },
+              "ha_replication_mode": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "id": {
+                "type": "string",
+                "computed": true
+              },
+              "lower_case_table_names": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "name": {
+                "type": "string",
+                "required": true
+              },
+              "nodes": {
+                "type": [
+                  "list",
+                  [
+                    "object",
+                    {
+                      "availability_zone": "string",
+                      "id": "string",
+                      "name": "string",
+                      "role": "string",
+                      "status": "string"
+                    }
+                  ]
+                ],
+                "computed": true
+              },
+              "param_group_id": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "period": {
+                "type": "number",
+                "optional": true,
+                "forcenew": true
+              },
+              "period_unit": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "private_ips": {
+                "type": [
+                  "list",
+                  "string"
+                ],
+                "computed": true
+              },
+              "public_ips": {
+                "type": [
+                  "list",
+                  "string"
+                ],
+                "computed": true
+              },
+              "region": {
+                "type": "string",
+                "computed": true
+              },
+              "security_group_id": {
+                "type": "string",
+                "required": true
+              },
+              "ssl_enable": {
+                "type": "bool",
+                "optional": true
+              },
+              "status": {
+                "type": "string",
+                "computed": true
+              },
+              "subnet_id": {
+                "type": "string",
+                "required": true,
+                "forcenew": true
+              },
+              "tags": {
+                "type": [
+                  "map",
+                  "string"
+                ],
+                "optional": true
+              },
+              "time_zone": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "vpc_id": {
+                "type": "string",
+                "required": true,
+                "forcenew": true
+              }
+            },
+            "block_types": {
+              "backup_strategy": {
+                "block": {
+                  "attributes": {
+                    "keep_days": {
+                      "type": "number",
+                      "description": "schema: Required",
+                      "required": true
+                    },
+                    "period": {
+                      "type": "string",
+                      "optional": true,
+                      "computed": true
+                    },
+                    "start_time": {
+                      "type": "string",
+                      "required": true
+                    }
+                  }
+                },
+                "nesting_mode": "list",
+                "max_items": 1
+              },
+              "db": {
+                "block": {
+                  "attributes": {
+                    "password": {
+                      "type": "string",
+                      "required": true,
+                      "sensitive": true
+                    },
+                    "port": {
+                      "type": "number",
+                      "optional": true,
+                      "computed": true
+                    },
+                    "type": {
+                      "type": "string",
+                      "required": true,
+                      "forcenew": true
+                    },
+                    "user_name": {
+                      "type": "string",
+                      "computed": true
+                    },
+                    "version": {
+                      "type": "string",
+                      "required": true,
+                      "forcenew": true
+                    }
+                  }
+                },
+                "nesting_mode": "list",
+                "forcenew": true,
+                "min_items": 1,
+                "max_items": 1
+              },
+              "parameters": {
+                "block": {
+                  "attributes": {
+                    "name": {
+                      "type": "string",
+                      "required": true
+                    },
+                    "value": {
+                      "type": "string",
+                      "required": true
+                    }
+                  }
+                },
+                "nesting_mode": "set"
+              },
+              "volume": {
+                "block": {
+                  "attributes": {
+                    "disk_encryption_id": {
+                      "type": "string",
+                      "optional": true,
+                      "computed": true,
+                      "forcenew": true
+                    },
+                    "limit_size": {
+                      "type": "number",
+                      "optional": true
+                    },
+                    "size": {
+                      "type": "number",
+                      "required": true
+                    },
+                    "trigger_threshold": {
+                      "type": "number",
+                      "optional": true
+                    },
+                    "type": {
+                      "type": "string",
+                      "required": true,
+                      "forcenew": true
+                    }
+                  }
+                },
+                "nesting_mode": "list",
+                "min_items": 1,
+                "max_items": 1
+              }
+            }
+          },
+          "product": {
+            "short": "RDS",
+            "name": "Relational Database Service",
+            "catalog": "Databases",
+            "name_cn": "云数据库",
+            "catalog_cn": "数据库"
+          }
+        }
+      }
+    }
+  }
+}

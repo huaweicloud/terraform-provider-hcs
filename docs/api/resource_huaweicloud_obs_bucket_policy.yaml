@@ -1,0 +1,20 @@
+info:
+  version: v1.xx.y
+  title: resource_huaweicloud_obs_bucket_policy
+  description:
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: OBS
+paths:
+  ?policy:
+    put:
+      tag: OBS
+      operationId: SetBucketPolicy
+    get:
+      tag: OBS
+      operationId: GetBucketPolicy
+    delete:
+      tag: OBS
+      operationId: DeleteBucketPolicy

@@ -1,0 +1,30 @@
+info:
+  version: 
+  title: resource_huaweicloud_live_domain
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: Live
+paths:
+  /v1/{project_id}/domain:
+    delete:
+      tag: Live
+      operationId: DeleteDomain
+    get:
+      tag: Live
+      operationId: ShowDomain
+    post:
+      tag: Live
+      operationId: CreateDomain
+    put:
+      tag: Live
+      operationId: UpdateDomain
+  /v1/{project_id}/domains_mapping:
+    delete:
+      tag: Live
+      operationId: DeleteDomainMapping
+    put:
+      tag: Live
+      operationId: CreateDomainMapping

@@ -1,0 +1,14 @@
+info:
+  version: 
+  title: data_source_huaweicloud_rds_instances
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: RDS
+paths:
+  /v3/{project_id}/instances:
+    get:
+      tag: RDS
+      operationId: List

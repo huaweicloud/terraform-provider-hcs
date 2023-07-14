@@ -1,0 +1,18 @@
+info:
+  version: 
+  title: data_source_huaweicloud_gaussdb_cassandra_instances
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: GaussDBforNoSQL
+paths:
+  /v3/{project_id}/instances/{id}/tags:
+    get:
+      tag: GaussDBforNoSQL
+      operationId: Get
+  /v3/{project_id}/instances:
+    get:
+      tag: GaussDBforNoSQL
+      operationId: List

@@ -1,0 +1,51 @@
+{
+  "provider_schemas": {
+    "huaweicloud/huaweicloud": {
+      "resource_schemas": {
+        "huaweicloud_gaussdb_mysql_proxy": {
+          "block": {
+            "attributes": {
+              "address": {
+                "type": "string",
+                "computed": true
+              },
+              "flavor": {
+                "type": "string",
+                "required": true,
+                "forcenew": true
+              },
+              "id": {
+                "type": "string",
+                "computed": true
+              },
+              "instance_id": {
+                "type": "string",
+                "required": true,
+                "forcenew": true
+              },
+              "node_num": {
+                "type": "number",
+                "required": true
+              },
+              "port": {
+                "type": "number",
+                "computed": true
+              },
+              "region": {
+                "type": "string",
+                "computed": true
+              }
+            }
+          },
+          "product": {
+            "short": "GaussDB",
+            "name": "GaussDB(for MySQL)",
+            "catalog": "Databases",
+            "name_cn": "云数据库 GaussDB(for MySQL)",
+            "catalog_cn": "数据库"
+          }
+        }
+      }
+    }
+  }
+}

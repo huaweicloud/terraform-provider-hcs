@@ -1,0 +1,24 @@
+info:
+  version: 
+  title: resource_huaweicloud_waf_policy
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: WAF
+paths:
+  /v1/{project_id}/waf/policy/{id}:
+    delete:
+      tag: WAF
+      operationId: DeleteWithEpsID
+    get:
+      tag: WAF
+      operationId: GetWithEpsID
+    patch:
+      tag: WAF
+      operationId: Update
+  /v1/{project_id}/waf/policy:
+    post:
+      tag: WAF
+      operationId: Create

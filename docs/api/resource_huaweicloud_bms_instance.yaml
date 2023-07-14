@@ -1,0 +1,25 @@
+info:
+  version: 
+  title: resource_huaweicloud_bms_instance
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: BMS
+paths:
+  /v1/{project_id}/baremetalservers/{serverID}:
+    get:
+      tag: BMS
+      operationId: Get
+    put:
+      tag: BMS
+      operationId: Update
+  /v1/{project_id}/baremetalservers:
+    post:
+      tag: BMS
+      operationId: CreatePrePaid
+  /v2.0/ports/{id}:
+    get:
+      tag: VPC
+      operationId: Get

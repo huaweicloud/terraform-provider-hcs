@@ -1,0 +1,22 @@
+info:
+  version: 
+  title: resource_huaweicloud_meeting_admin_assignment
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: Meeting
+paths:
+  /v1/usg/dcs/corp/admin/delete:
+    post:
+      tag: Meeting
+      operationId: BatchDelete
+  /v1/usg/dcs/corp/admin/{account}:
+    get:
+      tag: Meeting
+      operationId: Get
+  /v1/usg/dcs/corp/admin:
+    post:
+      tag: Meeting
+      operationId: Create

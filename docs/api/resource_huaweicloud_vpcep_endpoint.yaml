@@ -1,0 +1,24 @@
+info:
+  version: 
+  title: resource_huaweicloud_vpcep_endpoint
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: VPCEP
+paths:
+  /v1/{project_id}/vpc-endpoints/{endpointID}:
+    delete:
+      tag: VPCEP
+      operationId: Delete
+    get:
+      tag: VPCEP
+      operationId: Get
+    put:
+      tag: VPCEP
+      operationId: Update
+  /v1/{project_id}/vpc-endpoints:
+    post:
+      tag: VPCEP
+      operationId: Create

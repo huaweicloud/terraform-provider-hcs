@@ -1,0 +1,214 @@
+{
+  "provider_schemas": {
+    "huaweicloud/huaweicloud": {
+      "resource_schemas": {
+        "huaweicloud_as_configuration": {
+          "block": {
+            "attributes": {
+              "id": {
+                "type": "string",
+                "computed": true
+              },
+              "region": {
+                "type": "string",
+                "computed": true
+              },
+              "scaling_configuration_name": {
+                "type": "string",
+                "required": true,
+                "forcenew": true
+              },
+              "status": {
+                "type": "string",
+                "computed": true
+              }
+            },
+            "block_types": {
+              "instance_config": {
+                "block": {
+                  "attributes": {
+                    "charging_mode": {
+                      "type": "string",
+                      "optional": true,
+                      "forcenew": true,
+                      "default": "postPaid"
+                    },
+                    "ecs_group_id": {
+                      "type": "string",
+                      "optional": true,
+                      "computed": true,
+                      "forcenew": true
+                    },
+                    "flavor": {
+                      "type": "string",
+                      "optional": true,
+                      "computed": true,
+                      "forcenew": true
+                    },
+                    "flavor_priority_policy": {
+                      "type": "string",
+                      "optional": true,
+                      "computed": true,
+                      "forcenew": true
+                    },
+                    "image": {
+                      "type": "string",
+                      "optional": true,
+                      "computed": true,
+                      "forcenew": true
+                    },
+                    "instance_id": {
+                      "type": "string",
+                      "optional": true,
+                      "computed": true,
+                      "forcenew": true
+                    },
+                    "key_name": {
+                      "type": "string",
+                      "required": true,
+                      "forcenew": true
+                    },
+                    "metadata": {
+                      "type": [
+                        "map",
+                        "string"
+                      ],
+                      "optional": true,
+                      "forcenew": true
+                    },
+                    "security_group_ids": {
+                      "type": [
+                        "list",
+                        "string"
+                      ],
+                      "description": "schema: Required",
+                      "required": true,
+                      "forcenew": true
+                    },
+                    "user_data": {
+                      "type": "string",
+                      "optional": true,
+                      "forcenew": true
+                    }
+                  },
+                  "block_types": {
+                    "disk": {
+                      "block": {
+                        "attributes": {
+                          "disk_type": {
+                            "type": "string",
+                            "required": true,
+                            "forcenew": true
+                          },
+                          "kms_id": {
+                            "type": "string",
+                            "optional": true,
+                            "computed": true,
+                            "forcenew": true
+                          },
+                          "size": {
+                            "type": "number",
+                            "required": true,
+                            "forcenew": true
+                          },
+                          "volume_type": {
+                            "type": "string",
+                            "required": true,
+                            "forcenew": true
+                          }
+                        }
+                      },
+                      "nesting_mode": "list",
+                      "forcenew": true
+                    },
+                    "personality": {
+                      "block": {
+                        "attributes": {
+                          "content": {
+                            "type": "string",
+                            "required": true,
+                            "forcenew": true
+                          },
+                          "path": {
+                            "type": "string",
+                            "required": true,
+                            "forcenew": true
+                          }
+                        }
+                      },
+                      "nesting_mode": "list",
+                      "forcenew": true,
+                      "max_items": 5
+                    },
+                    "public_ip": {
+                      "block": {
+                        "block_types": {
+                          "eip": {
+                            "block": {
+                              "attributes": {
+                                "ip_type": {
+                                  "type": "string",
+                                  "required": true,
+                                  "forcenew": true
+                                }
+                              },
+                              "block_types": {
+                                "bandwidth": {
+                                  "block": {
+                                    "attributes": {
+                                      "charging_mode": {
+                                        "type": "string",
+                                        "required": true,
+                                        "forcenew": true
+                                      },
+                                      "share_type": {
+                                        "type": "string",
+                                        "required": true,
+                                        "forcenew": true
+                                      },
+                                      "size": {
+                                        "type": "number",
+                                        "required": true,
+                                        "forcenew": true
+                                      }
+                                    }
+                                  },
+                                  "nesting_mode": "list",
+                                  "forcenew": true,
+                                  "min_items": 1,
+                                  "max_items": 1
+                                }
+                              }
+                            },
+                            "nesting_mode": "list",
+                            "forcenew": true,
+                            "min_items": 1,
+                            "max_items": 1
+                          }
+                        }
+                      },
+                      "nesting_mode": "list",
+                      "forcenew": true,
+                      "max_items": 1
+                    }
+                  }
+                },
+                "nesting_mode": "list",
+                "forcenew": true,
+                "min_items": 1,
+                "max_items": 1
+              }
+            }
+          },
+          "product": {
+            "short": "AS",
+            "name": "Auto Scaling",
+            "catalog": "Compute",
+            "name_cn": "弹性伸缩",
+            "catalog_cn": "计算"
+          }
+        }
+      }
+    }
+  }
+}
