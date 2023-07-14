@@ -1,0 +1,107 @@
+{
+  "provider_schemas": {
+    "huaweicloud/huaweicloud": {
+      "resource_schemas": {
+        "huaweicloud_as_policy": {
+          "block": {
+            "attributes": {
+              "alarm_id": {
+                "type": "string",
+                "optional": true
+              },
+              "cool_down_time": {
+                "type": "number",
+                "optional": true,
+                "computed": true
+              },
+              "id": {
+                "type": "string",
+                "computed": true
+              },
+              "region": {
+                "type": "string",
+                "computed": true
+              },
+              "scaling_group_id": {
+                "type": "string",
+                "required": true,
+                "forcenew": true
+              },
+              "scaling_policy_name": {
+                "type": "string",
+                "required": true
+              },
+              "scaling_policy_type": {
+                "type": "string",
+                "required": true
+              },
+              "status": {
+                "type": "string",
+                "computed": true
+              }
+            },
+            "block_types": {
+              "scaling_policy_action": {
+                "block": {
+                  "attributes": {
+                    "instance_number": {
+                      "type": "number",
+                      "optional": true,
+                      "default": 1
+                    },
+                    "operation": {
+                      "type": "string",
+                      "optional": true,
+                      "computed": true
+                    }
+                  }
+                },
+                "nesting_mode": "list",
+                "max_items": 1
+              },
+              "scheduled_policy": {
+                "block": {
+                  "attributes": {
+                    "end_time": {
+                      "type": "string",
+                      "optional": true,
+                      "computed": true
+                    },
+                    "launch_time": {
+                      "type": "string",
+                      "required": true
+                    },
+                    "recurrence_type": {
+                      "type": "string",
+                      "optional": true,
+                      "computed": true
+                    },
+                    "recurrence_value": {
+                      "type": "string",
+                      "optional": true,
+                      "computed": true
+                    },
+                    "start_time": {
+                      "type": "string",
+                      "optional": true,
+                      "computed": true
+                    }
+                  }
+                },
+                "nesting_mode": "list",
+                "max_items": 1
+              }
+            }
+          },
+          "product": {
+            "short": "AS",
+            "name": "Auto Scaling",
+            "catalog": "Compute",
+            "name_cn": "弹性伸缩",
+            "catalog_cn": "计算"
+          }
+        }
+      }
+    }
+  }
+}

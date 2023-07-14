@@ -1,0 +1,14 @@
+info:
+  version: v1.xx.y
+  title: data_source_huaweicloud_gaussdb_mysql_flavors
+  description:
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: GaussDB
+paths:
+  /v3/{project_id}/flavors/{database_name}:
+    get:
+      tag: GaussDB
+      operationId: ShowGaussdbMySqlFlavors

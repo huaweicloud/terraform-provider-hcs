@@ -1,0 +1,149 @@
+{
+  "provider_schemas": {
+    "huaweicloud/huaweicloud": {
+      "resource_schemas": {
+        "huaweicloud_evs_volume": {
+          "block": {
+            "attributes": {
+              "attachment": {
+                "type": [
+                  "set",
+                  [
+                    "object",
+                    {
+                      "device": "string",
+                      "id": "string",
+                      "instance_id": "string"
+                    }
+                  ]
+                ],
+                "computed": true
+              },
+              "auto_renew": {
+                "type": "string",
+                "optional": true
+              },
+              "availability_zone": {
+                "type": "string",
+                "required": true,
+                "forcenew": true
+              },
+              "backup_id": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "cascade": {
+                "type": "bool",
+                "optional": true,
+                "default": false
+              },
+              "charging_mode": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "dedicated_storage_id": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "dedicated_storage_name": {
+                "type": "string",
+                "computed": true
+              },
+              "description": {
+                "type": "string",
+                "optional": true
+              },
+              "device_type": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true,
+                "default": "VBD"
+              },
+              "enterprise_project_id": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "id": {
+                "type": "string",
+                "computed": true
+              },
+              "image_id": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "kms_id": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "multiattach": {
+                "type": "bool",
+                "optional": true,
+                "forcenew": true,
+                "default": false
+              },
+              "name": {
+                "type": "string",
+                "optional": true
+              },
+              "period": {
+                "type": "number",
+                "optional": true,
+                "forcenew": true
+              },
+              "period_unit": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "region": {
+                "type": "string",
+                "computed": true
+              },
+              "size": {
+                "type": "number",
+                "optional": true,
+                "computed": true
+              },
+              "snapshot_id": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "tags": {
+                "type": [
+                  "map",
+                  "string"
+                ],
+                "optional": true
+              },
+              "volume_type": {
+                "type": "string",
+                "required": true,
+                "forcenew": true
+              },
+              "wwn": {
+                "type": "string",
+                "computed": true
+              }
+            }
+          },
+          "product": {
+            "short": "EVS",
+            "name": "Elastic Volume Service",
+            "catalog": "Storage",
+            "name_cn": "云硬盘",
+            "catalog_cn": "存储"
+          }
+        }
+      }
+    }
+  }
+}

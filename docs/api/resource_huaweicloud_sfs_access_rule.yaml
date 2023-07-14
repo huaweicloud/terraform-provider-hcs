@@ -1,0 +1,14 @@
+info:
+  version: 
+  title: resource_huaweicloud_sfs_access_rule
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: SFS
+paths:
+  /v2/{project_id}/shares/{id}/action:
+    post:
+      tag: SFS
+      operationId: GrantAccess

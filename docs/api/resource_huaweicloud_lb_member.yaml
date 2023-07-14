@@ -1,0 +1,24 @@
+info:
+  version: 
+  title: resource_huaweicloud_lb_member
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: ELB
+paths:
+  /v2/{project_id}/elb/pools/{poolID}/members/{memeberID}:
+    delete:
+      tag: ELB
+      operationId: DeleteMember
+    get:
+      tag: ELB
+      operationId: GetMember
+    put:
+      tag: ELB
+      operationId: UpdateMember
+  /v2/{project_id}/elb/pools/{poolId}/members:
+    post:
+      tag: ELB
+      operationId: CreateMember

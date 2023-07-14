@@ -1,0 +1,20 @@
+info:
+  version: v1.xx.y
+  title: resource_huaweicloud_obs_bucket_replication
+  description:
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: OBS
+paths:
+  ?replication:
+    put:
+      tag: OBS
+      operationId: SetBucketReplication
+    delete:
+      tag: OBS
+      operationId: DeleteBucketReplication
+    get:
+      tag: OBS
+      operationId: GetBucketReplication

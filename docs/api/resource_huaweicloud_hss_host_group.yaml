@@ -1,0 +1,27 @@
+info:
+  version: 
+  title: resource_huaweicloud_hss_host_group
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: HSS
+paths:
+  /v5/{project_id}/host-management/groups:
+    delete:
+      tag: HSS
+      operationId: DeleteHostsGroup
+    get:
+      tag: HSS
+      operationId: ListHostGroups
+    post:
+      tag: HSS
+      operationId: AddHostsGroup
+    put:
+      tag: HSS
+      operationId: ChangeHostsGroup
+  /v5/{project_id}/host-management/hosts:
+    get:
+      tag: HSS
+      operationId: ListHostStatus

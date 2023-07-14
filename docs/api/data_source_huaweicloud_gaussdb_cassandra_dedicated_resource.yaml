@@ -1,0 +1,14 @@
+info:
+  version: 
+  title: data_source_huaweicloud_gaussdb_cassandra_dedicated_resource
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: GaussDBforNoSQL
+paths:
+  /v3/{project_id}/dedicated-resources:
+    get:
+      tag: GaussDBforNoSQL
+      operationId: ListDeh

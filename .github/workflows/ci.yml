@@ -1,0 +1,105 @@
+# This is a ci workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  pull_request:
+    paths-ignore:
+    - 'docs/**'
+    - 'examples/**'
+    - '*.md'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: ">=1.18"
+    - run: go version
+
+    - name: Build
+      run: make build FLAGS='-mod=readonly'
+
+    - name: Vet
+      run: make vet
+
+  golangci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-go@v3
+        with:
+          go-version: ">=1.18"
+      - uses: actions/checkout@v3
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          # Optional: version of golangci-lint to use in form of v1.2 or v1.2.3 or `latest` to use the latest version
+          version: latest
+          # Optional: show only new issues if it's a pull request. The default value is `false`.
+          only-new-issues: true
+
+  # This workflow contains a job called "tfproviderlint"
+  # Ignoring bflad/tfproviderlint until https://github.com/bflad/tfproviderlint/issues/255 is fixed...
+  # using ShiChangkuo/tfproviderlint instead
+  tfproviderlint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/setup-go@v3
+        with:
+          go-version: ">=1.18"
+
+      - name: Checkout provider
+        uses: actions/checkout@v3
+        with:
+          path: terraform-provider-huaweicloudstack
+
+      - name: Checkout tfproviderlint
+        uses: actions/checkout@v3
+        with:
+          repository: ShiChangkuo/tfproviderlint
+          path: tfproviderlint
+
+      - name: Install tfproviderlint and Check
+        run: |
+          cd ${{ github.workspace }}/tfproviderlint/cmd/tfproviderlint
+          go install
+          cd ${{ github.workspace }}/terraform-provider-hcs
+          tfproviderlint -V011=false -V012=false -V013=false -V014=false -R019=false ./...
+
+  schema-markdown-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: ">=1.18"
+
+      - name: Check schemas and markdown docs
+        shell: bash {0}
+        run: |
+          cd scripts/markdown_check
+          go build -o markdown_check main.go
+          ./markdown_check >check_result.log
+
+          # There are three known issues for huaweicloud_mapreduce_cluster
+          ret=$(($?-3))
+          if [ $ret -gt 0 ]; then
+            echo "ERROR: find $ret inconsistencies between schemas and markdown docs"
+            echo -e "please ignore the errors in huaweicloud_mapreduce_cluster\n"
+            grep -B1 "\[ERROR\]" check_result.log
+          fi
+          exit $ret

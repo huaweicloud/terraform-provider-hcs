@@ -1,0 +1,14 @@
+info:
+  version: 
+  title: data_source_huaweicloud_rds_engine_versions
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: RDS
+paths:
+  /v3/{project_id}/datastores/{dbName}:
+    get:
+      tag: RDS
+      operationId: ListEngine

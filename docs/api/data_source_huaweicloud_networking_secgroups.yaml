@@ -1,0 +1,18 @@
+info:
+  version: 
+  title: data_source_huaweicloud_networking_secgroups
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: VPC
+paths:
+  /v3/{project_id}/vpc/security-groups:
+    get:
+      tag: VPC
+      operationId: List
+  /v1/{project_id}/security-groups:
+    get:
+      tag: VPC
+      operationId: List

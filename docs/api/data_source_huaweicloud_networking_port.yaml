@@ -1,0 +1,14 @@
+info:
+  version: 
+  title: data_source_huaweicloud_networking_port
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: VPC
+paths:
+  /v2.0/ports:
+    get:
+      tag: VPC
+      operationId: List

@@ -1,0 +1,24 @@
+version: 1.0
+name: DTSE-HCC-terraform-provider-hcs
+language: go
+
+
+#  构建工具
+dependencies:
+  base:
+    go: 1.18
+
+#  构建机器
+machine:
+  standard:
+    euler:
+      - default
+    
+#  构建脚本
+scripts:
+  - sh build.sh
+  
+#  构建产物
+artifacts:
+  package:
+    - terraform-provider-hcs

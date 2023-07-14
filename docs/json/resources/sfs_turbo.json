@@ -1,0 +1,140 @@
+{
+  "provider_schemas": {
+    "huaweicloud/huaweicloud": {
+      "resource_schemas": {
+        "huaweicloud_sfs_turbo": {
+          "block": {
+            "attributes": {
+              "auto_renew": {
+                "type": "string",
+                "optional": true
+              },
+              "availability_zone": {
+                "type": "string",
+                "required": true,
+                "forcenew": true
+              },
+              "available_capacity": {
+                "type": "string",
+                "computed": true
+              },
+              "charging_mode": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "crypt_key_id": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "dedicated_flavor": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "dedicated_storage_id": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "enhanced": {
+                "type": "bool",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "enterprise_project_id": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "export_location": {
+                "type": "string",
+                "computed": true
+              },
+              "id": {
+                "type": "string",
+                "computed": true
+              },
+              "name": {
+                "type": "string",
+                "required": true,
+                "forcenew": true
+              },
+              "period": {
+                "type": "number",
+                "optional": true,
+                "forcenew": true
+              },
+              "period_unit": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "region": {
+                "type": "string",
+                "computed": true
+              },
+              "security_group_id": {
+                "type": "string",
+                "required": true,
+                "forcenew": true
+              },
+              "share_proto": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true,
+                "default": "NFS"
+              },
+              "share_type": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true,
+                "default": "STANDARD"
+              },
+              "size": {
+                "type": "number",
+                "required": true
+              },
+              "status": {
+                "type": "string",
+                "computed": true
+              },
+              "subnet_id": {
+                "type": "string",
+                "required": true,
+                "forcenew": true
+              },
+              "tags": {
+                "type": [
+                  "map",
+                  "string"
+                ],
+                "optional": true
+              },
+              "version": {
+                "type": "string",
+                "computed": true
+              },
+              "vpc_id": {
+                "type": "string",
+                "required": true,
+                "forcenew": true
+              }
+            }
+          },
+          "product": {
+            "short": "SFS",
+            "name": "Scalable File Service(SFS)",
+            "catalog": "Storage",
+            "name_cn": "弹性文件服务(SFS)",
+            "catalog_cn": "存储"
+          }
+        }
+      }
+    }
+  }
+}

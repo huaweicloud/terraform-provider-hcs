@@ -1,0 +1,132 @@
+{
+  "provider_schemas": {
+    "huaweicloud/huaweicloud": {
+      "data_source_schemas": {
+        "huaweicloud_compute_instances": {
+          "block": {
+            "attributes": {
+              "availability_zone": {
+                "type": "string",
+                "optional": true
+              },
+              "enterprise_project_id": {
+                "type": "string",
+                "optional": true
+              },
+              "flavor_id": {
+                "type": "string",
+                "optional": true
+              },
+              "flavor_name": {
+                "type": "string",
+                "optional": true
+              },
+              "id": {
+                "type": "string",
+                "computed": true
+              },
+              "image_id": {
+                "type": "string",
+                "optional": true
+              },
+              "instance_id": {
+                "type": "string",
+                "optional": true
+              },
+              "instances": {
+                "type": [
+                  "list",
+                  [
+                    "object",
+                    {
+                      "availability_zone": "string",
+                      "enterprise_project_id": "string",
+                      "flavor_id": "string",
+                      "flavor_name": "string",
+                      "id": "string",
+                      "image_id": "string",
+                      "image_name": "string",
+                      "key_pair": "string",
+                      "name": "string",
+                      "network": [
+                        "list",
+                        [
+                          "object",
+                          {
+                            "fixed_ip_v4": "string",
+                            "fixed_ip_v6": "string",
+                            "mac": "string",
+                            "port": "string",
+                            "uuid": "string"
+                          }
+                        ]
+                      ],
+                      "public_ip": "string",
+                      "scheduler_hints": [
+                        "list",
+                        [
+                          "object",
+                          {
+                            "group": "string"
+                          }
+                        ]
+                      ],
+                      "security_group_ids": [
+                        "list",
+                        "string"
+                      ],
+                      "status": "string",
+                      "system_disk_id": "string",
+                      "tags": [
+                        "map",
+                        "string"
+                      ],
+                      "user_data": "string",
+                      "volume_attached": [
+                        "list",
+                        [
+                          "object",
+                          {
+                            "boot_index": "number",
+                            "is_sys_volume": "bool",
+                            "pci_address": "string",
+                            "size": "number",
+                            "type": "string",
+                            "volume_id": "string"
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ],
+                "computed": true
+              },
+              "key_pair": {
+                "type": "string",
+                "optional": true
+              },
+              "name": {
+                "type": "string",
+                "optional": true
+              },
+              "region": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "optional": true
+              }
+            }
+          },
+          "product": {
+            "short": "ECS",
+            "name": "Elastic Cloud Server",
+            "catalog": "Compute",
+            "name_cn": "弹性云服务器",
+            "catalog_cn": "计算"
+          }
+        }
+      }
+    }
+  }
+}

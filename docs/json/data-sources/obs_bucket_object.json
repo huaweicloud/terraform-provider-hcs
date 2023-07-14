@@ -1,0 +1,61 @@
+{
+  "provider_schemas": {
+    "huaweicloud/huaweicloud": {
+      "data_source_schemas": {
+        "huaweicloud_obs_bucket_object": {
+          "block": {
+            "attributes": {
+              "body": {
+                "type": "string",
+                "computed": true
+              },
+              "bucket": {
+                "type": "string",
+                "required": true
+              },
+              "content_type": {
+                "type": "string",
+                "computed": true
+              },
+              "etag": {
+                "type": "string",
+                "computed": true
+              },
+              "id": {
+                "type": "string",
+                "computed": true
+              },
+              "key": {
+                "type": "string",
+                "required": true
+              },
+              "region": {
+                "type": "string",
+                "computed": true
+              },
+              "size": {
+                "type": "number",
+                "computed": true
+              },
+              "storage_class": {
+                "type": "string",
+                "computed": true
+              },
+              "version_id": {
+                "type": "string",
+                "computed": true
+              }
+            }
+          },
+          "product": {
+            "short": "OBS",
+            "name": "Object Storage Service",
+            "catalog": "Storage",
+            "name_cn": "对象存储服务",
+            "catalog_cn": "存储"
+          }
+        }
+      }
+    }
+  }
+}

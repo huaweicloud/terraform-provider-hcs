@@ -1,0 +1,24 @@
+info:
+  version: 
+  title: resource_huaweicloud_dms_kafka_user
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: Kafka
+paths:
+  /v2/{project_id}/instances/{instance_id}/users/{user_name}:
+    put:
+      tag: Kafka
+      operationId: ResetUserPasswrod
+  /v2/{project_id}/instances/{instance_id}/users:
+    get:
+      tag: Kafka
+      operationId: ShowInstanceUsers
+    post:
+      tag: Kafka
+      operationId: CreateInstanceUser
+    put:
+      tag: Kafka
+      operationId: BatchDeleteInstanceUsers

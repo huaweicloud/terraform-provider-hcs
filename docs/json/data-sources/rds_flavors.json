@@ -1,0 +1,82 @@
+{
+  "provider_schemas": {
+    "huaweicloud/huaweicloud": {
+      "data_source_schemas": {
+        "huaweicloud_rds_flavors": {
+          "block": {
+            "attributes": {
+              "availability_zone": {
+                "type": "string",
+                "optional": true
+              },
+              "db_type": {
+                "type": "string",
+                "required": true
+              },
+              "db_version": {
+                "type": "string",
+                "optional": true
+              },
+              "flavors": {
+                "type": [
+                  "list",
+                  [
+                    "object",
+                    {
+                      "availability_zones": [
+                        "list",
+                        "string"
+                      ],
+                      "db_versions": [
+                        "list",
+                        "string"
+                      ],
+                      "group_type": "string",
+                      "id": "string",
+                      "instance_mode": "string",
+                      "memory": "number",
+                      "name": "string",
+                      "vcpus": "number"
+                    }
+                  ]
+                ],
+                "computed": true
+              },
+              "group_type": {
+                "type": "string",
+                "optional": true
+              },
+              "id": {
+                "type": "string",
+                "computed": true
+              },
+              "instance_mode": {
+                "type": "string",
+                "optional": true
+              },
+              "memory": {
+                "type": "number",
+                "optional": true
+              },
+              "region": {
+                "type": "string",
+                "computed": true
+              },
+              "vcpus": {
+                "type": "number",
+                "optional": true
+              }
+            }
+          },
+          "product": {
+            "short": "RDS",
+            "name": "Relational Database Service",
+            "catalog": "Databases",
+            "name_cn": "云数据库",
+            "catalog_cn": "数据库"
+          }
+        }
+      }
+    }
+  }
+}

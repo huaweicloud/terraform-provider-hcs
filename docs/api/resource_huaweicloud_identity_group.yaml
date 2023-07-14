@@ -1,0 +1,24 @@
+info:
+  version: 
+  title: resource_huaweicloud_identity_group
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: IAM
+paths:
+  /v3/groups/{groupID}:
+    delete:
+      tag: IAM
+      operationId: Delete
+    get:
+      tag: IAM
+      operationId: Get
+    patch:
+      tag: IAM
+      operationId: Update
+  /v3/groups:
+    post:
+      tag: IAM
+      operationId: Create

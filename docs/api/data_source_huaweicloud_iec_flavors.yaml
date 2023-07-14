@@ -1,0 +1,14 @@
+info:
+  version: 
+  title: data_source_huaweicloud_iec_flavors
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: IEC
+paths:
+  /v1/cloudservers/flavors:
+    get:
+      tag: IEC
+      operationId: List

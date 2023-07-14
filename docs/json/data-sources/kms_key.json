@@ -1,0 +1,95 @@
+{
+  "provider_schemas": {
+    "huaweicloud/huaweicloud": {
+      "data_source_schemas": {
+        "huaweicloud_kms_key": {
+          "block": {
+            "attributes": {
+              "creation_date": {
+                "type": "string",
+                "computed": true
+              },
+              "default_key_flag": {
+                "type": "string",
+                "optional": true,
+                "computed": true
+              },
+              "domain_id": {
+                "type": "string",
+                "optional": true,
+                "computed": true
+              },
+              "enterprise_project_id": {
+                "type": "string",
+                "optional": true,
+                "computed": true
+              },
+              "expiration_time": {
+                "type": "string",
+                "computed": true
+              },
+              "id": {
+                "type": "string",
+                "computed": true
+              },
+              "key_alias": {
+                "type": "string",
+                "optional": true,
+                "computed": true
+              },
+              "key_description": {
+                "type": "string",
+                "optional": true,
+                "computed": true
+              },
+              "key_id": {
+                "type": "string",
+                "optional": true,
+                "computed": true
+              },
+              "key_state": {
+                "type": "string",
+                "optional": true,
+                "computed": true
+              },
+              "region": {
+                "type": "string",
+                "computed": true
+              },
+              "rotation_enabled": {
+                "type": "bool",
+                "computed": true
+              },
+              "rotation_interval": {
+                "type": "number",
+                "computed": true
+              },
+              "rotation_number": {
+                "type": "number",
+                "computed": true
+              },
+              "scheduled_deletion_date": {
+                "type": "string",
+                "computed": true
+              },
+              "tags": {
+                "type": [
+                  "map",
+                  "string"
+                ],
+                "computed": true
+              }
+            }
+          },
+          "product": {
+            "short": "KMS",
+            "name": "Data Encryption Workshop KMS",
+            "catalog": "Security & Compliance",
+            "name_cn": "数据加密服务-密钥管理",
+            "catalog_cn": "安全与合规"
+          }
+        }
+      }
+    }
+  }
+}
