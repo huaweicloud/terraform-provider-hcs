@@ -1,0 +1,14 @@
+info:
+  version: 
+  title: data_source_huaweicloud_iec_sites
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: IEC
+paths:
+  /v1/sites:
+    get:
+      tag: IEC
+      operationId: List

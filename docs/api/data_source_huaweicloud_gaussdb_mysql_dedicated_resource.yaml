@@ -1,0 +1,14 @@
+info:
+  version: 
+  title: data_source_huaweicloud_gaussdb_mysql_dedicated_resource
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: GaussDBforMySQL
+paths:
+  /v3/{project_id}/dedicated-resources:
+    get:
+      tag: GaussDBforMySQL
+      operationId: ListDeh

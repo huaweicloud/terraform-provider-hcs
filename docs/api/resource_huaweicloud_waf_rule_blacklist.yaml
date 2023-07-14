@@ -1,0 +1,24 @@
+info:
+  version: 
+  title: resource_huaweicloud_waf_rule_blacklist
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: WAF
+paths:
+  /v1/{project_id}/waf/policy/{policyID}/whiteblackip/{id}:
+    delete:
+      tag: WAF
+      operationId: DeleteWithEpsId
+    get:
+      tag: WAF
+      operationId: GetWithEpsId
+    put:
+      tag: WAF
+      operationId: UpdateWithEpsId
+  /v1/{project_id}/waf/policy/{policyID}/whiteblackip:
+    post:
+      tag: WAF
+      operationId: CreateWithEpsId

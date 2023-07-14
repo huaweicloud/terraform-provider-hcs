@@ -1,0 +1,45 @@
+info:
+  version: 
+  title: resource_huaweicloud_ces_alarmrule
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: CES
+paths:
+  /v2/{project_id}/alarms/action:
+    post:
+      tag: CES
+      operationId: Action
+  /v2/{project_id}/alarms/batch-delete:
+    post:
+      tag: CES
+      operationId: Delete
+  /v2/{project_id}/alarms/{id}/policies:
+    put:
+      tag: CES
+      operationId: PoliciesModify
+  /v2/{project_id}/alarms/{id}/resources/{operation}:
+    post:
+      tag: CES
+      operationId: BatchResources
+  /v2/{project_id}/alarms/{id}/resources:
+    get:
+      tag: CES
+      operationId: GetResources
+  /V1.0/{project_id}/alarms/{id}:
+    get:
+      tag: CES
+      operationId: Get
+    put:
+      tag: CES
+      operationId: Update
+  /v2/{project_id}/alarms?alarm_id= + id:
+    get:
+      tag: CES
+      operationId: Get
+  /v2/{project_id}/alarms:
+    post:
+      tag: CES
+      operationId: Create

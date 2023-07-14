@@ -1,0 +1,123 @@
+{
+  "provider_schemas": {
+    "huaweicloud/huaweicloud": {
+      "resource_schemas": {
+        "huaweicloud_elb_listener": {
+          "block": {
+            "attributes": {
+              "access_policy": {
+                "type": "string",
+                "optional": true
+              },
+              "advanced_forwarding_enabled": {
+                "type": "bool",
+                "optional": true,
+                "computed": true
+              },
+              "ca_certificate": {
+                "type": "string",
+                "optional": true
+              },
+              "default_pool_id": {
+                "type": "string",
+                "optional": true,
+                "computed": true
+              },
+              "description": {
+                "type": "string",
+                "optional": true
+              },
+              "forward_eip": {
+                "type": "bool",
+                "optional": true,
+                "default": false
+              },
+              "http2_enable": {
+                "type": "bool",
+                "optional": true,
+                "default": false
+              },
+              "id": {
+                "type": "string",
+                "computed": true
+              },
+              "idle_timeout": {
+                "type": "number",
+                "optional": true,
+                "computed": true
+              },
+              "ip_group": {
+                "type": "string",
+                "optional": true
+              },
+              "loadbalancer_id": {
+                "type": "string",
+                "required": true,
+                "forcenew": true
+              },
+              "name": {
+                "type": "string",
+                "optional": true,
+                "computed": true
+              },
+              "protocol": {
+                "type": "string",
+                "required": true,
+                "forcenew": true
+              },
+              "protocol_port": {
+                "type": "number",
+                "required": true,
+                "forcenew": true
+              },
+              "region": {
+                "type": "string",
+                "computed": true
+              },
+              "request_timeout": {
+                "type": "number",
+                "optional": true,
+                "computed": true
+              },
+              "response_timeout": {
+                "type": "number",
+                "optional": true,
+                "computed": true
+              },
+              "server_certificate": {
+                "type": "string",
+                "optional": true
+              },
+              "sni_certificate": {
+                "type": [
+                  "list",
+                  "string"
+                ],
+                "optional": true
+              },
+              "tags": {
+                "type": [
+                  "map",
+                  "string"
+                ],
+                "optional": true
+              },
+              "tls_ciphers_policy": {
+                "type": "string",
+                "optional": true,
+                "computed": true
+              }
+            }
+          },
+          "product": {
+            "short": "ELB",
+            "name": "Elastic Load Balance",
+            "catalog": "Networking",
+            "name_cn": "弹性负载均衡",
+            "catalog_cn": "网络"
+          }
+        }
+      }
+    }
+  }
+}

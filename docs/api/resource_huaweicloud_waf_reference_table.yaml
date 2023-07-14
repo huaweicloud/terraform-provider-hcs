@@ -1,0 +1,24 @@
+info:
+  version: 
+  title: resource_huaweicloud_waf_reference_table
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: WAF
+paths:
+  /v1/{project_id}/waf/valuelist/{id}:
+    delete:
+      tag: WAF
+      operationId: DeleteWithEpsID
+    get:
+      tag: WAF
+      operationId: GetWithEpsID
+    put:
+      tag: WAF
+      operationId: Update
+  /v1/{project_id}/waf/valuelist:
+    post:
+      tag: WAF
+      operationId: Create

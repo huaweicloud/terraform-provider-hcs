@@ -1,0 +1,14 @@
+info:
+  version: 
+  title: data_source_huaweicloud_lb_certificate
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: ELB
+paths:
+  /v2/{project_id}/elb/certificates:
+    get:
+      tag: ELB
+      operationId: List

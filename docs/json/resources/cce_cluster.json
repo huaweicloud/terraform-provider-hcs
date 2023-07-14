@@ -1,0 +1,253 @@
+{
+  "provider_schemas": {
+    "huaweicloud/huaweicloud": {
+      "resource_schemas": {
+        "huaweicloud_cce_cluster": {
+          "block": {
+            "attributes": {
+              "authenticating_proxy_ca": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "authenticating_proxy_cert": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "authenticating_proxy_private_key": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "authentication_mode": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true,
+                "default": "rbac"
+              },
+              "auto_renew": {
+                "type": "string",
+                "optional": true
+              },
+              "certificate_clusters": {
+                "type": [
+                  "list",
+                  [
+                    "object",
+                    {
+                      "certificate_authority_data": "string",
+                      "name": "string",
+                      "server": "string"
+                    }
+                  ]
+                ],
+                "computed": true
+              },
+              "certificate_users": {
+                "type": [
+                  "list",
+                  [
+                    "object",
+                    {
+                      "client_certificate_data": "string",
+                      "client_key_data": "string",
+                      "name": "string"
+                    }
+                  ]
+                ],
+                "computed": true
+              },
+              "charging_mode": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "cluster_type": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true,
+                "default": "VirtualMachine"
+              },
+              "cluster_version": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "container_network_cidr": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "container_network_type": {
+                "type": "string",
+                "required": true,
+                "forcenew": true
+              },
+              "delete_all": {
+                "type": "string",
+                "optional": true
+              },
+              "delete_efs": {
+                "type": "string",
+                "optional": true
+              },
+              "delete_evs": {
+                "type": "string",
+                "optional": true
+              },
+              "delete_obs": {
+                "type": "string",
+                "optional": true
+              },
+              "delete_sfs": {
+                "type": "string",
+                "optional": true
+              },
+              "description": {
+                "type": "string",
+                "optional": true,
+                "computed": true
+              },
+              "eip": {
+                "type": "string",
+                "optional": true
+              },
+              "eni_subnet_cidr": {
+                "type": "string",
+                "description": "schema: Computed",
+                "computed": true
+              },
+              "eni_subnet_id": {
+                "type": "string",
+                "description": "the IPv4 subnet ID of the subnet where the ENI resides",
+                "optional": true,
+                "computed": true
+              },
+              "enterprise_project_id": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "extend_param": {
+                "type": [
+                  "map",
+                  "string"
+                ],
+                "optional": true,
+                "forcenew": true
+              },
+              "flavor_id": {
+                "type": "string",
+                "required": true,
+                "forcenew": true
+              },
+              "hibernate": {
+                "type": "bool",
+                "optional": true
+              },
+              "id": {
+                "type": "string",
+                "computed": true
+              },
+              "kube_config_raw": {
+                "type": "string",
+                "computed": true
+              },
+              "kube_proxy_mode": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "multi_az": {
+                "type": "bool",
+                "optional": true,
+                "forcenew": true
+              },
+              "name": {
+                "type": "string",
+                "required": true,
+                "forcenew": true
+              },
+              "period": {
+                "type": "number",
+                "optional": true,
+                "forcenew": true
+              },
+              "period_unit": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "region": {
+                "type": "string",
+                "computed": true
+              },
+              "security_group_id": {
+                "type": "string",
+                "optional": true,
+                "computed": true
+              },
+              "service_network_cidr": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "status": {
+                "type": "string",
+                "computed": true
+              },
+              "subnet_id": {
+                "type": "string",
+                "required": true,
+                "forcenew": true
+              },
+              "tags": {
+                "type": [
+                  "map",
+                  "string"
+                ],
+                "optional": true,
+                "forcenew": true
+              },
+              "vpc_id": {
+                "type": "string",
+                "required": true,
+                "forcenew": true
+              }
+            },
+            "block_types": {
+              "masters": {
+                "block": {
+                  "attributes": {
+                    "availability_zone": {
+                      "type": "string",
+                      "optional": true,
+                      "computed": true,
+                      "forcenew": true
+                    }
+                  }
+                },
+                "nesting_mode": "list",
+                "forcenew": true,
+                "max_items": 3
+              }
+            }
+          },
+          "product": {
+            "short": "CCE",
+            "name": "Cloud Container Engine",
+            "catalog": "Containers",
+            "name_cn": "云容器引擎",
+            "catalog_cn": "容器"
+          }
+        }
+      }
+    }
+  }
+}

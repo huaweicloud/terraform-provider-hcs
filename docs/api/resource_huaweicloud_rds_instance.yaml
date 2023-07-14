@@ -1,0 +1,69 @@
+info:
+  version: 
+  title: resource_huaweicloud_rds_instance
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: RDS
+paths:
+  /v3/{project_id}/instances/{id}/backups/policy:
+    get:
+      tag: RDS
+      operationId: Get
+    put:
+      tag: RDS
+      operationId: Update
+  /v3/{project_id}/instances/{id}/tags/action:
+    post:
+      tag: RDS
+      operationId: Create
+  /v3/{project_id}/instances/{instanceId}/{path}:
+    put:
+      tag: RDS
+      operationId: UpdatePort
+  /v3/{project_id}/instances/{instancesId}/action:
+    post:
+      tag: RDS
+      operationId: RebootInstance
+  /v3/{project_id}/instances/{instancesId}/configurations:
+    get:
+      tag: RDS
+      operationId: GetConfigurations
+    put:
+      tag: RDS
+      operationId: ModifyConfiguration
+  /v3/{project_id}/instances/{instancesId}/disk-auto-expansion:
+    get:
+      tag: RDS
+      operationId: GetAutoExpand
+    put:
+      tag: RDS
+      operationId: EnableAutoExpand
+  /v3/{project_id}/instances/{instancesId}/password:
+    post:
+      tag: RDS
+      operationId: RestRootPassword
+  /v3/{project_id}/instances/{instancesId}/{updata}:
+    post:
+      tag: RDS
+      operationId: Resize
+    put:
+      tag: RDS
+      operationId: Rename
+  /v3/{project_id}/instances/{serverID}:
+    delete:
+      tag: RDS
+      operationId: Delete
+  /v3/{project_id}/instances:
+    get:
+      tag: RDS
+      operationId: List
+    post:
+      tag: RDS
+      operationId: Create
+  /v3/{project_id}/jobs:
+    get:
+      tag: RDS
+      operationId: GetRDSJob

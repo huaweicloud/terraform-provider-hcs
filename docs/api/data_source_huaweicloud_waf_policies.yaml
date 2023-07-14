@@ -1,0 +1,14 @@
+info:
+  version: 
+  title: data_source_huaweicloud_waf_policies
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: WAF
+paths:
+  /v1/{project_id}/waf/policy:
+    get:
+      tag: WAF
+      operationId: ListPolicy

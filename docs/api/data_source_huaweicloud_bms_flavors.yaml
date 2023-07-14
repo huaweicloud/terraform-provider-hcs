@@ -1,0 +1,14 @@
+info:
+  version: 
+  title: data_source_huaweicloud_bms_flavors
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: BMS
+paths:
+  /v1/{project_id}/baremetalservers/flavors:
+    get:
+      tag: BMS
+      operationId: List

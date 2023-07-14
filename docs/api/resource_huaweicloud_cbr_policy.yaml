@@ -1,0 +1,24 @@
+info:
+  version: 
+  title: resource_huaweicloud_cbr_policy
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: CBR
+paths:
+  /v3/{project_id}/policies/{id}:
+    delete:
+      tag: CBR
+      operationId: Delete
+    get:
+      tag: CBR
+      operationId: Get
+    put:
+      tag: CBR
+      operationId: Update
+  /v3/{project_id}/policies:
+    post:
+      tag: CBR
+      operationId: Create

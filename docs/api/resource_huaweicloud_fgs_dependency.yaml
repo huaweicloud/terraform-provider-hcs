@@ -1,0 +1,24 @@
+info:
+  version: 
+  title: resource_huaweicloud_fgs_dependency
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: FunctionGraph
+paths:
+  /v2/{project_id}/fgs/dependencies/{dependId}:
+    delete:
+      tag: FunctionGraph
+      operationId: Delete
+    get:
+      tag: FunctionGraph
+      operationId: Get
+    put:
+      tag: FunctionGraph
+      operationId: Update
+  /v2/{project_id}/fgs/dependencies:
+    post:
+      tag: FunctionGraph
+      operationId: Create

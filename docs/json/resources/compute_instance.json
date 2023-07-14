@@ -1,0 +1,389 @@
+{
+  "provider_schemas": {
+    "huaweicloud/huaweicloud": {
+      "resource_schemas": {
+        "huaweicloud_compute_instance": {
+          "block": {
+            "attributes": {
+              "access_ip_v4": {
+                "type": "string",
+                "computed": true
+              },
+              "access_ip_v6": {
+                "type": "string",
+                "computed": true
+              },
+              "admin_pass": {
+                "type": "string",
+                "optional": true,
+                "sensitive": true
+              },
+              "agency_name": {
+                "type": "string",
+                "optional": true,
+                "computed": true
+              },
+              "agent_list": {
+                "type": "string",
+                "optional": true,
+                "computed": true
+              },
+              "auto_renew": {
+                "type": "string",
+                "optional": true
+              },
+              "availability_zone": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "charging_mode": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "created_at": {
+                "type": "string",
+                "computed": true
+              },
+              "delete_disks_on_termination": {
+                "type": "bool",
+                "optional": true
+              },
+              "delete_eip_on_termination": {
+                "type": "bool",
+                "optional": true,
+                "default": true
+              },
+              "description": {
+                "type": "string",
+                "optional": true,
+                "computed": true
+              },
+              "eip_id": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "eip_type": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "enterprise_project_id": {
+                "type": "string",
+                "optional": true,
+                "computed": true
+              },
+              "flavor_id": {
+                "type": "string",
+                "description": "schema: Required",
+                "required": true
+              },
+              "flavor_name": {
+                "type": "string",
+                "description": "schema: Computed",
+                "computed": true
+              },
+              "id": {
+                "type": "string",
+                "computed": true
+              },
+              "image_id": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "image_name": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "key_pair": {
+                "type": "string",
+                "optional": true
+              },
+              "name": {
+                "type": "string",
+                "required": true
+              },
+              "period": {
+                "type": "number",
+                "optional": true,
+                "forcenew": true
+              },
+              "period_unit": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "power_action": {
+                "type": "string",
+                "optional": true,
+                "computed": true
+              },
+              "private_key": {
+                "type": "string",
+                "optional": true,
+                "sensitive": true
+              },
+              "public_ip": {
+                "type": "string",
+                "computed": true
+              },
+              "region": {
+                "type": "string",
+                "computed": true
+              },
+              "security_group_ids": {
+                "type": [
+                  "set",
+                  "string"
+                ],
+                "optional": true,
+                "computed": true
+              },
+              "security_groups": {
+                "type": [
+                  "set",
+                  "string"
+                ],
+                "description": "schema: Computed",
+                "computed": true
+              },
+              "spot_duration": {
+                "type": "number",
+                "optional": true,
+                "forcenew": true
+              },
+              "spot_duration_count": {
+                "type": "number",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "spot_maximum_price": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "status": {
+                "type": "string",
+                "computed": true
+              },
+              "stop_before_destroy": {
+                "type": "bool",
+                "optional": true,
+                "default": false
+              },
+              "system_disk_id": {
+                "type": "string",
+                "computed": true
+              },
+              "system_disk_kms_key_id": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "system_disk_size": {
+                "type": "number",
+                "optional": true,
+                "computed": true
+              },
+              "system_disk_type": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "tags": {
+                "type": [
+                  "map",
+                  "string"
+                ],
+                "optional": true
+              },
+              "updated_at": {
+                "type": "string",
+                "computed": true
+              },
+              "user_data": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "user_id": {
+                "type": "string",
+                "optional": true,
+                "forcenew": true
+              },
+              "volume_attached": {
+                "type": [
+                  "list",
+                  [
+                    "object",
+                    {
+                      "boot_index": "number",
+                      "kms_key_id": "string",
+                      "pci_address": "string",
+                      "size": "number",
+                      "type": "string",
+                      "volume_id": "string"
+                    }
+                  ]
+                ],
+                "computed": true
+              }
+            },
+            "block_types": {
+              "bandwidth": {
+                "block": {
+                  "attributes": {
+                    "charge_mode": {
+                      "type": "string",
+                      "optional": true,
+                      "forcenew": true
+                    },
+                    "id": {
+                      "type": "string",
+                      "optional": true,
+                      "forcenew": true
+                    },
+                    "share_type": {
+                      "type": "string",
+                      "required": true,
+                      "forcenew": true
+                    },
+                    "size": {
+                      "type": "number",
+                      "optional": true,
+                      "forcenew": true
+                    }
+                  }
+                },
+                "nesting_mode": "list",
+                "forcenew": true,
+                "max_items": 1
+              },
+              "data_disks": {
+                "block": {
+                  "attributes": {
+                    "kms_key_id": {
+                      "type": "string",
+                      "optional": true,
+                      "forcenew": true
+                    },
+                    "size": {
+                      "type": "number",
+                      "required": true,
+                      "forcenew": true
+                    },
+                    "snapshot_id": {
+                      "type": "string",
+                      "optional": true,
+                      "forcenew": true
+                    },
+                    "type": {
+                      "type": "string",
+                      "required": true,
+                      "forcenew": true
+                    }
+                  }
+                },
+                "nesting_mode": "list",
+                "forcenew": true,
+                "max_items": 23
+              },
+              "network": {
+                "block": {
+                  "attributes": {
+                    "access_network": {
+                      "type": "bool",
+                      "optional": true,
+                      "default": false
+                    },
+                    "fixed_ip_v4": {
+                      "type": "string",
+                      "optional": true,
+                      "computed": true,
+                      "forcenew": true
+                    },
+                    "fixed_ip_v6": {
+                      "type": "string",
+                      "description": "schema: Computed",
+                      "computed": true
+                    },
+                    "ipv6_enable": {
+                      "type": "bool",
+                      "optional": true,
+                      "forcenew": true
+                    },
+                    "mac": {
+                      "type": "string",
+                      "computed": true
+                    },
+                    "port": {
+                      "type": "string",
+                      "description": "schema: Computed",
+                      "computed": true
+                    },
+                    "source_dest_check": {
+                      "type": "bool",
+                      "optional": true,
+                      "default": true
+                    },
+                    "uuid": {
+                      "type": "string",
+                      "description": "schema: Required",
+                      "required": true,
+                      "forcenew": true
+                    }
+                  }
+                },
+                "nesting_mode": "list",
+                "forcenew": true,
+                "min_items": 1,
+                "max_items": 12
+              },
+              "scheduler_hints": {
+                "block": {
+                  "attributes": {
+                    "deh_id": {
+                      "type": "string",
+                      "optional": true,
+                      "forcenew": true
+                    },
+                    "group": {
+                      "type": "string",
+                      "optional": true,
+                      "computed": true,
+                      "forcenew": true
+                    },
+                    "tenancy": {
+                      "type": "string",
+                      "optional": true,
+                      "forcenew": true
+                    }
+                  }
+                },
+                "nesting_mode": "set"
+              }
+            }
+          },
+          "product": {
+            "short": "ECS",
+            "name": "Elastic Cloud Server",
+            "catalog": "Compute",
+            "name_cn": "弹性云服务器",
+            "catalog_cn": "计算"
+          }
+        }
+      }
+    }
+  }
+}

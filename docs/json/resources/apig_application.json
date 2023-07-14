@@ -1,0 +1,81 @@
+{
+  "provider_schemas": {
+    "huaweicloud/huaweicloud": {
+      "resource_schemas": {
+        "huaweicloud_apig_application": {
+          "block": {
+            "attributes": {
+              "app_codes": {
+                "type": [
+                  "set",
+                  "string"
+                ],
+                "description": "The array of one or more application codes that the application has.",
+                "optional": true
+              },
+              "app_key": {
+                "type": "string",
+                "description": "The APP key.",
+                "computed": true
+              },
+              "app_secret": {
+                "type": "string",
+                "description": "The APP secret.",
+                "computed": true,
+                "sensitive": true
+              },
+              "description": {
+                "type": "string",
+                "description": "The application description.",
+                "optional": true,
+                "computed": true
+              },
+              "id": {
+                "type": "string",
+                "computed": true
+              },
+              "instance_id": {
+                "type": "string",
+                "description": "The ID of the dedicated instance to which the application belongs.",
+                "required": true,
+                "forcenew": true
+              },
+              "name": {
+                "type": "string",
+                "description": "The application name.",
+                "required": true
+              },
+              "region": {
+                "type": "string",
+                "description": "The region where the application is located.",
+                "computed": true
+              },
+              "registration_time": {
+                "type": "string",
+                "description": "The registration time.",
+                "computed": true
+              },
+              "secret_action": {
+                "type": "string",
+                "description": "The secret action to be done for the application.",
+                "optional": true
+              },
+              "updated_at": {
+                "type": "string",
+                "description": "The latest update time of the application.",
+                "computed": true
+              }
+            }
+          },
+          "product": {
+            "short": "APIG",
+            "name": "API Gateway",
+            "catalog": "Middleware",
+            "name_cn": "API网关",
+            "catalog_cn": "应用中间件"
+          }
+        }
+      }
+    }
+  }
+}

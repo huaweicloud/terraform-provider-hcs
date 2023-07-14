@@ -1,0 +1,26 @@
+info:
+  version: 
+  title: data_source_huaweicloud_compute_instance
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: ECS
+paths:
+  /v1/{project_id}/cloudservers/detail:
+    get:
+      tag: ECS
+      operationId: List
+  /{project_id}/cloudservers/{serverId}/block_device:
+    get:
+      tag: ECS
+      operationId: List
+  /v2/{project_id}/cloudvolumes/{id}:
+    get:
+      tag: EVS
+      operationId: Get
+  /v2.0/ports/{id}:
+    get:
+      tag: VPC
+      operationId: Get
