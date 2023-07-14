@@ -1,0 +1,24 @@
+info:
+  version: 
+  title: resource_huaweicloud_waf_dedicated_instance
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: WAF
+paths:
+  /v1/{project_id}/premium-waf/instance/{id}:
+    delete:
+      tag: WAF
+      operationId: DeleteWithEpsId
+    get:
+      tag: WAF
+      operationId: GetWithEpsId
+    put:
+      tag: WAF
+      operationId: UpdateWithEpsId
+  /v1/{project_id}/premium-waf/instance:
+    post:
+      tag: WAF
+      operationId: CreateWithEpsId

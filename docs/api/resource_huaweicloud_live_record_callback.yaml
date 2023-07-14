@@ -1,0 +1,27 @@
+info:
+  version: 
+  title: resource_huaweicloud_live_record_callback
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: Live
+paths:
+  /v1/{project_id}/record/callbacks/{id}:
+    delete:
+      tag: Live
+      operationId: DeleteRecordCallbackConfig
+    get:
+      tag: Live
+      operationId: ShowRecordCallbackConfig
+    put:
+      tag: Live
+      operationId: UpdateRecordCallbackConfig
+  /v1/{project_id}/record/callbacks:
+    get:
+      tag: Live
+      operationId: ListRecordCallbackConfigs
+    post:
+      tag: Live
+      operationId: CreateRecordCallbackConfig

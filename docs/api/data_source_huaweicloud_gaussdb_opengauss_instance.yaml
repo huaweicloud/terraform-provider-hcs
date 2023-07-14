@@ -1,0 +1,14 @@
+info:
+  version: 
+  title: data_source_huaweicloud_gaussdb_opengauss_instance
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: GaussDB
+paths:
+  /v3/{project_id}/instances:
+    get:
+      tag: GaussDB
+      operationId: List

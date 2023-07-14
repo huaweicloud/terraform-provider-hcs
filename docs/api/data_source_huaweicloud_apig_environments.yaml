@@ -1,0 +1,14 @@
+info:
+  version: 
+  title: data_source_huaweicloud_apig_environments
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: APIG
+paths:
+  /v2/{project_id}/apigw/instances/{instanceId}/{path}:
+    get:
+      tag: APIG
+      operationId: List

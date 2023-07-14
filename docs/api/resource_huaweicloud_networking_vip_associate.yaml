@@ -1,0 +1,17 @@
+info:
+  version: 
+  title: resource_huaweicloud_networking_vip_associate
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: VPC
+paths:
+  /v2.0/ports/{id}:
+    get:
+      tag: VPC
+      operationId: Get
+    put:
+      tag: VPC
+      operationId: Update

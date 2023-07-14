@@ -1,0 +1,125 @@
+{
+  "provider_schemas": {
+    "huaweicloud/huaweicloud": {
+      "resource_schemas": {
+        "huaweicloud_sfs_file_system": {
+          "block": {
+            "attributes": {
+              "access_level": {
+                "type": "string",
+                "optional": true,
+                "computed": true
+              },
+              "access_rule_status": {
+                "type": "string",
+                "computed": true
+              },
+              "access_rules": {
+                "type": [
+                  "list",
+                  [
+                    "object",
+                    {
+                      "access_level": "string",
+                      "access_rule_id": "string",
+                      "access_to": "string",
+                      "access_type": "string",
+                      "status": "string"
+                    }
+                  ]
+                ],
+                "computed": true
+              },
+              "access_to": {
+                "type": "string",
+                "optional": true
+              },
+              "access_type": {
+                "type": "string",
+                "optional": true,
+                "computed": true
+              },
+              "availability_zone": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "description": {
+                "type": "string",
+                "optional": true,
+                "computed": true
+              },
+              "enterprise_project_id": {
+                "type": "string",
+                "optional": true,
+                "computed": true,
+                "forcenew": true
+              },
+              "export_location": {
+                "type": "string",
+                "computed": true
+              },
+              "id": {
+                "type": "string",
+                "computed": true
+              },
+              "is_public": {
+                "type": "bool",
+                "optional": true,
+                "forcenew": true
+              },
+              "metadata": {
+                "type": [
+                  "map",
+                  "string"
+                ],
+                "optional": true,
+                "forcenew": true
+              },
+              "name": {
+                "type": "string",
+                "optional": true
+              },
+              "region": {
+                "type": "string",
+                "computed": true
+              },
+              "share_access_id": {
+                "type": "string",
+                "computed": true
+              },
+              "share_proto": {
+                "type": "string",
+                "optional": true,
+                "default": "NFS"
+              },
+              "size": {
+                "type": "number",
+                "required": true
+              },
+              "status": {
+                "type": "string",
+                "computed": true
+              },
+              "tags": {
+                "type": [
+                  "map",
+                  "string"
+                ],
+                "optional": true
+              }
+            }
+          },
+          "product": {
+            "short": "SFS",
+            "name": "Scalable File Service(SFS)",
+            "catalog": "Storage",
+            "name_cn": "弹性文件服务(SFS)",
+            "catalog_cn": "存储"
+          }
+        }
+      }
+    }
+  }
+}

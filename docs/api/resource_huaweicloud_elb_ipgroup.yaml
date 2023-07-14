@@ -1,0 +1,24 @@
+info:
+  version: 
+  title: resource_huaweicloud_elb_ipgroup
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: ELB
+paths:
+  /v3/{project_id}/elb/ipgroups/{id}:
+    delete:
+      tag: ELB
+      operationId: Delete
+    get:
+      tag: ELB
+      operationId: Get
+    put:
+      tag: ELB
+      operationId: Update
+  /v3/{project_id}/elb/ipgroups:
+    post:
+      tag: ELB
+      operationId: Create

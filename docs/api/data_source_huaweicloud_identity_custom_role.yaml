@@ -1,0 +1,14 @@
+info:
+  version: 
+  title: data_source_huaweicloud_identity_custom_role
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: IAM
+paths:
+  /v3.0/OS-ROLE/roles:
+    get:
+      tag: IAM
+      operationId: List

@@ -1,0 +1,29 @@
+{
+    "MD004": {
+        "style": "sublist"
+    },
+    "MD007": false,
+    "MD013": {
+        "line_length": 120,
+        "code_block_line_length": 120,
+        "heading_line_length": 120,
+        "tables": false,
+        "code_blocks": false
+    },
+    "MD014": false,
+    "MD024": {
+        "siblings_only": true
+    },
+    "MD033": {
+        "allowed_elements": [
+            "a", "br"
+        ]
+    },
+    "MD040": false,
+    "MD049": {
+        "style": "asterisk"
+    },
+    "MD050": {
+        "style": "asterisk"
+    }
+}

@@ -1,0 +1,14 @@
+info:
+  version: 
+  title: data_source_huaweicloud_dds_flavors
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: DDS
+paths:
+  /v3/{project_id}/flavors:
+    get:
+      tag: DDS
+      operationId: List

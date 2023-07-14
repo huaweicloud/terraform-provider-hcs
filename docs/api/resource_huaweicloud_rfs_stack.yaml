@@ -1,0 +1,29 @@
+info:
+  version: 
+  title: resource_huaweicloud_rfs_stack
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+  - name: RFS
+paths:
+  /v1/{project_id}/stacks/{stackName}/deployments:
+    post:
+      tag: RFS
+      operationId: Deploy
+  /v1/{project_id}/stacks/{stackName}/events:
+    get:
+      tag: RFS
+      operationId: ListAllEvents
+  /v1/{project_id}/stacks/{stackName}:
+    delete:
+      tag: RFS
+      operationId: Delete
+  /v1/{project_id}/stacks:
+    get:
+      tag: RFS
+      operationId: ListAll
+    post:
+      tag: RFS
+      operationId: Create

@@ -1,0 +1,9 @@
+info:
+  version: 
+  title: data_source_huaweicloud_dms_rabbitmq_flavors
+  description: 
+schemes:
+  - https
+host: huaweicloudstack.com
+tags:
+paths:
