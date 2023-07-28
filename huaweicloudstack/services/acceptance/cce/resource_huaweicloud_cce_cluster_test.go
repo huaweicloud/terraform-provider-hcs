@@ -111,7 +111,7 @@ func TestAccCluster_withEpsId(t *testing.T) {
 				Config: testAccCluster_withEpsId(rName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckClusterExists(resourceName, &cluster),
-					resource.TestCheckResourceAttr(resourceName, "enterprise_project_id", acceptance.HW_ENTERPRISE_PROJECT_ID_TEST),
+					resource.TestCheckResourceAttr(resourceName, "enterprise_project_id", acceptance.HCS_ENTERPRISE_PROJECT_ID_TEST),
 				),
 			},
 		},
@@ -241,7 +241,7 @@ func TestAccCluster_secGroup(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "container_network_type", "overlay_l2"),
 					resource.TestCheckResourceAttr(resourceName, "authentication_mode", "rbac"),
 					resource.TestCheckResourceAttr(resourceName, "service_network_cidr", "10.248.0.0/16"),
-					resource.TestCheckResourceAttr(resourceName, "security_group_id", acceptance.HW_SG_ID),
+					resource.TestCheckResourceAttr(resourceName, "security_group_id", acceptance.HCS_SG_ID),
 				),
 			},
 			{
@@ -249,7 +249,7 @@ func TestAccCluster_secGroup(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "description", "created by terraform update"),
 					resource.TestCheckResourceAttr(resourceName, "status", "Available"),
-					resource.TestCheckResourceAttr(resourceName, "security_group_id", acceptance.HW_SG_ID2),
+					resource.TestCheckResourceAttr(resourceName, "security_group_id", acceptance.HCS_SG_ID2),
 				),
 			},
 		},
@@ -258,7 +258,7 @@ func TestAccCluster_secGroup(t *testing.T) {
 
 func testAccCheckClusterDestroy(s *terraform.State) error {
 	config := acceptance.TestAccProvider.Meta().(*config.Config)
-	cceClient, err := config.CceV3Client(acceptance.HW_REGION_NAME)
+	cceClient, err := config.CceV3Client(acceptance.HCS_REGION_NAME)
 	if err != nil {
 		return fmt.Errorf("error creating CCE v3 client: %s", err)
 	}
@@ -289,7 +289,7 @@ func testAccCheckClusterExists(n string, cluster *clusters.Clusters) resource.Te
 		}
 
 		config := acceptance.TestAccProvider.Meta().(*config.Config)
-		cceClient, err := config.CceV3Client(acceptance.HW_REGION_NAME)
+		cceClient, err := config.CceV3Client(acceptance.HCS_REGION_NAME)
 		if err != nil {
 			return fmt.Errorf("error creating CCE v3 client: %s", err)
 		}
@@ -397,7 +397,7 @@ resource "hcs_cce_cluster" "test" {
   enterprise_project_id  = "%s"
 }
 
-`, common.TestVpc(rName), rName, acceptance.HW_ENTERPRISE_PROJECT_ID_TEST)
+`, common.TestVpc(rName), rName, acceptance.HCS_ENTERPRISE_PROJECT_ID_TEST)
 }
 
 func testAccCluster_turbo(rName string, eniNum int) string {

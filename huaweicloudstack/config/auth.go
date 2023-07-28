@@ -11,11 +11,12 @@ import (
 	"os"
 	"time"
 
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
-	huaweisdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack"
 	iam_model "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/model"
 	"github.com/jmespath/go-jmespath"
 	"github.com/mitchellh/go-homedir"
+
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
+	huaweisdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack"
 
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/helper/pathorcontents"
 )
@@ -107,7 +108,7 @@ func genClient(c *Config, ao golangsdk.AuthOptionsProvider) (*golangsdk.Provider
 
 	// Set UserAgent
 	client.UserAgent.Prepend(providerUserAgent)
-	customUserAgent := os.Getenv("HW_TF_CUSTOM_UA")
+	customUserAgent := os.Getenv("HCS_TF_CUSTOM_UA")
 	if customUserAgent != "" {
 		client.UserAgent.Prepend(customUserAgent)
 	}
