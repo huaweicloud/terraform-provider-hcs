@@ -32,6 +32,7 @@ import (
 	tmsv1 "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/tms/v1"
 	vodv1 "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/vod/v1"
 	vpcv3 "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/vpc/v3"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils/logp"
 
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core"
@@ -311,7 +312,7 @@ func NewHcClient(c *Config, region, product string, globalFlag bool) (*core.HcHt
 	}
 
 	headers := make(map[string]string)
-	customUserAgent := os.Getenv("HW_TF_CUSTOM_UA")
+	customUserAgent := os.Getenv("HCS_TF_CUSTOM_UA")
 	if customUserAgent != "" {
 		headers["User-Agent"] = fmt.Sprintf("%s;%s", providerUserAgent, customUserAgent)
 	} else {

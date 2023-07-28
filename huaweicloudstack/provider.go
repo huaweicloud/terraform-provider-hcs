@@ -28,7 +28,7 @@ func Provider() *schema.Provider {
 				Description:  descriptions["region"],
 				InputDefault: "cn-north-1",
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_REGION_NAME",
+					"HCS_REGION_NAME",
 					"OS_REGION_NAME",
 				}, nil),
 			},
@@ -39,7 +39,7 @@ func Provider() *schema.Provider {
 				Description:  descriptions["access_key"],
 				RequiredWith: []string{"secret_key"},
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_ACCESS_KEY",
+					"HCS_ACCESS_KEY",
 					"OS_ACCESS_KEY",
 				}, nil),
 			},
@@ -50,7 +50,7 @@ func Provider() *schema.Provider {
 				Description:  descriptions["secret_key"],
 				RequiredWith: []string{"access_key"},
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_SECRET_KEY",
+					"HCS_SECRET_KEY",
 					"OS_SECRET_KEY",
 				}, nil),
 			},
@@ -60,7 +60,7 @@ func Provider() *schema.Provider {
 				Optional:     true,
 				Description:  descriptions["security_token"],
 				RequiredWith: []string{"access_key"},
-				DefaultFunc:  schema.EnvDefaultFunc("HW_SECURITY_TOKEN", nil),
+				DefaultFunc:  schema.EnvDefaultFunc("HCS_SECURITY_TOKEN", nil),
 			},
 
 			"domain_id": {
@@ -68,7 +68,7 @@ func Provider() *schema.Provider {
 				Optional:    true,
 				Description: descriptions["domain_id"],
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_DOMAIN_ID",
+					"HCS_DOMAIN_ID",
 					"OS_DOMAIN_ID",
 					"OS_USER_DOMAIN_ID",
 					"OS_PROJECT_DOMAIN_ID",
@@ -80,7 +80,7 @@ func Provider() *schema.Provider {
 				Optional:    true,
 				Description: descriptions["domain_name"],
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_DOMAIN_NAME",
+					"HCS_DOMAIN_NAME",
 					"OS_DOMAIN_NAME",
 					"OS_USER_DOMAIN_NAME",
 					"OS_PROJECT_DOMAIN_NAME",
@@ -92,7 +92,7 @@ func Provider() *schema.Provider {
 				Optional:    true,
 				Description: descriptions["user_name"],
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_USER_NAME",
+					"HCS_USER_NAME",
 					"OS_USERNAME",
 				}, ""),
 			},
@@ -102,7 +102,7 @@ func Provider() *schema.Provider {
 				Optional:    true,
 				Description: descriptions["user_id"],
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_USER_ID",
+					"HCS_USER_ID",
 					"OS_USER_ID",
 				}, ""),
 			},
@@ -113,7 +113,7 @@ func Provider() *schema.Provider {
 				Sensitive:   true,
 				Description: descriptions["password"],
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_USER_PASSWORD",
+					"HCS_USER_PASSWORD",
 					"OS_PASSWORD",
 				}, ""),
 			},
@@ -128,13 +128,13 @@ func Provider() *schema.Provider {
 							Type:        schema.TypeString,
 							Required:    true,
 							Description: descriptions["assume_role_agency_name"],
-							DefaultFunc: schema.EnvDefaultFunc("HW_ASSUME_ROLE_AGENCY_NAME", nil),
+							DefaultFunc: schema.EnvDefaultFunc("HCS_ASSUME_ROLE_AGENCY_NAME", nil),
 						},
 						"domain_name": {
 							Type:        schema.TypeString,
 							Required:    true,
 							Description: descriptions["assume_role_domain_name"],
-							DefaultFunc: schema.EnvDefaultFunc("HW_ASSUME_ROLE_DOMAIN_NAME", nil),
+							DefaultFunc: schema.EnvDefaultFunc("HCS_ASSUME_ROLE_DOMAIN_NAME", nil),
 						},
 					},
 				},
@@ -145,7 +145,7 @@ func Provider() *schema.Provider {
 				Optional:    true,
 				Description: descriptions["project_id"],
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_PROJECT_ID",
+					"HCS_PROJECT_ID",
 					"OS_PROJECT_ID",
 				}, nil),
 			},
@@ -155,7 +155,7 @@ func Provider() *schema.Provider {
 				Optional:    true,
 				Description: descriptions["project_name"],
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_PROJECT_NAME",
+					"HCS_PROJECT_NAME",
 					"OS_PROJECT_NAME",
 				}, nil),
 			},
@@ -179,7 +179,7 @@ func Provider() *schema.Provider {
 				Optional:    true,
 				Description: descriptions["token"],
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_AUTH_TOKEN",
+					"HCS_AUTH_TOKEN",
 					"OS_AUTH_TOKEN",
 				}, ""),
 			},
@@ -189,7 +189,7 @@ func Provider() *schema.Provider {
 				Optional:    true,
 				Description: descriptions["insecure"],
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_INSECURE",
+					"HCS_INSECURE",
 					"OS_INSECURE",
 				}, false),
 			},
@@ -243,7 +243,7 @@ func Provider() *schema.Provider {
 				Optional:    true,
 				Description: descriptions["auth_url"],
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_AUTH_URL",
+					"HCS_AUTH_URL",
 					"OS_AUTH_URL",
 				}, nil),
 			},
@@ -252,7 +252,7 @@ func Provider() *schema.Provider {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: descriptions["cloud"],
-				DefaultFunc: schema.EnvDefaultFunc("HW_CLOUD", ""),
+				DefaultFunc: schema.EnvDefaultFunc("HCS_CLOUD", ""),
 			},
 
 			"endpoints": {
@@ -272,28 +272,28 @@ func Provider() *schema.Provider {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: descriptions["shared_config_file"],
-				DefaultFunc: schema.EnvDefaultFunc("HW_SHARED_CONFIG_FILE", ""),
+				DefaultFunc: schema.EnvDefaultFunc("HCS_SHARED_CONFIG_FILE", ""),
 			},
 
 			"profile": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: descriptions["profile"],
-				DefaultFunc: schema.EnvDefaultFunc("HW_PROFILE", ""),
+				DefaultFunc: schema.EnvDefaultFunc("HCS_PROFILE", ""),
 			},
 
 			"enterprise_project_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: descriptions["enterprise_project_id"],
-				DefaultFunc: schema.EnvDefaultFunc("HW_ENTERPRISE_PROJECT_ID", ""),
+				DefaultFunc: schema.EnvDefaultFunc("HCS_ENTERPRISE_PROJECT_ID", ""),
 			},
 
 			"max_retries": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Description: descriptions["max_retries"],
-				DefaultFunc: schema.EnvDefaultFunc("HW_MAX_RETRIES", 5),
+				DefaultFunc: schema.EnvDefaultFunc("HCS_MAX_RETRIES", 5),
 			},
 		},
 
