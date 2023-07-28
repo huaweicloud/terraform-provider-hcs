@@ -122,3 +122,24 @@ variable "server_group_id" {
 		acceptance.HCS_SG_ID, acceptance.HCS_SG_ID2, acceptance.HCS_AVAILABILITY_ZONE, acceptance.HCS_KEYPAIR_NAME,
 		acceptance.HCS_KMS_KEY_ID, acceptance.HCS_SERVER_GROUP_ID)
 }
+
+func TestCceVariables() string {
+	return fmt.Sprintf(`
+variable "availability_zone" ""
+
+variable "cluster_id" {
+  type    = string
+  default = "%[1]s"
+}
+
+variable "node_id" {
+  type    = string
+  default = "%[1]s"
+}
+
+variable "node_id" {
+  type    = string
+  default = "%[1]s"
+}
+`)
+}
