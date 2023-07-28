@@ -108,6 +108,6 @@ variable "sg_id2" {
   type    = string
   default = "%s"
 }
-`, acceptance.HW_VPC_ID, acceptance.HW_SUBNET_ID, acceptance.HW_EIP_ID, acceptance.HW_EIP_ID2, acceptance.HW_EIP_ADDRESS,
-		acceptance.HW_EIP_ADDRESS2, acceptance.HW_SG_ID, acceptance.HW_SG_ID2)
+`, acceptance.HCS_VPC_ID, acceptance.HCS_SUBNET_ID, acceptance.HCS_EIP_ID, acceptance.HCS_EIP_ID2, acceptance.HCS_EIP_ADDRESS,
+		acceptance.HCS_EIP_ADDRESS2, acceptance.HCS_SG_ID, acceptance.HCS_SG_ID2)
 }

@@ -60,13 +60,13 @@ jobs:
   # This workflow contains a job called "acc-test"
   acc-test:
     env:
-      HW_ACCESS_KEY: ${{ secrets.HW_ACCESS_KEY }}
-      HW_SECRET_KEY: ${{ secrets.HW_SECRET_KEY }}
-      HW_DOMAIN_NAME: ${{ secrets.HW_DOMAIN_NAME }}
-      HW_REGION_NAME: cn-north-4
-      HW_ADMIN: "true"
-      HW_ENTERPRISE_PROJECT_ID: "0"
-      HW_ENTERPRISE_PROJECT_ID_TEST: "0"
+      HCS_ACCESS_KEY: ${{ secrets.HCS_ACCESS_KEY }}
+      HCS_SECRET_KEY: ${{ secrets.HCS_SECRET_KEY }}
+      HCS_DOMAIN_NAME: ${{ secrets.HCS_DOMAIN_NAME }}
+      HCS_REGION_NAME: cn-north-4
+      HCS_ADMIN: "true"
+      HCS_ENTERPRISE_PROJECT_ID: "0"
+      HCS_ENTERPRISE_PROJECT_ID_TEST: "0"
 
     runs-on: ubuntu-latest
 
@@ -82,8 +82,8 @@ jobs:
 
       # run acceptance test
       - name: Run acceptance basic test
-        # run the step only when HW_ACCESS_KEY is setted
-        if: ${{ env.HW_ACCESS_KEY }}
+        # run the step only when HCS_ACCESS_KEY is setted
+        if: ${{ env.HCS_ACCESS_KEY }}
         shell: bash {0}
         run: |
           result=0
