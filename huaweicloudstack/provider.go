@@ -340,6 +340,7 @@ func Provider() *schema.Provider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
+			"hcs_cce_addon":     cce.ResourceAddon(),
 			"hcs_cce_cluster":   cce.ResourceCluster(),
 			"hcs_cce_node":      cce.ResourceNode(),
 			"hcs_cce_node_pool": cce.ResourceNodePool(),
