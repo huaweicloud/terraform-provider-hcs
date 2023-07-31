@@ -41,12 +41,6 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 	})
 }
 
-// List users of the group
-func ListUsers(client *golangsdk.ServiceClient, groupID string) (r UserResult) {
-	_, r.Err = client.Get(listUsersURL(client, groupID), &r.Body, nil)
-	return
-}
-
 // Get retrieves details on a single group, by ID.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 	_, r.Err = client.Get(getURL(client, id), &r.Body, nil)
@@ -91,17 +85,6 @@ func (opts CreateOpts) ToGroupCreateMap() (map[string]interface{}, error) {
 	return b, nil
 }
 
-// Create creates a new Group.
-func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToGroupCreateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	_, r.Err = client.Post(createURL(client), &b, &r.Body, &golangsdk.RequestOpts{})
-	return
-}
-
 // UpdateOptsBuilder allows extensions to add additional parameters to
 // the Update request.
 type UpdateOptsBuilder interface {
@@ -139,23 +122,4 @@ func (opts UpdateOpts) ToGroupUpdateMap() (map[string]interface{}, error) {
 	}
 
 	return b, nil
-}
-
-// Update updates an existing Group.
-func Update(client *golangsdk.ServiceClient, groupID string, opts UpdateOptsBuilder) (r UpdateResult) {
-	b, err := opts.ToGroupUpdateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	_, r.Err = client.Patch(updateURL(client, groupID), &b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
-// Delete deletes a group.
-func Delete(client *golangsdk.ServiceClient, groupID string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteURL(client, groupID), nil)
-	return
 }

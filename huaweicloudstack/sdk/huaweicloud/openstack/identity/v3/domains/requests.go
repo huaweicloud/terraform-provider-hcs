@@ -41,12 +41,6 @@ func List(client *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Page
 	})
 }
 
-// Get retrieves details on a single domain, by ID.
-func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(getURL(client, id), &r.Body, nil)
-	return
-}
-
 // CreateOptsBuilder allows extensions to add additional parameters to
 // the Create request.
 type CreateOptsBuilder interface {
@@ -70,25 +64,6 @@ func (opts CreateOpts) ToDomainCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "domain")
 }
 
-// Create creates a new Domain.
-func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToDomainCreateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	_, r.Err = client.Post(createURL(client), &b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{201},
-	})
-	return
-}
-
-// Delete deletes a domain.
-func Delete(client *golangsdk.ServiceClient, domainID string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteURL(client, domainID), nil)
-	return
-}
-
 // UpdateOptsBuilder allows extensions to add additional parameters to
 // the Update request.
 type UpdateOptsBuilder interface {
@@ -110,17 +85,4 @@ type UpdateOpts struct {
 // ToUpdateCreateMap formats a UpdateOpts into an update request.
 func (opts UpdateOpts) ToDomainUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "domain")
-}
-
-// Update modifies the attributes of a domain.
-func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
-	b, err := opts.ToDomainUpdateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	_, r.Err = client.Patch(updateURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
 }
