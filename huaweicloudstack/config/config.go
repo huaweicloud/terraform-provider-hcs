@@ -99,6 +99,10 @@ func (c *Config) LoadAndValidate() error {
 		return fmt.Errorf("region should be provided")
 	}
 
+	if c.Cloud == "" && len(c.Endpoints) <= 0 {
+		return fmt.Errorf("cloud or endpoints should be provided")
+	}
+
 	// Assume role
 	if c.AssumeRoleAgency != "" {
 		err = buildClientByAgency(c)
