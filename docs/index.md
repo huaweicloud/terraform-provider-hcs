@@ -14,7 +14,7 @@ terraform {
   required_providers {
     huaweicloudstack = {
       source  = "huaweicloudstack/huaweicloudstack"
-      version = "~> 1.26.0"
+      version = "~> 2.3.0"
     }
   }
 }
@@ -22,6 +22,7 @@ terraform {
 # Configure the huaweicloudstack Provider
 provider "huaweicloudstack" {
   region     = "cn-north-4"
+  cloud      = "mycloud.com"
   access_key = "my-access-key"
   secret_key = "my-secret-key"
 }
@@ -38,8 +39,9 @@ Terraform 0.12 and earlier:
 ```hcl
 # Configure the huaweicloudstack Provider
 provider "huaweicloudstack" {
-  version    = "~> 1.26.0"
+  version    = "~> 2.3.0"
   region     = "cn-north-4"
+  cloud      = "mycloud.com"
   access_key = "my-access-key"
   secret_key = "my-secret-key"
 }
@@ -77,6 +79,7 @@ Usage:
 ```hcl
 provider "huaweicloudstack" {
   region     = "cn-north-4"
+  cloud      = "mycloud.com"
   access_key = "my-access-key"
   secret_key = "my-secret-key"
 }
@@ -97,6 +100,7 @@ Usage:
 $ export HCS_ACCESS_KEY="anaccesskey"
 $ export HCS_SECRET_KEY="asecretkey"
 $ export HCS_REGION_NAME="cn-north-4"
+$ export HCS_CLOUD="mycloud.com"
 $ terraform plan
 ```
 
@@ -147,6 +151,7 @@ Usage:
 ```hcl
 provider "huaweicloudstack" {
   region     = "cn-north-4"
+  cloud      = "mycloud.com"
   access_key = "my-access-key"
   secret_key = "my-secret-key"
 
@@ -176,21 +181,29 @@ The following arguments are supported:
 * `profile` - (Optional) The profile name as set in the shared config file. If omitted, the `HCS_PROFILE` environment
   variable is used. Defaults to the `current` profile in the shared config file.
 
-* `assume_role` - (Optional) Configuration block for an assumed role. See below. Only one assume_role
-  block may be in the configuration.
+[//]: # (* `assume_role` - &#40;Optional&#41; Configuration block for an assumed role. See below. Only one assume_role)
 
-* `project_name` - (Optional) The Name of the project to login with. If omitted, the `HCS_PROJECT_NAME` environment
-  variable or `region` is used.
+[//]: # (  block may be in the configuration.)
 
-* `domain_name` - (Optional) The [Account name](https://support.huaweicloudstack.com/en-us/usermanual-iam/iam_01_0552.html)
-  of IAM to scope to. If omitted, the `HCS_DOMAIN_NAME` environment variable is used.
+[//]: # ()
+[//]: # (* `project_name` - &#40;Optional&#41; The Name of the project to login with. If omitted, the `HCS_PROJECT_NAME` environment)
 
-* `security_token` - (Optional) The security token to authenticate with a
-  [temporary security credential](https://support.huaweicloudstack.com/intl/en-us/iam_faq/iam_01_0620.html). If omitted,
-  the `HCS_SECURITY_TOKEN` environment variable is used.
+[//]: # (  variable or `region` is used.)
+
+[//]: # ()
+[//]: # (* `domain_name` - &#40;Optional&#41; The [Account name]&#40;https://support.huaweicloudstack.com/en-us/usermanual-iam/iam_01_0552.html&#41;)
+
+[//]: # (  of IAM to scope to. If omitted, the `HCS_DOMAIN_NAME` environment variable is used.)
+
+[//]: # ()
+[//]: # (* `security_token` - &#40;Optional&#41; The security token to authenticate with a)
+
+[//]: # (  [temporary security credential]&#40;https://support.huaweicloudstack.com/intl/en-us/iam_faq/iam_01_0620.html&#41;. If omitted,)
+
+[//]: # (  the `HCS_SECURITY_TOKEN` environment variable is used.)
 
 * `cloud` - (Optional) The endpoint of the cloud provider. If omitted, the
-  `HCS_CLOUD` environment variable is used. Defaults to `myhuaweicloud.com`.
+  `HCS_CLOUD` environment variable is used. 
 
 * `auth_url` - (Optional, Required before 1.14.0) The Identity authentication URL. If omitted, the
   `HCS_AUTH_URL` environment variable is used. Defaults to `https://iam.{{region}}.{{cloud}}:443/v3`.
@@ -207,7 +220,7 @@ The following arguments are supported:
   at [EPS](https://registry.terraform.io/providers/huaweicloudstack/huaweicloudstack/latest/docs/data-sources/enterprise_project).
   If omitted, the `HCS_ENTERPRISE_PROJECT_ID` environment variable is used.
 
-* `regional` - (Optional) Whether the service endpoints are regional. The default value is `false`.
+[//]: # (* `regional` - &#40;Optional&#41; Whether the service endpoints are regional. The default value is `false`.)
 
 * `endpoints` - (Optional) Configuration block in key/value pairs for customizing service endpoints. The following
   endpoints support to be customized: autoscaling, ecs, ims, vpc, nat, evs, obs, sfs, cce, rds, dds, iam. An example
