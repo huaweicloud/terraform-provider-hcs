@@ -12,6 +12,7 @@ import (
 
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/cce"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eps"
 )
 
 const (
@@ -297,11 +298,15 @@ func Provider() *schema.Provider {
 			},
 		},
 
-		DataSourcesMap: map[string]*schema.Resource{},
+		DataSourcesMap: map[string]*schema.Resource{
+			"hcs_enterprise_project": eps.DataSourceEnterpriseProject(),
+		},
 
 		ResourcesMap: map[string]*schema.Resource{
 			"hcs_cce_cluster": cce.ResourceCluster(),
 			"hcs_cce_node":    cce.ResourceNode(),
+
+			"hcs_enterprise_project": eps.ResourceEnterpriseProject(),
 		},
 	}
 
