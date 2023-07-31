@@ -101,19 +101,6 @@ func (opts CreateOpts) ToUserCreateMap() (map[string]interface{}, error) {
 	return b, nil
 }
 
-// Create creates a new User.
-func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToUserCreateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	_, r.Err = client.Post(createURL(client), &b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{201},
-	})
-	return
-}
-
 // UpdateOptsBuilder allows extensions to add additional parameters to
 // the Update request.
 type UpdateOptsBuilder interface {
@@ -151,25 +138,6 @@ func (opts UpdateOpts) ToUserUpdateMap() (map[string]interface{}, error) {
 	return b, nil
 }
 
-// Update updates an existing User.
-func Update(client *golangsdk.ServiceClient, userID string, opts UpdateOptsBuilder) (r UpdateResult) {
-	b, err := opts.ToUserUpdateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	_, r.Err = client.Patch(updateURL(client, userID), &b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
-// Delete deletes a user.
-func Delete(client *golangsdk.ServiceClient, userID string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteURL(client, userID), nil)
-	return
-}
-
 // ListGroups enumerates groups user belongs to.
 func ListGroups(client *golangsdk.ServiceClient, userID string) pagination.Pager {
 	url := listGroupsURL(client, userID)
@@ -184,33 +152,4 @@ func ListProjects(client *golangsdk.ServiceClient, userID string) pagination.Pag
 	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
 		return projects.ProjectPage{LinkedPageBase: pagination.LinkedPageBase{PageResult: r}}
 	})
-}
-
-// ListInGroup enumerates users that belong to a group.
-func ListInGroup(client *golangsdk.ServiceClient, groupID string, opts ListOptsBuilder) pagination.Pager {
-	url := listInGroupURL(client, groupID)
-	if opts != nil {
-		query, err := opts.ToUserListQuery()
-		if err != nil {
-			return pagination.Pager{Err: err}
-		}
-		url += query
-	}
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		return UserPage{pagination.LinkedPageBase{PageResult: r}}
-	})
-}
-
-// Add a user into one group
-func AddToGroup(client *golangsdk.ServiceClient, groupID string, userID string) (r AddMembershipResult) {
-	_, r.Err = client.Put(membershipURL(client, groupID, userID), nil, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{204},
-	})
-	return
-}
-
-// Remove user from group
-func RemoveFromGroup(client *golangsdk.ServiceClient, groupID string, userID string) (r DeleteResult) {
-	_, r.Err = client.Delete(membershipURL(client, groupID, userID), nil)
-	return
 }
