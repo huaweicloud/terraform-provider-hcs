@@ -93,21 +93,6 @@ type ActionOpts struct {
 	Action string `json:"action" required:"true"`
 }
 
-// Update accepts a ActionOpts struct and uses the values to enable or diaable a enterprise project.
-func Action(client *golangsdk.ServiceClient, opts ActionOpts, id string) (r ActionResult) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
-	if err != nil {
-		r.Err = err
-		return
-	}
-
-	_, r.Err = client.Post(actionURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
-		MoreHeaders: RequestOpts.MoreHeaders,
-		OkCodes:     []int{204},
-	})
-	return
-}
-
 type MigrateResourceOpts struct {
 	ResourceId string `json:"resource_id" required:"true"`
 
@@ -120,20 +105,6 @@ type MigrateResourceOpts struct {
 
 	// only support for EVS、EIP
 	Associated *bool `json:"associated,omitempty"`
-}
-
-func Migrate(client *golangsdk.ServiceClient, opts MigrateResourceOpts, id string) (r MigrateResult) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
-	if err != nil {
-		r.Err = err
-		return
-	}
-
-	_, r.Err = client.Post(migrateURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
-		MoreHeaders: RequestOpts.MoreHeaders,
-		OkCodes:     []int{204},
-	})
-	return
 }
 
 type ResourceOpts struct {
@@ -152,17 +123,4 @@ type Match struct {
 	Key string `json:"key" required:"true"`
 
 	Value string `json:"value" required:"true"`
-}
-
-func ShowResource(client *golangsdk.ServiceClient, opts ResourceOpts, id string) (r ResourceResult) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
-	if err != nil {
-		r.Err = err
-		return
-	}
-
-	_, r.Err = client.Post(resourceFilterURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
-		MoreHeaders: RequestOpts.MoreHeaders,
-	})
-	return
 }
