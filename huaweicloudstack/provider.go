@@ -390,7 +390,8 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 	var tenantName, tenantID, delegatedProject, identityEndpoint string
 	region := d.Get("region").(string)
 	isRegional := d.Get("regional").(bool)
-	cloud := getCloudDomain(d.Get("cloud").(string), region)
+	// different from hws, there is no default "cloud" in hcs, throw if not provided.
+	cloud := d.Get("cloud").(string)
 
 	// project_name is prior to tenant_name
 	// if neither of them was set, use region as the default project
@@ -421,11 +422,7 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 		identityEndpoint = v.(string)
 	} else {
 		// use cloud as basis for identityEndpoint
-		if isGlobalIamEndpoint(cloud, region, isRegional) {
-			identityEndpoint = fmt.Sprintf("https://iam.%s:443/v3", cloud)
-		} else {
-			identityEndpoint = fmt.Sprintf("https://iam.%s.%s:443/v3", region, cloud)
-		}
+		identityEndpoint = fmt.Sprintf("https://iam-apigateway-proxy.%s:443/v3", cloud)
 	}
 
 	config := config.Config{
