@@ -333,8 +333,10 @@ func Provider() *schema.Provider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"hcs_cce_cluster":        cce.ResourceCluster(),
-			"hcs_cce_node":           cce.ResourceNode(),
+			"hcs_cce_cluster":   cce.ResourceCluster(),
+			"hcs_cce_node":      cce.ResourceNode(),
+			"hcs_cce_node_pool": cce.ResourceNodePool(),
+
 			"hcs_enterprise_project": eps.ResourceEnterpriseProject(),
 			"hcs_dns_recordset":      dns.ResourceDNSRecordset(),
 			"hcs_dns_zone":           dns.ResourceDNSZone(),

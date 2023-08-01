@@ -326,7 +326,7 @@ resource "hcs_cce_cluster" "test" {
     key = "value"
   }
 }
-`, common.TestVariables(rName), rName)
+`, common.TestVariables(), rName)
 }
 
 func testAccCluster_update(rName string) string {
@@ -347,7 +347,7 @@ resource "hcs_cce_cluster" "test" {
     key = "value"
   }
 }
-`, common.TestVariables(rName), rName)
+`, common.TestVariables(), rName)
 }
 
 func testAccCluster_withEip(rName string) string {
@@ -364,7 +364,7 @@ resource "hcs_cce_cluster" "test" {
   authentication_mode    = "rbac"
   eip                    = var.eip_address
 }
-`, common.TestVariables(rName), rName)
+`, common.TestVariables(), rName)
 }
 
 func testAccCluster_withEipUpdate(rName string) string {
@@ -381,7 +381,7 @@ resource "hcs_cce_cluster" "test" {
   authentication_mode    = "rbac"
   eip                    = var.eip_address2
 }
-`, common.TestVariables(rName), rName)
+`, common.TestVariables(), rName)
 }
 
 func testAccCluster_withEpsId(rName string) string {
@@ -447,7 +447,7 @@ resource "hcs_cce_cluster" "test" {
     key = "value"
   }
 }
-`, common.TestVariables(rName), rName)
+`, common.TestVariables(), rName)
 }
 
 func testAccCluster_awake(rName string) string {
@@ -468,7 +468,7 @@ resource "hcs_cce_cluster" "test" {
     key = "value"
   }
 }
-`, common.TestVariables(rName), rName)
+`, common.TestVariables(), rName)
 }
 
 func testAccCluster_multiContainerNetworkCidrs(rName string) string {
@@ -489,7 +489,7 @@ resource "hcs_cce_cluster" "test" {
     key = "value"
   }
 }
-`, common.TestVariables(rName), rName)
+`, common.TestVariables(), rName)
 }
 
 func testAccCluster_secGroup(rName string) string {
@@ -511,7 +511,7 @@ resource "hcs_cce_cluster" "test" {
     key = "value"
   }
 }
-`, common.TestVariables(rName), rName)
+`, common.TestVariables(), rName)
 }
 
 func testAccCluster_secGroup_update(rName string) string {
@@ -533,5 +533,5 @@ resource "hcs_cce_cluster" "test" {
     key = "value"
   }
 }
-`, common.TestVariables(rName), rName)
+`, common.TestVariables(), rName)
 }
