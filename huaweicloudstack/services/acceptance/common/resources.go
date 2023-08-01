@@ -6,7 +6,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance"
 )
 
-// TestSecGroup can be referred as `huaweicloud_networking_secgroup.test`
+// TestSecGroup can be referred as `hcs_networking_secgroup.test`
 func TestSecGroup(name string) string {
 	return fmt.Sprintf(`
 resource "hcs_networking_secgroup" "test" {
@@ -16,7 +16,7 @@ resource "hcs_networking_secgroup" "test" {
 `, name)
 }
 
-// TestVpc can be referred as `huaweicloud_vpc.test` and `huaweicloud_vpc_subnet.test`
+// TestVpc can be referred as `hcs_vpc.test` and `hcs_vpc_subnet.test`
 func TestVpc(name string) string {
 	return fmt.Sprintf(`
 resource "hcs_vpc" "test" {
@@ -26,7 +26,7 @@ resource "hcs_vpc" "test" {
 
 resource "hcs_vpc_subnet" "test" {
   name       = "%[1]s"
-  vpc_id     = huaweicloud_vpc.test.id
+  vpc_id     = hcs_vpc.test.id
   cidr       = "192.168.0.0/24"
   gateway_ip = "192.168.0.1"
 }
@@ -59,14 +59,14 @@ data "huaweicloud_compute_flavors" "test" {
   memory_size       = 4
 }
 
-data "huaweicloud_images_image" "test" {
+data "hcs_ims_image" "test" {
   name        = "Ubuntu 18.04 server 64bit"
   most_recent = true
 }
 `, TestBaseNetwork(name))
 }
 
-// TestVariables can be referred as `huaweicloud_vpc.test` and `huaweicloud_vpc_subnet.test`
+// TestVariables can be referred as `hcs_vpc.test` and `hcs_vpc_subnet.test`
 func TestVariables(name string) string {
 	return fmt.Sprintf(`
 variable "vpc_id" {

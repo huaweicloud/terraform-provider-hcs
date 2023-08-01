@@ -17,14 +17,12 @@ type ListOpts struct {
 	Isregistered           string `q:"__isregistered"`
 	Imagetype              string `q:"__imagetype"`
 	WholeImage             bool   `q:"__whole_image"`
-	SystemCmkid            string `q:"__system__cmkid"`
 	Protected              bool   `q:"protected"`
 	Visibility             string `q:"visibility"`
 	Owner                  string `q:"owner"`
 	ID                     string `q:"id"`
 	Status                 string `q:"status"`
 	Name                   string `q:"name"`
-	FlavorId               string `q:"flavor_id"`
 	ContainerFormat        string `q:"container_format"`
 	DiskFormat             string `q:"disk_format"`
 	MinRam                 int    `q:"min_ram"`
@@ -50,7 +48,8 @@ type ListOpts struct {
 	SupportKvmInfiniband   string `q:"__support_kvm_infiniband"`
 	VirtualEnvType         string `q:"virtual_env_type"`
 	Architecture           string `q:"architecture"`
-	EnterpriseProjectID    string `q:"enterprise_project_id"`
+	HwDiskBus              string `q:"hw_disk_bus"`
+	HwFirmwareType         string `q:"hw_firmware_type"`
 	// CreatedAtQuery filters images based on their creation date.
 	CreatedAtQuery *ImageDateQuery
 	// UpdatedAtQuery filters images based on their updated date.
@@ -137,18 +136,6 @@ type CreateByServerOpts struct {
 	Description string `json:"description,omitempty"`
 	// server id to be converted
 	InstanceId string `json:"instance_id" required:"true"`
-	// the data disks to be converted
-	DataImages []DataImage `json:"data_images,omitempty"`
-	// image label "key.value"
-	Tags []string `json:"tags,omitempty"`
-	// One or more tag key and value pairs to associate with the image
-	ImageTags []ImageTag `json:"image_tags,omitempty"`
-	// the maximum memory of the image in the unit of MB
-	MaxRam int `json:"max_ram,omitempty"`
-	// the minimum memory of the image in the unit of MB
-	MinRam int `json:"min_ram,omitempty"`
-	// Enterprise project ID
-	EnterpriseProjectID string `json:"enterprise_project_id,omitempty"`
 }
 
 // CreateOpts represents options used to create an image.
@@ -163,22 +150,12 @@ type CreateByOBSOpts struct {
 	ImageUrl string `json:"image_url" required:"true"`
 	// the minimum size of the system disk in the unit of GB
 	MinDisk int `json:"min_disk" required:"true"`
-	//whether automatic configuration is enabled，the value can be true or false
-	IsConfig bool `json:"is_config,omitempty"`
-	// the master key used for encrypting an image
-	CmkId string `json:"cmk_id,omitempty"`
-	// image label "key.value"
-	Tags []string `json:"tags,omitempty"`
-	// One or more tag key and value pairs to associate with the image
-	ImageTags []ImageTag `json:"image_tags,omitempty"`
-	// the image type, the value can be ECS,BMS,FusionCompute, or Ironic
-	Type string `json:"type,omitempty"`
-	// the maximum memory of the image in the unit of MB
-	MaxRam int `json:"max_ram,omitempty"`
 	// the minimum memory of the image in the unit of MB
 	MinRam int `json:"min_ram,omitempty"`
-	// Enterprise project ID
-	EnterpriseProjectID string `json:"enterprise_project_id,omitempty"`
+	// whether automatic configuration is enabled，the value can be true or false
+	IsConfig bool `json:"is_config,omitempty"`
+	// whether the initial configuration is complete
+	IsConfigInit bool `json:"is_config_init,omitempty"`
 }
 
 // CreateWholeImageOpts represents options used to create an image.
@@ -193,16 +170,10 @@ type CreateWholeImageOpts struct {
 	BackupId string `json:"backup_id,omitempty"`
 	// image label "key.value"
 	Tags []string `json:"tags,omitempty"`
-	// One or more tag key and value pairs to associate with the image
-	ImageTags []ImageTag `json:"image_tags,omitempty"`
-	// the maximum memory of the image in the unit of MB
-	MaxRam int `json:"max_ram,omitempty"`
 	// the minimum memory of the image in the unit of MB
 	MinRam int `json:"min_ram,omitempty"`
 	// Enterprise project ID
 	EnterpriseProjectID string `json:"enterprise_project_id,omitempty"`
-	// the ID of the vault to which an ECS is to be added or has been added
-	VaultId string `json:"vault_id,omitempty"`
 	// the method of creating a full-ECS image
 	WholeImageType string `json:"whole_image_type,omitempty"`
 }
@@ -240,11 +211,6 @@ type DataImage struct {
 	Description string `json:"description,omitempty"`
 	// the data disk image tags
 	Tags []string `json:"tags,omitempty"`
-}
-
-type ImageTag struct {
-	Key   string `json:"key" required:"true"`
-	Value string `json:"value,omitempty"`
 }
 
 // ToImageCreateMap assembles a request body based on the contents of
