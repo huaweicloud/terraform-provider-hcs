@@ -265,20 +265,6 @@ type Patch interface {
 	ToImagePatchMap() map[string]interface{}
 }
 
-// UpdateVisibility represents an updated visibility property request.
-type UpdateVisibility struct {
-	Visibility ImageVisibility
-}
-
-// ToImagePatchMap assembles a request body based on UpdateVisibility.
-func (r UpdateVisibility) ToImagePatchMap() map[string]interface{} {
-	return map[string]interface{}{
-		"op":    "replace",
-		"path":  "/visibility",
-		"value": r.Visibility,
-	}
-}
-
 // ReplaceImageName represents an updated image_name property request.
 type ReplaceImageName struct {
 	NewName string
@@ -293,31 +279,17 @@ func (r ReplaceImageName) ToImagePatchMap() map[string]interface{} {
 	}
 }
 
-// ReplaceImageChecksum represents an updated checksum property request.
-type ReplaceImageChecksum struct {
-	Checksum string
+// ReplaceImageDescription represents an updated __description property request.
+type ReplaceImageDescription struct {
+	NewDescription string
 }
 
-// ReplaceImageChecksum assembles a request body based on ReplaceImageChecksum.
-func (r ReplaceImageChecksum) ToImagePatchMap() map[string]interface{} {
+// ReplaceImageDescription assembles a request body based on ReplaceImageDescription.
+func (r ReplaceImageDescription) ToImagePatchMap() map[string]interface{} {
 	return map[string]interface{}{
 		"op":    "replace",
-		"path":  "/checksum",
-		"value": r.Checksum,
-	}
-}
-
-// ReplaceImageTags represents an updated tags property request.
-type ReplaceImageTags struct {
-	NewTags []string
-}
-
-// ToImagePatchMap assembles a request body based on ReplaceImageTags.
-func (r ReplaceImageTags) ToImagePatchMap() map[string]interface{} {
-	return map[string]interface{}{
-		"op":    "replace",
-		"path":  "/tags",
-		"value": r.NewTags,
+		"path":  "/__description",
+		"value": r.NewDescription,
 	}
 }
 
