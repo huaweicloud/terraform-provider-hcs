@@ -221,7 +221,6 @@ func ResourceCluster() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: utils.ValidateIP,
-				ForceNew:     true,
 			},
 			"service_network_cidr": {
 				Type:     schema.TypeString,
@@ -251,6 +250,13 @@ func ResourceCluster() *schema.Resource {
 				Optional: true,
 			},
 			"tags": common.TagsForceNewSchema(),
+
+			// charge info: charging_mode, period_unit, period, auto_renew, auto_pay
+			"charging_mode": common.SchemaChargingMode(nil),
+			"period_unit":   common.SchemaPeriodUnit(nil),
+			"period":        common.SchemaPeriod(nil),
+			"auto_renew":    common.SchemaAutoRenewUpdatable(nil),
+			"auto_pay":      common.SchemaAutoPay(nil),
 
 			"delete_efs": associateDeleteSchema,
 			"delete_eni": associateDeleteSchemaInternal,
@@ -313,6 +319,15 @@ func ResourceCluster() *schema.Resource {
 					},
 				},
 			},
+
+			// Deprecated
+			"billing_mode": {
+				Type:       schema.TypeInt,
+				Optional:   true,
+				Computed:   true,
+				ForceNew:   true,
+				Deprecated: "use charging_mode instead",
+			},
 		},
 	}
 }
@@ -344,6 +359,30 @@ func resourceClusterExtendParam(d *schema.ResourceData, config *config.Config) m
 		for key, val := range v.(map[string]interface{}) {
 			extendParam[key] = val.(string)
 		}
+	}
+
+	// assemble the charge info
+	var isPrePaid bool
+	var billingMode int
+	if v, ok := d.GetOk("charging_mode"); ok && v.(string) == "prePaid" {
+		isPrePaid = true
+	}
+	if v, ok := d.GetOk("billing_mode"); ok {
+		billingMode = v.(int)
+	}
+	if isPrePaid || billingMode == 1 {
+		extendParam["isAutoRenew"] = "false"
+		extendParam["isAutoPay"] = common.GetAutoPay(d)
+	}
+
+	if v, ok := d.GetOk("period_unit"); ok {
+		extendParam["periodType"] = v.(string)
+	}
+	if v, ok := d.GetOk("period"); ok {
+		extendParam["periodNum"] = v.(int)
+	}
+	if v, ok := d.GetOk("auto_renew"); ok {
+		extendParam["isAutoRenew"] = v.(string)
 	}
 
 	if multi_az, ok := d.GetOk("multi_az"); ok && multi_az == true {
@@ -445,6 +484,12 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, meta int
 	}
 
 	billingMode := 0
+	if d.Get("charging_mode").(string) == "prePaid" || d.Get("billing_mode").(int) == 1 {
+		billingMode = 1
+		if err := common.ValidatePrePaidChargeInfo(d); err != nil {
+			return diag.FromErr(err)
+		}
+	}
 
 	clusterName := d.Get("name").(string)
 	createOpts := clusters.CreateOpts{
@@ -526,9 +571,10 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, meta int
 
 	log.Printf("[DEBUG] Waiting for CCE cluster (%s) to become available", d.Id())
 	stateConf := &resource.StateChangeConf{
-		Pending:      []string{"Creating"},
-		Target:       []string{"Available"},
-		Refresh:      waitForClusterActive(cceClient, d.Id()),
+		// The statuses of pending phase include "Creating".
+		Pending:      []string{"PENDING"},
+		Target:       []string{"COMPLETED"},
+		Refresh:      clusterStateRefreshFunc(cceClient, d.Id(), []string{"Available"}),
 		Timeout:      d.Timeout(schema.TimeoutCreate),
 		Delay:        20 * time.Second,
 		PollInterval: 20 * time.Second,
@@ -600,8 +646,13 @@ func resourceClusterRead(_ context.Context, d *schema.ResourceData, meta interfa
 		d.Set("security_group_id", n.Spec.HostNetwork.SecurityGroup),
 		d.Set("enterprise_project_id", n.Spec.ExtendParam["enterpriseProjectId"]),
 		d.Set("service_network_cidr", n.Spec.KubernetesSvcIPRange),
+		d.Set("billing_mode", n.Spec.BillingMode),
 		d.Set("tags", utils.TagsToMap(n.Spec.ClusterTags)),
 	)
+
+	if n.Spec.BillingMode != 0 {
+		mErr = multierror.Append(mErr, d.Set("charging_mode", "prePaid"))
+	}
 
 	r := clusters.GetCert(cceClient, d.Id())
 
@@ -750,6 +801,16 @@ func resourceClusterUpdate(ctx context.Context, d *schema.ResourceData, meta int
 		}
 	}
 
+	if d.HasChange("auto_renew") {
+		bssClient, err := config.BssV2Client(config.GetRegion(d))
+		if err != nil {
+			return diag.Errorf("error creating BSS v2 client: %s", err)
+		}
+		if err = common.UpdateAutoRenew(bssClient, d.Get("auto_renew").(string), d.Id()); err != nil {
+			return diag.Errorf("error updating the auto-renew of the CCE cluster (%s): %s", d.Id(), err)
+		}
+	}
+
 	return resourceClusterRead(ctx, d, meta)
 }
 
@@ -760,30 +821,38 @@ func resourceClusterDelete(ctx context.Context, d *schema.ResourceData, meta int
 		return diag.Errorf("error creating CCE v3 client: %s", err)
 	}
 
-	deleteOpts := clusters.DeleteOpts{}
-	if v, ok := d.GetOk("delete_all"); ok && v.(string) != "false" {
-		deleteOpt := d.Get("delete_all").(string)
-		deleteOpts.DeleteEfs = deleteOpt
-		deleteOpts.DeleteEvs = deleteOpt
-		deleteOpts.DeleteObs = deleteOpt
-		deleteOpts.DeleteSfs = deleteOpt
+	// for prePaid mode, we should unsubscribe the resource
+	if d.Get("charging_mode").(string) == "prePaid" || d.Get("billing_mode").(int) == 1 {
+		if err := common.UnsubscribePrePaidResource(d, config, []string{d.Id()}); err != nil {
+			return diag.Errorf("error unsubscribing CCE cluster: %s", err)
+		}
 	} else {
-		deleteOpts.DeleteEfs = d.Get("delete_efs").(string)
-		deleteOpts.DeleteENI = d.Get("delete_eni").(string)
-		deleteOpts.DeleteEvs = d.Get("delete_evs").(string)
-		deleteOpts.DeleteNet = d.Get("delete_net").(string)
-		deleteOpts.DeleteObs = d.Get("delete_obs").(string)
-		deleteOpts.DeleteSfs = d.Get("delete_sfs").(string)
-	}
-	err = clusters.DeleteWithOpts(cceClient, d.Id(), deleteOpts).ExtractErr()
-	if err != nil {
-		return diag.Errorf("error deleting CCE cluster: %s", err)
+		deleteOpts := clusters.DeleteOpts{}
+		if v, ok := d.GetOk("delete_all"); ok && v.(string) != "false" {
+			deleteOpt := d.Get("delete_all").(string)
+			deleteOpts.DeleteEfs = deleteOpt
+			deleteOpts.DeleteEvs = deleteOpt
+			deleteOpts.DeleteObs = deleteOpt
+			deleteOpts.DeleteSfs = deleteOpt
+		} else {
+			deleteOpts.DeleteEfs = d.Get("delete_efs").(string)
+			deleteOpts.DeleteENI = d.Get("delete_eni").(string)
+			deleteOpts.DeleteEvs = d.Get("delete_evs").(string)
+			deleteOpts.DeleteNet = d.Get("delete_net").(string)
+			deleteOpts.DeleteObs = d.Get("delete_obs").(string)
+			deleteOpts.DeleteSfs = d.Get("delete_sfs").(string)
+		}
+		err = clusters.DeleteWithOpts(cceClient, d.Id(), deleteOpts).ExtractErr()
+		if err != nil {
+			return diag.Errorf("error deleting CCE cluster: %s", err)
+		}
 	}
 
 	stateConf := &resource.StateChangeConf{
-		Pending:      []string{"Deleting", "Available", "Unavailable"},
-		Target:       []string{"Deleted"},
-		Refresh:      waitForClusterDelete(cceClient, d.Id()),
+		// The statuses of pending phase includes "Deleting", "Available" and "Unavailable".
+		Pending:      []string{"PENDING"},
+		Target:       []string{"COMPLETED"},
+		Refresh:      clusterStateRefreshFunc(cceClient, d.Id(), nil),
 		Timeout:      d.Timeout(schema.TimeoutDelete),
 		Delay:        60 * time.Second,
 		PollInterval: 20 * time.Second,
@@ -799,35 +868,28 @@ func resourceClusterDelete(ctx context.Context, d *schema.ResourceData, meta int
 	return nil
 }
 
-func waitForClusterActive(cceClient *golangsdk.ServiceClient, clusterId string) resource.StateRefreshFunc {
+func clusterStateRefreshFunc(cceClient *golangsdk.ServiceClient, clusterId string,
+	targets []string) resource.StateRefreshFunc {
 	return func() (interface{}, string, error) {
-		n, err := clusters.Get(cceClient, clusterId).Extract()
-		if err != nil {
-			return nil, "", err
-		}
-
-		return n, n.Status.Phase, nil
-	}
-}
-
-func waitForClusterDelete(cceClient *golangsdk.ServiceClient, clusterId string) resource.StateRefreshFunc {
-	return func() (interface{}, string, error) {
-		log.Printf("[DEBUG] Attempting to delete CCE cluster %s", clusterId)
-
-		r, err := clusters.Get(cceClient, clusterId).Extract()
-
+		log.Printf("[DEBUG] Expect the status of CCE cluster to be any one of the status list: %v", targets)
+		resp, err := clusters.Get(cceClient, clusterId).Extract()
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
-				log.Printf("[DEBUG] Successfully deleted CCE cluster %s", clusterId)
-				return r, "Deleted", nil
+				log.Printf("[DEBUG] The cluster (%s) has been deleted", clusterId)
+				return resp, "COMPLETED", nil
 			}
-			return nil, "", err
+			return nil, "ERROR", err
 		}
-		if r.Status.Phase == "Deleting" {
-			return r, "Deleting", nil
+
+		invalidStatuses := []string{"Error", "Shelved", "Unknow"}
+		if utils.IsStrContainsSliceElement(resp.Status.Phase, invalidStatuses, true, true) {
+			return resp, "ERROR", fmt.Errorf("unexpected status: %s", resp.Status.Phase)
 		}
-		log.Printf("[DEBUG] CCE cluster (%s) still available", clusterId)
-		return r, "Available", nil
+
+		if utils.StrSliceContains(targets, resp.Status.Phase) {
+			return resp, "COMPLETED", nil
+		}
+		return resp, "PENDING", nil
 	}
 }
 
@@ -869,9 +931,10 @@ func resourceClusterHibernate(ctx context.Context, d *schema.ResourceData, cceCl
 
 	log.Printf("[DEBUG] Waiting for CCE cluster (%s) to become hibernate", clusterID)
 	stateConf := &resource.StateChangeConf{
-		Pending:      []string{"Available", "Hibernating"},
-		Target:       []string{"Hibernation"},
-		Refresh:      waitForClusterActive(cceClient, clusterID),
+		// The statuses of pending phase includes "Available" and "Hibernating".
+		Pending:      []string{"PENDING"},
+		Target:       []string{"COMPLETED"},
+		Refresh:      clusterStateRefreshFunc(cceClient, clusterID, []string{"Hibernation"}),
 		Timeout:      d.Timeout(schema.TimeoutUpdate),
 		Delay:        20 * time.Second,
 		PollInterval: 20 * time.Second,
@@ -893,9 +956,10 @@ func resourceClusterAwake(ctx context.Context, d *schema.ResourceData, cceClient
 
 	log.Printf("[DEBUG] Waiting for CCE cluster (%s) to become available", clusterID)
 	stateConf := &resource.StateChangeConf{
-		Pending:      []string{"Awaking"},
-		Target:       []string{"Available"},
-		Refresh:      waitForClusterActive(cceClient, clusterID),
+		// The statuses of pending phase include "Awaking".
+		Pending:      []string{"PENDING"},
+		Target:       []string{"COMPLETED"},
+		Refresh:      clusterStateRefreshFunc(cceClient, clusterID, []string{"Available"}),
 		Timeout:      d.Timeout(schema.TimeoutUpdate),
 		Delay:        100 * time.Second,
 		PollInterval: 20 * time.Second,
@@ -910,19 +974,19 @@ func resourceClusterAwake(ctx context.Context, d *schema.ResourceData, cceClient
 
 func resourceClusterEipAction(cceClient, eipClient *golangsdk.ServiceClient,
 	clusterID, eip, action string) error {
-	//eipID, err := common.GetEipIDbyAddress(eipClient, eip, "all_granted_eps")
-	//if err != nil {
-	//	return fmt.Errorf("error fetching EIP ID: %s", err)
-	//}
+	eipID, err := common.GetEipIDbyAddress(eipClient, eip, "all_granted_eps")
+	if err != nil {
+		return fmt.Errorf("error fetching EIP ID: %s", err)
+	}
 
 	opts := clusters.UpdateIpOpts{
 		Action: action,
 		Spec: clusters.IpSpec{
-			ID: eip,
+			ID: eipID,
 		},
 	}
 
-	err := clusters.UpdateMasterIp(cceClient, clusterID, opts).ExtractErr()
+	err = clusters.UpdateMasterIp(cceClient, clusterID, opts).ExtractErr()
 	if err != nil {
 		return fmt.Errorf("error %sing the public IP of CCE cluster: %s", action, err)
 	}
