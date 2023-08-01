@@ -67,18 +67,8 @@ data "hcs_ims_image" "test" {
 }
 
 // TestVariables can be referred as `hcs_vpc.test` and `hcs_vpc_subnet.test`
-func TestVariables(name string) string {
+func TestVariables() string {
 	return fmt.Sprintf(`
-variable "vpc_id" {
-  type    = string
-  default = "%s"
-}
-
-variable "subnet_id" {
-  type    = string
-  default = "%s"
-}
-
 variable "eip_id" {
   type    = string
   default = "%s"
@@ -108,6 +98,27 @@ variable "sg_id2" {
   type    = string
   default = "%s"
 }
-`, acceptance.HCS_VPC_ID, acceptance.HCS_SUBNET_ID, acceptance.HCS_EIP_ID, acceptance.HCS_EIP_ID2, acceptance.HCS_EIP_ADDRESS,
-		acceptance.HCS_EIP_ADDRESS2, acceptance.HCS_SG_ID, acceptance.HCS_SG_ID2)
+
+variable "availability_zone" {
+  type    = string
+  default = "%s"
+}
+
+variable "keypair_name" {
+  type    = string
+  default = "%s"
+}
+
+variable "kms_key_id" {
+  type    = string
+  default = "%s"
+}
+
+variable "server_group_id" {
+  type    = string
+  default = "%s"
+}
+`, acceptance.HCS_EIP_ID, acceptance.HCS_EIP_ID2, acceptance.HCS_EIP_ADDRESS, acceptance.HCS_EIP_ADDRESS2,
+		acceptance.HCS_SG_ID, acceptance.HCS_SG_ID2, acceptance.HCS_AVAILABILITY_ZONE, acceptance.HCS_KEYPAIR_NAME,
+		acceptance.HCS_KMS_KEY_ID, acceptance.HCS_SERVER_GROUP_ID)
 }
