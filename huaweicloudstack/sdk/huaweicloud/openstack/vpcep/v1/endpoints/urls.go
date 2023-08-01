@@ -1,6 +1,6 @@
 package endpoints
 
-import "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
+import golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 
 const (
 	rootPath = "vpc-endpoints"
