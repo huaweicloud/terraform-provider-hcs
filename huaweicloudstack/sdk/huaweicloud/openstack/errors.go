@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
-	tokens2 "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/identity/v2/tokens"
 	tokens3 "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/identity/v3/tokens"
 )
 
@@ -28,7 +27,7 @@ func (e ErrInvalidAvailabilityProvided) Error() string {
 // for the given options is found in the v2 catalog
 type ErrMultipleMatchingEndpointsV2 struct {
 	golangsdk.BaseError
-	Endpoints []tokens2.Endpoint
+	Endpoints []tokens3.Endpoint
 }
 
 func (e ErrMultipleMatchingEndpointsV2) Error() string {
