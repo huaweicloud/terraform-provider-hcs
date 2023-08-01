@@ -19,6 +19,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ims"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/nat"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/smn"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpc"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpcep"
 )
 
@@ -316,8 +317,10 @@ func Provider() *schema.Provider {
 			"hcs_nat_gateway": nat.DataSourcePublicGateway(),
 			"hcs_smn_topics":  smn.DataSourceTopics(),
 
-			"hcs_ims_image":  ims.DataSourceImagesImageV2(),
 			"hcs_ims_images": ims.DataSourceImagesImages(),
+
+			"hcs_vpcs":        vpc.DataSourceVpcs(),
+			"hcs_vpc_subnets": vpc.DataSourceVpcSubnets(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -363,6 +366,15 @@ func Provider() *schema.Provider {
 			"hcs_ims_image":                ims.ResourceImsImage(),
 			"hcs_ims_image_share":          ims.ResourceImsImageShare(),
 			"hcs_ims_image_share_accepter": ims.ResourceImsImageShareAccepter(),
+
+			"hcs_vpc":        vpc.ResourceVirtualPrivateCloudV1(),
+			"hcs_vpc_subnet": vpc.ResourceVpcSubnetV1(),
+
+			"hcs_vpc_route_v2":             vpc.ResourceVPCRouteV2(),
+			"hcs_vpc_v1":                   vpc.ResourceVirtualPrivateCloudV1(),
+			"hcs_vpc_subnet_v1":            vpc.ResourceVpcSubnetV1(),
+			"hcs_networking_vip":           vpc.ResourceNetworkingVip(),
+			"hcs_networking_vip_associate": vpc.ResourceNetworkingVIPAssociateV2(),
 		},
 	}
 
