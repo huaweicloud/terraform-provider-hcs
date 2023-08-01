@@ -56,7 +56,7 @@ func Get(c *golangsdk.ServiceClient, gatewayId string) (*Rule, error) {
 // UpdateOpts is the structure used to modify an existing DNAT rule.
 type UpdateOpts struct {
 	// The ID of the gateway to which the DNAT rule belongs.
-	GatewayId string `json:"nat_gateway_id" required:"true"`
+	GatewayId string `json:"nat_gateway_id,omitempty"`
 	// The description of the DNAT rule.
 	Description *string `json:"description,omitempty"`
 	// The port ID of network.

@@ -11,18 +11,10 @@ Use this data source to get a list of EIPs.
 An example filter by name and tag
 
 ```hcl
-variable "public_ip" {}
+variable "enterprise_project_id" {}
 
 data "hcs_vpc_eips" "eip" {
-  public_ips = [var.public_ip]
-
-  tags = {
-    foo = "bar"
-  }
-}
-
-output "eip_ids" {
-  value = data.hcs_vpc_eips.eip.eips[*].id
+  enterprise_project_id = var.enterprise_project_id
 }
 ```
 
