@@ -3,8 +3,8 @@ package cce
 import (
 	"context"
 	"fmt"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/ecs/v1/cloudservers"
 	"log"
-	"strconv"
 	"strings"
 	"time"
 
@@ -17,7 +17,6 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/cce/v3/clusters"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/cce/v3/nodes"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/common/tags"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
@@ -75,21 +74,18 @@ func ResourceNode() *schema.Resource {
 			"key_pair": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ForceNew:     true,
 				ExactlyOneOf: []string{"password", "key_pair"},
 			},
 			"password": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Sensitive:    true,
-				ForceNew:     true,
 				ExactlyOneOf: []string{"password", "key_pair"},
 			},
 			"private_key": {
 				Type:      schema.TypeString,
 				Optional:  true,
 				Sensitive: true,
-				ForceNew:  true,
 			},
 			"root_volume": {
 				Type:     schema.TypeList,
@@ -133,7 +129,8 @@ func ResourceNode() *schema.Resource {
 							Computed: true,
 							ForceNew: true,
 						},
-					}},
+					},
+				},
 			},
 			"data_volumes": {
 				Type:     schema.TypeList,
@@ -176,7 +173,8 @@ func ResourceNode() *schema.Resource {
 							Computed: true,
 							ForceNew: true,
 						},
-					}},
+					},
+				},
 			},
 			"storage": {
 				Type:     schema.TypeList,
@@ -289,7 +287,8 @@ func ResourceNode() *schema.Resource {
 								},
 							},
 						},
-					}},
+					},
+				},
 			},
 			"taints": {
 				Type:     schema.TypeList,
@@ -320,7 +319,7 @@ func ResourceNode() *schema.Resource {
 				Optional: true,
 				ForceNew: true,
 				ConflictsWith: []string{
-					"iptype", "bandwidth_charge_mode", "bandwidth_size", "sharetype",
+					"eip_ids", "iptype", "bandwidth_charge_mode", "bandwidth_size", "sharetype",
 				},
 			},
 			"iptype": {
@@ -335,7 +334,7 @@ func ResourceNode() *schema.Resource {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ForceNew:      true,
-				ConflictsWith: []string{"eip_id"},
+				ConflictsWith: []string{"eip_ids", "eip_id"},
 			},
 			"sharetype": {
 				Type:     schema.TypeString,
@@ -371,45 +370,49 @@ func ResourceNode() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				ForceNew:    true,
-				Description: "schema: Internal",
+				Description: "schema: Deprecated",
 			},
 			"product_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				ForceNew:    true,
-				Description: "schema: Internal",
+				Description: "schema: Deprecated",
 			},
 			"max_pods": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				ForceNew: true,
+				Type:        schema.TypeInt,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "schema: Deprecated",
 			},
 			"public_key": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				ForceNew:    true,
-				Description: "schema: Internal",
+				Description: "schema: Deprecated",
 			},
 			"preinstall": {
-				Type:      schema.TypeString,
-				Optional:  true,
-				ForceNew:  true,
-				StateFunc: utils.DecodeHashAndHexEncode,
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "schema: Deprecated",
+				StateFunc:   utils.DecodeHashAndHexEncode,
 			},
 			"postinstall": {
-				Type:      schema.TypeString,
-				Optional:  true,
-				ForceNew:  true,
-				StateFunc: utils.DecodeHashAndHexEncode,
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "schema: Deprecated",
+				StateFunc:   utils.DecodeHashAndHexEncode,
 			},
-			"labels": { //(k8s_tags)
+			// (k8s_tags)
+			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
 				ForceNew: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
-			//(node/ecs_tags)
-			"tags": common.TagsForceNewSchema(),
+			// (node/ecs_tags)
+			"tags": common.TagsSchema(),
 			"annotations": {
 				Type:        schema.TypeMap,
 				Optional:    true,
@@ -418,12 +421,24 @@ func ResourceNode() *schema.Resource {
 				Description: "schema: Internal",
 			},
 
+			// charge info: charging_mode, period_unit, period, auto_renew, auto_pay
+			"charging_mode": common.SchemaChargingMode(nil),
+			"period_unit":   common.SchemaPeriodUnit(nil),
+			"period":        common.SchemaPeriod(nil),
+			"auto_renew":    common.SchemaAutoRenewUpdatable(nil),
+			"auto_pay":      common.SchemaAutoPay(nil),
+
 			"extend_param": {
-				Type:     schema.TypeMap,
-				Optional: true,
-				ForceNew: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+				Type:        schema.TypeMap,
+				Optional:    true,
+				ForceNew:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Description: "schema: Deprecated",
 			},
+			"extend_params": resourceNodeExtendParamsSchema([]string{
+				"max_pods", "public_key", "preinstall", "postinstall", "extend_param",
+				"billing_mode", "order_id", "product_id", "ecs_performance_type",
+			}),
 			"subnet_id": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -438,7 +453,6 @@ func ResourceNode() *schema.Resource {
 			"keep_ecs": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				ForceNew:    true,
 				Description: "schema: Internal",
 			},
 			"private_ip": {
@@ -456,6 +470,44 @@ func ResourceNode() *schema.Resource {
 			"status": {
 				Type:     schema.TypeString,
 				Computed: true,
+			},
+
+			// Deprecated
+			"eip_ids": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				ForceNew: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Set:      schema.HashString,
+				ConflictsWith: []string{
+					"eip_id", "iptype", "bandwidth_charge_mode", "bandwidth_size", "sharetype",
+				},
+				Deprecated: "use eip_id instead",
+			},
+			"billing_mode": {
+				Type:       schema.TypeInt,
+				Optional:   true,
+				ForceNew:   true,
+				Computed:   true,
+				Deprecated: "use charging_mode instead",
+			},
+			"extend_param_charging_mode": {
+				Type:       schema.TypeInt,
+				Optional:   true,
+				ForceNew:   true,
+				Deprecated: "use charging_mode instead",
+			},
+			"order_id": {
+				Type:       schema.TypeString,
+				Optional:   true,
+				ForceNew:   true,
+				Deprecated: "will be removed after v1.26.0",
+			},
+			"partition": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "schema: Internal",
 			},
 		},
 	}
@@ -544,44 +596,12 @@ func buildResourceNodeEipIDs(d *schema.ResourceData) []string {
 	if v, ok := d.GetOk("eip_id"); ok {
 		return []string{v.(string)}
 	}
-	return nil
-}
-
-func buildResourceNodeExtendParam(d *schema.ResourceData) map[string]interface{} {
-	extendParam := make(map[string]interface{})
-	if v, ok := d.GetOk("extend_param"); ok {
-		for key, val := range v.(map[string]interface{}) {
-			extendParam[key] = val.(string)
-		}
-		if v, ok := extendParam["periodNum"]; ok {
-			periodNum, err := strconv.Atoi(v.(string))
-			if err != nil {
-				log.Printf("[WARNING] PeriodNum %s invalid, Type conversion error: %s", v.(string), err)
-			}
-			extendParam["periodNum"] = periodNum
-		}
+	rawID := d.Get("eip_ids").(*schema.Set)
+	id := make([]string, rawID.Len())
+	for i, raw := range rawID.List() {
+		id[i] = raw.(string)
 	}
-
-	if v, ok := d.GetOk("ecs_performance_type"); ok {
-		extendParam["ecs:performancetype"] = v.(string)
-	}
-	if v, ok := d.GetOk("max_pods"); ok {
-		extendParam["maxPods"] = v.(int)
-	}
-	if v, ok := d.GetOk("product_id"); ok {
-		extendParam["productID"] = v.(string)
-	}
-	if v, ok := d.GetOk("public_key"); ok {
-		extendParam["publicKey"] = v.(string)
-	}
-	if v, ok := d.GetOk("preinstall"); ok {
-		extendParam["alpha.cce/preInstall"] = utils.TryBase64EncodeString(v.(string))
-	}
-	if v, ok := d.GetOk("postinstall"); ok {
-		extendParam["alpha.cce/postInstall"] = utils.TryBase64EncodeString(v.(string))
-	}
-
-	return extendParam
+	return id
 }
 
 func buildResourceNodeStorage(d *schema.ResourceData) *nodes.StorageSpec {
@@ -719,12 +739,36 @@ func buildResourceNodeLoginSpec(d *schema.ResourceData) (nodes.LoginSpec, error)
 
 func resourceNodeCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	cfg := meta.(*config.Config)
-	nodeClient, err := cfg.CceV3Client(cfg.GetRegion(d))
+	region := cfg.GetRegion(d)
+	nodeClient, err := cfg.CceV3Client(region)
 	if err != nil {
 		return diag.Errorf("error creating CCE Node client: %s", err)
 	}
 
-	clusterId := d.Get("cluster_id").(string)
+	// validation
+	billingMode := 0
+	if d.Get("charging_mode").(string) == "prePaid" || d.Get("billing_mode").(int) == 1 {
+		billingMode = 1
+		if err := common.ValidatePrePaidChargeInfo(d); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
+	// wait for the cce cluster to become available
+	clusterid := d.Get("cluster_id").(string)
+	stateCluster := &resource.StateChangeConf{
+		Pending:      []string{"PENDING"},
+		Target:       []string{"COMPLETED"},
+		Refresh:      clusterStateRefreshFunc(nodeClient, clusterid, []string{"Available"}),
+		Timeout:      d.Timeout(schema.TimeoutCreate),
+		Delay:        5 * time.Second,
+		PollInterval: 5 * time.Second,
+	}
+	_, err = stateCluster.WaitForStateContext(ctx)
+	if err != nil {
+		return diag.Errorf("error waiting for CCE cluster to be Available: %s", err)
+	}
+
 	createOpts := nodes.CreateOpts{
 		Kind:       "Node",
 		ApiVersion: "v3",
@@ -740,10 +784,11 @@ func resourceNodeCreate(ctx context.Context, d *schema.ResourceData, meta interf
 			DataVolumes: buildResourceNodeDataVolume(d),
 			Storage:     buildResourceNodeStorage(d),
 			PublicIP:    buildResourceNodePublicIP(d),
+			BillingMode: billingMode,
 			Count:       1,
 			NodeNicSpec: buildResourceNodeNicSpec(d),
 			EcsGroupID:  d.Get("ecs_group_id").(string),
-			ExtendParam: buildResourceNodeExtendParam(d),
+			ExtendParam: buildExtendParams(d),
 			Taints:      buildResourceNodeTaint(d),
 			K8sTags:     buildResourceNodeK8sTags(d),
 			UserTags:    buildResourceNodeTags(d),
@@ -756,6 +801,11 @@ func resourceNodeCreate(ctx context.Context, d *schema.ResourceData, meta interf
 		}
 	}
 
+	// Create a node in the specified partition
+	if v, ok := d.GetOk("partition"); ok {
+		createOpts.Spec.Partition = v.(string)
+	}
+
 	log.Printf("[DEBUG] Create Options: %#v", createOpts)
 
 	// Add loginSpec here so it wouldn't go in the above log entry
@@ -765,11 +815,26 @@ func resourceNodeCreate(ctx context.Context, d *schema.ResourceData, meta interf
 	}
 	createOpts.Spec.Login = loginSpec
 
-	s, err := nodes.Create(nodeClient, clusterId, createOpts).Extract()
+	s, err := nodes.Create(nodeClient, clusterid, createOpts).Extract()
 	if err != nil {
 		return diag.Errorf("error creating Node: %s", err)
 	}
 
+	if orderId, ok := s.Spec.ExtendParam["orderID"]; ok && orderId != "" {
+		bssClient, err := cfg.BssV2Client(region)
+		if err != nil {
+			return diag.Errorf("error creating BSS v2 client: %s", err)
+		}
+		err = common.WaitOrderComplete(ctx, bssClient, orderId.(string), d.Timeout(schema.TimeoutCreate))
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		// The resource ID generated by the CBC service only means that the underlying ECS of CCE node is created.
+		_, err = common.WaitOrderResourceComplete(ctx, bssClient, orderId.(string), d.Timeout(schema.TimeoutCreate))
+		if err != nil {
+			return diag.FromErr(err)
+		}
+	}
 	// The completion of the creation of the underlying resource (ECS) corresponding to the CCE node does not mean that
 	// the creation of the CCE node is completed.
 	nodeID, err := getResourceIDFromJob(ctx, nodeClient, s.Status.JobID, "CreateNode", "CreateNodeVM",
@@ -781,9 +846,10 @@ func resourceNodeCreate(ctx context.Context, d *schema.ResourceData, meta interf
 
 	log.Printf("[DEBUG] Waiting for CCE Node (%s) to become available", s.Metadata.Name)
 	stateConf := &resource.StateChangeConf{
-		Pending:      []string{"Build", "Installing"},
-		Target:       []string{"Active"},
-		Refresh:      waitForNodeActive(nodeClient, clusterId, nodeID),
+		// The statuses of pending phase includes "Build" and "Installing".
+		Pending:      []string{"PENDING"},
+		Target:       []string{"COMPLETED"},
+		Refresh:      nodeStateRefreshFunc(nodeClient, clusterid, nodeID, []string{"Active"}),
 		Timeout:      d.Timeout(schema.TimeoutCreate),
 		Delay:        20 * time.Second,
 		PollInterval: 20 * time.Second,
@@ -803,8 +869,9 @@ func resourceNodeRead(_ context.Context, d *schema.ResourceData, meta interface{
 	if err != nil {
 		return diag.Errorf("error creating CCE Node client: %s", err)
 	}
-	clusterId := d.Get("cluster_id").(string)
-	s, err := nodes.Get(nodeClient, clusterId, d.Id()).Extract()
+	clusterid := d.Get("cluster_id").(string)
+	s, err := nodes.Get(nodeClient, clusterid, d.Id()).Extract()
+
 	if err != nil {
 		return common.CheckDeletedDiag(d, err, "error retrieving CCE Node")
 	}
@@ -826,8 +893,32 @@ func resourceNodeRead(_ context.Context, d *schema.ResourceData, meta interface{
 		d.Set("data_volumes", flattenResourceNodeDataVolume(s.Spec.DataVolumes)),
 	)
 
+	if s.Spec.BillingMode != 0 {
+		mErr = multierror.Append(mErr, d.Set("charging_mode", "prePaid"))
+	}
 	if s.Spec.RunTime != nil {
 		mErr = multierror.Append(mErr, d.Set("runtime", s.Spec.RunTime.Name))
+	}
+
+	computeClient, err := cfg.ComputeV1Client(region)
+	if err != nil {
+		return diag.Errorf("error creating compute client: %s", err)
+	}
+
+	serverId := s.Status.ServerID
+	// fetch key_pair from ECS instance
+	if server, err := cloudservers.Get(computeClient, serverId).Extract(); err == nil {
+		mErr = multierror.Append(mErr, d.Set("key_pair", server.KeyName))
+	} else {
+		log.Printf("[WARN] Error fetching ECS instance (%s): %s", serverId, err)
+	}
+
+	// fetch tags from ECS instance
+	if resourceTags, err := tags.Get(computeClient, "cloudservers", serverId).Extract(); err == nil {
+		tagmap := utils.TagsToMap(resourceTags.Tags)
+		mErr = multierror.Append(mErr, d.Set("tags", tagmap))
+	} else {
+		log.Printf("[WARN] Error fetching tags of ECS instance (%s): %s", serverId, err)
 	}
 
 	if err = mErr.ErrorOrNil(); err != nil {
@@ -884,14 +975,76 @@ func resourceNodeUpdate(ctx context.Context, d *schema.ResourceData, meta interf
 	if err != nil {
 		return diag.Errorf("error creating CCE client: %s", err)
 	}
-
-	var updateOpts nodes.UpdateOpts
-	updateOpts.Metadata.Name = d.Get("name").(string)
-
-	clusterId := d.Get("cluster_id").(string)
-	_, err = nodes.Update(nodeClient, clusterId, d.Id(), updateOpts).Extract()
+	computeClient, err := cfg.ComputeV1Client(region)
 	if err != nil {
-		return diag.Errorf("error updating cce node: %s", err)
+		return diag.Errorf("error creating compute client: %s", err)
+	}
+
+	if d.HasChange("name") {
+		var updateOpts nodes.UpdateOpts
+		updateOpts.Metadata.Name = d.Get("name").(string)
+
+		clusterid := d.Get("cluster_id").(string)
+		_, err = nodes.Update(nodeClient, clusterid, d.Id(), updateOpts).Extract()
+		if err != nil {
+			return diag.Errorf("error updating cce node: %s", err)
+		}
+	}
+
+	serverId := d.Get("server_id").(string)
+
+	// update node tags with ECS API
+	if d.HasChange("tags") {
+		tagErr := utils.UpdateResourceTags(computeClient, d, "cloudservers", serverId)
+		if tagErr != nil {
+			return diag.Errorf("error updating tags of cce node %s: %s", d.Id(), tagErr)
+		}
+	}
+
+	// update node key_pair with DEW API
+	if d.HasChange("key_pair") {
+		kmsClient, err := cfg.KmsV3Client(region)
+		if err != nil {
+			return diag.Errorf("error creating KMS v3 client: %s", err)
+		}
+
+		currentPwd, _ := d.GetChange("password")
+		o, n := d.GetChange("key_pair")
+		keyPairOpts := &common.KeypairAuthOpts{
+			InstanceID:       serverId,
+			InUsedKeyPair:    o.(string),
+			NewKeyPair:       n.(string),
+			InUsedPrivateKey: d.Get("private_key").(string),
+			Password:         currentPwd.(string),
+			DisablePassword:  true,
+			Timeout:          d.Timeout(schema.TimeoutUpdate),
+		}
+		if err := common.UpdateEcsInstanceKeyPair(ctx, computeClient, kmsClient, keyPairOpts); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
+	// update node password with ECS API
+	// A new password takes effect after the ECS is started or restarted.
+	if d.HasChange("password") {
+		// if the password is empty, it means that the ECS instance will bind a new keypair
+		if newPwd, ok := d.GetOk("password"); ok {
+			err := cloudservers.ChangeAdminPassword(computeClient, serverId, newPwd.(string)).ExtractErr()
+			if err != nil {
+				return diag.Errorf("error changing password of cce node %s: %s", d.Id(), err)
+			}
+		}
+	}
+
+	if d.HasChange("auto_renew") {
+		bssClient, err := cfg.BssV2Client(region)
+		if err != nil {
+			return diag.Errorf("error creating BSS V2 client: %s", err)
+		}
+		if err = common.UpdateAutoRenew(bssClient, d.Get("auto_renew").(string), d.Get("server_id").(string)); err != nil {
+			// Do not output the underlying ECS instance ID externally.
+			return diag.Errorf("error updating the auto-renew of the node (%s): %s", d.Id(), err)
+		}
 	}
 
 	return resourceNodeRead(ctx, d, meta)
@@ -899,44 +1052,30 @@ func resourceNodeUpdate(ctx context.Context, d *schema.ResourceData, meta interf
 
 func resourceNodeDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	cfg := meta.(*config.Config)
-	nodeClient, err := cfg.CceV3Client(cfg.GetRegion(d))
+	region := cfg.GetRegion(d)
+	nodeClient, err := cfg.CceV3Client(region)
 	if err != nil {
 		return diag.Errorf("error creating CCE client: %s", err)
 	}
 
-	clusterId := d.Get("cluster_id").(string)
+	clusterid := d.Get("cluster_id").(string)
 	// remove node without deleting ecs
 	if d.Get("keep_ecs").(bool) {
-		loginSpec, err := buildResourceNodeLoginSpec(d)
+		err := removeNode(nodeClient, d, clusterid)
 		if err != nil {
-			diag.FromErr(err)
-		}
-
-		removeOpts := nodes.RemoveOpts{
-			Spec: nodes.RemoveNodeSpec{
-				Login: loginSpec,
-				Nodes: []nodes.NodeItem{
-					{
-						Uid: d.Id(),
-					},
-				},
-			},
-		}
-
-		err = nodes.Remove(nodeClient, clusterId, removeOpts).ExtractErr()
-		if err != nil {
-			return diag.Errorf("error removing CCE node: %s", err)
+			return diag.FromErr(err)
 		}
 	} else {
-		err = nodes.Delete(nodeClient, clusterId, d.Id()).ExtractErr()
+		err := deleteNode(ctx, cfg, nodeClient, d, clusterid)
 		if err != nil {
-			return diag.Errorf("error deleting CCE node: %s", err)
+			return diag.FromErr(err)
 		}
 	}
 	stateConf := &resource.StateChangeConf{
-		Pending:      []string{"Deleting"},
-		Target:       []string{"Deleted"},
-		Refresh:      waitForNodeDelete(nodeClient, clusterId, d.Id()),
+		// The statuses of pending phase include "Deleting".
+		Pending:      []string{"PENDING"},
+		Target:       []string{"COMPLETED"},
+		Refresh:      nodeStateRefreshFunc(nodeClient, clusterid, d.Id(), nil),
 		Timeout:      d.Timeout(schema.TimeoutDelete),
 		Delay:        60 * time.Second,
 		PollInterval: 20 * time.Second,
@@ -951,9 +1090,114 @@ func resourceNodeDelete(ctx context.Context, d *schema.ResourceData, meta interf
 	return nil
 }
 
+func removeNode(nodeClient *golangsdk.ServiceClient, d *schema.ResourceData, clusterID string) error {
+	loginSpec, err := buildResourceNodeLoginSpec(d)
+	if err != nil {
+		return err
+	}
+
+	removeOpts := nodes.RemoveOpts{
+		Spec: nodes.RemoveNodeSpec{
+			Login: loginSpec,
+			Nodes: []nodes.NodeItem{
+				{
+					Uid: d.Id(),
+				},
+			},
+		},
+	}
+
+	err = nodes.Remove(nodeClient, clusterID, removeOpts).ExtractErr()
+	if err != nil {
+		return fmt.Errorf("error removing CCE node: %s", err)
+	}
+
+	return nil
+}
+
+func deleteNode(ctx context.Context, cfg *config.Config, nodeClient *golangsdk.ServiceClient,
+	d *schema.ResourceData, clusterID string) error {
+	// for prePaid node, firstly, we should unsubscribe the ecs server, and then delete it
+	if d.Get("charging_mode").(string) == "prePaid" || d.Get("billing_mode").(int) == 1 {
+		region := cfg.GetRegion(d)
+		serverID := d.Get("server_id").(string)
+		publicIP := d.Get("public_ip").(string)
+
+		resourceIDs, err := getResourceIDsToUnsubscribe(cfg, d, serverID, publicIP)
+		if err != nil {
+			return err
+		}
+
+		if len(resourceIDs) > 0 {
+			if err := common.UnsubscribePrePaidResource(d, cfg, resourceIDs); err != nil {
+				return fmt.Errorf("error unsubscribing CCE node: %s", err)
+			}
+		}
+
+		// wait for the ecs server of the prePaid node to be deleted
+		computeClient, err := cfg.ComputeV1Client(region)
+		if err != nil {
+			return fmt.Errorf("error creating compute client: %s", err)
+		}
+
+		pending := []string{"ACTIVE", "SHUTOFF"}
+		target := []string{"DELETED", "SOFT_DELETED"}
+		deleteTimeout := d.Timeout(schema.TimeoutDelete)
+		if err := waitForServerTargetState(ctx, computeClient, serverID, pending, target, deleteTimeout); err != nil {
+			return fmt.Errorf("state waiting timeout: %s", err)
+		}
+	}
+
+	err := nodes.Delete(nodeClient, clusterID, d.Id()).ExtractErr()
+	if err != nil {
+		return fmt.Errorf("error deleting CCE node: %s", err)
+	}
+
+	return nil
+}
+
+func getResourceIDsToUnsubscribe(cfg *config.Config, d *schema.ResourceData, serverID, publicIP string) ([]string, error) {
+	resourceIDs := make([]string, 0, 2)
+	region := cfg.GetRegion(d)
+
+	// check whether the ecs server of the perPaid exists before unsubscribe it
+	// because resource could not be found cannot be unsubscribed
+	if serverID != "" {
+		computeClient, err := cfg.ComputeV1Client(region)
+		if err != nil {
+			return nil, fmt.Errorf("error creating compute client: %s", err)
+		}
+
+		server, err := cloudservers.Get(computeClient, serverID).Extract()
+		if err != nil {
+			if _, ok := err.(golangsdk.ErrDefault404); !ok {
+				return nil, fmt.Errorf("error retrieving ECS intance: %s", err)
+			}
+		} else if server.Status != "DELETED" && server.Status != "SOFT_DELETED" {
+			resourceIDs = append(resourceIDs, serverID)
+		}
+	}
+
+	// unsubscribe the eip if necessary
+	if _, ok := d.GetOk("iptype"); ok && publicIP != "" {
+		eipClient, err := cfg.NetworkingV1Client(region)
+		if err != nil {
+			return nil, fmt.Errorf("error creating networking client: %s", err)
+		}
+
+		epsID := "all_granted_eps"
+		if eipID, err := common.GetEipIDbyAddress(eipClient, publicIP, epsID); err == nil {
+			resourceIDs = append(resourceIDs, eipID)
+		} else {
+			log.Printf("[WARN] error fetching EIP ID of CCE Node (%s): %s", d.Id(), err)
+		}
+	}
+
+	return resourceIDs, nil
+}
+
 func getResourceIDFromJob(ctx context.Context, client *golangsdk.ServiceClient, jobID, jobType, subJobType string,
 	timeout time.Duration) (string, error) {
-
 	stateJob := &resource.StateChangeConf{
 		Pending:      []string{"Initializing", "Running"},
 		Target:       []string{"Success"},
@@ -996,58 +1240,37 @@ func getResourceIDFromJob(ctx context.Context, client *golangsdk.ServiceClient, 
 		}
 	}
 
-	var nodeId string
 	for _, s := range job.Spec.SubJobs {
 		if s.Spec.Type == subJobType {
-			nodeId = s.Spec.ResourceID
-			break
+			return s.Spec.ResourceID, nil
 		}
 	}
-	if nodeId == "" {
-		return "", fmt.Errorf("error fetching %s Job resource id", subJobType)
-	}
-	return nodeId, nil
+
+	return "", fmt.Errorf("error fetching the resource ID from the specified job (type: %s)", subJobType)
 }
 
-func waitForNodeActive(cceClient *golangsdk.ServiceClient, clusterId, nodeId string) resource.StateRefreshFunc {
+func nodeStateRefreshFunc(cceClient *golangsdk.ServiceClient, clusterId, nodeId string,
+	targets []string) resource.StateRefreshFunc {
 	return func() (interface{}, string, error) {
-		n, err := nodes.Get(cceClient, clusterId, nodeId).Extract()
-		if err != nil {
-			return nil, "", err
-		}
-
-		return n, n.Status.Phase, nil
-	}
-}
-
-func waitForNodeDelete(cceClient *golangsdk.ServiceClient, clusterId, nodeId string) resource.StateRefreshFunc {
-	return func() (interface{}, string, error) {
-		log.Printf("[DEBUG] Attempting to delete CCE Node %s", nodeId)
-
-		r, err := nodes.Get(cceClient, clusterId, nodeId).Extract()
-
+		log.Printf("[DEBUG] Expect the status of CCE node to be any one of the status list: %v", targets)
+		resp, err := nodes.Get(cceClient, clusterId, nodeId).Extract()
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
-				log.Printf("[DEBUG] Successfully deleted CCE Node %s", nodeId)
-				return r, "Deleted", nil
+				log.Printf("[DEBUG] The node (%s) has been deleted", clusterId)
+				return resp, "COMPLETED", nil
 			}
-			return r, "Deleting", err
+			return nil, "ERROR", err
 		}
 
-		return r, r.Status.Phase, nil
-	}
-}
-
-func waitForClusterAvailable(cceClient *golangsdk.ServiceClient, clusterId string) resource.StateRefreshFunc {
-	return func() (interface{}, string, error) {
-		log.Printf("[INFO] Waiting for CCE Cluster %s to be available", clusterId)
-		n, err := clusters.Get(cceClient, clusterId).Extract()
-
-		if err != nil {
-			return nil, "", err
+		invalidStatuses := []string{"Error", "Shelved", "Unknow"}
+		if utils.IsStrContainsSliceElement(resp.Status.Phase, invalidStatuses, true, true) {
+			return resp, "ERROR", fmt.Errorf("unexpected status: %s", resp.Status.Phase)
 		}
 
-		return n, n.Status.Phase, nil
+		if utils.StrSliceContains(targets, resp.Status.Phase) {
+			return resp, "COMPLETED", nil
+		}
+		return resp, "PENDING", nil
 	}
 }
 
@@ -1063,7 +1286,7 @@ func waitForJobStatus(cceClient *golangsdk.ServiceClient, jobID string) resource
 }
 
 func resourceNodeImport(_ context.Context, d *schema.ResourceData, _ interface{}) ([]*schema.ResourceData, error) {
-	parts := strings.SplitN(d.Id(), "/", 2)
+	parts := strings.Split(d.Id(), "/")
 	if len(parts) != 2 {
 		err := fmt.Errorf("invalid format specified for CCE Node. Format must be <cluster id>/<node id>")
 		return nil, err
@@ -1073,9 +1296,45 @@ func resourceNodeImport(_ context.Context, d *schema.ResourceData, _ interface{}
 	nodeID := parts[1]
 
 	d.SetId(nodeID)
-	err := d.Set("cluster_id", clusterID)
-	if err != nil {
-		return []*schema.ResourceData{d}, err
-	}
+	d.Set("cluster_id", clusterID)
+
 	return []*schema.ResourceData{d}, nil
+}
+
+func waitForServerTargetState(ctx context.Context, client *golangsdk.ServiceClient, id string,
+	pending, target []string, timeout time.Duration) error {
+	stateConf := &resource.StateChangeConf{
+		Pending:      pending,
+		Target:       target,
+		Refresh:      ServerV1StateRefreshFunc(client, id),
+		Timeout:      timeout,
+		Delay:        5 * time.Second,
+		PollInterval: 5 * time.Second,
+	}
+
+	_, err := stateConf.WaitForStateContext(ctx)
+	if err != nil {
+		return fmt.Errorf("error waiting for instance (%s) to become target state (%v): %s", id, target, err)
+	}
+	return nil
+}
+
+// ServerV1StateRefreshFunc returns a resource.StateRefreshFunc that is used to watch an instance.
+func ServerV1StateRefreshFunc(client *golangsdk.ServiceClient, instanceID string) resource.StateRefreshFunc {
+	return func() (interface{}, string, error) {
+		s, err := cloudservers.Get(client, instanceID).Extract()
+		if err != nil {
+			if _, ok := err.(golangsdk.ErrDefault404); ok {
+				return s, "DELETED", nil
+			}
+			return nil, "", err
+		}
+
+		// get fault message when status is ERROR
+		if s.Status == "ERROR" {
+			fault := fmt.Errorf("[error code: %d, message: %s]", s.Fault.Code, s.Fault.Message)
+			return s, "ERROR", fault
+		}
+		return s, s.Status, nil
+	}
 }
