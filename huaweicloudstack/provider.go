@@ -14,6 +14,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/cce"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dns"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eip"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/elb"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eps"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpcep"
 )
@@ -326,6 +327,17 @@ func Provider() *schema.Provider {
 
 			"hcs_vpc_bandwidth_v2": eip.ResourceVpcBandWidthV2(),
 			"hcs_vpc_eip_v1":       eip.ResourceVpcEIPV1(),
+
+			"hcs_elb_certificate":     elb.ResourceCertificateV3(),
+			"hcs_elb_l7policy":        elb.ResourceL7PolicyV3(),
+			"hcs_elb_l7rule":          elb.ResourceL7RuleV3(),
+			"hcs_elb_listener":        elb.ResourceListenerV3(),
+			"hcs_elb_loadbalancer":    elb.ResourceLoadBalancerV3(),
+			"hcs_elb_member":          elb.ResourceMemberV3(),
+			"hcs_elb_monitor":         elb.ResourceMonitorV3(),
+			"hcs_elb_pool":            elb.ResourcePoolV3(),
+			"hcs_elb_security_policy": elb.ResourceSecurityPolicy(),
+
 			// Legacy
 			"hcs_networking_eip_associate": eip.ResourceEIPAssociate(),
 		},
