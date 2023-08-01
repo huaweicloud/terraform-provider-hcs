@@ -8,12 +8,9 @@ import (
 	"strings"
 
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
-	tokens2 "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/identity/v2/tokens"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/identity/v3/catalog"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/identity/v3/domains"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/identity/v3/projects"
 	tokens3 "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/identity/v3/tokens"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/pagination"
 )
 
 const (
@@ -157,40 +154,6 @@ func v2auth(client *golangsdk.ProviderClient, endpoint string, options golangsdk
 
 	if endpoint != "" {
 		v2Client.Endpoint = endpoint
-	}
-
-	v2Opts := tokens2.AuthOptions{
-		IdentityEndpoint: options.IdentityEndpoint,
-		Username:         options.Username,
-		Password:         options.Password,
-		TenantID:         options.TenantID,
-		TenantName:       options.TenantName,
-		AllowReauth:      options.AllowReauth,
-		TokenID:          options.TokenID,
-	}
-
-	result := tokens2.Create(v2Client, v2Opts)
-
-	token, err := result.ExtractToken()
-	if err != nil {
-		return err
-	}
-
-	catalog, err := result.ExtractServiceCatalog()
-	if err != nil {
-		return err
-	}
-
-	if options.AllowReauth {
-		client.ReauthFunc = func() error {
-			client.TokenID = ""
-			return v2auth(client, endpoint, options, eo)
-		}
-	}
-	client.TokenID = token.ID
-	client.ProjectID = token.Tenant.ID
-	client.EndpointLocator = func(opts golangsdk.EndpointOpts) (string, error) {
-		return V2EndpointURL(catalog, opts)
 	}
 
 	return nil
@@ -356,19 +319,6 @@ func v3AKSKAuth(client *golangsdk.ProviderClient, endpoint string, options golan
 
 	if !options.WithUserCatalog {
 		var entries = make([]tokens3.CatalogEntry, 0, 1)
-		err = catalog.List(v3Client).EachPage(func(page pagination.Page) (bool, error) {
-			catalogList, err := catalog.ExtractServiceCatalog(page)
-			if err != nil {
-				return false, err
-			}
-
-			entries = append(entries, catalogList...)
-			return true, nil
-		})
-
-		if err != nil {
-			return err
-		}
 
 		client.EndpointLocator = func(opts golangsdk.EndpointOpts) (string, error) {
 			return V3EndpointURL(&tokens3.ServiceCatalog{
