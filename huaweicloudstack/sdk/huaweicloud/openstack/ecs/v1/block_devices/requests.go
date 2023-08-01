@@ -42,7 +42,7 @@ type AttachOpts struct {
 	//   are optional. If the device names of data disks are required, set them in alphabetical order. For example, if
 	//   there are two data disks, set the device names of the two data disks to /dev/vdb and /dev/vdc, respectively.
 	//   If you set a device name starting with /dev/sd, the system uses /dev/vd by default.
-	Device string `json:"device,omitempty"`
+	Device string `json:"device" required:"true"`
 	// Specifies the ID of the disk to be attached. The value is in UUID format.
 	VolumeId string `json:"volumeId" required:"true"`
 	// Specifies the ID of the ECS to which the disk will be attached.
