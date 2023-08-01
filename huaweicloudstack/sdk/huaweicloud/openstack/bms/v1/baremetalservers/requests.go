@@ -2,9 +2,7 @@ package baremetalservers
 
 import (
 	"encoding/base64"
-
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/common/tags"
 )
 
 type CreateOpts struct {
@@ -34,22 +32,17 @@ type CreateOpts struct {
 
 	Count int `json:"count,omitempty"`
 
-	RootVolume *RootVolume `json:"root_volume,omitempty"`
-
 	DataVolumes []DataVolume `json:"data_volumes,omitempty"`
 
-	ExtendParam ServerExtendParam `json:"extendparam" required:"true"`
+	ExtendParam ServerExtendParam `json:"extendparam,omitempty"`
 
-	SchedulerHints *SchedulerHints `json:"os:scheduler_hints,omitempty"`
-
-	ServerTags []tags.ResourceTag `json:"server_tags,omitempty"`
+	Tags []string `json:"tags,omitempty"`
 }
 
 type MetaData struct {
 	OpSvcUserId string `json:"op_svc_userid" required:"true"`
 	BYOL        string `json:"BYOL,omitempty"`
 	AdminPass   string `json:"admin_pass,omitempty"`
-	AgencyName  string `json:"agency_name,omitempty"`
 }
 
 type SecurityGroup struct {
@@ -66,57 +59,30 @@ type PublicIp struct {
 	Eip *Eip   `json:"eip,omitempty"`
 }
 
-type RootVolume struct {
-	VolumeType  string `json:"volumetype,omitempty"`
-	Size        int    `json:"size,omitempty"`
-	ClusterID   string `json:"cluster_id,omitempty"`
-	ClusterType string `json:"cluster_type,omitempty"`
-}
-
 type DataVolume struct {
-	VolumeType  string `json:"volumetype" required:"true"`
-	Size        int    `json:"size" required:"true"`
-	Shareable   bool   `json:"shareable,omitempty"`
-	ClusterID   string `json:"cluster_id,omitempty"`
-	ClusterType string `json:"cluster_type,omitempty"`
+	VolumeType  string            `json:"volumetype" required:"true"`
+	Size        int               `json:"size" required:"true"`
+	Shareable   bool              `json:"shareable,omitempty"`
+	extendparam map[string]string `json:"extendparam,omitempty"`
+	metadata    map[string]string `json:"metadata,omitempty"`
 }
 
 type ServerExtendParam struct {
-	ChargingMode string `json:"chargingMode,omitempty"`
-
-	RegionID string `json:"regionID,omitempty"`
-
-	PeriodType string `json:"periodType,omitempty"`
-
-	PeriodNum int `json:"periodNum,omitempty"`
-
-	IsAutoRenew string `json:"isAutoRenew,omitempty"`
-
-	IsAutoPay string `json:"isAutoPay,omitempty"`
-
+	ChargingMode        string `json:"chargingMode,omitempty"`
+	RegionID            string `json:"regionID,omitempty"`
 	EnterpriseProjectId string `json:"enterprise_project_id,omitempty"`
 }
 
-type SchedulerHints struct {
-	DecBaremetal string `json:"dec_baremetal,omitempty"`
-}
-
 type Eip struct {
-	IpType      string         `json:"iptype" required:"true"`
-	BandWidth   BandWidth      `json:"bandwidth" required:"true"`
-	ExtendParam EipExtendParam `json:"extendparam" required:"true"`
+	IpType    string    `json:"iptype" required:"true"`
+	BandWidth BandWidth `json:"bandwidth" required:"true"`
 }
 
 type BandWidth struct {
-	Name       string `json:"name,omitempty"`
-	ShareType  string `json:"sharetype" required:"true"`
-	Id         string `json:"id,omitempty"`
-	Size       int    `json:"size" required:"true"`
-	ChargeMode string `json:"chargemode,omitempty"`
-}
-
-type EipExtendParam struct {
-	ChargingMode string `json:"chargingMode" required:"true"`
+	Name      string `json:"name,omitempty"`
+	ShareType string `json:"sharetype" required:"true"`
+	bwId      string `json:"bwId,omitempty"`
+	Size      int    `json:"size" required:"true"`
 }
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
@@ -147,7 +113,7 @@ func (opts CreateOpts) ToServerCreateMap() (map[string]interface{}, error) {
 }
 
 // CreatePrePaid requests a server to be provisioned to the user in the current tenant.
-func CreatePrePaid(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r OrderResult) {
+func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r JobResult) {
 	reqBody, err := opts.ToServerCreateMap()
 	if err != nil {
 		r.Err = err
@@ -166,32 +132,13 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 	return
 }
 
-type UpdateOpts struct {
-	Name string `json:"name,omitempty"`
-}
-
-type UpdateOptsBuilder interface {
-	ToServerUpdateMap() (map[string]interface{}, error)
-}
-
-func (opts UpdateOpts) ToServerUpdateMap() (map[string]interface{}, error) {
-	b, err := golangsdk.BuildRequestBody(opts, "")
-	if err != nil {
-		return nil, err
-	}
-
-	return map[string]interface{}{"server": b}, nil
-}
-
-func Update(client *golangsdk.ServiceClient, id string, ops UpdateOptsBuilder) (r UpdateResult) {
-	b, err := ops.ToServerUpdateMap()
+func Delete(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r JobResult) {
+	reqBody, err := opts.ToServerCreateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
 
-	_, r.Err = client.Put(putURL(client, id), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
+	_, r.Err = client.Post(deleteURL(client), reqBody, &r.Body, &golangsdk.RequestOpts{OkCodes: []int{200}})
 	return
 }

@@ -18,7 +18,7 @@ func TagsSchema() *schema.Schema {
 // TagsForceNewSchema returns the schema to use for tags with ForceNew
 func TagsForceNewSchema() *schema.Schema {
 	return &schema.Schema{
-		Type:     schema.TypeMap,
+		Type:     schema.TypeList,
 		Optional: true,
 		ForceNew: true,
 		Elem:     &schema.Schema{Type: schema.TypeString},

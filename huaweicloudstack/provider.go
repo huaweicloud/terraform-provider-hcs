@@ -12,6 +12,7 @@ import (
 
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/as"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/bms"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/cce"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dns"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ecs"
@@ -399,6 +400,8 @@ func Provider() *schema.Provider {
 			"hcs_network_acl_rule":         ResourceNetworkACLRule(),
 			"hcs_networking_secgroup":      ResourceNetworkingSecGroup(),
 			"hcs_networking_secgroup_rule": ResourceNetworkingSecGroupRule(),
+
+			"hcs_bms_instance": bms.ResourceBmsInstance(),
 		},
 	}
 
