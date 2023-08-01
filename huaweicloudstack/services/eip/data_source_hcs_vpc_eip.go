@@ -75,6 +75,9 @@ func dataSourceVpcEipRead(_ context.Context, d *schema.ResourceData, meta interf
 	if portId, ok := d.GetOk("port_id"); ok {
 		listOpts.PortId = []string{portId.(string)}
 	}
+	if publicIp, ok := d.GetOk("public_ip"); ok {
+		listOpts.PublicIp = []string{publicIp.(string)}
+	}
 
 	listOpts.EnterpriseProjectId = config.DataGetEnterpriseProjectID(d)
 

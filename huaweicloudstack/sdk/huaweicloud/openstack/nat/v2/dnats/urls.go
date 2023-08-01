@@ -11,5 +11,5 @@ func resourceURL(c *golangsdk.ServiceClient, ruleId string) string {
 }
 
 func deleteURL(c *golangsdk.ServiceClient, gatewayId, ruleId string) string {
-	return c.ServiceURL("nat_gateways", gatewayId, "dnat_rules", ruleId)
+	return c.ServiceURL("dnat_rules", ruleId)
 }

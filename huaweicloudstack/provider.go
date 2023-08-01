@@ -16,6 +16,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eip"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/elb"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eps"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/nat"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/smn"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpcep"
 )
@@ -310,6 +311,8 @@ func Provider() *schema.Provider {
 			"hcs_vpc_bandwidth": eip.DataSourceBandWidth(),
 			"hcs_vpc_eip":       eip.DataSourceVpcEip(),
 			"hcs_vpc_eips":      eip.DataSourceVpcEips(),
+
+			"hcs_nat_gateway": nat.DataSourcePublicGateway(),
 			"hcs_smn_topics":    smn.DataSourceTopics(),
 		},
 
@@ -347,6 +350,10 @@ func Provider() *schema.Provider {
 			"hcs_smn_message_template":     smn.ResourceSmnMessageTemplate(),
 			"hcs_smn_topic_v2":             smn.ResourceTopic(),
 			"hcs_smn_subscription_v2":      smn.ResourceSubscription(),
+
+			"hcs_nat_gateway":   nat.ResourcePublicGateway(),
+			"hcs_nat_snat_rule": nat.ResourcePublicSnatRule(),
+			"hcs_nat_dnat_rule": nat.ResourcePublicDnatRule(),
 		},
 	}
 
