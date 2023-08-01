@@ -321,6 +321,8 @@ func Provider() *schema.Provider {
 
 			"hcs_vpcs":        vpc.DataSourceVpcs(),
 			"hcs_vpc_subnets": vpc.DataSourceVpcSubnets(),
+
+			"hcs_networking_secgroups": vpc.DataSourceNetworkingSecGroups(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -375,6 +377,11 @@ func Provider() *schema.Provider {
 			"hcs_vpc_subnet_v1":            vpc.ResourceVpcSubnetV1(),
 			"hcs_networking_vip":           vpc.ResourceNetworkingVip(),
 			"hcs_networking_vip_associate": vpc.ResourceNetworkingVIPAssociateV2(),
+
+			"hcs_network_acl":              ResourceNetworkACL(),
+			"hcs_network_acl_rule":         ResourceNetworkACLRule(),
+			"hcs_networking_secgroup":      ResourceNetworkingSecGroup(),
+			"hcs_networking_secgroup_rule": ResourceNetworkingSecGroupRule(),
 		},
 	}
 
