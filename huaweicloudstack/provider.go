@@ -13,6 +13,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/cce"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dns"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eip"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eps"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpcep"
 )
@@ -303,6 +304,10 @@ func Provider() *schema.Provider {
 		DataSourcesMap: map[string]*schema.Resource{
 			"hcs_enterprise_project":    eps.DataSourceEnterpriseProject(),
 			"hcs_vpcep_public_services": vpcep.DataSourceVPCEPPublicServices(),
+
+			"hcs_vpc_bandwidth": eip.DataSourceBandWidth(),
+			"hcs_vpc_eip":       eip.DataSourceVpcEip(),
+			"hcs_vpc_eips":      eip.DataSourceVpcEips(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -314,6 +319,15 @@ func Provider() *schema.Provider {
 			"hcs_vpcep_approval":     vpcep.ResourceVPCEndpointApproval(),
 			"hcs_vpcep_endpoint":     vpcep.ResourceVPCEndpoint(),
 			"hcs_vpcep_service":      vpcep.ResourceVPCEndpointService(),
+
+			"hcs_vpc_bandwidth":     eip.ResourceVpcBandWidthV2(),
+			"hcs_vpc_eip":           eip.ResourceVpcEIPV1(),
+			"hcs_vpc_eip_associate": eip.ResourceEIPAssociate(),
+
+			"hcs_vpc_bandwidth_v2": eip.ResourceVpcBandWidthV2(),
+			"hcs_vpc_eip_v1":       eip.ResourceVpcEIPV1(),
+			// Legacy
+			"hcs_networking_eip_associate": eip.ResourceEIPAssociate(),
 		},
 	}
 
