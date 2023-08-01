@@ -3,7 +3,6 @@ package huaweicloudstack
 import (
 	"context"
 	"fmt"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/as"
 	"log"
 	"strings"
 	"sync"
@@ -12,8 +11,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/as"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/cce"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dns"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ecs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eip"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/elb"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eps"
@@ -356,6 +357,9 @@ func Provider() *schema.Provider {
 			"hcs_elb_monitor":         elb.ResourceMonitorV3(),
 			"hcs_elb_pool":            elb.ResourcePoolV3(),
 			"hcs_elb_security_policy": elb.ResourceSecurityPolicy(),
+
+			"hcs_ecs_attach_volume":        ecs.ResourceComputeVolumeAttach(),
+			"hcs_ecs_compute_server_group": ecs.ResourceComputeServerGroup(),
 
 			// Legacy
 			"hcs_networking_eip_associate": eip.ResourceEIPAssociate(),
