@@ -3,6 +3,7 @@ package huaweicloudstack
 import (
 	"context"
 	"fmt"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/as"
 	"log"
 	"strings"
 	"sync"
@@ -323,6 +324,10 @@ func Provider() *schema.Provider {
 			"hcs_vpc_subnets": vpc.DataSourceVpcSubnets(),
 
 			"hcs_networking_secgroups": vpc.DataSourceNetworkingSecGroups(),
+
+			"hcs_availability_zones": DataSourceAvailabilityZones(),
+			"hcs_as_configurations":  as.DataSourceASConfigurations(),
+			"hcs_as_groups":          as.DataSourceASGroups(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -364,6 +369,14 @@ func Provider() *schema.Provider {
 			"hcs_smn_message_template": smn.ResourceSmnMessageTemplate(),
 			"hcs_smn_topic_v2":         smn.ResourceTopic(),
 			"hcs_smn_subscription_v2":  smn.ResourceSubscription(),
+
+			"hcs_as_bandwidth_policy": as.ResourceASBandWidthPolicy(),
+			"hcs_as_configuration":    as.ResourceASConfiguration(),
+			"hcs_as_group":            as.ResourceASGroup(),
+			"hcs_as_instance_attach":  as.ResourceASInstanceAttach(),
+			"hcs_as_lifecycle_hook":   as.ResourceASLifecycleHook(),
+			"hcs_as_notification":     as.ResourceAsNotification(),
+			"hcs_as_policy":           as.ResourceASPolicy(),
 
 			"hcs_ims_image":                ims.ResourceImsImage(),
 			"hcs_ims_image_share":          ims.ResourceImsImageShare(),
