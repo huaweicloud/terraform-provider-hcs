@@ -25,10 +25,8 @@ type CreateOptsBuilder interface {
 }
 
 type CreateOpts struct {
-	Name                string `json:"name" required:"true"`
-	Size                *int   `json:"size" required:"true"`
-	ChargeMode          string `json:"charge_mode,omitempty"`
-	EnterpriseProjectId string `json:"enterprise_project_id,omitempty"`
+	Name string `json:"name" required:"true"`
+	Size *int   `json:"size" required:"true"`
 }
 
 func (opts CreateOpts) ToBandWidthCreateMap() (map[string]interface{}, error) {
