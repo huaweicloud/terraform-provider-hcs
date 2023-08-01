@@ -1,8 +1,7 @@
 package services
 
 import (
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/common/tags"
+	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 )
 
 // PostOptsBuilder allows extensions to add parameters to the
@@ -30,14 +29,8 @@ type CreateOpts struct {
 	ServiceType string `json:"service_type,omitempty"`
 	// Specifies whether connection approval is required.
 	Approval *bool `json:"approval_enabled,omitempty"`
-	// Specifies the ID of the virtual NIC to which the virtual IP address is bound.
-	VipPortID string `json:"vip_port_id,omitempty"`
 	// Specifies whether the client IP address and port number or marker_id information is transmitted to the server.
 	TCPProxy string `json:"tcp_proxy,omitempty"`
-	// Specifies the resource tags in key/value format
-	Tags []tags.ResourceTag `json:"tags,omitempty"`
-	// Specifies the description
-	Description string `json:"description,omitempty"`
 }
 
 // PortOpts contains the port mappings opened to the VPC endpoint service.

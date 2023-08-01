@@ -1,8 +1,7 @@
 package endpoints
 
 import (
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/common/tags"
+	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 )
 
 // Endpoint contains the response of the VPC endpoint
@@ -11,8 +10,6 @@ type Endpoint struct {
 	ID string `json:"id"`
 	// the connection status of the VPC endpoint
 	Status string `json:"status"`
-	// the account status: frozen or active
-	ActiveStatus []string `json:"active_status"`
 	// the endpoint status is enabled: enable or disable
 	EnableStatus string `json:"enable_status"`
 	// the specification name of VPC endpoint
@@ -39,15 +36,9 @@ type Endpoint struct {
 	EnableWhitelist bool `json:"enable_whitelist"`
 	// the whitelist for controlling access to the VPC endpoint
 	Whitelist []string `json:"whitelist"`
-	// the IDs of route tables
-	RouteTables []string `json:"routetables"`
-	// the resource tags
-	Tags []tags.ResourceTag `json:"tags"`
 	// the project ID
 	ProjectID string `json:"project_id"`
 	// the description of the VPC endpoint
-	Description string `json:"description"`
-	// the creation time of the VPC endpoint
 	Created string `json:"created_at"`
 	// the update time of the VPC endpoint
 	Updated string `json:"updated_at"`
