@@ -738,3 +738,10 @@ func TestAccPreCheckCnEast3(t *testing.T) {
 		t.Skip("HCS_REGION_NAME must be cn-east-3 for this test.")
 	}
 }
+
+// lintignore:AT003
+func TestAccPreCheckBms(t *testing.T) {
+	if HCS_USER_ID == "" {
+		t.Skip("HW_USER_ID must be set for BMS acceptance tests")
+	}
+}
