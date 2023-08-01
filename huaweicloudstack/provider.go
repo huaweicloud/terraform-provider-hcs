@@ -12,6 +12,7 @@ import (
 
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/cce"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dns"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eps"
 )
 
@@ -303,10 +304,11 @@ func Provider() *schema.Provider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"hcs_cce_cluster": cce.ResourceCluster(),
-			"hcs_cce_node":    cce.ResourceNode(),
-
+			"hcs_cce_cluster":        cce.ResourceCluster(),
+			"hcs_cce_node":           cce.ResourceNode(),
 			"hcs_enterprise_project": eps.ResourceEnterpriseProject(),
+			"hcs_dns_recordset":      dns.ResourceDNSRecordset(),
+			"hcs_dns_zone":           dns.ResourceDNSZone(),
 		},
 	}
 
