@@ -16,6 +16,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eip"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/elb"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eps"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ims"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/nat"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/smn"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpcep"
@@ -313,7 +314,10 @@ func Provider() *schema.Provider {
 			"hcs_vpc_eips":      eip.DataSourceVpcEips(),
 
 			"hcs_nat_gateway": nat.DataSourcePublicGateway(),
-			"hcs_smn_topics":    smn.DataSourceTopics(),
+			"hcs_smn_topics":  smn.DataSourceTopics(),
+
+			"hcs_ims_image":  ims.DataSourceImagesImageV2(),
+			"hcs_ims_images": ims.DataSourceImagesImages(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -345,15 +349,20 @@ func Provider() *schema.Provider {
 
 			// Legacy
 			"hcs_networking_eip_associate": eip.ResourceEIPAssociate(),
-			"hcs_smn_topic":                smn.ResourceTopic(),
-			"hcs_smn_subscription":         smn.ResourceSubscription(),
-			"hcs_smn_message_template":     smn.ResourceSmnMessageTemplate(),
-			"hcs_smn_topic_v2":             smn.ResourceTopic(),
-			"hcs_smn_subscription_v2":      smn.ResourceSubscription(),
 
 			"hcs_nat_gateway":   nat.ResourcePublicGateway(),
 			"hcs_nat_snat_rule": nat.ResourcePublicSnatRule(),
 			"hcs_nat_dnat_rule": nat.ResourcePublicDnatRule(),
+
+			"hcs_smn_topic":            smn.ResourceTopic(),
+			"hcs_smn_subscription":     smn.ResourceSubscription(),
+			"hcs_smn_message_template": smn.ResourceSmnMessageTemplate(),
+			"hcs_smn_topic_v2":         smn.ResourceTopic(),
+			"hcs_smn_subscription_v2":  smn.ResourceSubscription(),
+
+			"hcs_ims_image":                ims.ResourceImsImage(),
+			"hcs_ims_image_share":          ims.ResourceImsImageShare(),
+			"hcs_ims_image_share_accepter": ims.ResourceImsImageShareAccepter(),
 		},
 	}
 
