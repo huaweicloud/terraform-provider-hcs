@@ -14,6 +14,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/cce"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dns"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eps"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpcep"
 )
 
 const (
@@ -300,7 +301,8 @@ func Provider() *schema.Provider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"hcs_enterprise_project": eps.DataSourceEnterpriseProject(),
+			"hcs_enterprise_project":    eps.DataSourceEnterpriseProject(),
+			"hcs_vpcep_public_services": vpcep.DataSourceVPCEPPublicServices(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -309,6 +311,9 @@ func Provider() *schema.Provider {
 			"hcs_enterprise_project": eps.ResourceEnterpriseProject(),
 			"hcs_dns_recordset":      dns.ResourceDNSRecordset(),
 			"hcs_dns_zone":           dns.ResourceDNSZone(),
+			"hcs_vpcep_approval":     vpcep.ResourceVPCEndpointApproval(),
+			"hcs_vpcep_endpoint":     vpcep.ResourceVPCEndpoint(),
+			"hcs_vpcep_service":      vpcep.ResourceVPCEndpointService(),
 		},
 	}
 

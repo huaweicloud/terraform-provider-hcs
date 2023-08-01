@@ -1,8 +1,7 @@
 package endpoints
 
 import (
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/common/tags"
+	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 )
 
 // CreateOptsBuilder allows extensions to add parameters to the
@@ -30,12 +29,6 @@ type CreateOpts struct {
 	EnableWhitelist *bool `json:"enable_whitelist,omitempty"`
 	// Specifies the whitelist for controlling access to the VPC endpoint
 	Whitelist []string `json:"whitelist,omitempty"`
-	// Specifies the IDs of route tables
-	RouteTables []string `json:"routeTables,omitempty"`
-	// Specifies the resource tags in key/value format
-	Tags []tags.ResourceTag `json:"tags,omitempty"`
-	// Specifies the description of the VPC endpoint service
-	Description string `json:"description,omitempty"`
 }
 
 // ToEndpointCreateMap assembles a request body based on the contents of a CreateOpts.
