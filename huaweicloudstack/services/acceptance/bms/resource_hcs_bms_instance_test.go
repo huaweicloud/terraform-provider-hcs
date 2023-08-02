@@ -50,21 +50,24 @@ func TestAccBmsInstance_basic(t *testing.T) {
 }
 
 func testAccCheckBmsInstanceDestroy(s *terraform.State) error {
-	config := acceptance.TestAccProvider.Meta().(*config.Config)
-	bmsClient, err := config.BmsV1Client(acceptance.HCS_REGION_NAME)
+	cfg := acceptance.TestAccProvider.Meta().(*config.Config)
+	bmsClient, err := cfg.BmsV1Client(acceptance.HCS_REGION_NAME)
 	if err != nil {
-		return fmt.Errorf("Error creating hcs bms client: %s", err)
+		return fmt.Errorf("error creating HuaweiCloudStack bms client: %s", err)
 	}
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "hcs_bms_instance" {
 			continue
 		}
-
-		server, err := baremetalservers.Get(bmsClient, rs.Primary.ID).Extract()
+		opts := &baremetalservers.ListOpts{
+			Tags:         "__type_baremetal",
+			ExpectFields: "id,tags",
+		}
+		server, err := baremetalservers.Get(bmsClient, rs.Primary.ID, opts).Extract()
 		if err == nil {
 			if server.Status != "DELETED" {
-				return fmt.Errorf("Instance still exists")
+				return fmt.Errorf("instance still exists")
 			}
 		}
 	}
@@ -83,13 +86,17 @@ func testAccCheckBmsInstanceExists(n string, instance *baremetalservers.CloudSer
 			return fmt.Errorf("No ID is set")
 		}
 
-		config := acceptance.TestAccProvider.Meta().(*config.Config)
-		bmsClient, err := config.BmsV1Client(acceptance.HCS_REGION_NAME)
+		cfg := acceptance.TestAccProvider.Meta().(*config.Config)
+		bmsClient, err := cfg.BmsV1Client(acceptance.HCS_REGION_NAME)
 		if err != nil {
 			return fmt.Errorf("Error creating HuaweiCloudStack bms client: %s", err)
 		}
 
-		found, err := baremetalservers.Get(bmsClient, rs.Primary.ID).Extract()
+		opts := &baremetalservers.ListOpts{
+			Tags:         "__type_baremetal",
+			ExpectFields: "id,tags",
+		}
+		found, err := baremetalservers.Get(bmsClient, rs.Primary.ID, opts).Extract()
 		if err != nil {
 			return err
 		}
@@ -129,7 +136,6 @@ resource "hcs_vpc_eip" "myeip" {
     name        = "%[2]s"
     size        = 8
     share_type  = "PER"
-    charge_mode = "traffic"
   }
 }
 

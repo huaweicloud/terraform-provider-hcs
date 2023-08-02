@@ -331,6 +331,8 @@ func Provider() *schema.Provider {
 			"hcs_as_configurations":  as.DataSourceASConfigurations(),
 			"hcs_as_groups":          as.DataSourceASGroups(),
 
+			"hcs_bms_flavors": bms.DataSourceBmsFlavors(),
+
 			"hcs_cce_cluster":        cce.DataSourceCCEClusterV3(),
 			"hcs_cce_clusters":       cce.DataSourceCCEClusters(),
 			"hcs_cce_addon_template": cce.DataSourceAddonTemplate(),
