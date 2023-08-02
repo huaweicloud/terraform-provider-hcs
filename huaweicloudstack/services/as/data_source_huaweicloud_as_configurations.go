@@ -37,6 +37,11 @@ func DataSourceASConfigurations() *schema.Resource {
 				Description: "The information about AS instance configurations.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"scaling_configuration_id": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "The id of the AS configuration.",
+						},
 						"scaling_configuration_name": {
 							Type:        schema.TypeString,
 							Computed:    true,
@@ -248,6 +253,7 @@ func dataSourceASConfigurationRead(_ context.Context, d *schema.ResourceData, me
 	elements := make([]map[string]interface{}, 0, len(configurationList))
 	for _, configuration := range configurationList {
 		configurationMap := map[string]interface{}{
+			"scaling_configuration_id":   configuration.ID,
 			"scaling_configuration_name": configuration.Name,
 			"instance_config":            flattenInstanceConfig(configuration.InstanceConfig),
 			"status":                     normalizeConfigurationStatus(configuration.ScalingGroupID),
