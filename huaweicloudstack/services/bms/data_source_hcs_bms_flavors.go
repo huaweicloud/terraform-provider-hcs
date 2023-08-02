@@ -97,7 +97,7 @@ func dataSourceBmsFlavorsRead(_ context.Context, d *schema.ResourceData, meta in
 	if v, ok := d.GetOk("vcpus"); ok {
 		vcpus = strconv.Itoa(v.(int))
 	}
-	mem := d.Get("memory").(int) * 1024
+	mem := d.Get("memory").(int)
 
 	filter := map[string]interface{}{
 		"VCPUs":                vcpus,
