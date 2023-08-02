@@ -50,10 +50,10 @@ func TestBaseComputeResources(name string) string {
 # base test resources
 %s
 
-data "huaweicloud_availability_zones" "test" {}
+data "hcs_availability_zones" "test" {}
 
-data "huaweicloud_compute_flavors" "test" {
-  availability_zone = data.huaweicloud_availability_zones.test.names[0]
+data "hcs_compute_flavors" "test" {
+  availability_zone = data.hcs_availability_zones.test.names[0]
   performance_type  = "normal"
   cpu_core_count    = 2
   memory_size       = 4
