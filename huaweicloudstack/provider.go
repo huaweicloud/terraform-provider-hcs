@@ -330,6 +330,13 @@ func Provider() *schema.Provider {
 			"hcs_availability_zones": DataSourceAvailabilityZones(),
 			"hcs_as_configurations":  as.DataSourceASConfigurations(),
 			"hcs_as_groups":          as.DataSourceASGroups(),
+
+			"hcs_cce_cluster":        cce.DataSourceCCEClusterV3(),
+			"hcs_cce_clusters":       cce.DataSourceCCEClusters(),
+			"hcs_cce_addon_template": cce.DataSourceAddonTemplate(),
+			"hcs_cce_node_pool":      cce.DataSourceCCENodePoolV3(),
+			"hcs_cce_node":           cce.DataSourceNode(),
+			"hcs_cce_nodes":          cce.DataSourceNodes(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{

@@ -2,7 +2,7 @@
 subcategory: "Cloud Container Engine (CCE)"
 ---
 
-# huaweicloud_cce_node
+# hcs_cce_node
 
 Add a node to a CCE cluster.
 
@@ -334,7 +334,7 @@ This resource provides the following timeouts configuration options:
 CCE node can be imported using the cluster ID and node ID separated by a slash, e.g.:
 
 ```
-$ terraform import huaweicloud_cce_node.my_node 5c20fdad-7288-11eb-b817-0255ac10158b/e9287dff-7288-11eb-b817-0255ac10158b
+$ terraform import hcs_cce_node.my_node 5c20fdad-7288-11eb-b817-0255ac10158b/e9287dff-7288-11eb-b817-0255ac10158b
 ```
 
 Note that the imported state may not be identical to your resource definition, due to some attributes missing from the
