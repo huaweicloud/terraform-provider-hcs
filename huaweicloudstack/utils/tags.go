@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/common/tags"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 const SysTagKeyEnterpriseProjectId = "_sys_enterprise_project_id"
@@ -110,37 +111,51 @@ func FlattenTagsToMap(tags interface{}) map[string]interface{} {
 }
 
 // ExpandResourceTags returns the tags for the given map of data.
-func ExpandResourceTags(tagmap map[string]interface{}) []tags.ResourceTag {
-	var taglist []tags.ResourceTag
+func ExpandResourceTags(tagMap map[string]interface{}) []tags.ResourceTag {
+	var tagList []tags.ResourceTag
 
-	for k, v := range tagmap {
+	for k, v := range tagMap {
 		tag := tags.ResourceTag{
 			Key:   k,
 			Value: v.(string),
 		}
-		taglist = append(taglist, tag)
+		tagList = append(tagList, tag)
 	}
 
-	return taglist
+	return tagList
 }
 
-// ExpandResourceTagsMap returns the tags in format of list of maps for the given map of data.
-func ExpandResourceTagsMap(tagmap map[string]interface{}) []map[string]interface{} {
-	if len(tagmap) < 1 {
+func ExpandResourceTagsString(tagMap map[string]interface{}) []interface{} {
+	if len(tagMap) < 1 {
 		return nil
 	}
 
-	taglist := make([]map[string]interface{}, 0, len(tagmap))
+	tagList := make([]interface{}, 0, len(tagMap))
+	for k, v := range tagMap {
+		str := fmt.Sprintf("%s.%s", k, v)
+		tagList = append(tagList, str)
+	}
 
-	for k, v := range tagmap {
+	return tagList
+}
+
+// ExpandResourceTagsMap returns the tags in format of list of maps for the given map of data.
+func ExpandResourceTagsMap(tagMap map[string]interface{}) []map[string]interface{} {
+	if len(tagMap) < 1 {
+		return nil
+	}
+
+	tagList := make([]map[string]interface{}, 0, len(tagMap))
+
+	for k, v := range tagMap {
 		tag := map[string]interface{}{
 			"key":   k,
 			"value": v,
 		}
-		taglist = append(taglist, tag)
+		tagList = append(tagList, tag)
 	}
 
-	return taglist
+	return tagList
 }
 
 // GetDNSZoneTagType returns resource tag type of DNS zone by zoneType

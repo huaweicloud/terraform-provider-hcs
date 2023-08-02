@@ -3,6 +3,7 @@ package common
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils/fmtp"
 )
 
@@ -18,7 +19,7 @@ func TagsSchema() *schema.Schema {
 // TagsForceNewSchema returns the schema to use for tags with ForceNew
 func TagsForceNewSchema() *schema.Schema {
 	return &schema.Schema{
-		Type:     schema.TypeList,
+		Type:     schema.TypeMap,
 		Optional: true,
 		ForceNew: true,
 		Elem:     &schema.Schema{Type: schema.TypeString},

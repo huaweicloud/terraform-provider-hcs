@@ -7,7 +7,7 @@ func createURL(sc *golangsdk.ServiceClient) string {
 }
 
 func getURL(sc *golangsdk.ServiceClient, serverID string) string {
-	return sc.ServiceURL("baremetalservers", serverID)
+	return sc.ServiceURL("cloudservers", serverID)
 }
 
 func putURL(sc *golangsdk.ServiceClient, serverID string) string {

@@ -188,7 +188,11 @@ func ResourceBmsInstance() *schema.Resource {
 					},
 				},
 			},
+
 			"charging_mode": common.SchemaChargingMode([]string{}),
+			"period_unit":   common.SchemaPeriodUnit([]string{}),
+			"period":        common.SchemaPeriod([]string{}),
+			"auto_renew":    common.SchemaAutoRenewUpdatable(nil),
 
 			"tags": common.TagsForceNewSchema(),
 			"enterprise_project_id": {
@@ -196,6 +200,11 @@ func ResourceBmsInstance() *schema.Resource {
 				Optional: true,
 				ForceNew: true,
 				Computed: true,
+			},
+			"agency_name": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
 			},
 			"host_id": {
 				Type:     schema.TypeString,
@@ -222,13 +231,23 @@ func ResourceBmsInstance() *schema.Resource {
 				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
+			"delete_eip_on_termination": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  true,
+			},
+			"delete_disks_on_termination": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
 		},
 	}
 }
 
 func resourceBmsInstanceCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
-	bmsClient, err := config.BmsV1Client(config.GetRegion(d))
+	cfg := meta.(*config.Config)
+	bmsClient, err := cfg.BmsV1Client(cfg.GetRegion(d))
 	if err != nil {
 		return fmtp.DiagErrorf("Error creating HuaweiCloudStack bms client: %s", err)
 	}
@@ -239,6 +258,7 @@ func resourceBmsInstanceCreate(ctx context.Context, d *schema.ResourceData, meta
 		FlavorRef: d.Get("flavor_id").(string),
 		MetaData: baremetalservers.MetaData{
 			OpSvcUserId: d.Get("user_id").(string),
+			AgencyName:  d.Get("agency_name").(string),
 		},
 		UserData:         []byte(d.Get("user_data").(string)),
 		AdminPass:        d.Get("admin_pass").(string),
@@ -249,8 +269,8 @@ func resourceBmsInstanceCreate(ctx context.Context, d *schema.ResourceData, meta
 		Nics:             resourceBmsInstanceNicsV1(d),
 		DataVolumes:      resourceBmsInstanceDataVolumesV1(d),
 		ExtendParam: baremetalservers.ServerExtendParam{
-			ChargingMode:        d.Get("charging_mode").(string),
-			EnterpriseProjectId: config.GetEnterpriseProjectID(d),
+			ChargingMode:        normalizeChargingModeToNumber(d.Get("charging_mode").(string)),
+			EnterpriseProjectId: cfg.GetEnterpriseProjectID(d),
 		},
 	}
 
@@ -259,7 +279,6 @@ func resourceBmsInstanceCreate(ctx context.Context, d *schema.ResourceData, meta
 	if eipID, ok := d.GetOk("eip_id"); ok {
 		hasEIP = true
 		eipOpts.Id = eipID.(string)
-
 	} else if eipType, ok := d.GetOk("iptype"); ok {
 		hasEIP = true
 		eipOpts.Eip = &baremetalservers.Eip{
@@ -274,20 +293,26 @@ func resourceBmsInstanceCreate(ctx context.Context, d *schema.ResourceData, meta
 		createOpts.PublicIp = &eipOpts
 	}
 
-	tagList := d.Get("tags").([]string)
-	if len(tagList) > 0 {
+	tagRaw := d.Get("tags").(map[string]interface{})
+	if len(tagRaw) > 0 {
+		tagList := utils.ExpandResourceTagsString(tagRaw)
 		createOpts.Tags = tagList
 	}
 
-	var v *baremetalservers.JobResponse
-
-	v, err = baremetalservers.Create(bmsClient, createOpts).ExtractJobResponse()
+	n, err := baremetalservers.Create(bmsClient, createOpts).ExtractJobResponse()
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloud BMS server: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack BMS server: %s", err)
+	}
+	err = baremetalservers.WaitForJobSuccess(bmsClient, int(d.Timeout(schema.TimeoutCreate)/time.Second), n.JobID)
+	if err != nil {
+		return diag.FromErr(err)
 	}
 
-	err = baremetalservers.WaitForJobSuccess(bmsClient, int(d.Timeout(schema.TimeoutCreate)/time.Second), v.JobID)
-	entity, err := baremetalservers.GetJobEntity(bmsClient, v.JobID, "server_id")
+	entity, err := baremetalservers.GetJobEntity(bmsClient, n.JobID, "server_id")
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	if id, ok := entity.(string); ok {
 		log.Printf("[INFO] BMS ID: %s", id)
 		// Store the ID now
@@ -297,15 +322,28 @@ func resourceBmsInstanceCreate(ctx context.Context, d *schema.ResourceData, meta
 	return diag.Errorf("unexpected conversion error in resourceBmsInstanceCreate.")
 }
 
-func resourceBmsInstanceRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
-	region := config.GetRegion(d)
-	bmsClient, err := config.BmsV1Client(region)
-	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloud compute client: %s", err)
+func normalizeChargingModeToNumber(mode string) string {
+	var chargingModeNum string
+	switch mode {
+	case "prePaid":
+		chargingModeNum = "1"
+	default:
+		chargingModeNum = "0"
 	}
 
-	server, err := baremetalservers.Get(bmsClient, d.Id()).Extract()
+	return chargingModeNum
+}
+
+func resourceBmsInstanceRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	cfg := meta.(*config.Config)
+	region := cfg.GetRegion(d)
+	bmsClient, err := cfg.ComputeV1Client(region)
+	if err != nil {
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack bms client: %s", err)
+	}
+
+	opts := buildListOpts(d, cfg)
+	server, err := baremetalservers.Get(bmsClient, d.Id(), opts).Extract()
 	if err != nil {
 		return common.CheckDeletedDiag(d, err, "server")
 	}
@@ -353,54 +391,55 @@ func resourceBmsInstanceRead(_ context.Context, d *schema.ResourceData, meta int
 	return nil
 }
 
+func buildListOpts(d *schema.ResourceData, conf *config.Config) *baremetalservers.ListOpts {
+	result := &baremetalservers.ListOpts{
+		EnterpriseProjectID: conf.DataGetEnterpriseProjectID(d),
+		Name:                d.Get("name").(string),
+		Tags:                "__type_baremetal",
+	}
+
+	return result
+}
+
 func resourceBmsInstanceUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	return resourceBmsInstanceRead(ctx, d, meta)
 }
 
 func resourceBmsInstanceDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
-	region := config.GetRegion(d)
-	bmsClient, err := config.BmsV1Client(region)
+	cfg := meta.(*config.Config)
+	region := cfg.GetRegion(d)
+	bmsClient, err := cfg.BmsV1Client(region)
 	if err != nil {
 		return fmtp.DiagErrorf("Error creating HuaweiCloud compute client: %s", err)
 	}
-	serverID := d.Id()
-	publicIP := d.Get("public_ip").(string)
-	diskIds := d.Get("disk_ids").([]interface{})
 
-	resourceIDs := make([]string, 0, 2+len(diskIds))
-
-	resourceIDs = append(resourceIDs, serverID)
-
-	if len(diskIds) > 0 {
-		for _, diskId := range diskIds {
-			resourceIDs = append(resourceIDs, diskId.(string))
-		}
+	deleteOpts := baremetalservers.DeleteOpts{
+		Servers: []baremetalservers.Server{
+			{Id: d.Id()},
+		},
+		DeletePublicIp: d.Get("delete_eip_on_termination").(bool),
+		DeleteVolume:   d.Get("delete_disks_on_termination").(bool),
+	}
+	n, err := baremetalservers.Delete(bmsClient, deleteOpts).ExtractJobResponse()
+	if err != nil {
+		return diag.Errorf("error deleting server: %s", err)
 	}
 
-	// unsubscribe the eip if necessary
-	if _, ok := d.GetOk("iptype"); ok && publicIP != "" {
-		eipClient, err := config.NetworkingV1Client(region)
-		if err != nil {
-			return fmtp.DiagErrorf("Error creating networking client: %s", err)
-		}
-
-		epsID := "all_granted_eps"
-		if eipID, err := common.GetEipIDbyAddress(eipClient, publicIP, epsID); err == nil {
-			resourceIDs = append(resourceIDs, eipID)
-		} else {
-			return fmtp.DiagErrorf("Error fetching EIP ID of BMS server (%s): %s", d.Id(), err)
-		}
+	if err := baremetalservers.WaitForJobSuccess(bmsClient, int(d.Timeout(schema.TimeoutCreate)/time.Second), n.JobID); err != nil {
+		return diag.FromErr(err)
 	}
 
-	if err := common.UnsubscribePrePaidResource(d, config, resourceIDs); err != nil {
-		return fmtp.DiagErrorf("Error unsubscribing HuaweiCloudStack BMS server: %s", err)
+	client, err := cfg.ComputeV1Client(region)
+	if err != nil {
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack bms client: %s", err)
 	}
+
+	opts := buildListOpts(d, cfg)
 
 	stateConf := &resource.StateChangeConf{
 		Pending:      []string{"Deleting", "ACTIVE", "SHUTOFF"},
 		Target:       []string{"DELETED"},
-		Refresh:      waitForBmsInstanceDelete(bmsClient, d.Id()),
+		Refresh:      waitForBmsInstanceDelete(client, d.Id(), opts),
 		Timeout:      d.Timeout(schema.TimeoutDelete),
 		Delay:        60 * time.Second,
 		PollInterval: 20 * time.Second,
@@ -408,7 +447,7 @@ func resourceBmsInstanceDelete(ctx context.Context, d *schema.ResourceData, meta
 
 	_, err = stateConf.WaitForStateContext(ctx)
 	if err != nil {
-		return fmtp.DiagErrorf("Error deleting HuaweiCloud BMS instance: %s", err)
+		return fmtp.DiagErrorf("Error deleting HuaweiCloudStack BMS instance: %s", err)
 	}
 
 	d.SetId("")
@@ -512,13 +551,16 @@ func bmsPublicIP(server *baremetalservers.CloudServer) string {
 	return publicIP
 }
 
-func waitForBmsInstanceDelete(bmsClient *golangsdk.ServiceClient, ServerId string) resource.StateRefreshFunc {
+func waitForBmsInstanceDelete(client *golangsdk.ServiceClient, ServerId string, opts baremetalservers.ListOptsBuilder) resource.StateRefreshFunc {
 	return func() (interface{}, string, error) {
-		logp.Printf("[DEBUG] Attempting to delete HuaweiCloud BMS instance %s", ServerId)
+		logp.Printf("[DEBUG] Attempting to delete HuaweiCloudStack BMS instance %s", ServerId)
 
-		r, err := baremetalservers.Get(bmsClient, ServerId).Extract()
-
+		r, err := baremetalservers.Get(client, ServerId, opts).Extract()
 		if err != nil {
+			if _, ok := err.(golangsdk.ErrDefault404); ok {
+				logp.Printf("[DEBUG] Successfully deleted HuaweiCloudStack BMS instance %s", ServerId)
+				return r, "DELETED", nil
+			}
 			return r, "Deleting", err
 		}
 

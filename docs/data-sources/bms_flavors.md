@@ -31,7 +31,7 @@ resource "hcs_bms_instance" "instance" {
 
 * `vcpus` - (Optional, Int) Specifies the number of vCPUs in the BMS flavor.
 
-* `memory` - (Optional, Int) Specifies the memory size(GB) in the BMS flavor.
+* `memory` - (Optional, Int) Specifies the memory size(MB) in the BMS flavor.
 
 * `cpu_arch` - (Optional, String) Specifies the CPU architecture of the BMS flavor.
   The value can be x86_64 and aarch64, defaults to **x86_64**.
