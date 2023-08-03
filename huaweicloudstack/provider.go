@@ -345,6 +345,7 @@ func Provider() *schema.Provider {
 			"hcs_cce_namespace": cce.ResourceCCENamespaceV1(),
 			"hcs_cce_node":      cce.ResourceNode(),
 			"hcs_cce_node_pool": cce.ResourceNodePool(),
+			"hcs_cce_pvc":       cce.ResourceCcePersistentVolumeClaimsV1(),
 
 			"hcs_enterprise_project": eps.ResourceEnterpriseProject(),
 			"hcs_dns_recordset":      dns.ResourceDNSRecordset(),
