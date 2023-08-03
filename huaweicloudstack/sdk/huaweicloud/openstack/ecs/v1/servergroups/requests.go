@@ -72,7 +72,7 @@ func (opts MemberOpts) ToServerGroupUpdateMemberMap(optsType string) (map[string
 
 // UpdateMember is used to add and delete members from Server Group.
 // (params)optsType: The opts type is title of block in request body.
-//                   Add options is "add_memebr" and remove options is "remove_member".
+// Add options is "add_memebr" and remove options is "remove_member".
 func UpdateMember(client *golangsdk.ServiceClient, opts MemberOptsBuilder, optsType, id string) (r MemberResult) {
 	b, err := opts.ToServerGroupUpdateMemberMap(optsType)
 	if err != nil {
@@ -80,7 +80,7 @@ func UpdateMember(client *golangsdk.ServiceClient, opts MemberOptsBuilder, optsT
 		return
 	}
 	_, r.Err = client.Post(actionURL(client, id), b, nil, &golangsdk.RequestOpts{
-		OkCodes: []int{200, 202},
+		OkCodes: []int{200, 202, 204},
 	})
 	return
 }
