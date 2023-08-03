@@ -339,6 +339,9 @@ func Provider() *schema.Provider {
 			"hcs_cce_node_pool":      cce.DataSourceCCENodePoolV3(),
 			"hcs_cce_node":           cce.DataSourceNode(),
 			"hcs_cce_nodes":          cce.DataSourceNodes(),
+
+			"hcs_ecs_compute_flavors":      ecs.DataSourceEcsFlavors(),
+			"hcs_ecs_compute_servergroups": ecs.DataSourceComputeServerGroups(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -373,8 +376,9 @@ func Provider() *schema.Provider {
 			"hcs_elb_pool":            elb.ResourcePoolV3(),
 			"hcs_elb_security_policy": elb.ResourceSecurityPolicy(),
 
-			"hcs_ecs_attach_volume":        ecs.ResourceComputeVolumeAttach(),
-			"hcs_ecs_compute_server_group": ecs.ResourceComputeServerGroup(),
+			"hcs_ecs_compute_volume_attach":    ecs.ResourceComputeVolumeAttach(),
+			"hcs_ecs_compute_server_group":     ecs.ResourceComputeServerGroup(),
+			"hcs_ecs_compute_interface_attach": ecs.ResourceComputeInterfaceAttach(),
 
 			// Legacy
 			"hcs_networking_eip_associate": eip.ResourceEIPAssociate(),
