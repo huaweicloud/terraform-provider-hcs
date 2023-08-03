@@ -17,14 +17,12 @@ import (
 	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/compute/v2/extensions/attachinterfaces"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/networking/v2/ports"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
 )
 
 func ResourceComputeInterfaceAttach() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceComputeInterfaceAttachCreate,
 		ReadContext:   resourceComputeInterfaceAttachRead,
-		UpdateContext: resourceComputeInterfaceAttachUpdate,
 		DeleteContext: resourceComputeInterfaceAttachDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -68,16 +66,11 @@ func ResourceComputeInterfaceAttach() *schema.Resource {
 				Computed: true,
 				ForceNew: true,
 			},
-			"security_group_ids": {
-				Type:     schema.TypeList,
-				Optional: true,
-				Computed: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-			},
 			"source_dest_check": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  true,
+				ForceNew: true,
 			},
 			"mac": {
 				Type:     schema.TypeString,
@@ -87,11 +80,9 @@ func ResourceComputeInterfaceAttach() *schema.Resource {
 	}
 }
 
-func updateInterfacePort(client *golangsdk.ServiceClient, portId string, securityGroupIds []string,
-	sourceDestCheckEnabled bool) error {
+func updateInterfacePort(client *golangsdk.ServiceClient, portId string, sourceDestCheckEnabled bool) error {
 	opts := ports.UpdateOpts{
 		AllowedAddressPairs: nil,
-		SecurityGroups:      &securityGroupIds,
 	}
 	if !sourceDestCheckEnabled {
 		// Update the allowed-address-pairs of the port to 1.1.1.1/0
@@ -168,10 +159,9 @@ func resourceComputeInterfaceAttachCreate(ctx context.Context, d *schema.Resourc
 	d.SetId(id)
 
 	var (
-		securityGroupIds       = d.Get("security_group_ids").([]interface{})
 		sourceDestCheckEnabled = d.Get("source_dest_check").(bool)
 	)
-	err = updateInterfacePort(nicClient, portID, utils.ExpandToStringList(securityGroupIds), sourceDestCheckEnabled)
+	err = updateInterfacePort(nicClient, portID, sourceDestCheckEnabled)
 	if err != nil {
 		return diag.Errorf("error updating VPC port (%s): %s", portID, err)
 	}
@@ -202,10 +192,9 @@ func resourceComputeInterfaceAttachRead(_ context.Context, d *schema.ResourceDat
 	}
 
 	var (
-		securitygroups []string
-		ipAddress      string
-		macAddress     string
-		sdCheck        bool
+		ipAddress  string
+		macAddress string
+		sdCheck    bool
 	)
 
 	if len(attachment.FixedIPs) > 0 {
@@ -213,7 +202,6 @@ func resourceComputeInterfaceAttachRead(_ context.Context, d *schema.ResourceDat
 	}
 	if port, err := ports.Get(networkingClient, attachment.PortID).Extract(); err == nil {
 		macAddress = port.MACAddress
-		securitygroups = port.SecurityGroups
 		sdCheck = len(port.AllowedAddressPairs) == 0
 	}
 
@@ -224,31 +212,10 @@ func resourceComputeInterfaceAttachRead(_ context.Context, d *schema.ResourceDat
 		d.Set("network_id", attachment.NetID),
 		d.Set("fixed_ip", ipAddress),
 		d.Set("mac", macAddress),
-		d.Set("security_group_ids", securitygroups),
 		d.Set("source_dest_check", sdCheck),
 	)
 
 	return diag.FromErr(mErr.ErrorOrNil())
-}
-
-func resourceComputeInterfaceAttachUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
-	nicClient, err := cfg.NetworkingV2Client(cfg.GetRegion(d))
-	if err != nil {
-		return diag.Errorf("error creating networking client: %s", err)
-	}
-
-	var (
-		portId                 = d.Get("port_id").(string)
-		securityGroupIds       = d.Get("security_group_ids").([]interface{})
-		sourceDestCheckEnabled = d.Get("source_dest_check").(bool)
-	)
-	err = updateInterfacePort(nicClient, portId, utils.ExpandToStringList(securityGroupIds), sourceDestCheckEnabled)
-	if err != nil {
-		return diag.Errorf("error updating VPC port (%s): %s", portId, err)
-	}
-
-	return resourceComputeInterfaceAttachRead(ctx, d, meta)
 }
 
 func resourceComputeInterfaceAttachDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
