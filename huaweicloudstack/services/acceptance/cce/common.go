@@ -42,24 +42,3 @@ resource "hcs_cce_node" "test" {
   }
 }`, common.TestBaseNetwork(rName), rName)
 }
-
-func testAccNodePool_base(rName string) string {
-	return fmt.Sprintf(`
-%[1]s
-
-data "hcs_availability_zones" "test" {}
-
-resource "hcs_kps_keypair" "test" {
-  name = "%[2]s"
-}
-
-resource "hcs_cce_cluster" "test" {
-  name                   = "%[2]s"
-  cluster_type           = "VirtualMachine"
-  flavor_id              = "cce.s1.small"
-  vpc_id                 = hcs_vpc.test.id
-  subnet_id              = hcs_vpc_subnet.test.id
-  container_network_type = "overlay_l2"
-}
-`, common.TestVpc(rName), rName)
-}
