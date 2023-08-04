@@ -189,7 +189,6 @@ func TestAccNode_existing_eip(t *testing.T) {
 		PreCheck: func() {
 			acceptance.TestAccPreCheck(t)
 			acceptance.TestAccPreCheckCceClusterId(t)
-			acceptance.TestAccPreCheckEipId(t)
 		},
 		ProviderFactories: acceptance.TestAccProviderFactories,
 		CheckDestroy:      rc.CheckResourceDestroy(),
@@ -209,6 +208,21 @@ func TestAccNode_existing_eip(t *testing.T) {
 
 func testAccNode_existing_eip(name string) string {
 	return fmt.Sprintf(`
+
+resource "hcs_vpc_eip" "test" {
+  name = "%[2]s"
+
+  publicip {
+    type       = "5_bgp"
+  }
+
+  bandwidth {
+    share_type  = "PER"
+    name        = "%[2]s"
+    size        = 5
+  }
+}
+
 resource "hcs_cce_node" "test" {
   cluster_id        = "%[1]s"
   name              = "%[2]s"
@@ -218,7 +232,7 @@ resource "hcs_cce_node" "test" {
   os                = "EulerOS 2.10"
 
   // Assign existing EIP
-  eip_id = "%[3]s"
+  eip_id = hcs_vpc_eip.test.id
 
   root_volume {
     volumetype = "SSD"
@@ -229,7 +243,7 @@ resource "hcs_cce_node" "test" {
     size       = 100
   }
 }
-`, acceptance.HCS_CCE_CLUSTER_ID, name, acceptance.HCS_EIP_ID)
+`, acceptance.HCS_CCE_CLUSTER_ID, name)
 }
 
 func TestAccNode_volume_extendParams(t *testing.T) {

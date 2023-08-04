@@ -241,7 +241,7 @@ func TestAccCluster_secGroup(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "container_network_type", "overlay_l2"),
 					resource.TestCheckResourceAttr(resourceName, "authentication_mode", "rbac"),
 					resource.TestCheckResourceAttr(resourceName, "service_network_cidr", "10.248.0.0/16"),
-					resource.TestCheckResourceAttr(resourceName, "security_group_id", acceptance.HCS_SG_ID),
+					resource.TestCheckResourceAttrPair(resourceName, "security_group_id", "hcs_networking_secgroup", "id"),
 				),
 			},
 			{
@@ -249,7 +249,7 @@ func TestAccCluster_secGroup(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "description", "created by terraform update"),
 					resource.TestCheckResourceAttr(resourceName, "status", "Available"),
-					resource.TestCheckResourceAttr(resourceName, "security_group_id", acceptance.HCS_SG_ID2),
+					resource.TestCheckResourceAttrPair(resourceName, "security_group_id", "hcs_networking_secgroup", "id"),
 				),
 			},
 		},
