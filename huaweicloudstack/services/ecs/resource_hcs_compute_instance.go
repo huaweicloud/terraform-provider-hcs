@@ -35,7 +35,7 @@ import (
 )
 
 var (
-	novaConflicts  = []string{"block_device", "metadata"}
+	novaConflicts  = []string{"block_device_mapping_v2", "metadata"}
 	powerActionMap = map[string]string{
 		"ON":     "os-start",
 		"OFF":    "os-stop",
@@ -482,7 +482,7 @@ func ResourceComputeInstance() *schema.Resource {
 				Deprecated:    "use tags instead",
 				Elem:          &schema.Schema{Type: schema.TypeString},
 			},
-			"block_device": {
+			"block_device_mapping_v2": {
 				Type:          schema.TypeList,
 				Optional:      true,
 				ConflictsWith: []string{"system_disk_type", "system_disk_size", "data_disks"},
@@ -491,8 +491,7 @@ func ResourceComputeInstance() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"source_type": {
 							Type:     schema.TypeString,
-							Required: true,
-							ForceNew: true,
+							Optional: true,
 						},
 						"uuid": {
 							Type:     schema.TypeString,
@@ -504,10 +503,14 @@ func ResourceComputeInstance() *schema.Resource {
 							Optional: true,
 							ForceNew: true,
 						},
-						"destination_type": {
+						"volume_type": {
 							Type:     schema.TypeString,
 							Optional: true,
 							ForceNew: true,
+						},
+						"destination_type": {
+							Type:     schema.TypeString,
+							Optional: true,
 						},
 						"boot_index": {
 							Type:     schema.TypeInt,
@@ -518,11 +521,6 @@ func ResourceComputeInstance() *schema.Resource {
 							Type:     schema.TypeBool,
 							Optional: true,
 							Default:  false,
-							ForceNew: true,
-						},
-						"guest_format": {
-							Type:     schema.TypeString,
-							Optional: true,
 							ForceNew: true,
 						},
 					},
@@ -536,7 +534,7 @@ func hasDeprecatedConfig(d *schema.ResourceData) bool {
 	if _, ok := d.GetOk("metadata"); ok {
 		return true
 	}
-	if _, ok := d.GetOk("block_device"); ok {
+	if _, ok := d.GetOk("block_device_mapping_v2"); ok {
 		return true
 	}
 	return false
@@ -575,7 +573,7 @@ func resourceComputeInstanceCreate(ctx context.Context, d *schema.ResourceData, 
 	}
 
 	// Determines the Image ID using the following rules:
-	// If a bootable block_device was specified, ignore the image altogether.
+	// If a bootable block_device_mapping_v2 was specified, ignore the image altogether.
 	// If an image_id was specified, use it.
 	// If an image_name was specified, look up the image ID, report if error.
 	imageId, err := getImageIDFromConfig(imsClient, d)
@@ -588,7 +586,7 @@ func resourceComputeInstanceCreate(ctx context.Context, d *schema.ResourceData, 
 		return diag.FromErr(err)
 	}
 
-	// determine if block_device configuration is correct
+	// determine if block_device_mapping_v2 configuration is correct
 	// this includes valid combinations and required attributes
 	if err := checkBlockDeviceConfig(d); err != nil {
 		return diag.FromErr(err)
@@ -748,7 +746,7 @@ func resourceComputeInstanceCreate(ctx context.Context, d *schema.ResourceData, 
 			}
 		}
 
-		if vL, ok := d.GetOk("block_device"); ok {
+		if vL, ok := d.GetOk("block_device_mapping_v2"); ok {
 			blockDevices, err := resourceInstanceBlockDevicesV2(vL.([]interface{}))
 			if err != nil {
 				return diag.FromErr(err)
@@ -772,14 +770,10 @@ func resourceComputeInstanceCreate(ctx context.Context, d *schema.ResourceData, 
 
 		log.Printf("[DEBUG] compute create options: %#v", createOpts)
 
-		// If a block_device is used, use the bootfromvolume.Create function as it allows an empty ImageRef.
+		// If a block_device_mapping_v2  is used, use the bootfromvolume.Create function as it allows an empty ImageRef.
 		// Otherwise, use the normal servers.Create function.
 		var server *servers.Server
-		if _, ok := d.GetOk("block_device"); ok {
-			server, err = bootfromvolume.Create(computeClient, createOpts).Extract()
-		} else {
-			server, err = servers.Create(computeClient, createOpts).Extract()
-		}
+		server, err = servers.Create(computeClient, createOpts).Extract()
 
 		if err != nil {
 			return diag.Errorf("error creating server: %s", err)
@@ -1557,7 +1551,6 @@ func resourceInstanceBlockDevicesV2(bds []interface{}) ([]bootfromvolume.BlockDe
 			VolumeSize:          bdM["volume_size"].(int),
 			BootIndex:           bdM["boot_index"].(int),
 			DeleteOnTermination: bdM["delete_on_termination"].(bool),
-			GuestFormat:         bdM["guest_format"].(string),
 		}
 
 		sourceType := bdM["source_type"].(string)
@@ -1642,9 +1635,9 @@ func getImage(client *golangsdk.ServiceClient, id, name string) (*cloudimages.Im
 }
 
 func getImageIDFromConfig(imsClient *golangsdk.ServiceClient, d *schema.ResourceData) (string, error) {
-	// If block_device was used, an Image does not need to be specified, unless an image/local
+	// If block_device_mapping_v2 was used, an Image does not need to be specified, unless an image/local
 	// combination was used. This emulates normal boot behavior. Otherwise, ignore the image altogether.
-	if vL, ok := d.GetOk("block_device"); ok {
+	if vL, ok := d.GetOk("block_device_mapping_v2"); ok {
 		needImage := false
 		for _, v := range vL.([]interface{}) {
 			vM := v.(map[string]interface{})
@@ -1673,9 +1666,9 @@ func getImageIDFromConfig(imsClient *golangsdk.ServiceClient, d *schema.Resource
 }
 
 func setImageInformation(d *schema.ResourceData, imsClient *golangsdk.ServiceClient, imageID string) error {
-	// If block_device was used, an Image does not need to be specified, unless an image/local
+	// If block_device_mapping_v2 was used, an Image does not need to be specified, unless an image/local
 	// combination was used. This emulates normal boot behavior. Otherwise, ignore the image altogether.
-	if vL, ok := d.GetOk("block_device"); ok {
+	if vL, ok := d.GetOk("block_device_mapping_v2"); ok {
 		needImage := false
 		for _, v := range vL.([]interface{}) {
 			vM := v.(map[string]interface{})
@@ -1779,7 +1772,7 @@ func resourceComputeSchedulerHintsHash(v interface{}) int {
 }
 
 func checkBlockDeviceConfig(d *schema.ResourceData) error {
-	if vL, ok := d.GetOk("block_device"); ok {
+	if vL, ok := d.GetOk("block_device_mapping_v2"); ok {
 		for _, v := range vL.([]interface{}) {
 			vM := v.(map[string]interface{})
 

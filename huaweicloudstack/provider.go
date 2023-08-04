@@ -380,6 +380,7 @@ func Provider() *schema.Provider {
 			"hcs_ecs_compute_volume_attach":    ecs.ResourceComputeVolumeAttach(),
 			"hcs_ecs_compute_server_group":     ecs.ResourceComputeServerGroup(),
 			"hcs_ecs_compute_interface_attach": ecs.ResourceComputeInterfaceAttach(),
+			"hcs_ecs_compute_instance":     ecs.ResourceComputeInstance(),
 
 			// Legacy
 			"hcs_networking_eip_associate": eip.ResourceEIPAssociate(),
