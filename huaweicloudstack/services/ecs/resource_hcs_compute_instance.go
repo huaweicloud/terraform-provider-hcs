@@ -1236,7 +1236,7 @@ func resourceComputeInstanceUpdate(ctx context.Context, d *schema.ResourceData, 
 		stateConf := &resource.StateChangeConf{
 			Pending:    []string{"extending"},
 			Target:     []string{"available", "in-use"},
-			Refresh:    evs.CloudVolumeRefreshFunc(evsV2Client, systemDiskID),
+			Refresh:    evs.VolumeV2StateRefreshFunc(evsV2Client, systemDiskID),
 			Timeout:    d.Timeout(schema.TimeoutUpdate),
 			Delay:      10 * time.Second,
 			MinTimeout: 3 * time.Second,
