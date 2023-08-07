@@ -1,38 +1,18 @@
 package volumes
 
 import (
-	"encoding/json"
-	"time"
-
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/pagination"
 )
 
 type Attachment struct {
-	AttachedAt   time.Time `json:"-"`
+	AttachedAt   string    `json:"attached_at"`
 	AttachmentID string    `json:"attachment_id"`
 	Device       string    `json:"device"`
 	HostName     string    `json:"host_name"`
 	ID           string    `json:"id"`
 	ServerID     string    `json:"server_id"`
 	VolumeID     string    `json:"volume_id"`
-}
-
-func (r *Attachment) UnmarshalJSON(b []byte) error {
-	type tmp Attachment
-	var s struct {
-		tmp
-		AttachedAt golangsdk.JSONRFC3339MilliNoZ `json:"attached_at"`
-	}
-	err := json.Unmarshal(b, &s)
-	if err != nil {
-		return err
-	}
-	*r = Attachment(s.tmp)
-
-	r.AttachedAt = time.Time(s.AttachedAt)
-
-	return err
 }
 
 // Volume contains all the information associated with an OpenStack Volume.
@@ -46,9 +26,9 @@ type Volume struct {
 	// AvailabilityZone is which availability zone the volume is in.
 	AvailabilityZone string `json:"availability_zone"`
 	// The date when this volume was created.
-	CreatedAt time.Time `json:"-"`
+	CreatedAt string `json:"created_at"`
 	// The date when this volume was last updated
-	UpdatedAt time.Time `json:"-"`
+	UpdatedAt string `json:"updated_at"`
 	// Instances onto which the volume is attached.
 	Attachments []Attachment `json:"attachments"`
 	// Human-readable display name for the volume.
@@ -75,25 +55,8 @@ type Volume struct {
 	ConsistencyGroupID string `json:"consistencygroup_id"`
 	// Multiattach denotes if the volume is multi-attach capable.
 	Multiattach bool `json:"multiattach"`
-}
-
-func (r *Volume) UnmarshalJSON(b []byte) error {
-	type tmp Volume
-	var s struct {
-		tmp
-		CreatedAt golangsdk.JSONRFC3339MilliNoZ `json:"created_at"`
-		UpdatedAt golangsdk.JSONRFC3339MilliNoZ `json:"updated_at"`
-	}
-	err := json.Unmarshal(b, &s)
-	if err != nil {
-		return err
-	}
-	*r = Volume(s.tmp)
-
-	r.CreatedAt = time.Time(s.CreatedAt)
-	r.UpdatedAt = time.Time(s.UpdatedAt)
-
-	return err
+	// wwn
+	WWN string `json:"wwn"`
 }
 
 // VolumePage is a pagination.pager that is returned from a call to the List function.

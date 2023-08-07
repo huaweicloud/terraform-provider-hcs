@@ -1,0 +1,93 @@
+---
+subcategory: "Elastic Volume Service (EVS)"
+---
+
+# hcs_evs_volume
+
+Manages a volume resource within HuaweiCloudStack.
+
+## Example Usage
+
+```hcl
+resource "hcs_evs_volume" "volume_1" {
+  availability_zone      = "az"
+  name                   = "volume_1"
+  description            = "first test volume"
+  size                   = 3
+}
+```
+
+## Argument Reference
+
+The following arguments are supported:
+
+* `region` - (Optional, String, ForceNew) The region in which to create the disk. If omitted, the `region` argument of
+  the provider is used. Changing this creates a new disk.
+
+* `size` - (Required, Int) The size of the disk to create (in gigabytes).
+
+* `availability_zone` - (Optional, String, ForceNew) The availability zone for the disk. Changing this creates a new
+  disk.
+
+* `consistency_group_id` - (Optional, String, ForceNew) The consistency group to place the disk in.
+
+* `description` - (Optional, String) A description of the disk. Changing this updates the disk's description.
+
+* `image_id` - (Optional, String, ForceNew) The image ID from which to create the disk. Changing this creates a new
+  disk.
+
+* `metadata` - (Optional, Map) Metadata key/value pairs to associate with the disk. Changing this updates the existing
+  disk metadata.
+
+* `name` - (Optional, String) A unique name for the disk. Changing this updates the disk's name.
+
+* `snapshot_id` - (Optional, String, ForceNew) The snapshot ID from which to create the disk. Changing this creates a
+  new disk.
+
+* `source_replica` - (Optional, String, ForceNew) The disk ID to replicate with.
+
+* `source_vol_id` - (Optional, String, ForceNew) The disk ID from which to create the disk. Changing this creates a
+  new disk.
+
+* `volume_type` - (Optional, String, ForceNew) The type of disk to create. Changing this creates a new disk.
+
+* `multiattach` - (Optional, Bool, ForceNew) Specifies whether the disk is shareable. The default value is false. 
+  Changing this creates a new disk.
+
+## Attribute Reference
+
+In addition to all arguments above, the following attributes are exported:
+
+* `id` - Specifies a resource ID in UUID format.
+
+* `attachment` - If a disk is attached to an instance, this attribute will display the Attachment ID, Instance ID, and
+  the Device as the Instance sees it. The [object](#attachment_struct) structure is documented below.
+
+* `wwn` - The unique identifier used for mounting the disk.
+
+* `status` - The status of disk.
+
+<a name="attachment_struct"></a>
+The `attachment` block supports:
+
+* `id` - The ID of the attachment information.
+
+* `instance_id` - The ID of the server to which the disk is attached.
+
+* `device` - The device name.
+
+## Timeouts
+
+This resource provides the following timeouts configuration options:
+
+* `create` - Default is 10 minute.
+* `update` - Default is 10 minute.
+* `delete` - Default is 10 minute.
+
+## Import
+
+Volumes can be imported using the `id`, e.g.
+
+```
+$ terraform import hcs_evs_volume.volume_1 ea257959-eeb1-4c10-8d33-26f0409a755d
+```

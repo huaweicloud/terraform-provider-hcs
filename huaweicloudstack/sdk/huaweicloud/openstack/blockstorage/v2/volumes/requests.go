@@ -110,14 +110,28 @@ type ListOptsBuilder interface {
 // ListOpts holds options for listing Volumes. It is passed to the volumes.List
 // function.
 type ListOpts struct {
+	// The availability zone
+	AvailabilityZone string `q:"availability_zone"`
+
+	// The Enterprise ProjectID
+	EnterpriseProjectID string `q:"enterprise_project_id"`
+
+	// Server ID
+	ServerID string `q:"server_id"`
+
 	// AllTenants will retrieve volumes of all tenants/projects.
 	AllTenants bool `q:"all_tenants"`
+
+	MetadataOrigin map[string]interface{}
 
 	// Metadata will filter results based on specified metadata.
 	Metadata map[string]string `q:"metadata"`
 
 	// Name will filter by the specified volume name.
 	Name string `q:"name"`
+
+	// whether all snapshots of the volume are displayed in the volume list.
+	WithSnapshot bool `q:"with_snapshot"`
 
 	// Status will filter by the specified status.
 	Status string `q:"status"`
@@ -142,8 +156,18 @@ type ListOpts struct {
 
 // ToVolumeListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToVolumeListQuery() (string, error) {
+	handleMetadata(&opts)
 	q, err := golangsdk.BuildQueryString(opts)
 	return q.String(), err
+}
+
+func handleMetadata(opts *ListOpts) {
+	m := opts.MetadataOrigin
+	nm := make(map[string]string, len(m))
+	for k, v := range m {
+		nm[k] = v.(string)
+	}
+	opts.Metadata = nm
 }
 
 // List returns Volumes optionally limited by the conditions provided in ListOpts.
