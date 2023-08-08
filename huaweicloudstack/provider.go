@@ -31,7 +31,7 @@ const (
 	defaultCloud string = "myhuaweicloud.com"
 )
 
-// Provider returns a schema.Provider for HuaweiCloud.
+// Provider returns a schema.Provider for HuaweiCloudStack.
 func Provider() *schema.Provider {
 	provider := &schema.Provider{
 		Schema: map[string]*schema.Schema{
@@ -385,7 +385,7 @@ func Provider() *schema.Provider {
 			"hcs_ecs_compute_volume_attach":    ecs.ResourceComputeVolumeAttach(),
 			"hcs_ecs_compute_server_group":     ecs.ResourceComputeServerGroup(),
 			"hcs_ecs_compute_interface_attach": ecs.ResourceComputeInterfaceAttach(),
-			"hcs_ecs_compute_instance":     ecs.ResourceComputeInstance(),
+			"hcs_ecs_compute_instance":         ecs.ResourceComputeInstance(),
 
 			// Legacy
 			"hcs_networking_eip_associate": eip.ResourceEIPAssociate(),
@@ -450,7 +450,7 @@ func init() {
 	descriptions = map[string]string{
 		"auth_url": "The Identity authentication URL.",
 
-		"region": "The HuaweiCloud region to connect to.",
+		"region": "The HuaweiCloudStack region to connect to.",
 
 		"user_name": "Username to login with.",
 
@@ -472,8 +472,8 @@ func init() {
 
 		"domain_name": "The name of the Domain to scope to.",
 
-		"access_key":     "The access key of the HuaweiCloud to use.",
-		"secret_key":     "The secret key of the HuaweiCloud to use.",
+		"access_key":     "The access key of the HuaweiCloudStack to use.",
+		"secret_key":     "The secret key of the HuaweiCloudStack to use.",
 		"security_token": "The security token to authenticate with a temporary security credential.",
 
 		"insecure": "Trust self-signed certificates.",

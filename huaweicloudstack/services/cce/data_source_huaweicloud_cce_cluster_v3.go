@@ -186,7 +186,7 @@ func dataSourceCCEClusterV3Read(_ context.Context, d *schema.ResourceData, meta 
 	config := meta.(*config.Config)
 	cceClient, err := config.CceV3Client(config.GetRegion(d))
 	if err != nil {
-		return fmtp.DiagErrorf("Unable to create HuaweiCloud CCE client : %s", err)
+		return fmtp.DiagErrorf("Unable to create HuaweiCloudStack CCE client : %s", err)
 	}
 
 	listOpts := clusters.ListOpts{
@@ -262,7 +262,7 @@ func dataSourceCCEClusterV3Read(_ context.Context, d *schema.ResourceData, meta 
 
 	cert, err := r.Extract()
 	if err != nil {
-		logp.Printf("Error retrieving HuaweiCloud CCE cluster cert: %s", err)
+		logp.Printf("Error retrieving HuaweiCloudStack CCE cluster cert: %s", err)
 	}
 
 	//Set Certificate Clusters

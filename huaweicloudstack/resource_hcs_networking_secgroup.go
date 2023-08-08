@@ -149,7 +149,7 @@ func resourceNetworkingSecGroupCreate(ctx context.Context, d *schema.ResourceDat
 	region := common.GetRegion(d, config)
 	v3Client, err := config.NetworkingV3Client(region)
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloud networking v3 client: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v3 client: %s", err)
 	}
 
 	// Only name and enterprise project ID are supported.
@@ -158,7 +158,7 @@ func resourceNetworkingSecGroupCreate(ctx context.Context, d *schema.ResourceDat
 		EnterpriseProjectId: common.GetEnterpriseProjectID(d, config),
 	}
 
-	logp.Printf("[DEBUG] Create HuaweiCloud Security Group: %#v", createOpts)
+	logp.Printf("[DEBUG] Create HuaweiCloudStack Security Group: %#v", createOpts)
 	securityGroup, err := v3groups.Create(v3Client, createOpts)
 	if err != nil {
 		if _, ok := err.(golangsdk.ErrDefault404); ok {
@@ -199,7 +199,7 @@ func resourceNetworkingSecGroupCreateV1(ctx context.Context, d *schema.ResourceD
 	// The v3 API does not exist or has not been published in this region, retry creation using v1 client.
 	v1Client, err := config.NetworkingV1Client(region)
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloud networking v1 client: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v1 client: %s", err)
 	}
 
 	// Only name and enterprise project ID are supported.
@@ -237,16 +237,16 @@ func resourceNetworkingSecGroupRead(_ context.Context, d *schema.ResourceData, m
 	region := common.GetRegion(d, config)
 	v1Client, err := config.NetworkingV1Client(region)
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloud networking v1 client: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v1 client: %s", err)
 	}
 	v3Client, err := config.NetworkingV3Client(region)
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloud networking v3 client: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v3 client: %s", err)
 	}
 
 	v1Resp, err := v1groups.Get(v1Client, d.Id()).Extract()
 	if err != nil {
-		return common.CheckDeletedDiag(d, err, "HuaweiCloud Security group")
+		return common.CheckDeletedDiag(d, err, "HuaweiCloudStack Security group")
 	}
 
 	logp.Printf("[DEBUG] Retrieved Security Group (%s) by v1 client: %v", d.Id(), v1Resp)
@@ -348,7 +348,7 @@ func resourceNetworkingSecGroupUpdate(ctx context.Context, d *schema.ResourceDat
 	region := common.GetRegion(d, config)
 	client, err := config.NetworkingV3Client(region)
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloud networking v3 client: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v3 client: %s", err)
 	}
 
 	description := d.Get("description").(string)
@@ -378,7 +378,7 @@ func resourceNetworkingSecGroupUpdate(ctx context.Context, d *schema.ResourceDat
 func resourceNetworkingSecGroupUpdateV2(d *schema.ResourceData, config *config.Config, region string) error {
 	v2Client, err := config.NetworkingV2Client(region)
 	if err != nil {
-		return fmtp.Errorf("Error creating HuaweiCloud networking v2 client: %s", err)
+		return fmtp.Errorf("Error creating HuaweiCloudStack networking v2 client: %s", err)
 	}
 
 	desc := d.Get("description").(string)
@@ -396,7 +396,7 @@ func resourceNetworkingSecGroupDelete(ctx context.Context, d *schema.ResourceDat
 	config := meta.(*config.Config)
 	client, err := config.NetworkingV1Client(common.GetRegion(d, config))
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloud networking v1 client: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v1 client: %s", err)
 	}
 
 	stateConf := &resource.StateChangeConf{
@@ -419,12 +419,12 @@ func resourceNetworkingSecGroupDelete(ctx context.Context, d *schema.ResourceDat
 
 func waitForSecGroupDelete(client *golangsdk.ServiceClient, secGroupId string) resource.StateRefreshFunc {
 	return func() (interface{}, string, error) {
-		logp.Printf("[DEBUG] Attempting to delete HuaweiCloud Security Group %s.", secGroupId)
+		logp.Printf("[DEBUG] Attempting to delete HuaweiCloudStack Security Group %s.", secGroupId)
 
 		r, err := v1groups.Get(client, secGroupId).Extract()
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
-				logp.Printf("[DEBUG] Successfully deleted HuaweiCloud Security Group %s", secGroupId)
+				logp.Printf("[DEBUG] Successfully deleted HuaweiCloudStack Security Group %s", secGroupId)
 				return r, "DELETED", nil
 			}
 			return r, "ACTIVE", err
@@ -433,7 +433,7 @@ func waitForSecGroupDelete(client *golangsdk.ServiceClient, secGroupId string) r
 		err = v1groups.Delete(client, secGroupId).ExtractErr()
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
-				logp.Printf("[DEBUG] Successfully deleted HuaweiCloud Security Group %s", secGroupId)
+				logp.Printf("[DEBUG] Successfully deleted HuaweiCloudStack Security Group %s", secGroupId)
 				return r, "DELETED", nil
 			}
 			if errCode, ok := err.(golangsdk.ErrUnexpectedResponseCode); ok {
@@ -444,7 +444,7 @@ func waitForSecGroupDelete(client *golangsdk.ServiceClient, secGroupId string) r
 			return r, "ACTIVE", err
 		}
 
-		logp.Printf("[DEBUG] HuaweiCloud Security Group %s still active", secGroupId)
+		logp.Printf("[DEBUG] HuaweiCloudStack Security Group %s still active", secGroupId)
 		return r, "ACTIVE", nil
 	}
 }

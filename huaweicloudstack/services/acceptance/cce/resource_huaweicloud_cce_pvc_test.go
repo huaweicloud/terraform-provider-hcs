@@ -18,7 +18,7 @@ import (
 func getPvcResourceFunc(conf *config.Config, state *terraform.ResourceState) (interface{}, error) {
 	c, err := conf.CceV1Client(acceptance.HCS_REGION_NAME)
 	if err != nil {
-		return nil, fmt.Errorf("error creating HuaweiCloud CCE v1 client: %s", err)
+		return nil, fmt.Errorf("error creating HuaweiCloudStack CCE v1 client: %s", err)
 	}
 	resp, err := cce.GetCcePvcInfoById(c, state.Primary.Attributes["cluster_id"],
 		state.Primary.Attributes["namespace"], state.Primary.ID)

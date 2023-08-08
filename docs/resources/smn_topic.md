@@ -4,7 +4,7 @@ subcategory: "Simple Message Notification (SMN)"
 
 # hcs_smn_topic
 
-Manages an SMN topic resource within HuaweiCloud.
+Manages an SMN topic resource within HuaweiCloudStack.
 
 ## Example Usage
 

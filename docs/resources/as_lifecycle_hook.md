@@ -4,7 +4,7 @@ subcategory: "Auto Scaling"
 
 # hcs_as_lifecycle_hook
 
-Manages an AS Lifecycle Hook resource within HuaweiCloud.
+Manages an AS Lifecycle Hook resource within HuaweiCloudStack.
 
 ## Example Usage
 

@@ -22,7 +22,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils/logp"
 )
 
-// FirewallGroup is an HuaweiCloud firewall group.
+// FirewallGroup is an HuaweiCloudStack firewall group.
 type FirewallGroup struct {
 	firewall_groups.FirewallGroup
 	routerinsertion.FirewallGroupExt
@@ -100,7 +100,7 @@ func resourceNetworkACLCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*config.Config)
 	fwClient, err := config.FwV2Client(common.GetRegion(d, config))
 	if err != nil {
-		return fmtp.Errorf("Error creating HuaweiCloud fw client: %s", err)
+		return fmtp.Errorf("Error creating HuaweiCloudStack fw client: %s", err)
 	}
 
 	defer func() {
@@ -230,7 +230,7 @@ func resourceNetworkACLRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*config.Config)
 	fwClient, err := config.FwV2Client(common.GetRegion(d, config))
 	if err != nil {
-		return fmtp.Errorf("Error creating HuaweiCloud fw client: %s", err)
+		return fmtp.Errorf("Error creating HuaweiCloudStack fw client: %s", err)
 	}
 
 	var fwGroup FirewallGroup
@@ -239,7 +239,7 @@ func resourceNetworkACLRead(d *schema.ResourceData, meta interface{}) error {
 		return common.CheckDeleted(d, err, "firewall")
 	}
 
-	logp.Printf("[DEBUG] Read HuaweiCloud Firewall group %s: %#v", d.Id(), fwGroup)
+	logp.Printf("[DEBUG] Read HuaweiCloudStack Firewall group %s: %#v", d.Id(), fwGroup)
 
 	d.Set("name", fwGroup.Name)
 	d.Set("status", fwGroup.Status)
@@ -247,7 +247,7 @@ func resourceNetworkACLRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("inbound_policy_id", fwGroup.IngressPolicyID)
 	d.Set("outbound_policy_id", fwGroup.EgressPolicyID)
 	if err := d.Set("ports", fwGroup.PortIDs); err != nil {
-		return fmtp.Errorf("[DEBUG] Error saving ports to state for HuaweiCloud firewall group (%s): %s", d.Id(), err)
+		return fmtp.Errorf("[DEBUG] Error saving ports to state for HuaweiCloudStack firewall group (%s): %s", d.Id(), err)
 	}
 
 	return nil
@@ -257,7 +257,7 @@ func resourceNetworkACLUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*config.Config)
 	fwClient, err := config.FwV2Client(common.GetRegion(d, config))
 	if err != nil {
-		return fmtp.Errorf("Error creating HuaweiCloud fw client: %s", err)
+		return fmtp.Errorf("Error creating HuaweiCloudStack fw client: %s", err)
 	}
 
 	// first of all, inbound_policy/rules and outbound_policy/rules should be updated
@@ -340,7 +340,7 @@ func resourceNetworkACLDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*config.Config)
 	fwClient, err := config.FwV2Client(common.GetRegion(d, config))
 	if err != nil {
-		return fmtp.Errorf("Error creating HuaweiCloud fw client: %s", err)
+		return fmtp.Errorf("Error creating HuaweiCloudStack fw client: %s", err)
 	}
 
 	inboundPolicyID := d.Get("inbound_policy_id").(string)
@@ -394,7 +394,7 @@ func getGWPortFromSubnet(config *config.Config, subnetID string) (string, error)
 	}
 	networkingClient, err := config.NetworkingV2Client(config.Region)
 	if err != nil {
-		return "", fmtp.Errorf("Error creating HuaweiCloud networking client: %s", err)
+		return "", fmtp.Errorf("Error creating HuaweiCloudStack networking client: %s", err)
 	}
 
 	// get Gateway IP

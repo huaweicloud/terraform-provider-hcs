@@ -15,7 +15,7 @@ import (
 
 func TestAccNetworkingSecGroupsDataSource_basic(t *testing.T) {
 	rName := acceptance.RandomAccResourceName()
-	dataSourceName := "data.huaweicloud_networking_secgroups.test"
+	dataSourceName := "data.hcs_networking_secgroups.test"
 
 	dc := acceptance.InitDataSourceCheck(dataSourceName)
 
@@ -32,7 +32,7 @@ func TestAccNetworkingSecGroupsDataSource_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(dataSourceName, "security_groups.0.description",
 						"[Acc Test] The security group created by Terraform."),
 					resource.TestCheckResourceAttrPair(dataSourceName, "security_groups.0.id",
-						"huaweicloud_networking_secgroup.test", "id"),
+						"hcs_networking_secgroup.test", "id"),
 					resource.TestCheckResourceAttrSet(dataSourceName, "security_groups.0.enterprise_project_id"),
 					resource.TestCheckResourceAttrSet(dataSourceName, "security_groups.0.created_at"),
 					resource.TestCheckResourceAttrSet(dataSourceName, "security_groups.0.updated_at"),
@@ -44,7 +44,7 @@ func TestAccNetworkingSecGroupsDataSource_basic(t *testing.T) {
 
 func TestAccNetworkingSecGroupsDataSource_description(t *testing.T) {
 	rName := acceptance.RandomAccResourceName()
-	dataSourceName := "data.huaweicloud_networking_secgroups.test"
+	dataSourceName := "data.hcs_networking_secgroups.test"
 
 	dc := acceptance.InitDataSourceCheck(dataSourceName)
 
@@ -61,7 +61,7 @@ func TestAccNetworkingSecGroupsDataSource_description(t *testing.T) {
 					resource.TestCheckResourceAttr(dataSourceName, "security_groups.0.description",
 						"[Acc Test] The security group created by Terraform."),
 					resource.TestCheckResourceAttrPair(dataSourceName, "security_groups.0.id",
-						"huaweicloud_networking_secgroup.test", "id"),
+						"hcs_networking_secgroup.test", "id"),
 					resource.TestCheckResourceAttrSet(dataSourceName, "security_groups.0.enterprise_project_id"),
 					resource.TestCheckResourceAttrSet(dataSourceName, "security_groups.0.created_at"),
 					resource.TestCheckResourceAttrSet(dataSourceName, "security_groups.0.updated_at"),
@@ -73,7 +73,7 @@ func TestAccNetworkingSecGroupsDataSource_description(t *testing.T) {
 
 func TestAccNetworkingSecGroupsDataSource_id(t *testing.T) {
 	rName := acceptance.RandomAccResourceName()
-	dataSourceName := "data.huaweicloud_networking_secgroups.test"
+	dataSourceName := "data.hcs_networking_secgroups.test"
 
 	dc := acceptance.InitDataSourceCheck(dataSourceName)
 
@@ -90,7 +90,7 @@ func TestAccNetworkingSecGroupsDataSource_id(t *testing.T) {
 					resource.TestCheckResourceAttr(dataSourceName, "security_groups.0.description",
 						"[Acc Test] The security group created by Terraform."),
 					resource.TestCheckResourceAttrPair(dataSourceName, "security_groups.0.id",
-						"huaweicloud_networking_secgroup.test", "id"),
+						"hcs_networking_secgroup.test", "id"),
 					resource.TestCheckResourceAttrSet(dataSourceName, "security_groups.0.enterprise_project_id"),
 					resource.TestCheckResourceAttrSet(dataSourceName, "security_groups.0.created_at"),
 					resource.TestCheckResourceAttrSet(dataSourceName, "security_groups.0.updated_at"),
@@ -102,7 +102,7 @@ func TestAccNetworkingSecGroupsDataSource_id(t *testing.T) {
 
 func testAccNetworkingSecGroupsDataSource_base(rName string) string {
 	return fmt.Sprintf(`
-resource "huaweicloud_networking_secgroup" "test" {
+resource "hcs_networking_secgroup" "test" {
   name        = "%s"
   description = "[Acc Test] The security group created by Terraform."
 }
@@ -113,8 +113,8 @@ func testAccNetworkingSecGroupsDataSource_basic(rName string) string {
 	return fmt.Sprintf(`
 %s
 
-data "huaweicloud_networking_secgroups" "test" {
-  name = huaweicloud_networking_secgroup.test.name
+data "hcs_networking_secgroups" "test" {
+  name = hcs_networking_secgroup.test.name
 }
 `, testAccNetworkingSecGroupsDataSource_base(rName))
 }
@@ -123,8 +123,8 @@ func testAccNetworkingSecGroupsDataSource_description(rName string) string {
 	return fmt.Sprintf(`
 %s
 
-data "huaweicloud_networking_secgroups" "test" {
-  description = huaweicloud_networking_secgroup.test.description
+data "hcs_networking_secgroups" "test" {
+  description = hcs_networking_secgroup.test.description
 }
 `, testAccNetworkingSecGroupsDataSource_base(rName))
 }
@@ -133,8 +133,8 @@ func testAccNetworkingSecGroupsDataSource_id(rName string) string {
 	return fmt.Sprintf(`
 %s
 
-data "huaweicloud_networking_secgroups" "test" {
-  id = huaweicloud_networking_secgroup.test.id
+data "hcs_networking_secgroups" "test" {
+  id = hcs_networking_secgroup.test.id
 }
 `, testAccNetworkingSecGroupsDataSource_base(rName))
 }

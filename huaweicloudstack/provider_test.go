@@ -120,14 +120,14 @@ func TestProvider(t *testing.T) {
 	}
 }
 
-// Steps for configuring HuaweiCloud with SSL validation are here:
+// Steps for configuring HuaweiCloudStack with SSL validation are here:
 // https://github.com/hashicorp/terraform/pull/6279#issuecomment-219020144
 func TestAccProvider_caCertFile(t *testing.T) {
 	if os.Getenv("TF_ACC") == "" || os.Getenv("OS_SSL_TESTS") == "" {
-		t.Skip("TF_ACC or OS_SSL_TESTS not set, skipping HuaweiCloud SSL test.")
+		t.Skip("TF_ACC or OS_SSL_TESTS not set, skipping HuaweiCloudStack SSL test.")
 	}
 	if os.Getenv("OS_CACERT") == "" {
-		t.Skip("OS_CACERT is not set; skipping HuaweiCloud CA test.")
+		t.Skip("OS_CACERT is not set; skipping HuaweiCloudStack CA test.")
 	}
 
 	p := Provider()
@@ -144,16 +144,16 @@ func TestAccProvider_caCertFile(t *testing.T) {
 
 	diags := p.Configure(context.Background(), terraform.NewResourceConfigRaw(raw))
 	if diags.HasError() {
-		t.Fatalf("Unexpected err when specifying HuaweiCloud CA by file: %s", diags[0].Summary)
+		t.Fatalf("Unexpected err when specifying HuaweiCloudStack CA by file: %s", diags[0].Summary)
 	}
 }
 
 func TestAccProvider_caCertString(t *testing.T) {
 	if os.Getenv("TF_ACC") == "" || os.Getenv("OS_SSL_TESTS") == "" {
-		t.Skip("TF_ACC or OS_SSL_TESTS not set, skipping HuaweiCloud SSL test.")
+		t.Skip("TF_ACC or OS_SSL_TESTS not set, skipping HuaweiCloudStack SSL test.")
 	}
 	if os.Getenv("OS_CACERT") == "" {
-		t.Skip("OS_CACERT is not set; skipping HuaweiCloud CA test.")
+		t.Skip("OS_CACERT is not set; skipping HuaweiCloudStack CA test.")
 	}
 
 	p := Provider()
@@ -168,16 +168,16 @@ func TestAccProvider_caCertString(t *testing.T) {
 
 	diags := p.Configure(context.Background(), terraform.NewResourceConfigRaw(raw))
 	if diags.HasError() {
-		t.Fatalf("Unexpected err when specifying HuaweiCloud CA by string: %s", diags[0].Summary)
+		t.Fatalf("Unexpected err when specifying HuaweiCloudStack CA by string: %s", diags[0].Summary)
 	}
 }
 
 func TestAccProvider_clientCertFile(t *testing.T) {
 	if os.Getenv("TF_ACC") == "" || os.Getenv("OS_SSL_TESTS") == "" {
-		t.Skip("TF_ACC or OS_SSL_TESTS not set, skipping HuaweiCloud SSL test.")
+		t.Skip("TF_ACC or OS_SSL_TESTS not set, skipping HuaweiCloudStack SSL test.")
 	}
 	if os.Getenv("OS_CERT") == "" || os.Getenv("OS_KEY") == "" {
-		t.Skip("OS_CERT or OS_KEY is not set; skipping HuaweiCloud client SSL auth test.")
+		t.Skip("OS_CERT or OS_KEY is not set; skipping HuaweiCloudStack client SSL auth test.")
 	}
 
 	p := Provider()
@@ -200,16 +200,16 @@ func TestAccProvider_clientCertFile(t *testing.T) {
 
 	diags := p.Configure(context.Background(), terraform.NewResourceConfigRaw(raw))
 	if diags.HasError() {
-		t.Fatalf("Unexpected err when specifying HuaweiCloud Client keypair by file: %s", diags[0].Summary)
+		t.Fatalf("Unexpected err when specifying HuaweiCloudStack Client keypair by file: %s", diags[0].Summary)
 	}
 }
 
 func TestAccProvider_clientCertString(t *testing.T) {
 	if os.Getenv("TF_ACC") == "" || os.Getenv("OS_SSL_TESTS") == "" {
-		t.Skip("TF_ACC or OS_SSL_TESTS not set, skipping HuaweiCloud SSL test.")
+		t.Skip("TF_ACC or OS_SSL_TESTS not set, skipping HuaweiCloudStack SSL test.")
 	}
 	if os.Getenv("OS_CERT") == "" || os.Getenv("OS_KEY") == "" {
-		t.Skip("OS_CERT or OS_KEY is not set; skipping HuaweiCloud client SSL auth test.")
+		t.Skip("OS_CERT or OS_KEY is not set; skipping HuaweiCloudStack client SSL auth test.")
 	}
 
 	p := Provider()
@@ -230,7 +230,7 @@ func TestAccProvider_clientCertString(t *testing.T) {
 
 	diags := p.Configure(context.Background(), terraform.NewResourceConfigRaw(raw))
 	if diags.HasError() {
-		t.Fatalf("Unexpected err when specifying HuaweiCloud Client keypair by contents: %s", diags[0].Summary)
+		t.Fatalf("Unexpected err when specifying HuaweiCloudStack Client keypair by contents: %s", diags[0].Summary)
 	}
 }
 

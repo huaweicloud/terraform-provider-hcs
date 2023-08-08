@@ -1,11 +1,11 @@
 package ecs
 
 // This set of code handles all functions required to configure networking
-// on an huaweicloud_compute_instance resource.
+// on an hcs_compute_instance resource.
 //
 // This is a complicated task because it's not possible to obtain all
 // information in a single API call. In fact, it even traverses multiple
-// HuaweiCloud services.
+// HuaweiCloudStack services.
 //
 // The end result, from the user's point of view, is a structured set of
 // understandable network information within the instance resource.

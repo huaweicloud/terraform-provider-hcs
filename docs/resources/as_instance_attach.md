@@ -4,7 +4,7 @@ subcategory: "Auto Scaling"
 
 # hcs_as_instance_attach
 
-Manages an AS instance attachment resource within HuaweiCloud.
+Manages an AS instance attachment resource within HuaweiCloudStack.
 
 ## Example Usage
 

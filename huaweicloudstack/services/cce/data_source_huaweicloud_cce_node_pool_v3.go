@@ -162,7 +162,7 @@ func dataSourceCceNodePoolsV3Read(_ context.Context, d *schema.ResourceData, met
 	config := meta.(*config.Config)
 	cceClient, err := config.CceV3Client(config.GetRegion(d))
 	if err != nil {
-		return fmtp.DiagErrorf("unable to create HuaweiCloud CCE client : %s", err)
+		return fmtp.DiagErrorf("unable to create HuaweiCloudStack CCE client : %s", err)
 	}
 
 	listOpts := nodepools.ListOpts{

@@ -6,6 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/networking/v1/bandwidths"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance"
@@ -14,7 +15,7 @@ import (
 func getBandwidthResourceFunc(conf *config.Config, state *terraform.ResourceState) (interface{}, error) {
 	c, err := conf.NetworkingV1Client(acceptance.HCS_REGION_NAME)
 	if err != nil {
-		return nil, fmt.Errorf("error creating HuaweiCloud Network client: %s", err)
+		return nil, fmt.Errorf("error creating HuaweiCloudStack Network client: %s", err)
 	}
 	return bandwidths.Get(c, state.Primary.ID).Extract()
 }
@@ -65,7 +66,7 @@ func TestAccVpcBandWidth_WithEpsId(t *testing.T) {
 	var bandwidth bandwidths.BandWidth
 
 	randName := acceptance.RandomAccResourceName()
-	resourceName := "huaweicloud_vpc_bandwidth.test"
+	resourceName := "hcs_vpc_bandwidth.test"
 
 	rc := acceptance.InitResourceCheck(
 		resourceName,
@@ -96,7 +97,7 @@ func TestAccVpcBandWidth_WithEpsId(t *testing.T) {
 
 func testAccVpcBandWidth_basic(rName string, size int) string {
 	return fmt.Sprintf(`
-resource "huaweicloud_vpc_bandwidth" "test" {
+resource "hcs_vpc_bandwidth" "test" {
   name = "%s"
   size = "%d"
 }
@@ -105,7 +106,7 @@ resource "huaweicloud_vpc_bandwidth" "test" {
 
 func testAccVpcBandWidth_epsId(rName string, size int) string {
 	return fmt.Sprintf(`
-resource "huaweicloud_vpc_bandwidth" "test" {
+resource "hcs_vpc_bandwidth" "test" {
   name                  = "%s"
   size                  = "%d"
   enterprise_project_id = "%s"

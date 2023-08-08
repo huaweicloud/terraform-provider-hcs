@@ -112,7 +112,7 @@ func testAccImsImage_basic(rName string) string {
 data "hcs_availability_zones" "test" {}
 
 data "hcs_ecs_flavors" "test" {
-  availability_zone = data.huaweicloud_availability_zones.test.names[0]
+  availability_zone = data.hcs_availability_zones.test.names[0]
   performance_type  = "normal"
   cpu_core_count    = 2
   memory_size       = 4

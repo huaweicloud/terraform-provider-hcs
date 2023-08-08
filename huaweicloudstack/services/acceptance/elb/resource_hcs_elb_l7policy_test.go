@@ -26,7 +26,7 @@ func TestAccElbV3L7Policy_basic(t *testing.T) {
 	var l7Policy l7policies.L7Policy
 	rName := acceptance.RandomAccResourceName()
 	updateName := acceptance.RandomAccResourceName()
-	resourceName := "huaweicloud_elb_l7policy.test"
+	resourceName := "hcs_elb_l7policy.test"
 
 	rc := acceptance.InitResourceCheck(
 		resourceName,
@@ -47,9 +47,9 @@ func TestAccElbV3L7Policy_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test description"),
 					resource.TestCheckResourceAttr(resourceName, "action", "REDIRECT_TO_POOL"),
 					resource.TestCheckResourceAttrPair(resourceName, "listener_id",
-						"huaweicloud_elb_listener.test", "id"),
+						"hcs_elb_listener.test", "id"),
 					resource.TestCheckResourceAttrPair(resourceName, "redirect_pool_id",
-						"huaweicloud_elb_pool.test", "id"),
+						"hcs_elb_pool.test", "id"),
 				),
 			},
 			{
@@ -60,9 +60,9 @@ func TestAccElbV3L7Policy_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test description update"),
 					resource.TestCheckResourceAttr(resourceName, "action", "REDIRECT_TO_POOL"),
 					resource.TestCheckResourceAttrPair(resourceName, "listener_id",
-						"huaweicloud_elb_listener.test", "id"),
+						"hcs_elb_listener.test", "id"),
 					resource.TestCheckResourceAttrPair(resourceName, "redirect_pool_id",
-						"huaweicloud_elb_pool.test_update", "id"),
+						"hcs_elb_pool.test_update", "id"),
 				),
 			},
 			{
@@ -78,7 +78,7 @@ func TestAccElbV3L7Policy_listener(t *testing.T) {
 	var l7Policy l7policies.L7Policy
 	rName := acceptance.RandomAccResourceName()
 	updateName := acceptance.RandomAccResourceName()
-	resourceName := "huaweicloud_elb_l7policy.test"
+	resourceName := "hcs_elb_l7policy.test"
 
 	rc := acceptance.InitResourceCheck(
 		resourceName,
@@ -99,9 +99,9 @@ func TestAccElbV3L7Policy_listener(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test description"),
 					resource.TestCheckResourceAttr(resourceName, "action", "REDIRECT_TO_LISTENER"),
 					resource.TestCheckResourceAttrPair(resourceName, "listener_id",
-						"huaweicloud_elb_listener.test", "id"),
+						"hcs_elb_listener.test", "id"),
 					resource.TestCheckResourceAttrPair(resourceName, "redirect_listener_id",
-						"huaweicloud_elb_listener.test_redirect", "id"),
+						"hcs_elb_listener.test_redirect", "id"),
 				),
 			},
 			{
@@ -112,9 +112,9 @@ func TestAccElbV3L7Policy_listener(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test description update"),
 					resource.TestCheckResourceAttr(resourceName, "action", "REDIRECT_TO_LISTENER"),
 					resource.TestCheckResourceAttrPair(resourceName, "listener_id",
-						"huaweicloud_elb_listener.test", "id"),
+						"hcs_elb_listener.test", "id"),
 					resource.TestCheckResourceAttrPair(resourceName, "redirect_listener_id",
-						"huaweicloud_elb_listener.test_redirect_update", "id"),
+						"hcs_elb_listener.test_redirect_update", "id"),
 				),
 			},
 			{
@@ -130,19 +130,19 @@ func testAccCheckElbV3L7PolicyConfig_basic(rName string) string {
 	return fmt.Sprintf(`
 %[1]s
 
-resource "huaweicloud_elb_pool" "test" {
+resource "hcs_elb_pool" "test" {
   name            = "%[2]s"
   protocol        = "HTTP"
   lb_method       = "LEAST_CONNECTIONS"
-  loadbalancer_id = huaweicloud_elb_loadbalancer.test.id
+  loadbalancer_id = hcs_elb_loadbalancer.test.id
 }
 
-resource "huaweicloud_elb_l7policy" "test" {
+resource "hcs_elb_l7policy" "test" {
   name             = "%[2]s"
   description      = "test description"
   action           = "REDIRECT_TO_POOL"
-  listener_id      = huaweicloud_elb_listener.test.id
-  redirect_pool_id = huaweicloud_elb_pool.test.id
+  listener_id      = hcs_elb_listener.test.id
+  redirect_pool_id = hcs_elb_pool.test.id
 }
 `, testAccElbV3ListenerConfig_basic(rName), rName)
 }
@@ -151,26 +151,26 @@ func testAccCheckElbV3L7PolicyConfig_basic_update(rName, updateName string) stri
 	return fmt.Sprintf(`
 %[1]s
 
-resource "huaweicloud_elb_pool" "test" {
+resource "hcs_elb_pool" "test" {
   name            = "%[2]s"
   protocol        = "HTTP"
   lb_method       = "LEAST_CONNECTIONS"
-  loadbalancer_id = huaweicloud_elb_loadbalancer.test.id
+  loadbalancer_id = hcs_elb_loadbalancer.test.id
 }
 
-resource "huaweicloud_elb_pool" "test_update" {
+resource "hcs_elb_pool" "test_update" {
   name            = "%[2]s"
   protocol        = "HTTP"
   lb_method       = "LEAST_CONNECTIONS"
-  loadbalancer_id = huaweicloud_elb_loadbalancer.test.id
+  loadbalancer_id = hcs_elb_loadbalancer.test.id
 }
 
-resource "huaweicloud_elb_l7policy" "test" {
+resource "hcs_elb_l7policy" "test" {
   name             = "%[2]s"
   description      = "test description update"
   action           = "REDIRECT_TO_POOL"
-  listener_id      = huaweicloud_elb_listener.test.id
-  redirect_pool_id = huaweicloud_elb_pool.test_update.id
+  listener_id      = hcs_elb_listener.test.id
+  redirect_pool_id = hcs_elb_pool.test_update.id
 }
 `, testAccElbV3ListenerConfig_basic(rName), updateName)
 }
@@ -181,21 +181,21 @@ func testAccCheckElbV3L7PolicyConfig_listener(rName string) string {
 
 %[2]s
 
-resource "huaweicloud_elb_listener" "test_redirect" {
+resource "hcs_elb_listener" "test_redirect" {
   name                        = "%[3]s"
   protocol                    = "HTTPS"
   protocol_port               = 443
-  loadbalancer_id             = huaweicloud_elb_loadbalancer.test.id
+  loadbalancer_id             = hcs_elb_loadbalancer.test.id
   advanced_forwarding_enabled = true
-  server_certificate          = huaweicloud_elb_certificate.test.id
+  server_certificate          = hcs_elb_certificate.test.id
 }
 
-resource "huaweicloud_elb_l7policy" "test" {
+resource "hcs_elb_l7policy" "test" {
   name                 = "%[3]s"
   description          = "test description"
   action               = "REDIRECT_TO_LISTENER"
-  listener_id          = huaweicloud_elb_listener.test.id
-  redirect_listener_id = huaweicloud_elb_listener.test_redirect.id
+  listener_id          = hcs_elb_listener.test.id
+  redirect_listener_id = hcs_elb_listener.test_redirect.id
 }
 `, testAccElbV3ListenerConfig_basic(rName), testAccElbV3CertificateConfig_basic(rName), rName)
 }
@@ -206,30 +206,30 @@ func testAccCheckElbV3L7PolicyConfig_listener_update(rName, updateName string) s
 
 %[2]s
 
-resource "huaweicloud_elb_listener" "test_redirect" {
+resource "hcs_elb_listener" "test_redirect" {
   name                        = "%[3]s"
   protocol                    = "HTTPS"
   protocol_port               = 443
-  loadbalancer_id             = huaweicloud_elb_loadbalancer.test.id
+  loadbalancer_id             = hcs_elb_loadbalancer.test.id
   advanced_forwarding_enabled = true
-  server_certificate          = huaweicloud_elb_certificate.test.id
+  server_certificate          = hcs_elb_certificate.test.id
 }
 
-resource "huaweicloud_elb_listener" "test_redirect_update" {
+resource "hcs_elb_listener" "test_redirect_update" {
   name                        = "%[4]s"
   protocol                    = "HTTPS"
   protocol_port               = 448
-  loadbalancer_id             = huaweicloud_elb_loadbalancer.test.id
+  loadbalancer_id             = hcs_elb_loadbalancer.test.id
   advanced_forwarding_enabled = true
-  server_certificate          = huaweicloud_elb_certificate.test.id
+  server_certificate          = hcs_elb_certificate.test.id
 }
 
-resource "huaweicloud_elb_l7policy" "test" {
+resource "hcs_elb_l7policy" "test" {
   name                 = "%[4]s"
   description          = "test description update"
   action               = "REDIRECT_TO_LISTENER"
-  listener_id          = huaweicloud_elb_listener.test.id
-  redirect_listener_id = huaweicloud_elb_listener.test_redirect_update.id
+  listener_id          = hcs_elb_listener.test.id
+  redirect_listener_id = hcs_elb_listener.test_redirect_update.id
 }
 `, testAccElbV3ListenerConfig_basic(rName), testAccElbV3CertificateConfig_basic(rName), rName, updateName)
 }

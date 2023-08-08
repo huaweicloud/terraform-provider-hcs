@@ -27,19 +27,19 @@ func TestAccElbV3Member_basic(t *testing.T) {
 			{
 				Config: testAccElbV3MemberConfig_basic(rName),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckElbV3MemberExists("huaweicloud_elb_member.member_1", &member_1),
-					testAccCheckElbV3MemberExists("huaweicloud_elb_member.member_2", &member_2),
+					testAccCheckElbV3MemberExists("hcs_elb_member.member_1", &member_1),
+					testAccCheckElbV3MemberExists("hcs_elb_member.member_2", &member_2),
 				),
 			},
 			{
 				Config: testAccElbV3MemberConfig_update(rName),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("huaweicloud_elb_member.member_1", "weight", "10"),
-					resource.TestCheckResourceAttr("huaweicloud_elb_member.member_2", "weight", "15"),
+					resource.TestCheckResourceAttr("hcs_elb_member.member_1", "weight", "10"),
+					resource.TestCheckResourceAttr("hcs_elb_member.member_2", "weight", "15"),
 				),
 			},
 			{
-				ResourceName:      "huaweicloud_elb_member.member_1",
+				ResourceName:      "hcs_elb_member.member_1",
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateIdFunc: testAccELBMemberImportStateIdFunc(),
@@ -61,19 +61,19 @@ func TestAccElbV3Member_crossVpcBackend(t *testing.T) {
 			{
 				Config: testAccElbV3MemberConfig_crossVpcBackend_basic(rName),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckElbV3MemberExists("huaweicloud_elb_member.member_1", &member_1),
-					testAccCheckElbV3MemberExists("huaweicloud_elb_member.member_2", &member_2),
+					testAccCheckElbV3MemberExists("hcs_elb_member.member_1", &member_1),
+					testAccCheckElbV3MemberExists("hcs_elb_member.member_2", &member_2),
 				),
 			},
 			{
 				Config: testAccElbV3MemberConfig_crossVpcBackend_update(rName),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("huaweicloud_elb_member.member_1", "weight", "10"),
-					resource.TestCheckResourceAttr("huaweicloud_elb_member.member_2", "weight", "15"),
+					resource.TestCheckResourceAttr("hcs_elb_member.member_1", "weight", "10"),
+					resource.TestCheckResourceAttr("hcs_elb_member.member_2", "weight", "15"),
 				),
 			},
 			{
-				ResourceName:      "huaweicloud_elb_member.member_1",
+				ResourceName:      "hcs_elb_member.member_1",
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateIdFunc: testAccELBMemberImportStateIdFunc(),
@@ -90,7 +90,7 @@ func testAccCheckElbV3MemberDestroy(s *terraform.State) error {
 	}
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "huaweicloud_elb_member" {
+		if rs.Type != "hcs_elb_member" {
 			continue
 		}
 
@@ -139,11 +139,11 @@ func testAccCheckElbV3MemberExists(n string, member *pools.Member) resource.Test
 
 func testAccELBMemberImportStateIdFunc() resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
-		pool, ok := s.RootModule().Resources["huaweicloud_elb_pool.test"]
+		pool, ok := s.RootModule().Resources["hcs_elb_pool.test"]
 		if !ok {
 			return "", fmt.Errorf("pool not found: %s", pool)
 		}
-		member, ok := s.RootModule().Resources["huaweicloud_elb_member.member_1"]
+		member, ok := s.RootModule().Resources["hcs_elb_member.member_1"]
 		if !ok {
 			return "", fmt.Errorf("member not found: %s", member)
 		}
@@ -156,28 +156,28 @@ func testAccELBMemberImportStateIdFunc() resource.ImportStateIdFunc {
 
 func testAccElbV3MemberConfig_basic(rName string) string {
 	return fmt.Sprintf(`
-data "huaweicloud_vpc_subnet" "test" {
+data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "huaweicloud_availability_zones" "test" {}
+data "hcs_availability_zones" "test" {}
 
-resource "huaweicloud_elb_loadbalancer" "test" {
+resource "hcs_elb_loadbalancer" "test" {
   name            = "%s"
-  ipv4_subnet_id  = data.huaweicloud_vpc_subnet.test.ipv4_subnet_id
-  ipv6_network_id = data.huaweicloud_vpc_subnet.test.id
+  ipv4_subnet_id  = data.hcs_vpc_subnet.test.ipv4_subnet_id
+  ipv6_network_id = data.hcs_vpc_subnet.test.id
 
   availability_zone = [
-    data.huaweicloud_availability_zones.test.names[0]
+    data.hcs_availability_zones.test.names[0]
   ]
 }
 
-resource "huaweicloud_elb_listener" "test" {
+resource "hcs_elb_listener" "test" {
   name            = "%s"
   description     = "test description"
   protocol        = "HTTP"
   protocol_port   = 8080
-  loadbalancer_id = huaweicloud_elb_loadbalancer.test.id
+  loadbalancer_id = hcs_elb_loadbalancer.test.id
 
   forward_eip      = true
   idle_timeout     = 60
@@ -185,53 +185,53 @@ resource "huaweicloud_elb_listener" "test" {
   response_timeout = 60
 }
 
-resource "huaweicloud_elb_pool" "test" {
+resource "hcs_elb_pool" "test" {
   name        = "%s"
   protocol    = "HTTP"
   lb_method   = "ROUND_ROBIN"
-  listener_id = huaweicloud_elb_listener.test.id
+  listener_id = hcs_elb_listener.test.id
 }
 
-resource "huaweicloud_elb_member" "member_1" {
+resource "hcs_elb_member" "member_1" {
   address       = "192.168.0.10"
   protocol_port = 8080
-  pool_id       = huaweicloud_elb_pool.test.id
-  subnet_id     = data.huaweicloud_vpc_subnet.test.ipv4_subnet_id
+  pool_id       = hcs_elb_pool.test.id
+  subnet_id     = data.hcs_vpc_subnet.test.ipv4_subnet_id
 }
 
-resource "huaweicloud_elb_member" "member_2" {
+resource "hcs_elb_member" "member_2" {
   address       = "192.168.0.11"
   protocol_port = 8080
-  pool_id       = huaweicloud_elb_pool.test.id
-  subnet_id     = data.huaweicloud_vpc_subnet.test.ipv4_subnet_id
+  pool_id       = hcs_elb_pool.test.id
+  subnet_id     = data.hcs_vpc_subnet.test.ipv4_subnet_id
 }
 `, rName, rName, rName)
 }
 
 func testAccElbV3MemberConfig_update(rName string) string {
 	return fmt.Sprintf(`
-data "huaweicloud_vpc_subnet" "test" {
+data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "huaweicloud_availability_zones" "test" {}
+data "hcs_availability_zones" "test" {}
 
-resource "huaweicloud_elb_loadbalancer" "test" {
+resource "hcs_elb_loadbalancer" "test" {
   name            = "%s"
-  ipv4_subnet_id  = data.huaweicloud_vpc_subnet.test.ipv4_subnet_id
-  ipv6_network_id = data.huaweicloud_vpc_subnet.test.id
+  ipv4_subnet_id  = data.hcs_vpc_subnet.test.ipv4_subnet_id
+  ipv6_network_id = data.hcs_vpc_subnet.test.id
 
   availability_zone = [
-    data.huaweicloud_availability_zones.test.names[0]
+    data.hcs_availability_zones.test.names[0]
   ]
 }
 
-resource "huaweicloud_elb_listener" "test" {
+resource "hcs_elb_listener" "test" {
   name            = "%s"
   description     = "test description"
   protocol        = "HTTP"
   protocol_port   = 8080
-  loadbalancer_id = huaweicloud_elb_loadbalancer.test.id
+  loadbalancer_id = hcs_elb_loadbalancer.test.id
 
   forward_eip      = true
   idle_timeout     = 60
@@ -239,56 +239,56 @@ resource "huaweicloud_elb_listener" "test" {
   response_timeout = 60
 }
 
-resource "huaweicloud_elb_pool" "test" {
+resource "hcs_elb_pool" "test" {
   name        = "%s"
   protocol    = "HTTP"
   lb_method   = "ROUND_ROBIN"
-  listener_id = huaweicloud_elb_listener.test.id
+  listener_id = hcs_elb_listener.test.id
 }
 
-resource "huaweicloud_elb_member" "member_1" {
+resource "hcs_elb_member" "member_1" {
   address        = "192.168.0.10"
   protocol_port  = 8080
   weight         = 10
-  pool_id        = huaweicloud_elb_pool.test.id
-  subnet_id      = data.huaweicloud_vpc_subnet.test.ipv4_subnet_id
+  pool_id        = hcs_elb_pool.test.id
+  subnet_id      = data.hcs_vpc_subnet.test.ipv4_subnet_id
 }
 
-resource "huaweicloud_elb_member" "member_2" {
+resource "hcs_elb_member" "member_2" {
   address        = "192.168.0.11"
   protocol_port  = 8080
   weight         = 15
-  pool_id        = huaweicloud_elb_pool.test.id
-  subnet_id      = data.huaweicloud_vpc_subnet.test.ipv4_subnet_id
+  pool_id        = hcs_elb_pool.test.id
+  subnet_id      = data.hcs_vpc_subnet.test.ipv4_subnet_id
 }
 `, rName, rName, rName)
 }
 
 func testAccElbV3MemberConfig_crossVpcBackend_basic(rName string) string {
 	return fmt.Sprintf(`
-data "huaweicloud_vpc_subnet" "test" {
+data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "huaweicloud_availability_zones" "test" {}
+data "hcs_availability_zones" "test" {}
 
-resource "huaweicloud_elb_loadbalancer" "test" {
+resource "hcs_elb_loadbalancer" "test" {
   name              = "%s"
   cross_vpc_backend = true
-  ipv4_subnet_id    = data.huaweicloud_vpc_subnet.test.ipv4_subnet_id
-  ipv6_network_id   = data.huaweicloud_vpc_subnet.test.id
+  ipv4_subnet_id    = data.hcs_vpc_subnet.test.ipv4_subnet_id
+  ipv6_network_id   = data.hcs_vpc_subnet.test.id
 
   availability_zone = [
-    data.huaweicloud_availability_zones.test.names[0]
+    data.hcs_availability_zones.test.names[0]
   ]
 }
 
-resource "huaweicloud_elb_listener" "test" {
+resource "hcs_elb_listener" "test" {
   name            = "%s"
   description     = "test description"
   protocol        = "HTTP"
   protocol_port   = 8080
-  loadbalancer_id = huaweicloud_elb_loadbalancer.test.id
+  loadbalancer_id = hcs_elb_loadbalancer.test.id
 
   forward_eip      = true
   idle_timeout     = 60
@@ -296,52 +296,52 @@ resource "huaweicloud_elb_listener" "test" {
   response_timeout = 60
 }
 
-resource "huaweicloud_elb_pool" "test" {
+resource "hcs_elb_pool" "test" {
   name        = "%s"
   protocol    = "HTTP"
   lb_method   = "ROUND_ROBIN"
-  listener_id = huaweicloud_elb_listener.test.id
+  listener_id = hcs_elb_listener.test.id
 }
 
-resource "huaweicloud_elb_member" "member_1" {
+resource "hcs_elb_member" "member_1" {
   address       = "121.121.0.120"
   protocol_port = 8080
-  pool_id       = huaweicloud_elb_pool.test.id
+  pool_id       = hcs_elb_pool.test.id
 }
 
-resource "huaweicloud_elb_member" "member_2" {
+resource "hcs_elb_member" "member_2" {
   address       = "121.121.0.121"
   protocol_port = 8080
-  pool_id       = huaweicloud_elb_pool.test.id
+  pool_id       = hcs_elb_pool.test.id
 }
 `, rName, rName, rName)
 }
 
 func testAccElbV3MemberConfig_crossVpcBackend_update(rName string) string {
 	return fmt.Sprintf(`
-data "huaweicloud_vpc_subnet" "test" {
+data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "huaweicloud_availability_zones" "test" {}
+data "hcs_availability_zones" "test" {}
 
-resource "huaweicloud_elb_loadbalancer" "test" {
+resource "hcs_elb_loadbalancer" "test" {
   name              = "%s"
   cross_vpc_backend = true
-  ipv4_subnet_id    = data.huaweicloud_vpc_subnet.test.ipv4_subnet_id
-  ipv6_network_id   = data.huaweicloud_vpc_subnet.test.id
+  ipv4_subnet_id    = data.hcs_vpc_subnet.test.ipv4_subnet_id
+  ipv6_network_id   = data.hcs_vpc_subnet.test.id
 
   availability_zone = [
-    data.huaweicloud_availability_zones.test.names[0]
+    data.hcs_availability_zones.test.names[0]
   ]
 }
 
-resource "huaweicloud_elb_listener" "test" {
+resource "hcs_elb_listener" "test" {
   name            = "%s"
   description     = "test description"
   protocol        = "HTTP"
   protocol_port   = 8080
-  loadbalancer_id = huaweicloud_elb_loadbalancer.test.id
+  loadbalancer_id = hcs_elb_loadbalancer.test.id
 
   forward_eip      = true
   idle_timeout     = 60
@@ -349,25 +349,25 @@ resource "huaweicloud_elb_listener" "test" {
   response_timeout = 60
 }
 
-resource "huaweicloud_elb_pool" "test" {
+resource "hcs_elb_pool" "test" {
   name        = "%s"
   protocol    = "HTTP"
   lb_method   = "ROUND_ROBIN"
-  listener_id = huaweicloud_elb_listener.test.id
+  listener_id = hcs_elb_listener.test.id
 }
 
-resource "huaweicloud_elb_member" "member_1" {
+resource "hcs_elb_member" "member_1" {
   address        = "121.121.0.120"
   protocol_port  = 8080
   weight         = 10
-  pool_id        = huaweicloud_elb_pool.test.id
+  pool_id        = hcs_elb_pool.test.id
 }
 
-resource "huaweicloud_elb_member" "member_2" {
+resource "hcs_elb_member" "member_2" {
   address        = "121.121.0.121"
   protocol_port  = 8080
   weight         = 15
-  pool_id        = huaweicloud_elb_pool.test.id
+  pool_id        = hcs_elb_pool.test.id
 }
 `, rName, rName, rName)
 }

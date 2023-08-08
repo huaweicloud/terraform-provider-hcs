@@ -4,7 +4,7 @@ subcategory: "Auto Scaling"
 
 # hcs_as_policy
 
-Manages an AS policy resource within HuaweiCloud.
+Manages an AS policy resource within HuaweiCloudStack.
 
 ## Example Usage
 
@@ -56,7 +56,7 @@ resource "hcs_as_policy" "my_aspolicy_1" {
 ```hcl
 variable "as_group_id" {}
 
-resource "huaweicloud_ces_alarmrule" "alarm_rule" {
+resource "hcs_ces_alarmrule" "alarm_rule" {
   alarm_name = "as_alarm_rule"
 
   metric {
@@ -85,7 +85,7 @@ resource "hcs_as_policy" "my_aspolicy_2" {
   scaling_policy_name = "my_aspolicy_2"
   scaling_policy_type = "ALARM"
   scaling_group_id    = var.as_group_id
-  alarm_id            = huaweicloud_ces_alarmrule.alarm_rule.id
+  alarm_id            = hcs_ces_alarmrule.alarm_rule.id
   cool_down_time      = 900
 
   scaling_policy_action {
@@ -114,7 +114,7 @@ The following arguments are supported:
 
 * `alarm_id` - (Optional, String) Specifies the alarm rule ID. This parameter is mandatory when `scaling_policy_type`
   is set to `ALARM`. You can create an alarm rule with
-  [huaweicloud_ces_alarmrule](https://registry.terraform.io/providers/huaweicloud/huaweicloud/latest/docs/resources/ces_alarmrule).
+  [hcs_ces_alarmrule](https://registry.terraform.io/providers/huaweicloud/huaweicloud/latest/docs/resources/ces_alarmrule).
 
 * `scheduled_policy` - (Optional, List) Specifies the periodic or scheduled AS policy.
   This parameter is mandatory when `scaling_policy_type` is set to `SCHEDULED` or `RECURRENCE`.

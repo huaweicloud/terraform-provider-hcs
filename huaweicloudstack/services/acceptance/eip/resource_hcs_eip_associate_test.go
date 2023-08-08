@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/networking/v1/eips"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance/common"
@@ -18,7 +19,7 @@ func TestAccEIPAssociate_basic(t *testing.T) {
 	resourceName := "hcs_vpc_eip.test"
 	partten := `^((25[0-5]|2[0-4]\d|(1\d{2}|[1-9]?\d))\.){3}(25[0-5]|2[0-4]\d|(1\d{2}|[1-9]?\d))$`
 
-	// huaweicloud_vpc_eip_associate and huaweicloud_vpc_eip have the same ID
+	// hcs_vpc_eip_associate and hcs_vpc_eip have the same ID
 	// and call the same API to get resource
 	rc := acceptance.InitResourceCheck(
 		associateName,
