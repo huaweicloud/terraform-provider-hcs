@@ -29,8 +29,6 @@ The following arguments are supported:
 * `availability_zone` - (Optional, String, ForceNew) The availability zone for the disk. Changing this creates a new
   disk.
 
-* `consistency_group_id` - (Optional, String, ForceNew) The consistency group to place the disk in.
-
 * `description` - (Optional, String) A description of the disk. Changing this updates the disk's description.
 
 * `image_id` - (Optional, String, ForceNew) The image ID from which to create the disk. Changing this creates a new
@@ -43,8 +41,6 @@ The following arguments are supported:
 
 * `snapshot_id` - (Optional, String, ForceNew) The snapshot ID from which to create the disk. Changing this creates a
   new disk.
-
-* `source_replica` - (Optional, String, ForceNew) The disk ID to replicate with.
 
 * `source_vol_id` - (Optional, String, ForceNew) The disk ID from which to create the disk. Changing this creates a
   new disk.
@@ -60,21 +56,31 @@ In addition to all arguments above, the following attributes are exported:
 
 * `id` - Specifies a resource ID in UUID format.
 
-* `attachment` - If a disk is attached to an instance, this attribute will display the Attachment ID, Instance ID, and
-  the Device as the Instance sees it. The [object](#attachment_struct) structure is documented below.
+* `attachments` - If a disk is attached to an instance, this attribute will display the Attachment ID, Instance ID, and
+  the Device as the Instance sees it. The [object](#attachments_struct) structure is documented below.
 
 * `wwn` - The unique identifier used for mounting the disk.
 
 * `status` - The status of disk.
 
-<a name="attachment_struct"></a>
-The `attachment` block supports:
+* `bootable` - Whether the disk is bootable.
 
-* `id` - The ID of the attachment information.
+* `created_at` - The time when the disk was created.
 
-* `instance_id` - The ID of the server to which the disk is attached.
+* `updated_at` - The time when the disk was updated.
 
-* `device` - The device name.
+<a name="attachments_struct"></a>
+The `attachments` block supports:
+
+* `id` - The ID of the attached resource in UUID format.
+
+* `attached_at` - The time when the disk was attached.
+
+* `attached_mode` - The ID of the attachment information.
+
+* `device_name` - The device name to which the disk is attached.
+
+* `server_id` - The ID of the server to which the disk is attached.
 
 ## Timeouts
 

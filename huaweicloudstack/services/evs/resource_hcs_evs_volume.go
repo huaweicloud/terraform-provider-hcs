@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -94,22 +95,16 @@ func ResourceEvsVolume() *schema.Resource {
 				ForceNew: true,
 				Computed: true,
 			},
-			"consistency_group_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-			},
-			"source_replica": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-			},
 			"multiattach": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				ForceNew: true,
 			},
-			"attachment": {
+			"bootable": {
+				Type:     schema.TypeBool,
+				Computed: true,
+			},
+			"attachments": {
 				Type:     schema.TypeSet,
 				Computed: true,
 				Elem: &schema.Resource{
@@ -118,11 +113,19 @@ func ResourceEvsVolume() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"instance_id": {
+						"attached_at": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"device": {
+						"attached_mode": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"server_id": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"device_name": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
@@ -135,6 +138,14 @@ func ResourceEvsVolume() *schema.Resource {
 				Computed: true,
 			},
 			"status": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"created_at": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"updated_at": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -158,18 +169,16 @@ func resourceEvsVolumeCreate(ctx context.Context, d *schema.ResourceData, meta i
 	}
 
 	createOpts := &volumes.CreateOpts{
-		AvailabilityZone:   d.Get("availability_zone").(string),
-		ConsistencyGroupID: d.Get("consistency_group_id").(string),
-		Description:        d.Get("description").(string),
-		ImageID:            d.Get("image_id").(string),
-		Metadata:           resourceContainerMetadataV2(d),
-		Name:               d.Get("name").(string),
-		Size:               d.Get("size").(int),
-		SnapshotID:         d.Get("snapshot_id").(string),
-		SourceReplica:      d.Get("source_replica").(string),
-		SourceVolID:        d.Get("source_vol_id").(string),
-		VolumeType:         d.Get("volume_type").(string),
-		Multiattach:        d.Get("multiattach").(bool),
+		AvailabilityZone: d.Get("availability_zone").(string),
+		Description:      d.Get("description").(string),
+		ImageID:          d.Get("image_id").(string),
+		Metadata:         resourceContainerMetadataV2(d),
+		Name:             d.Get("name").(string),
+		Size:             d.Get("size").(int),
+		SnapshotID:       d.Get("snapshot_id").(string),
+		SourceVolID:      d.Get("source_vol_id").(string),
+		VolumeType:       d.Get("volume_type").(string),
+		Multiattach:      d.Get("multiattach").(bool),
 	}
 
 	log.Printf("[DEBUG] Create Options: %#v", createOpts)
@@ -229,34 +238,29 @@ func resourceEvsVolumeRead(_ context.Context, d *schema.ResourceData, meta inter
 	d.Set("volume_type", v.VolumeType)
 	d.Set("wwn", v.WWN)
 	d.Set("status", v.Status)
-
-	// NOTE: This tries to remove system metadata.
-	md := make(map[string]string)
-	var sys_keys = [3]string{"StorageType", "lun_wwn", "take_over_lun_wwn"}
-
-OUTER:
-	for key, val := range v.Metadata {
-		for i := range sys_keys {
-			if key == sys_keys[i] {
-				md[key] = val
-				continue OUTER
-			}
-		}
-	}
-	d.Set("metadata", md)
-
+	d.Set("created_at", v.CreatedAt)
+	d.Set("updated_at", v.UpdatedAt)
+	d.Set("metadata", v.Metadata)
+	d.Set("multiattach", v.Multiattach)
 	d.Set("region", cfg.GetRegion(d))
 
 	attachments := make([]map[string]interface{}, len(v.Attachments))
 	for i, attachment := range v.Attachments {
 		attachments[i] = make(map[string]interface{})
-		attachments[i]["id"] = attachment.ID
-		attachments[i]["instance_id"] = attachment.ServerID
-		attachments[i]["device"] = attachment.Device
+		attachments[i]["id"] = attachment.AttachmentID
+		attachments[i]["server_id"] = attachment.ServerID
+		attachments[i]["device_name"] = attachment.Device
+		attachments[i]["attached_at"] = attachment.AttachedAt
+		attachments[i]["attached_mode"] = v.Metadata["attached_mode"]
 		log.Printf("[DEBUG] attachment: %v", attachment)
 	}
-	d.Set("attachment", attachments)
-
+	d.Set("attachments", attachments)
+	bootable, err := strconv.ParseBool(v.Bootable)
+	if err != nil {
+		return fmtp.DiagErrorf("The bootable of volume (%s) connot be converted to bool.",
+			v.ID)
+	}
+	d.Set("bootable", bootable)
 	return nil
 }
 
