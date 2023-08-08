@@ -9,10 +9,8 @@ Use this data source to query the detailed information list of the EVS disks wit
 ## Example Usage
 
 ```hcl
-variable "target_server" {}
-
 data "hcs_evs_volumes" "test" {
-  server_id = var.target_server
+  name = "test"
 }
 ```
 
@@ -27,16 +25,11 @@ The following arguments are supported:
 
 * `multiattach` - (Optional, Bool) Specifies whether the disk is shareable.
 
-* `metadata` - (Optional, Map) Metadata key/value pairs to associate with the disk. Changing this updates the existing
-  disk metadata.
+* `metadata` - (Optional, Map) Metadata key/value pairs to associate with the disk.
 
 * `name` - (Optional, String) The disk name.
 
-* `server_id` - (Optional, String) Specifies the server ID to which the disks are attached.
-
 * `status` - (Optional, String) Specifies the disk status.
-
-* `with_snapshot` - (Optional, Map) Specifies whether all snapshots of the disk are displayed in the disk list.
 
 ## Attribute Reference
 
@@ -66,11 +59,13 @@ The `volumes` block supports:
 
 * `status` - The disk status.
 
-* `create_at` - The time when the disk was created.
+* `created_at` - The time when the disk was created.
 
-* `update_at` - The time when the disk was updated.
+* `updated_at` - The time when the disk was updated.
 
 * `wwn` - The unique identifier used when attaching the disk.
+
+* `metadata` - Metadata key/value pairs to associate with the disk.
 
 The `attachments` block supports:
 
