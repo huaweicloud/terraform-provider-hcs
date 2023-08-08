@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils/fmtp"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils/fmtp"
 )
 
 func TestAccCCEClusterV3DataSource_basic(t *testing.T) {

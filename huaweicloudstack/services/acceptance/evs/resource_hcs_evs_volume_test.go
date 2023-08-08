@@ -21,7 +21,7 @@ const (
 func getVolumeResourceFunc(conf *config.Config, state *terraform.ResourceState) (interface{}, error) {
 	c, err := conf.BlockStorageV2Client(acceptance.HCS_REGION_NAME)
 	if err != nil {
-		return nil, fmt.Errorf("Error creating HuaweiCloud block storage v2 client: %s", err)
+		return nil, fmt.Errorf("Error creating HuaweiCloudStack block storage v2 client: %s", err)
 	}
 	return volumes.Get(c, state.Primary.ID).Extract()
 }

@@ -18,7 +18,7 @@ func TestAccElbV3Pool_basic(t *testing.T) {
 	var pool pools.Pool
 	rName := fmt.Sprintf("tf-acc-test-%s", acctest.RandString(5))
 	rNameUpdate := fmt.Sprintf("tf-acc-test-%s", acctest.RandString(5))
-	resourceName := "huaweicloud_elb_pool.test"
+	resourceName := "hcs_elb_pool.test"
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
@@ -57,7 +57,7 @@ func testAccCheckElbV3PoolDestroy(s *terraform.State) error {
 	}
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "huaweicloud_elb_pool" {
+		if rs.Type != "hcs_elb_pool" {
 			continue
 		}
 
@@ -104,39 +104,39 @@ func testAccCheckElbV3PoolExists(n string, pool *pools.Pool) resource.TestCheckF
 
 func testAccElbV3PoolConfig_basic(rName string) string {
 	return fmt.Sprintf(`
-data "huaweicloud_vpc_subnet" "test" {
+data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "huaweicloud_availability_zones" "test" {}
+data "hcs_availability_zones" "test" {}
 
-resource "huaweicloud_elb_loadbalancer" "test" {
+resource "hcs_elb_loadbalancer" "test" {
   name            = "%s"
-  ipv4_subnet_id  = data.huaweicloud_vpc_subnet.test.ipv4_subnet_id
-  ipv6_network_id = data.huaweicloud_vpc_subnet.test.id
+  ipv4_subnet_id  = data.hcs_vpc_subnet.test.ipv4_subnet_id
+  ipv6_network_id = data.hcs_vpc_subnet.test.id
 
   availability_zone = [
-    data.huaweicloud_availability_zones.test.names[0]
+    data.hcs_availability_zones.test.names[0]
   ]
 }
 
-resource "huaweicloud_elb_listener" "test" {
+resource "hcs_elb_listener" "test" {
   name             = "%s"
   description      = "test description"
   protocol         = "HTTP"
   protocol_port    = 8080
-  loadbalancer_id  = huaweicloud_elb_loadbalancer.test.id
+  loadbalancer_id  = hcs_elb_loadbalancer.test.id
   forward_eip      = true
   idle_timeout     = 60
   request_timeout  = 60
   response_timeout = 60
 }
 
-resource "huaweicloud_elb_pool" "test" {
+resource "hcs_elb_pool" "test" {
   name        = "%s"
   protocol    = "HTTP"
   lb_method   = "ROUND_ROBIN"
-  listener_id = huaweicloud_elb_listener.test.id
+  listener_id = hcs_elb_listener.test.id
 
   timeouts {
     create = "5m"
@@ -149,39 +149,39 @@ resource "huaweicloud_elb_pool" "test" {
 
 func testAccElbV3PoolConfig_update(rName, rNameUpdate string) string {
 	return fmt.Sprintf(`
-data "huaweicloud_vpc_subnet" "test" {
+data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "huaweicloud_availability_zones" "test" {}
+data "hcs_availability_zones" "test" {}
 
-resource "huaweicloud_elb_loadbalancer" "test" {
+resource "hcs_elb_loadbalancer" "test" {
   name            = "%s"
-  ipv4_subnet_id  = data.huaweicloud_vpc_subnet.test.ipv4_subnet_id
-  ipv6_network_id = data.huaweicloud_vpc_subnet.test.id
+  ipv4_subnet_id  = data.hcs_vpc_subnet.test.ipv4_subnet_id
+  ipv6_network_id = data.hcs_vpc_subnet.test.id
 
   availability_zone = [
-    data.huaweicloud_availability_zones.test.names[0]
+    data.hcs_availability_zones.test.names[0]
   ]
 }
 
-resource "huaweicloud_elb_listener" "test" {
+resource "hcs_elb_listener" "test" {
   name             = "%s"
   description      = "test description"
   protocol         = "HTTP"
   protocol_port    = 8080
-  loadbalancer_id  = huaweicloud_elb_loadbalancer.test.id
+  loadbalancer_id  = hcs_elb_loadbalancer.test.id
   forward_eip      = true
   idle_timeout     = 60
   request_timeout  = 60
   response_timeout = 60
 }
 
-resource "huaweicloud_elb_pool" "test" {
+resource "hcs_elb_pool" "test" {
   name           = "%s"
   protocol       = "HTTP"
   lb_method      = "LEAST_CONNECTIONS"
-  listener_id    = huaweicloud_elb_listener.test.id
+  listener_id    = hcs_elb_listener.test.id
 
   timeouts {
     create = "5m"

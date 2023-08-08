@@ -34,7 +34,7 @@ type Server struct {
 	VpcId         string `json:"vpc_id,omitempty"`
 }
 
-// Create create a premium domain in HuaweiCloud.
+// Create create a premium domain in HuaweiCloudStack.
 func Create(c *golangsdk.ServiceClient, opts CreateOpts) (*CreatePremiumHostRst, error) {
 	b, err := golangsdk.BuildRequestBody(opts, "")
 	if err != nil {

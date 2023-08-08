@@ -410,7 +410,7 @@ func resourceBmsInstanceDelete(ctx context.Context, d *schema.ResourceData, meta
 	region := cfg.GetRegion(d)
 	bmsClient, err := cfg.BmsV1Client(region)
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloud compute client: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack compute client: %s", err)
 	}
 
 	deleteOpts := baremetalservers.DeleteOpts{
@@ -501,7 +501,7 @@ func flattenBmsInstanceNicsV1(d *schema.ResourceData, meta interface{},
 	config := meta.(*config.Config)
 	networkingClient, err := config.NetworkingV2Client(config.GetRegion(d))
 	if err != nil {
-		logp.Printf("Error creating HuaweiCloud networking client: %s", err)
+		logp.Printf("Error creating HuaweiCloudStack networking client: %s", err)
 	}
 
 	var network string

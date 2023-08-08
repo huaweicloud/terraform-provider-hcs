@@ -17,7 +17,7 @@ import (
 func TestAccElbV3Certificate_basic(t *testing.T) {
 	var c certificates.Certificate
 	name := fmt.Sprintf("tf-cert-%s", acctest.RandString(5))
-	resourceName := "huaweicloud_elb_certificate.test"
+	resourceName := "hcs_elb_certificate.test"
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
@@ -50,7 +50,7 @@ func TestAccElbV3Certificate_basic(t *testing.T) {
 func TestAccElbV3Certificate_client(t *testing.T) {
 	var c certificates.Certificate
 	name := fmt.Sprintf("tf-cert-%s", acctest.RandString(5))
-	resourceName := "huaweicloud_elb_certificate.test"
+	resourceName := "hcs_elb_certificate.test"
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
@@ -72,7 +72,7 @@ func TestAccElbV3Certificate_client(t *testing.T) {
 func TestAccElbV3Certificate_withEpsId(t *testing.T) {
 	var c certificates.Certificate
 	name := fmt.Sprintf("tf-cert-%s", acctest.RandString(5))
-	resourceName := "huaweicloud_elb_certificate.test"
+	resourceName := "hcs_elb_certificate.test"
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { acceptance.TestAccPreCheckEpsID(t) },
@@ -100,7 +100,7 @@ func testAccCheckElbV3CertificateDestroy(s *terraform.State) error {
 	}
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "huaweicloud_elb_certificate" {
+		if rs.Type != "hcs_elb_certificate" {
 			continue
 		}
 
@@ -148,7 +148,7 @@ func testAccCheckElbV3CertificateExists(
 
 func testAccElbV3CertificateConfig_basic(name string) string {
 	return fmt.Sprintf(`
-resource "huaweicloud_elb_certificate" "test" {
+resource "hcs_elb_certificate" "test" {
   name        = "%s"
   description = "terraform test certificate"
   domain      = "www.elb.com"
@@ -212,7 +212,7 @@ EOT
 
 func testAccElbV3CertificateConfig_update(name string) string {
 	return fmt.Sprintf(`
-resource "huaweicloud_elb_certificate" "test" {
+resource "hcs_elb_certificate" "test" {
   name        = "%s_updated"
   description = "terraform test certificate"
   domain      = "www.elb.com"
@@ -276,7 +276,7 @@ EOT
 
 func testAccElbV3CertificateConfig_client(name string) string {
 	return fmt.Sprintf(`
-resource "huaweicloud_elb_certificate" "test" {
+resource "hcs_elb_certificate" "test" {
   name        = "%s"
   description = "terraform CA certificate"
   type        = "client"
@@ -311,7 +311,7 @@ EOT
 
 func testAccElbV3CertificateConfig_withEpsId(name string) string {
 	return fmt.Sprintf(`
-resource "huaweicloud_elb_certificate" "test" {
+resource "hcs_elb_certificate" "test" {
   name        = "%s"
   description = "terraform CA certificate"
   type        = "client"

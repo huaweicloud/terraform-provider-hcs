@@ -360,7 +360,7 @@ resource "hcs_networking_vip" "test" {
   network_id = hcs_vpc_subnet.test.id
 }
 
-resource "huaweicloud_vpc_eip" "test" {
+resource "hcs_vpc_eip" "test" {
   publicip {
     type    = "5_bgp"
     port_id = hcs_networking_vip.test.id

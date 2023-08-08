@@ -4,7 +4,7 @@ subcategory: "Auto Scaling"
 
 # hcs_as_bandwidth_policy
 
-Manages an AS bandwidth scaling policy resource within HuaweiCloud.
+Manages an AS bandwidth scaling policy resource within HuaweiCloudStack.
 
 -> AS cannot scale yearly/monthly bandwidths.
 

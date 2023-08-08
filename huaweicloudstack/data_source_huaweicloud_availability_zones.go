@@ -1,11 +1,12 @@
 package huaweicloudstack
 
 import (
+	"sort"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/helper/hashcode"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/compute/v2/extensions/availabilityzones"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils/fmtp"
-	"sort"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -42,7 +43,7 @@ func dataSourceAvailabilityZonesRead(d *schema.ResourceData, meta interface{}) e
 	region := GetRegion(d, config)
 	computeClient, err := config.ComputeV2Client(region)
 	if err != nil {
-		return fmtp.Errorf("Error creating HuaweiCloud compute client: %s", err)
+		return fmtp.Errorf("Error creating HuaweiCloudStack compute client: %s", err)
 	}
 
 	allPages, err := availabilityzones.List(computeClient).AllPages()

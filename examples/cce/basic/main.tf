@@ -11,7 +11,7 @@ resource "hcs_vpc_subnet" "mysubnet" {
   # dns is required for cce node installing
   primary_dns   = var.primary_dns
   secondary_dns = var.secondary_dns
-  vpc_id        = huaweicloud_vpc.myvpc.id
+  vpc_id        = hcs_vpc.myvpc.id
 }
 
 resource "hcs_vpc_eip" "myeip" {
@@ -26,7 +26,7 @@ resource "hcs_vpc_eip" "myeip" {
   }
 }
 
-data "huaweicloud_availability_zones" "myaz" {}
+data "hcs_availability_zones" "myaz" {}
 
 resource "hcs_compute_keypair" "mykeypair" {
   name = var.key_pair_name
@@ -34,18 +34,18 @@ resource "hcs_compute_keypair" "mykeypair" {
 resource "hcs_cce_cluster" "mycce" {
   name                   = var.cce_cluster_name
   flavor_id              = var.cce_cluster_flavor
-  vpc_id                 = huaweicloud_vpc.myvpc.id
-  subnet_id              = huaweicloud_vpc_subnet.mysubnet.id
+  vpc_id                 = hcs_vpc.myvpc.id
+  subnet_id              = hcs_vpc_subnet.mysubnet.id
   container_network_type = "overlay_l2"
-  eip                    = huaweicloud_vpc_eip.myeip.address
+  eip                    = hcs_vpc_eip.myeip.address
 }
 
 resource "hcs_cce_node" "mynode" {
-  cluster_id        = huaweicloud_cce_cluster.mycce.id
+  cluster_id        = hcs_cce_cluster.mycce.id
   name              = var.node_name
   flavor_id         = var.node_flavor
-  availability_zone = data.huaweicloud_availability_zones.myaz.names[0]
-  key_pair          = huaweicloud_compute_keypair.mykeypair.name
+  availability_zone = data.hcs_availability_zones.myaz.names[0]
+  key_pair          = hcs_compute_keypair.mykeypair.name
 
   root_volume {
     size       = var.root_volume_size
@@ -57,17 +57,17 @@ resource "hcs_cce_node" "mynode" {
   }
 }
 
-data "huaweicloud_images_image" "myimage" {
+data "hcs_images_image" "myimage" {
   name        = var.image_name
   most_recent = true
 }
 
 resource "hcs_compute_instance" "myecs" {
   name                        = var.ecs_name
-  image_id                    = data.huaweicloud_images_image.myimage.id
+  image_id                    = data.hcs_images_image.myimage.id
   flavor_id                   = var.ecs_flavor
-  availability_zone           = data.huaweicloud_availability_zones.myaz.names[0]
-  key_pair                    = huaweicloud_compute_keypair.mykeypair.name
+  availability_zone           = data.hcs_availability_zones.myaz.names[0]
+  key_pair                    = hcs_compute_keypair.mykeypair.name
   delete_disks_on_termination = true
 
   system_disk_type = var.root_volume_type
@@ -79,13 +79,13 @@ resource "hcs_compute_instance" "myecs" {
   }
 
   network {
-    uuid = huaweicloud_vpc_subnet.mysubnet.id
+    uuid = hcs_vpc_subnet.mysubnet.id
   }
 }
 
 resource "hcs_cce_node_attach" "test" {
-  cluster_id = huaweicloud_cce_cluster.mycce.id
-  server_id  = huaweicloud_compute_instance.myecs.id
-  key_pair   = huaweicloud_compute_keypair.mykeypair.name
+  cluster_id = hcs_cce_cluster.mycce.id
+  server_id  = hcs_compute_instance.myecs.id
+  key_pair   = hcs_compute_keypair.mykeypair.name
   os         = var.os
 }

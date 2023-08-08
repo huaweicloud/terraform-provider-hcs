@@ -116,7 +116,7 @@ func resourceEIPAssociateCreate(ctx context.Context, d *schema.ResourceData, met
 	config := meta.(*config.Config)
 	vpcClient, err := config.NetworkingV1Client(config.GetRegion(d))
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloud VPC client: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack VPC client: %s", err)
 	}
 
 	publicIP := d.Get("public_ip").(string)
@@ -159,7 +159,7 @@ func resourceEIPAssociateRead(_ context.Context, d *schema.ResourceData, meta in
 	region := config.GetRegion(d)
 	vpcClient, err := config.NetworkingV1Client(region)
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloud VPC client: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack VPC client: %s", err)
 	}
 
 	eIP, err := eips.Get(vpcClient, d.Id()).Extract()
@@ -205,7 +205,7 @@ func resourceEIPAssociateDelete(_ context.Context, d *schema.ResourceData, meta 
 	config := meta.(*config.Config)
 	vpcClient, err := config.NetworkingV1Client(config.GetRegion(d))
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloud VPC client: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack VPC client: %s", err)
 	}
 
 	portID := d.Get("port_id").(string)

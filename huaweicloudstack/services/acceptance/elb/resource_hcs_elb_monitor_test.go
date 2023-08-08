@@ -17,7 +17,7 @@ import (
 func TestAccElbV3Monitor_basic(t *testing.T) {
 	var monitor monitors.Monitor
 	rName := fmt.Sprintf("tf-acc-test-%s", acctest.RandString(5))
-	resourceName := "huaweicloud_elb_monitor.monitor_1"
+	resourceName := "hcs_elb_monitor.monitor_1"
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
@@ -63,7 +63,7 @@ func testAccCheckElbV3MonitorDestroy(s *terraform.State) error {
 	}
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "huaweicloud_elb_monitor" {
+		if rs.Type != "hcs_elb_monitor" {
 			continue
 		}
 
@@ -110,27 +110,27 @@ func testAccCheckElbV3MonitorExists(n string, monitor *monitors.Monitor) resourc
 
 func testAccCheckElbV3MonitorConfig(rName string) string {
 	return fmt.Sprintf(`
-data "huaweicloud_vpc_subnet" "test" {
+data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "huaweicloud_availability_zones" "test" {}
+data "hcs_availability_zones" "test" {}
 
-resource "huaweicloud_elb_loadbalancer" "test" {
+resource "hcs_elb_loadbalancer" "test" {
   name            = "%s"
-  ipv4_subnet_id  = data.huaweicloud_vpc_subnet.test.ipv4_subnet_id
-  ipv6_network_id = data.huaweicloud_vpc_subnet.test.id
+  ipv4_subnet_id  = data.hcs_vpc_subnet.test.ipv4_subnet_id
+  ipv6_network_id = data.hcs_vpc_subnet.test.id
 
   availability_zone = [
-    data.huaweicloud_availability_zones.test.names[0]
+    data.hcs_availability_zones.test.names[0]
   ]
 }
 
-resource "huaweicloud_elb_pool" "test" {
+resource "hcs_elb_pool" "test" {
   name            = "%s"
   protocol        = "HTTP"
   lb_method       = "LEAST_CONNECTIONS"
-  loadbalancer_id = huaweicloud_elb_loadbalancer.test.id
+  loadbalancer_id = hcs_elb_loadbalancer.test.id
 }
 `, rName, rName)
 }
@@ -139,14 +139,14 @@ func testAccElbV3MonitorConfig_basic(rName string) string {
 	return fmt.Sprintf(`
 %s
 
-resource "huaweicloud_elb_monitor" "monitor_1" {
+resource "hcs_elb_monitor" "monitor_1" {
   protocol    = "HTTP"
   interval    = 20
   timeout     = 10
   max_retries = 5
   url_path    = "/aa"
   domain_name = "www.aa.com"
-  pool_id     = huaweicloud_elb_pool.test.id
+  pool_id     = hcs_elb_pool.test.id
 }
 `, testAccCheckElbV3MonitorConfig(rName))
 }
@@ -155,7 +155,7 @@ func testAccElbV3MonitorConfig_update(rName string) string {
 	return fmt.Sprintf(`
 %s
 
-resource "huaweicloud_elb_monitor" "monitor_1" {
+resource "hcs_elb_monitor" "monitor_1" {
   protocol    = "HTTP"
   interval    = 30
   timeout     = 15
@@ -163,7 +163,7 @@ resource "huaweicloud_elb_monitor" "monitor_1" {
   url_path    = "/bb"
   domain_name = "www.bb.com"
   port        = 8888
-  pool_id     = huaweicloud_elb_pool.test.id
+  pool_id     = hcs_elb_pool.test.id
 }
 `, testAccCheckElbV3MonitorConfig(rName))
 }

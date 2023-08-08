@@ -2,9 +2,9 @@
 subcategory: "Simple Message Notification (SMN)"
 ---
 
-# huaweicloud_smn_subscription
+# hcs_smn_subscription
 
-Manages an SMN subscription resource within HuaweiCloud.
+Manages an SMN subscription resource within HuaweiCloudStack.
 
 ## Example Usage
 
@@ -14,14 +14,14 @@ resource "hcs_smn_topic" "topic_1" {
   display_name = "The display name of topic_1"
 }
 
-resource "huaweicloud_smn_subscription" "subscription_1" {
+resource "hcs_smn_subscription" "subscription_1" {
   topic_urn = hcs_smn_topic.topic_1.id
   endpoint  = "mailtest@gmail.com"
   protocol  = "email"
   remark    = "O&M"
 }
 
-resource "huaweicloud_smn_subscription" "subscription_2" {
+resource "hcs_smn_subscription" "subscription_2" {
   topic_urn = hcs_smn_topic.topic_1.id
   endpoint  = "13600000000"
   protocol  = "sms"
@@ -74,5 +74,5 @@ In addition to all arguments above, the following attributes are exported:
 SMN subscription can be imported using the `id` (subscription urn), e.g.
 
 ```
-$ terraform import huaweicloud_smn_subscription.subscription_1 urn:smn:cn-north-4:0970dd7a1300f5672ff2c003c60ae115:topic_1:a2aa5a1f66df494184f4e108398de1a6
+$ terraform import hcs_smn_subscription.subscription_1 urn:smn:cn-north-4:0970dd7a1300f5672ff2c003c60ae115:topic_1:a2aa5a1f66df494184f4e108398de1a6
 ```

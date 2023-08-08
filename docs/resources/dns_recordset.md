@@ -2,9 +2,9 @@
 subcategory: "Domain Name Service (DNS)"
 ---
 
-# huaweicloud_dns_recordset
+# hcs_dns_recordset
 
-Manages a DNS record set resource within HuaweiCloud.
+Manages a DNS record set resource within HuaweiCloudStack.
 
 ## Example Usage
 
@@ -126,5 +126,5 @@ This resource provides the following timeouts configuration options:
 The DNS recordset can be imported using `zone_id`, `recordset_id`, separated by slashes, e.g.
 
 ```bash
-$ terraform import huaweicloud_dns_recordset.test <zone_id>/<recordset_id>
+$ terraform import hcs_dns_recordset.test <zone_id>/<recordset_id>
 ```

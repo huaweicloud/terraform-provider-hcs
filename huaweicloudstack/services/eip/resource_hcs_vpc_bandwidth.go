@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
@@ -151,7 +152,7 @@ func resourceVpcBandWidthV2Update(ctx context.Context, d *schema.ResourceData, m
 		}
 		_, err := bandwidths.Update(networkingClient, d.Id(), updateOpts)
 		if err != nil {
-			return fmtp.DiagErrorf("Error updating HuaweiCloud BandWidth (%s): %s", d.Id(), err)
+			return fmtp.DiagErrorf("Error updating HuaweiCloudStack BandWidth (%s): %s", d.Id(), err)
 		}
 	}
 
@@ -195,7 +196,7 @@ func resourceVpcBandWidthV2Delete(ctx context.Context, d *schema.ResourceData, m
 
 	err = bandwidths.Delete(networkingClient, d.Id()).ExtractErr()
 	if err != nil {
-		return fmtp.DiagErrorf("Error deleting HuaweiCloud Bandwidth: %s", err)
+		return fmtp.DiagErrorf("Error deleting HuaweiCloudStack Bandwidth: %s", err)
 	}
 
 	stateConf := &resource.StateChangeConf{
@@ -226,7 +227,7 @@ func waitForBandwidth(networkingClient *golangsdk.ServiceClient, Id string) reso
 			return nil, "", err
 		}
 
-		logp.Printf("[DEBUG] HuaweiCloud Bandwidth (%s) current status: %s", b.ID, b.Status)
+		logp.Printf("[DEBUG] HuaweiCloudStack Bandwidth (%s) current status: %s", b.ID, b.Status)
 		return b, b.Status, nil
 	}
 }

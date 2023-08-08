@@ -174,7 +174,7 @@ func resourceCcePersistentVolumeClaimV1Create(ctx context.Context, d *schema.Res
 	config := meta.(*config.Config)
 	c, err := config.CceV1Client(config.GetRegion(d))
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloud CCE client: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack CCE client: %s", err)
 	}
 
 	clusterId := d.Get("cluster_id").(string)
@@ -185,7 +185,7 @@ func resourceCcePersistentVolumeClaimV1Create(ctx context.Context, d *schema.Res
 	}
 	namespace, err := persistentvolumeclaims.Create(c, clusterId, ns, opts).Extract()
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloud CCE PVC: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack CCE PVC: %s", err)
 	}
 
 	d.SetId(namespace.Metadata.UID)
@@ -249,7 +249,7 @@ func resourceCcePersistentVolumeClaimV1Read(_ context.Context, d *schema.Resourc
 	config := meta.(*config.Config)
 	client, err := config.CceV1Client(config.GetRegion(d))
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloud CCE client: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack CCE client: %s", err)
 	}
 
 	clusterId := d.Get("cluster_id").(string)
@@ -271,7 +271,7 @@ func resourceCcePersistentVolumeClaimV1Delete(ctx context.Context, d *schema.Res
 	config := meta.(*config.Config)
 	c, err := config.CceV1Client(config.GetRegion(d))
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloud CCE Client: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack CCE Client: %s", err)
 	}
 
 	clusterId := d.Get("cluster_id").(string)

@@ -116,7 +116,7 @@ func testAccBmsInstance_base(rName string) string {
 %s
 
 data "hcs_bms_flavors" "test" {
-  availability_zone = try(element(data.huaweicloud_availability_zones.test.names, 0), "")
+  availability_zone = try(element(data.hcs_availability_zones.test.names, 0), "")
 }
 
 resource "hcs_kps_keypair" "test" {
@@ -141,7 +141,7 @@ resource "hcs_vpc_eip" "myeip" {
 
 resource "hcs_bms_instance" "test" {
   security_groups   = [hcs_networking_secgroup.test.id]
-  availability_zone = data.huaweicloud_availability_zones.test.names[0]
+  availability_zone = data.hcs_availability_zones.test.names[0]
   vpc_id            = hcs_vpc.test.id
   flavor_id         = ""
   key_pair          = ""

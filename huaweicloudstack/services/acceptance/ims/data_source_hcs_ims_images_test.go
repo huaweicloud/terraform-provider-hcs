@@ -138,13 +138,13 @@ func testAccImsImagesDataSource_base(rName string) string {
 resource "hcs_ecs_instance" "test" {
   name       = "%[2]s"
   image_name = "Ubuntu 18.04 server 64bit"
-  flavor_id  = data.huaweicloud_compute_flavors.test.ids[0]
+  flavor_id  = data.hcs_compute_flavors.test.ids[0]
 
   security_group_ids = [
     hcs_networking_secgroup.test.id
   ]
 
-  availability_zone = data.huaweicloud_availability_zones.test.names[0]
+  availability_zone = data.hcs_availability_zones.test.names[0]
 
   network {
     uuid = hcs_vpc_subnet.test.id

@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance"
 )
 
@@ -32,7 +33,7 @@ func TestAccVpcEipsDataSource_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(dataSourceName, "eips.0.tags.foo", "bar"),
 					resource.TestCheckResourceAttr(dataSourceName, "eips.0.tags.key", "value"),
 					resource.TestCheckResourceAttrPair(dataSourceName, "eips.0.id",
-						"huaweicloud_vpc_eip.test", "id"),
+						"hcs_vpc_eip.test", "id"),
 				),
 			},
 		},

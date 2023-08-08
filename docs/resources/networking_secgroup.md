@@ -33,12 +33,12 @@ The following arguments are supported:
   This is `false` by default.
 
 -> **NOTE:** The default security rules are described
-in [HuaweiCloud](https://support.huaweicloud.com/intl/en-us/usermanual-vpc/SecurityGroup_0003.html). See the below
+in [HuaweiCloudStack](https://support.huaweicloud.com/intl/en-us/usermanual-vpc/SecurityGroup_0003.html). See the below
 section for more information.
 
 ## Default Security Group Rules
 
-In most cases, HuaweiCloud will create some security group rules for each new security group. These security group rules
+In most cases, HuaweiCloudStack will create some security group rules for each new security group. These security group rules
 will not be managed by Terraform, so if you prefer to have *all*
 aspects of your infrastructure managed by Terraform, set `delete_default_rules` to `true`
 and then create separate security group rules such as the following:

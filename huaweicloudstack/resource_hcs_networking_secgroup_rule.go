@@ -170,7 +170,7 @@ func resourceNetworkingSecGroupRuleCreateV1(ctx context.Context, d *schema.Resou
 	config := meta.(*config.Config)
 	v1Client, err := config.NetworkingV1Client(common.GetRegion(d, config))
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloud networking v1 client: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v1 client: %s", err)
 	}
 
 	opt := v1Rules.CreateOpts{
@@ -200,7 +200,7 @@ func resourceNetworkingSecGroupRuleCreateV3(ctx context.Context, d *schema.Resou
 	config := meta.(*config.Config)
 	v3Client, err := config.NetworkingV3Client(common.GetRegion(d, config))
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloud networking v3 client: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v3 client: %s", err)
 	}
 
 	opt := v3Rules.CreateOpts{
@@ -246,17 +246,17 @@ func resourceNetworkingSecGroupRuleRead(_ context.Context, d *schema.ResourceDat
 
 	v1Client, err := config.NetworkingV1Client(region)
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloud networking v1 client: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v1 client: %s", err)
 	}
 	v3Client, err := config.NetworkingV3Client(common.GetRegion(d, config))
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloud networking v3 client: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v3 client: %s", err)
 	}
 
 	resp, err := v1Rules.Get(v1Client, d.Id())
 	if err != nil {
 		logp.Printf("[DEBUG] Unable to find the specified Security group rule (%s).", d.Id())
-		return common.CheckDeletedDiag(d, err, "HuaweiCloud Security Group Rule")
+		return common.CheckDeletedDiag(d, err, "HuaweiCloudStack Security Group Rule")
 	}
 
 	mErr := multierror.Append(nil,
@@ -296,7 +296,7 @@ func resourceNetworkingSecGroupRuleDelete(ctx context.Context, d *schema.Resourc
 	config := meta.(*config.Config)
 	client, err := config.NetworkingV1Client(common.GetRegion(d, config))
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloud networking v1 client: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v1 client: %s", err)
 	}
 
 	stateConf := &resource.StateChangeConf{
@@ -310,7 +310,7 @@ func resourceNetworkingSecGroupRuleDelete(ctx context.Context, d *schema.Resourc
 
 	_, err = stateConf.WaitForStateContext(ctx)
 	if err != nil {
-		return fmtp.DiagErrorf("Error deleting HuaweiCloud Security Group Rule: %s", err)
+		return fmtp.DiagErrorf("Error deleting HuaweiCloudStack Security Group Rule: %s", err)
 	}
 
 	d.SetId("")
@@ -319,12 +319,12 @@ func resourceNetworkingSecGroupRuleDelete(ctx context.Context, d *schema.Resourc
 
 func waitForSecGroupRuleDelete(client *golangsdk.ServiceClient, ruleId string) resource.StateRefreshFunc {
 	return func() (interface{}, string, error) {
-		logp.Printf("[DEBUG] Attempting to delete HuaweiCloud Security Group Rule %s.", ruleId)
+		logp.Printf("[DEBUG] Attempting to delete HuaweiCloudStack Security Group Rule %s.", ruleId)
 
 		r, err := v1Rules.Get(client, ruleId)
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
-				logp.Printf("[DEBUG] Successfully deleted HuaweiCloud Security Group Rule %s", ruleId)
+				logp.Printf("[DEBUG] Successfully deleted HuaweiCloudStack Security Group Rule %s", ruleId)
 				return r, "DELETED", nil
 			}
 			return r, "ACTIVE", err
@@ -333,13 +333,13 @@ func waitForSecGroupRuleDelete(client *golangsdk.ServiceClient, ruleId string) r
 		err = v1Rules.Delete(client, ruleId).ExtractErr()
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
-				logp.Printf("[DEBUG] Successfully deleted HuaweiCloud Security Group Rule %s", ruleId)
+				logp.Printf("[DEBUG] Successfully deleted HuaweiCloudStack Security Group Rule %s", ruleId)
 				return r, "DELETED", nil
 			}
 			return r, "ACTIVE", err
 		}
 
-		logp.Printf("[DEBUG] HuaweiCloud Security Group Rule %s still active.", ruleId)
+		logp.Printf("[DEBUG] HuaweiCloudStack Security Group Rule %s still active.", ruleId)
 		return r, "ACTIVE", nil
 	}
 }

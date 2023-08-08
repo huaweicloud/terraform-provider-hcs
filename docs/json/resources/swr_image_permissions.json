@@ -47,17 +47,17 @@
                   "attributes": {
                     "permission": {
                       "type": "string",
-                      "description": "Specifies the user permission of the existing HuaweiCloud user.",
+                      "description": "Specifies the user permission of the existing HuaweiCloudStack user.",
                       "required": true
                     },
                     "user_id": {
                       "type": "string",
-                      "description": "Specifies the ID of the existing HuaweiCloud user.",
+                      "description": "Specifies the ID of the existing HuaweiCloudStack user.",
                       "required": true
                     },
                     "user_name": {
                       "type": "string",
-                      "description": "Specifies the name of the existing HuaweiCloud user.",
+                      "description": "Specifies the name of the existing HuaweiCloudStack user.",
                       "optional": true,
                       "computed": true
                     }

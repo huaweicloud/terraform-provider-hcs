@@ -94,5 +94,5 @@ This resource provides the following timeouts configuration options:
 VPC endpoint services can be imported using the `id`, e.g.
 
 ```
-$ terraform import huaweicloud_vpcep_service.test_service 950cd3ba-9d0e-4451-97c1-3e97dd515d46
+$ terraform import hcs_vpcep_service.test_service 950cd3ba-9d0e-4451-97c1-3e97dd515d46
 ```

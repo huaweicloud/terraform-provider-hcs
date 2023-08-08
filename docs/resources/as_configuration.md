@@ -4,7 +4,7 @@ subcategory: "Auto Scaling"
 
 # hcs_as_configuration
 
-Manages an AS configuration resource within HuaweiCloud.
+Manages an AS configuration resource within HuaweiCloudStack.
 
 ## Example Usage
 

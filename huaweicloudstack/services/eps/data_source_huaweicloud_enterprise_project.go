@@ -90,7 +90,7 @@ func dataSourceEnterpriseProjectRead(_ context.Context, d *schema.ResourceData, 
 	)
 
 	if err := mErr.ErrorOrNil(); err != nil {
-		return fmtp.DiagErrorf("error setting HuaweiCloud enterprise project fields: %w", err)
+		return fmtp.DiagErrorf("error setting HuaweiCloudStack enterprise project fields: %w", err)
 	}
 
 	return nil

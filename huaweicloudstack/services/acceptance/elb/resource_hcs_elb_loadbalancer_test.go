@@ -40,7 +40,7 @@ func TestAccElbV3LoadBalancer_basic(t *testing.T) {
 	var lb loadbalancers.LoadBalancer
 	rName := acceptance.RandomAccResourceNameWithDash()
 	rNameUpdate := acceptance.RandomAccResourceNameWithDash()
-	resourceName := "huaweicloud_elb_loadbalancer.test"
+	resourceName := "hcs_elb_loadbalancer.test"
 
 	rc := acceptance.InitResourceCheck(
 		resourceName,
@@ -84,7 +84,7 @@ func TestAccElbV3LoadBalancer_basic(t *testing.T) {
 func TestAccElbV3LoadBalancer_withEpsId(t *testing.T) {
 	var lb loadbalancers.LoadBalancer
 	rName := acceptance.RandomAccResourceNameWithDash()
-	resourceName := "huaweicloud_elb_loadbalancer.test"
+	resourceName := "hcs_elb_loadbalancer.test"
 
 	rc := acceptance.InitResourceCheck(
 		resourceName,
@@ -112,7 +112,7 @@ func TestAccElbV3LoadBalancer_withEpsId(t *testing.T) {
 func TestAccElbV3LoadBalancer_withEIP(t *testing.T) {
 	var lb loadbalancers.LoadBalancer
 	rName := acceptance.RandomAccResourceNameWithDash()
-	resourceName := "huaweicloud_elb_loadbalancer.test"
+	resourceName := "hcs_elb_loadbalancer.test"
 
 	rc := acceptance.InitResourceCheck(
 		resourceName,
@@ -141,7 +141,7 @@ func TestAccElbV3LoadBalancer_withEIP(t *testing.T) {
 func TestAccElbV3LoadBalancer_prePaid(t *testing.T) {
 	var lb loadbalancers.LoadBalancer
 	rName := acceptance.RandomAccResourceNameWithDash()
-	resourceName := "huaweicloud_elb_loadbalancer.test"
+	resourceName := "hcs_elb_loadbalancer.test"
 
 	rc := acceptance.InitResourceCheck(
 		resourceName,
@@ -178,9 +178,9 @@ func TestAccElbV3LoadBalancer_prePaid(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.owner", "terraform"),
 					resource.TestCheckResourceAttr(resourceName, "description", "update flavors"),
 					resource.TestCheckResourceAttrPair(
-						resourceName, "l4_flavor_id", "data.huaweicloud_elb_flavors.l4flavors", "ids.0"),
+						resourceName, "l4_flavor_id", "data.hcs_elb_flavors.l4flavors", "ids.0"),
 					resource.TestCheckResourceAttrPair(
-						resourceName, "l7_flavor_id", "data.huaweicloud_elb_flavors.l7flavors", "ids.0"),
+						resourceName, "l7_flavor_id", "data.hcs_elb_flavors.l7flavors", "ids.0"),
 					resource.TestCheckResourceAttr(resourceName, "auto_renew", "true"),
 				),
 			},
@@ -190,19 +190,19 @@ func TestAccElbV3LoadBalancer_prePaid(t *testing.T) {
 
 func testAccElbV3LoadBalancerConfig_basic(rName string) string {
 	return fmt.Sprintf(`
-data "huaweicloud_vpc_subnet" "test" {
+data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "huaweicloud_availability_zones" "test" {}
+data "hcs_availability_zones" "test" {}
 
-resource "huaweicloud_elb_loadbalancer" "test" {
+resource "hcs_elb_loadbalancer" "test" {
   name            = "%s"
-  ipv4_subnet_id  = data.huaweicloud_vpc_subnet.test.ipv4_subnet_id
-  ipv6_network_id = data.huaweicloud_vpc_subnet.test.id
+  ipv4_subnet_id  = data.hcs_vpc_subnet.test.ipv4_subnet_id
+  ipv6_network_id = data.hcs_vpc_subnet.test.id
 
   availability_zone = [
-    data.huaweicloud_availability_zones.test.names[0]
+    data.hcs_availability_zones.test.names[0]
   ]
 
   tags = {
@@ -215,20 +215,20 @@ resource "huaweicloud_elb_loadbalancer" "test" {
 
 func testAccElbV3LoadBalancerConfig_update(rNameUpdate string) string {
 	return fmt.Sprintf(`
-data "huaweicloud_vpc_subnet" "test" {
+data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "huaweicloud_availability_zones" "test" {}
+data "hcs_availability_zones" "test" {}
 
-resource "huaweicloud_elb_loadbalancer" "test" {
+resource "hcs_elb_loadbalancer" "test" {
   name              = "%s"
   cross_vpc_backend = true
-  ipv4_subnet_id    = data.huaweicloud_vpc_subnet.test.ipv4_subnet_id
-  ipv6_network_id   = data.huaweicloud_vpc_subnet.test.id
+  ipv4_subnet_id    = data.hcs_vpc_subnet.test.ipv4_subnet_id
+  ipv6_network_id   = data.hcs_vpc_subnet.test.id
 
   availability_zone = [
-    data.huaweicloud_availability_zones.test.names[0]
+    data.hcs_availability_zones.test.names[0]
   ]
 
   tags = {
@@ -241,19 +241,19 @@ resource "huaweicloud_elb_loadbalancer" "test" {
 
 func testAccElbV3LoadBalancerConfig_withEpsId(rName string) string {
 	return fmt.Sprintf(`
-data "huaweicloud_vpc_subnet" "test" {
+data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "huaweicloud_availability_zones" "test" {}
+data "hcs_availability_zones" "test" {}
 
-resource "huaweicloud_elb_loadbalancer" "test" {
+resource "hcs_elb_loadbalancer" "test" {
   name                  = "%s"
-  ipv4_subnet_id        = data.huaweicloud_vpc_subnet.test.ipv4_subnet_id
+  ipv4_subnet_id        = data.hcs_vpc_subnet.test.ipv4_subnet_id
   enterprise_project_id = "%s"
 
   availability_zone = [
-    data.huaweicloud_availability_zones.test.names[0]
+    data.hcs_availability_zones.test.names[0]
   ]
 
   tags = {
@@ -266,18 +266,18 @@ resource "huaweicloud_elb_loadbalancer" "test" {
 
 func testAccElbV3LoadBalancerConfig_withEIP(rName string) string {
 	return fmt.Sprintf(`
-data "huaweicloud_vpc_subnet" "test" {
+data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "huaweicloud_availability_zones" "test" {}
+data "hcs_availability_zones" "test" {}
 
-resource "huaweicloud_elb_loadbalancer" "test" {
+resource "hcs_elb_loadbalancer" "test" {
   name           = "%s"
-  ipv4_subnet_id = data.huaweicloud_vpc_subnet.test.ipv4_subnet_id
+  ipv4_subnet_id = data.hcs_vpc_subnet.test.ipv4_subnet_id
 
   availability_zone = [
-    data.huaweicloud_availability_zones.test.names[0]
+    data.hcs_availability_zones.test.names[0]
   ]
 
   iptype                = "5_bgp"
@@ -290,16 +290,16 @@ resource "huaweicloud_elb_loadbalancer" "test" {
 
 func testAccElbV3LoadBalancerConfig_prePaid(rName string) string {
 	return fmt.Sprintf(`
-data "huaweicloud_vpc_subnet" "test" {
+data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "huaweicloud_availability_zones" "test" {}
+data "hcs_availability_zones" "test" {}
 
-resource "huaweicloud_elb_loadbalancer" "test" {
+resource "hcs_elb_loadbalancer" "test" {
   name            = "%s"
-  ipv4_subnet_id  = data.huaweicloud_vpc_subnet.test.ipv4_subnet_id
-  ipv6_network_id = data.huaweicloud_vpc_subnet.test.id
+  ipv4_subnet_id  = data.hcs_vpc_subnet.test.ipv4_subnet_id
+  ipv6_network_id = data.hcs_vpc_subnet.test.id
 
   charging_mode = "prePaid"
   period_unit   = "month"
@@ -307,7 +307,7 @@ resource "huaweicloud_elb_loadbalancer" "test" {
   auto_renew    = "false"
 
   availability_zone = [
-    data.huaweicloud_availability_zones.test.names[0]
+    data.hcs_availability_zones.test.names[0]
   ]
 
   tags = {
@@ -320,33 +320,33 @@ resource "huaweicloud_elb_loadbalancer" "test" {
 
 func testAccElbV3LoadBalancerConfig_prePaidUpdate(rName string) string {
 	return fmt.Sprintf(`
-data "huaweicloud_vpc_subnet" "test" {
+data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "huaweicloud_availability_zones" "test" {}
+data "hcs_availability_zones" "test" {}
 
-data "huaweicloud_elb_flavors" "l4flavors" {
+data "hcs_elb_flavors" "l4flavors" {
   type            = "L4"
   max_connections = 1000000
   cps             = 20000
   bandwidth       = 100
 }
 
-data "huaweicloud_elb_flavors" "l7flavors" {
+data "hcs_elb_flavors" "l7flavors" {
   type            = "L7"
   max_connections = 400000
   cps             = 4000
   bandwidth       = 100
 }
 
-resource "huaweicloud_elb_loadbalancer" "test" {
+resource "hcs_elb_loadbalancer" "test" {
   name            = "%s"
-  ipv4_subnet_id  = data.huaweicloud_vpc_subnet.test.ipv4_subnet_id
-  ipv6_network_id = data.huaweicloud_vpc_subnet.test.id
+  ipv4_subnet_id  = data.hcs_vpc_subnet.test.ipv4_subnet_id
+  ipv6_network_id = data.hcs_vpc_subnet.test.id
   description     = "update flavors"
-  l4_flavor_id    = data.huaweicloud_elb_flavors.l4flavors.ids[0]
-  l7_flavor_id    = data.huaweicloud_elb_flavors.l7flavors.ids[0]
+  l4_flavor_id    = data.hcs_elb_flavors.l4flavors.ids[0]
+  l7_flavor_id    = data.hcs_elb_flavors.l7flavors.ids[0]
 
   charging_mode = "prePaid"
   period_unit   = "month"
@@ -354,7 +354,7 @@ resource "huaweicloud_elb_loadbalancer" "test" {
   auto_renew    = "true"
 
   availability_zone = [
-    data.huaweicloud_availability_zones.test.names[0]
+    data.hcs_availability_zones.test.names[0]
   ]
 
   tags = {
