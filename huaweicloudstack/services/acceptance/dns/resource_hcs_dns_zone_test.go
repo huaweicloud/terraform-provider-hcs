@@ -2,11 +2,12 @@ package dns
 
 import (
 	"fmt"
+	"regexp"
+	"testing"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/dns/v2/zones"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance"
-	"regexp"
-	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -23,7 +24,7 @@ func getDNSZoneResourceFunc(c *config.Config, state *terraform.ResourceState) (i
 
 func TestAccDNSZone_basic(t *testing.T) {
 	var zone zones.Zone
-	resourceName := "huaweicloud_dns_zone.zone_1"
+	resourceName := "hcs_dns_zone.zone_1"
 	name := fmt.Sprintf("acpttest-zone-%s.com.", acctest.RandString(5))
 
 	rc := acceptance.InitResourceCheck(
@@ -71,7 +72,7 @@ func TestAccDNSZone_basic(t *testing.T) {
 
 func TestAccDNSZone_private(t *testing.T) {
 	var zone zones.Zone
-	resourceName := "huaweicloud_dns_zone.zone_1"
+	resourceName := "hcs_dns_zone.zone_1"
 	name := fmt.Sprintf("acpttest-zone-%s.com.", acctest.RandString(5))
 
 	rc := acceptance.InitResourceCheck(
@@ -104,7 +105,7 @@ func TestAccDNSZone_private(t *testing.T) {
 
 func TestAccDNSZone_readTTL(t *testing.T) {
 	var zone zones.Zone
-	resourceName := "huaweicloud_dns_zone.zone_1"
+	resourceName := "hcs_dns_zone.zone_1"
 	name := fmt.Sprintf("acpttest-zone-%s.com.", acctest.RandString(5))
 
 	rc := acceptance.InitResourceCheck(
@@ -131,7 +132,7 @@ func TestAccDNSZone_readTTL(t *testing.T) {
 
 func TestAccDNSZone_withEpsId(t *testing.T) {
 	var zone zones.Zone
-	resourceName := "huaweicloud_dns_zone.zone_1"
+	resourceName := "hcs_dns_zone.zone_1"
 	name := fmt.Sprintf("acpttest-zone-%s.com.", acctest.RandString(5))
 
 	rc := acceptance.InitResourceCheck(
@@ -210,7 +211,7 @@ resource "hcs_dns_zone" "zone_1" {
   zone_type   = "private"
 
   router {
-    router_id = data.huaweicloud_vpc.default.id
+    router_id = data.hcs_vpc.default.id
   }
   tags = {
     zone_type = "private"

@@ -48,7 +48,7 @@ func TestAccSecurityPoliciesV3_basic(t *testing.T) {
 	var obj interface{}
 
 	name := acceptance.RandomAccResourceName()
-	rName := "huaweicloud_elb_security_policy.test"
+	rName := "hcs_elb_security_policy.test"
 
 	rc := acceptance.InitResourceCheck(
 		rName,
@@ -91,7 +91,7 @@ func TestAccSecurityPoliciesV3_basic(t *testing.T) {
 
 func testSecurityPoliciesV3_basic(name string) string {
 	return fmt.Sprintf(`
-resource "huaweicloud_elb_security_policy" "test" {
+resource "hcs_elb_security_policy" "test" {
   protocols = [
     "TLSv1.1",
     "TLSv1.2"
@@ -107,7 +107,7 @@ resource "huaweicloud_elb_security_policy" "test" {
 
 func testSecurityPoliciesV3_basic_update(name string) string {
 	return fmt.Sprintf(`
-resource "huaweicloud_elb_security_policy" "test" {
+resource "hcs_elb_security_policy" "test" {
   protocols = [
     "TLSv1.2"
   ]

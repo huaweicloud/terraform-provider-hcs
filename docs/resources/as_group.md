@@ -4,7 +4,7 @@ subcategory: "Auto Scaling"
 
 # hcs_as_group
 
-Manages an AS group resource within HuaweiCloud.
+Manages an AS group resource within HuaweiCloudStack.
 
 ## Example Usage
 
@@ -89,23 +89,23 @@ variable "vpc_id" {}
 variable "subnet_id" {}
 variable "ipv4_subnet_id" {}
 
-resource "huaweicloud_lb_loadbalancer" "loadbalancer_1" {
+resource "hcs_lb_loadbalancer" "loadbalancer_1" {
   name          = "loadbalancer_1"
   vip_subnet_id = var.ipv4_subnet_id
 }
 
-resource "huaweicloud_lb_listener" "listener_1" {
+resource "hcs_lb_listener" "listener_1" {
   name            = "listener_1"
   protocol        = "HTTP"
   protocol_port   = 8080
-  loadbalancer_id = huaweicloud_lb_loadbalancer.loadbalancer_1.id
+  loadbalancer_id = hcs_lb_loadbalancer.loadbalancer_1.id
 }
 
-resource "huaweicloud_lb_pool" "pool_1" {
+resource "hcs_lb_pool" "pool_1" {
   name        = "pool_1"
   protocol    = "HTTP"
   lb_method   = "ROUND_ROBIN"
-  listener_id = huaweicloud_lb_listener.listener_1.id
+  listener_id = hcs_lb_listener.listener_1.id
 }
 
 resource "hcs_as_group" "my_as_group_with_enhanced_lb" {
@@ -120,8 +120,8 @@ resource "hcs_as_group" "my_as_group_with_enhanced_lb" {
     id = var.subnet_id
   }
   lbaas_listeners {
-    pool_id       = huaweicloud_lb_pool.pool_1.id
-    protocol_port = huaweicloud_lb_listener.listener_1.protocol_port
+    pool_id       = hcs_lb_pool.pool_1.id
+    protocol_port = hcs_lb_listener.listener_1.protocol_port
   }
 }
 ```

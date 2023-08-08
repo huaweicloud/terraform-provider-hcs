@@ -4,7 +4,7 @@ subcategory: "Elastic IP (EIP)"
 
 # hcs_vpc_eip
 
-Manages an EIP resource within HuaweiCloud.
+Manages an EIP resource within HuaweiCloudStack.
 
 ## Example Usage
 
@@ -118,5 +118,5 @@ This resource provides the following timeouts configuration options:
 EIPs can be imported using the `id`, e.g.
 
 ```
-$ terraform import huaweicloud_vpc_eip.test 2c7f39f3-702b-48d1-940c-b50384177ee1
+$ terraform import hcs_vpc_eip.test 2c7f39f3-702b-48d1-940c-b50384177ee1
 ```

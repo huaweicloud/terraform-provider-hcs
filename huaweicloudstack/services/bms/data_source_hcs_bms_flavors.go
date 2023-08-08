@@ -80,7 +80,7 @@ func dataSourceBmsFlavorsRead(_ context.Context, d *schema.ResourceData, meta in
 	region := config.GetRegion(d)
 	bmsClient, err := config.BmsV1Client(region)
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloud BMS client: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack BMS client: %s", err)
 	}
 
 	az := d.Get("availability_zone").(string)

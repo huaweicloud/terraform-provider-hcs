@@ -4,7 +4,7 @@ subcategory: "Auto Scaling"
 
 # hcs_as_notification
 
-Manages an AS notification resource within HuaweiCloud.
+Manages an AS notification resource within HuaweiCloudStack.
 
 ## Example Usage
 

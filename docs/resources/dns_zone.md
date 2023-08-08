@@ -4,7 +4,7 @@ subcategory: "Domain Name Service (DNS)"
 
 # hcs_dns_zone
 
-Manages a DNS zone in the HuaweiCloud DNS Service.
+Manages a DNS zone in the HuaweiCloudStack DNS Service.
 
 ## Example Usage
 
@@ -90,5 +90,5 @@ This resource provides the following timeouts configuration options:
 This resource can be imported by specifying the zone ID:
 
 ```
-$ terraform import huaweicloud_dns_zone.zone_1 <zone_id>
+$ terraform import hcs_dns_zone.zone_1 <zone_id>
 ```

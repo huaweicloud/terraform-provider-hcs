@@ -910,7 +910,7 @@ func resourceComputeInstanceRead(_ context.Context, d *schema.ResourceData, meta
 	hostv4, hostv6 := getInstanceAccessAddresses(networks)
 
 	// update hostv4/6 by AccessIPv4/v6
-	// currently, AccessIPv4/v6 are Reserved in HuaweiCloud
+	// currently, AccessIPv4/v6 are Reserved in HuaweiCloudStack
 	if server.AccessIPv4 != "" {
 		hostv4 = server.AccessIPv4
 	}
@@ -1245,7 +1245,7 @@ func resourceComputeInstanceUpdate(ctx context.Context, d *schema.ResourceData, 
 		_, err = stateConf.WaitForStateContext(ctx)
 		if err != nil {
 			return diag.Errorf(
-				"error waiting for huaweicloud_compute_instance system disk %s to become ready: %s", systemDiskID, err)
+				"error waiting for hcs_compute_instance system disk %s to become ready: %s", systemDiskID, err)
 		}
 	}
 
@@ -1394,7 +1394,7 @@ func resourceComputeInstanceImportState(_ context.Context, d *schema.ResourceDat
 	return []*schema.ResourceData{d}, nil
 }
 
-// ServerV1StateRefreshFunc returns a resource.StateRefreshFunc that is used to watch an HuaweiCloud instance.
+// ServerV1StateRefreshFunc returns a resource.StateRefreshFunc that is used to watch an HuaweiCloudStack instance.
 func ServerV1StateRefreshFunc(client *golangsdk.ServiceClient, instanceID string) resource.StateRefreshFunc {
 	return func() (interface{}, string, error) {
 		s, err := cloudservers.Get(client, instanceID).Extract()

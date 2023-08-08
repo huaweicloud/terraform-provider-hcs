@@ -208,7 +208,7 @@ func dataSourceEvsVolumesV2Read(_ context.Context, d *schema.ResourceData, meta 
 	cfg := meta.(*config.Config)
 	client, err := cfg.BlockStorageV2Client(cfg.GetRegion(d))
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloud EVS v2 client: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack EVS v2 client: %s", err)
 	}
 
 	pages, err := volumes.List(client, buildQueryOpts(d, cfg)).AllPages()

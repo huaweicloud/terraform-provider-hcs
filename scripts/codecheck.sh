@@ -10,7 +10,7 @@ function usage() {
 function checkImporter() {
     dir=$1
     for f in $(ls $dir); do
-        if [[ $f =~ "resource_huaweicloud_" ]]; then
+        if [[ $f =~ "resource_hcs_" ]]; then
             hasImporter=$(grep -w "Importer:" $dir/$f)
             if [ "X$hasImporter" == "X" ]; then
                 echo -e "\033[31m  -> the resource in $f should can be imported\n\033[0m"
@@ -22,7 +22,7 @@ function checkImporter() {
 function checkCheckDeleted() {
     dir=$1
     for f in $(ls $dir); do
-        if [[ $f =~ "resource_huaweicloud_" ]]; then
+        if [[ $f =~ "resource_hcs_" ]]; then
             checkDeleted=$(grep "CheckDeleted" $dir/$f)
              if [ "X$checkDeleted" == "X" ]; then
                 checkDeleted=$(grep "\"Resource not found\"" $dir/$f)
@@ -38,7 +38,7 @@ function checkCheckDeleted() {
 function checkMultierror() {
     dir=$1
     for f in $(ls $dir); do
-        if [[ $f =~ "_huaweicloud_" ]]; then
+        if [[ $f =~ "_hcs_" ]]; then
             hasMultierror=$(grep -w "go-multierror" $dir/$f)
             if [ "X$hasMultierror" == "X" ]; then
                 echo -e "\033[31m  -> please use go-multierror package in $f\n\033[0m"
@@ -53,7 +53,7 @@ function checkHuaweiCloudKey() {
     for key in ${key_words[@]}; do
         result=$(grep -rn $key $dir | grep -i " huaweicloud")
         if [ "X$result" != "X" ]; then
-            echo -e "\033[31m  -> the following $key statements contain 'HuaweiCloud' key:\033[0m"
+            echo -e "\033[31m  -> the following $key statements contain 'HuaweiCloudStack' key:\033[0m"
             echo -e "$result\n"
         fi
     done

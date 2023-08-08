@@ -136,7 +136,7 @@ func CheckDeletedDiag(d *schema.ResourceData, err error, msg string) diag.Diagno
 func UnsubscribePrePaidResource(d *schema.ResourceData, config *config.Config, resourceIDs []string) error {
 	bssV2Client, err := config.BssV2Client(GetRegion(d, config))
 	if err != nil {
-		return fmtp.Errorf("Error creating HuaweiCloud bss V2 client: %s", err)
+		return fmtp.Errorf("Error creating HuaweiCloudStack bss V2 client: %s", err)
 	}
 
 	unsubscribeOpts := orders.UnsubscribeOpts{

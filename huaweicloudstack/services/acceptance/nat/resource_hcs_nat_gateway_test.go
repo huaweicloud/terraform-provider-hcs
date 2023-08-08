@@ -28,7 +28,7 @@ func TestAccPublicGateway_basic(t *testing.T) {
 	var (
 		obj gateways.Gateway
 
-		rName         = "huaweicloud_nat_gateway.test"
+		rName         = "hcs_nat_gateway.test"
 		name          = acceptance.RandomAccResourceNameWithDash()
 		updateName    = acceptance.RandomAccResourceNameWithDash()
 		relatedConfig = common.TestBaseNetwork(name)
@@ -84,12 +84,12 @@ func testAccPublicGateway_basic_step_1(name, relatedConfig string) string {
 	return fmt.Sprintf(`
 %[1]s
 
-resource "huaweicloud_nat_gateway" "test" {
+resource "hcs_nat_gateway" "test" {
   name                  = "%[2]s"
   spec                  = "1"
   description           = "Created by acc test"
-  vpc_id                = huaweicloud_vpc.test.id
-  subnet_id             = huaweicloud_vpc_subnet.test.id
+  vpc_id                = hcs_vpc.test.id
+  subnet_id             = hcs_vpc_subnet.test.id
   enterprise_project_id = "0"
 
   tags = {
@@ -104,11 +104,11 @@ func testAccPublicGateway_basic_step_2(name, relatedConfig string) string {
 	return fmt.Sprintf(`
 %[1]s
 
-resource "huaweicloud_nat_gateway" "test" {
+resource "hcs_nat_gateway" "test" {
   name                  = "%[2]s"
   spec                  = "2"
-  vpc_id                = huaweicloud_vpc.test.id
-  subnet_id             = huaweicloud_vpc_subnet.test.id
+  vpc_id                = hcs_vpc.test.id
+  subnet_id             = hcs_vpc_subnet.test.id
   enterprise_project_id = "0"
 
   tags = {

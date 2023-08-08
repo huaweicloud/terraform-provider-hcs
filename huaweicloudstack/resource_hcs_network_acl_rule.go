@@ -92,7 +92,7 @@ func resourceNetworkACLRuleCreate(d *schema.ResourceData, meta interface{}) erro
 	config := meta.(*config.Config)
 	fwClient, err := config.FwV2Client(common.GetRegion(d, config))
 	if err != nil {
-		return fmtp.Errorf("Error creating HuaweiCloud fw client: %s", err)
+		return fmtp.Errorf("Error creating HuaweiCloudStack fw client: %s", err)
 	}
 
 	enabled := d.Get("enabled").(bool)
@@ -128,7 +128,7 @@ func resourceNetworkACLRuleRead(d *schema.ResourceData, meta interface{}) error 
 	config := meta.(*config.Config)
 	fwClient, err := config.FwV2Client(common.GetRegion(d, config))
 	if err != nil {
-		return fmtp.Errorf("Error creating HuaweiCloud fw client: %s", err)
+		return fmtp.Errorf("Error creating HuaweiCloudStack fw client: %s", err)
 	}
 
 	rule, err := rules.Get(fwClient, d.Id()).Extract()
@@ -136,7 +136,7 @@ func resourceNetworkACLRuleRead(d *schema.ResourceData, meta interface{}) error 
 		return common.CheckDeleted(d, err, "Network ACL rule")
 	}
 
-	logp.Printf("[DEBUG] Retrieve HuaweiCloud Network ACL rule %s: %#v", d.Id(), rule)
+	logp.Printf("[DEBUG] Retrieve HuaweiCloudStack Network ACL rule %s: %#v", d.Id(), rule)
 
 	d.Set("action", rule.Action)
 	d.Set("name", rule.Name)
@@ -161,7 +161,7 @@ func resourceNetworkACLRuleUpdate(d *schema.ResourceData, meta interface{}) erro
 	config := meta.(*config.Config)
 	fwClient, err := config.FwV2Client(common.GetRegion(d, config))
 	if err != nil {
-		return fmtp.Errorf("Error creating HuaweiCloud fw client: %s", err)
+		return fmtp.Errorf("Error creating HuaweiCloudStack fw client: %s", err)
 	}
 
 	var updateOpts rules.UpdateOpts
@@ -219,7 +219,7 @@ func resourceNetworkACLRuleDelete(d *schema.ResourceData, meta interface{}) erro
 	config := meta.(*config.Config)
 	fwClient, err := config.FwV2Client(common.GetRegion(d, config))
 	if err != nil {
-		return fmtp.Errorf("Error creating HuaweiCloud fw client: %s", err)
+		return fmtp.Errorf("Error creating HuaweiCloudStack fw client: %s", err)
 	}
 
 	rule, err := rules.Get(fwClient, d.Id()).Extract()

@@ -18,7 +18,7 @@ import (
 func TestAccElbV3L7Rule_basic(t *testing.T) {
 	var l7rule l7policies.Rule
 	rName := fmt.Sprintf("tf-acc-test-%s", acctest.RandString(5))
-	resourceName := "huaweicloud_elb_l7rule.l7rule_1"
+	resourceName := "hcs_elb_l7rule.l7rule_1"
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
@@ -63,7 +63,7 @@ func testAccCheckElbV3L7RuleDestroy(s *terraform.State) error {
 	}
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "huaweicloud_elb_l7rule" {
+		if rs.Type != "hcs_elb_l7rule" {
 			continue
 		}
 
@@ -134,11 +134,11 @@ func testAccCheckElbV3L7RuleExists(n string, l7rule *l7policies.Rule) resource.T
 
 func testAccELBL7RuleImportStateIdFunc() resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
-		policy, ok := s.RootModule().Resources["huaweicloud_elb_l7policy.test"]
+		policy, ok := s.RootModule().Resources["hcs_elb_l7policy.test"]
 		if !ok {
 			return "", fmt.Errorf("policy not found: %s", policy)
 		}
-		rule, ok := s.RootModule().Resources["huaweicloud_elb_l7rule.l7rule_1"]
+		rule, ok := s.RootModule().Resources["hcs_elb_l7rule.l7rule_1"]
 		if !ok {
 			return "", fmt.Errorf("rule not found: %s", rule)
 		}
@@ -151,46 +151,46 @@ func testAccELBL7RuleImportStateIdFunc() resource.ImportStateIdFunc {
 
 func testAccCheckElbV3L7RuleConfig(rName string) string {
 	return fmt.Sprintf(`
-data "huaweicloud_vpc_subnet" "test" {
+data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "huaweicloud_availability_zones" "test" {}
+data "hcs_availability_zones" "test" {}
 
-resource "huaweicloud_elb_loadbalancer" "test" {
+resource "hcs_elb_loadbalancer" "test" {
   name            = "%s"
-  ipv4_subnet_id  = data.huaweicloud_vpc_subnet.test.ipv4_subnet_id
-  ipv6_network_id = data.huaweicloud_vpc_subnet.test.id
+  ipv4_subnet_id  = data.hcs_vpc_subnet.test.ipv4_subnet_id
+  ipv6_network_id = data.hcs_vpc_subnet.test.id
 
   availability_zone = [
-    data.huaweicloud_availability_zones.test.names[0]
+    data.hcs_availability_zones.test.names[0]
   ]
 }
 
-resource "huaweicloud_elb_listener" "test" {
+resource "hcs_elb_listener" "test" {
   name             = "%s"
   description      = "test description"
   protocol         = "HTTP"
   protocol_port    = 8080
-  loadbalancer_id  = huaweicloud_elb_loadbalancer.test.id
+  loadbalancer_id  = hcs_elb_loadbalancer.test.id
   forward_eip      = true
   idle_timeout     = 60
   request_timeout  = 60
   response_timeout = 60
 }
 
-resource "huaweicloud_elb_pool" "test" {
+resource "hcs_elb_pool" "test" {
   name            = "%s"
   protocol        = "HTTP"
   lb_method       = "LEAST_CONNECTIONS"
-  loadbalancer_id = huaweicloud_elb_loadbalancer.test.id
+  loadbalancer_id = hcs_elb_loadbalancer.test.id
 }
 
-resource "huaweicloud_elb_l7policy" "test" {
+resource "hcs_elb_l7policy" "test" {
   name             = "%s"
   description      = "test description"
-  listener_id      = huaweicloud_elb_listener.test.id
-  redirect_pool_id = huaweicloud_elb_pool.test.id
+  listener_id      = hcs_elb_listener.test.id
+  redirect_pool_id = hcs_elb_pool.test.id
 }
 `, rName, rName, rName, rName)
 }
@@ -199,8 +199,8 @@ func testAccCheckElbV3L7RuleConfig_basic(rName string) string {
 	return fmt.Sprintf(`
 %s
 
-resource "huaweicloud_elb_l7rule" "l7rule_1" {
-  l7policy_id  = huaweicloud_elb_l7policy.test.id
+resource "hcs_elb_l7rule" "l7rule_1" {
+  l7policy_id  = hcs_elb_l7policy.test.id
   type         = "PATH"
   compare_type = "EQUAL_TO"
   value        = "/api"
@@ -212,8 +212,8 @@ func testAccCheckElbV3L7RuleConfig_update(rName string) string {
 	return fmt.Sprintf(`
 %s
 
-resource "huaweicloud_elb_l7rule" "l7rule_1" {
-  l7policy_id  = huaweicloud_elb_l7policy.test.id
+resource "hcs_elb_l7rule" "l7rule_1" {
+  l7policy_id  = hcs_elb_l7policy.test.id
   type         = "PATH"
   compare_type = "STARTS_WITH"
   value        = "/images"

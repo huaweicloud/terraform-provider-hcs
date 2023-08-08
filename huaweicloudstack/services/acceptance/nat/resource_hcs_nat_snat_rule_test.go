@@ -27,7 +27,7 @@ func TestAccPublicSnatRule_basic(t *testing.T) {
 	var (
 		obj snats.Rule
 
-		rName = "huaweicloud_nat_snat_rule.test"
+		rName = "hcs_nat_snat_rule.test"
 		name  = acceptance.RandomAccResourceNameWithDash()
 	)
 
@@ -48,9 +48,9 @@ func TestAccPublicSnatRule_basic(t *testing.T) {
 				Config: testAccPublicSnatRule_basic_step_1(name),
 				Check: resource.ComposeTestCheckFunc(
 					rc.CheckResourceExists(),
-					resource.TestCheckResourceAttrPair(rName, "nat_gateway_id", "huaweicloud_nat_gateway.test", "id"),
-					resource.TestCheckResourceAttrPair(rName, "subnet_id", "huaweicloud_vpc_subnet.test", "id"),
-					resource.TestCheckResourceAttrPair(rName, "floating_ip_id", "huaweicloud_vpc_eip.test.0", "id"),
+					resource.TestCheckResourceAttrPair(rName, "nat_gateway_id", "hcs_nat_gateway.test", "id"),
+					resource.TestCheckResourceAttrPair(rName, "subnet_id", "hcs_vpc_subnet.test", "id"),
+					resource.TestCheckResourceAttrPair(rName, "floating_ip_id", "hcs_vpc_eip.test.0", "id"),
 					resource.TestCheckResourceAttr(rName, "description", "Created by acc test"),
 					resource.TestCheckResourceAttr(rName, "status", "ACTIVE"),
 				),
@@ -59,7 +59,7 @@ func TestAccPublicSnatRule_basic(t *testing.T) {
 				Config: testAccPublicSnatRule_basic_step_2(name),
 				Check: resource.ComposeTestCheckFunc(
 					rc.CheckResourceExists(),
-					resource.TestCheckResourceAttrPair(rName, "nat_gateway_id", "huaweicloud_nat_gateway.test", "id"),
+					resource.TestCheckResourceAttrPair(rName, "nat_gateway_id", "hcs_nat_gateway.test", "id"),
 					resource.TestCheckResourceAttr(rName, "description", ""),
 					resource.TestCheckResourceAttr(rName, "status", "ACTIVE"),
 				),
@@ -77,7 +77,7 @@ func testAccPublicSnatRule_base(name string) string {
 	return fmt.Sprintf(`
 %[1]s
 
-resource "huaweicloud_vpc_eip" "test" {
+resource "hcs_vpc_eip" "test" {
   count = 2
 
   publicip {
@@ -92,23 +92,23 @@ resource "huaweicloud_vpc_eip" "test" {
   }
 }
 
-resource "huaweicloud_compute_instance" "test" {
+resource "hcs_compute_instance" "test" {
   name               = "%[2]s"
-  image_id           = data.huaweicloud_images_image.test.id
-  flavor_id          = data.huaweicloud_compute_flavors.test.ids[0]
-  security_group_ids = [huaweicloud_networking_secgroup.test.id]
-  availability_zone  = data.huaweicloud_availability_zones.test.names[0]
+  image_id           = data.hcs_images_image.test.id
+  flavor_id          = data.hcs_compute_flavors.test.ids[0]
+  security_group_ids = [hcs_networking_secgroup.test.id]
+  availability_zone  = data.hcs_availability_zones.test.names[0]
 
   network {
-    uuid = huaweicloud_vpc_subnet.test.id
+    uuid = hcs_vpc_subnet.test.id
   }
 }
 
-resource "huaweicloud_nat_gateway" "test" {
+resource "hcs_nat_gateway" "test" {
   name                  = "%[2]s"
   spec                  = "2"
-  vpc_id                = huaweicloud_vpc.test.id
-  subnet_id             = huaweicloud_vpc_subnet.test.id
+  vpc_id                = hcs_vpc.test.id
+  subnet_id             = hcs_vpc_subnet.test.id
   enterprise_project_id = "0"
 }
 `, common.TestBaseComputeResources(name), name)
@@ -118,10 +118,10 @@ func testAccPublicSnatRule_basic_step_1(name string) string {
 	return fmt.Sprintf(`
 %[1]s
 
-resource "huaweicloud_nat_snat_rule" "test" {
-  nat_gateway_id = huaweicloud_nat_gateway.test.id
-  subnet_id      = huaweicloud_vpc_subnet.test.id
-  floating_ip_id = huaweicloud_vpc_eip.test[0].id
+resource "hcs_nat_snat_rule" "test" {
+  nat_gateway_id = hcs_nat_gateway.test.id
+  subnet_id      = hcs_vpc_subnet.test.id
+  floating_ip_id = hcs_vpc_eip.test[0].id
   description    = "Created by acc test"
 }
 `, testAccPublicSnatRule_base(name))
@@ -131,10 +131,10 @@ func testAccPublicSnatRule_basic_step_2(name string) string {
 	return fmt.Sprintf(`
 %[1]s
 
-resource "huaweicloud_nat_snat_rule" "test" {
-  nat_gateway_id = huaweicloud_nat_gateway.test.id
-  subnet_id      = huaweicloud_vpc_subnet.test.id
-  floating_ip_id = join(",", huaweicloud_vpc_eip.test[*].id)
+resource "hcs_nat_snat_rule" "test" {
+  nat_gateway_id = hcs_nat_gateway.test.id
+  subnet_id      = hcs_vpc_subnet.test.id
+  floating_ip_id = join(",", hcs_vpc_eip.test[*].id)
 }
 `, testAccPublicSnatRule_base(name))
 }

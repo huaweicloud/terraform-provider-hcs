@@ -4,7 +4,7 @@ subcategory: "Elastic IP (EIP)"
 
 # hcs_vpc_bandwidth
 
-Manages a **Shared** Bandwidth resource within HuaweiCloud.
+Manages a **Shared** Bandwidth resource within HuaweiCloudStack.
 
 ## Example Usage
 
@@ -60,5 +60,5 @@ This resource provides the following timeouts configuration options:
 Shared Bandwidths can be imported using the `id`, e.g.
 
 ```
-$ terraform import huaweicloud_vpc_bandwidth.bandwidth_1 7117d38e-4c8f-4624-a505-bd96b97d024c
+$ terraform import hcs_vpc_bandwidth.bandwidth_1 7117d38e-4c8f-4624-a505-bd96b97d024c
 ```

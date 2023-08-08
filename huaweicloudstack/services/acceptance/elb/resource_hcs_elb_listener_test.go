@@ -25,7 +25,7 @@ func TestAccElbV3Listener_basic(t *testing.T) {
 	var listener listeners.Listener
 	rName := acceptance.RandomAccResourceNameWithDash()
 	rNameUpdate := acceptance.RandomAccResourceNameWithDash()
-	resourceName := "huaweicloud_elb_listener.test"
+	resourceName := "hcs_elb_listener.test"
 
 	rc := acceptance.InitResourceCheck(
 		resourceName,
@@ -70,19 +70,19 @@ func TestAccElbV3Listener_basic(t *testing.T) {
 
 func testAccElbV3ListenerConfig_basic(rName string) string {
 	return fmt.Sprintf(`
-data "huaweicloud_vpc_subnet" "test" {
+data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "huaweicloud_availability_zones" "test" {}
+data "hcs_availability_zones" "test" {}
 
-resource "huaweicloud_elb_loadbalancer" "test" {
+resource "hcs_elb_loadbalancer" "test" {
   name            = "%s"
-  ipv4_subnet_id  = data.huaweicloud_vpc_subnet.test.ipv4_subnet_id
-  ipv6_network_id = data.huaweicloud_vpc_subnet.test.id
+  ipv4_subnet_id  = data.hcs_vpc_subnet.test.ipv4_subnet_id
+  ipv6_network_id = data.hcs_vpc_subnet.test.id
 
   availability_zone = [
-    data.huaweicloud_availability_zones.test.names[0]
+    data.hcs_availability_zones.test.names[0]
   ]
 
   tags = {
@@ -91,12 +91,12 @@ resource "huaweicloud_elb_loadbalancer" "test" {
   }
 }
 
-resource "huaweicloud_elb_listener" "test" {
+resource "hcs_elb_listener" "test" {
   name                        = "%s"
   description                 = "test description"
   protocol                    = "HTTP"
   protocol_port               = 8080
-  loadbalancer_id             = huaweicloud_elb_loadbalancer.test.id
+  loadbalancer_id             = hcs_elb_loadbalancer.test.id
   advanced_forwarding_enabled = false
 
   forward_eip = true
@@ -115,20 +115,20 @@ resource "huaweicloud_elb_listener" "test" {
 
 func testAccElbV3ListenerConfig_update(rNameUpdate string) string {
 	return fmt.Sprintf(`
-data "huaweicloud_vpc_subnet" "test" {
+data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "huaweicloud_availability_zones" "test" {}
+data "hcs_availability_zones" "test" {}
 
-resource "huaweicloud_elb_loadbalancer" "test" {
+resource "hcs_elb_loadbalancer" "test" {
   name              = "%s"
   cross_vpc_backend = true
-  ipv4_subnet_id    = data.huaweicloud_vpc_subnet.test.ipv4_subnet_id
-  ipv6_network_id   = data.huaweicloud_vpc_subnet.test.id
+  ipv4_subnet_id    = data.hcs_vpc_subnet.test.ipv4_subnet_id
+  ipv6_network_id   = data.hcs_vpc_subnet.test.id
 
   availability_zone = [
-    data.huaweicloud_availability_zones.test.names[0]
+    data.hcs_availability_zones.test.names[0]
   ]
 
   tags = {
@@ -137,12 +137,12 @@ resource "huaweicloud_elb_loadbalancer" "test" {
   }
 }
 
-resource "huaweicloud_elb_listener" "test" {
+resource "hcs_elb_listener" "test" {
   name                        = "%s"
   description                 = "test description"
   protocol                    = "HTTP"
   protocol_port               = 8080
-  loadbalancer_id             = huaweicloud_elb_loadbalancer.test.id
+  loadbalancer_id             = hcs_elb_loadbalancer.test.id
   advanced_forwarding_enabled = true
 
   idle_timeout = 62

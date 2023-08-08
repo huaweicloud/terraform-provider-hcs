@@ -2,10 +2,12 @@ package eip
 
 import (
 	"context"
+
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/networking/v1/bandwidths"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
@@ -59,7 +61,7 @@ func dataSourceBandWidthRead(_ context.Context, d *schema.ResourceData, meta int
 	config := meta.(*config.Config)
 	vpcClient, err := config.NetworkingV1Client(config.GetRegion(d))
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloud VPC client: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack VPC client: %s", err)
 	}
 
 	listOpts := bandwidths.ListOpts{
@@ -68,10 +70,10 @@ func dataSourceBandWidthRead(_ context.Context, d *schema.ResourceData, meta int
 
 	allBWs, err := bandwidths.List(vpcClient, listOpts).Extract()
 	if err != nil {
-		return fmtp.DiagErrorf("Unable to list HuaweiCloud bandwidths: %s", err)
+		return fmtp.DiagErrorf("Unable to list HuaweiCloudStack bandwidths: %s", err)
 	}
 	if len(allBWs) == 0 {
-		return fmtp.DiagErrorf("No HuaweiCloud bandwidth was found")
+		return fmtp.DiagErrorf("No HuaweiCloudStack bandwidth was found")
 	}
 
 	filter := map[string]interface{}{
@@ -86,11 +88,11 @@ func dataSourceBandWidthRead(_ context.Context, d *schema.ResourceData, meta int
 		return fmtp.DiagErrorf("filter bandwidths failed: %s", err)
 	}
 	if len(filterBWs) == 0 {
-		return fmtp.DiagErrorf("No HuaweiCloud bandwidth was found by %+v", filter)
+		return fmtp.DiagErrorf("No HuaweiCloudStack bandwidth was found by %+v", filter)
 	}
 
 	result := filterBWs[0].(bandwidths.BandWidth)
-	logp.Printf("[DEBUG] Retrieved HuaweiCloud bandwidth %s: %+v", result.ID, result)
+	logp.Printf("[DEBUG] Retrieved HuaweiCloudStack bandwidth %s: %+v", result.ID, result)
 	d.SetId(result.ID)
 
 	mErr := multierror.Append(

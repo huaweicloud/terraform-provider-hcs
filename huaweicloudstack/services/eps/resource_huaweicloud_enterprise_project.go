@@ -86,7 +86,7 @@ func resourceEnterpriseProjectCreate(ctx context.Context, d *schema.ResourceData
 	epsClient, err := config.EnterpriseProjectClient(config.GetRegion(d))
 
 	if err != nil {
-		return fmtp.DiagErrorf("Unable to create HuaweiCloud EPS client : %s", err)
+		return fmtp.DiagErrorf("Unable to create HuaweiCloudStack EPS client : %s", err)
 	}
 
 	createOpts := enterpriseprojects.CreateOpts{
@@ -98,7 +98,7 @@ func resourceEnterpriseProjectCreate(ctx context.Context, d *schema.ResourceData
 	project, err := enterpriseprojects.Create(epsClient, createOpts).Extract()
 
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloud Enterprise Project: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack Enterprise Project: %s", err)
 	}
 
 	d.SetId(project.ID)
@@ -111,12 +111,12 @@ func resourceEnterpriseProjectRead(_ context.Context, d *schema.ResourceData, me
 	epsClient, err := config.EnterpriseProjectClient(config.GetRegion(d))
 
 	if err != nil {
-		return fmtp.DiagErrorf("Unable to create HuaweiCloud EPS client : %s", err)
+		return fmtp.DiagErrorf("Unable to create HuaweiCloudStack EPS client : %s", err)
 	}
 
 	project, err := enterpriseprojects.Get(epsClient, d.Id()).Extract()
 	if err != nil {
-		return common.CheckDeletedDiag(d, err, "Error retrieving HuaweiCloud Enterprise Project")
+		return common.CheckDeletedDiag(d, err, "Error retrieving HuaweiCloudStack Enterprise Project")
 	}
 
 	var enable bool
@@ -135,7 +135,7 @@ func resourceEnterpriseProjectRead(_ context.Context, d *schema.ResourceData, me
 	)
 
 	if err := mErr.ErrorOrNil(); err != nil {
-		return fmtp.DiagErrorf("error setting HuaweiCloud enterprise project fields: %w", err)
+		return fmtp.DiagErrorf("error setting HuaweiCloudStack enterprise project fields: %w", err)
 	}
 
 	return nil
@@ -146,7 +146,7 @@ func resourceEnterpriseProjectUpdate(ctx context.Context, d *schema.ResourceData
 	epsClient, err := config.EnterpriseProjectClient(config.GetRegion(d))
 
 	if err != nil {
-		return fmtp.DiagErrorf("Unable to create HuaweiCloud EPS client : %s", err)
+		return fmtp.DiagErrorf("Unable to create HuaweiCloudStack EPS client : %s", err)
 	}
 
 	if d.HasChanges("name", "description", "type") {
@@ -159,7 +159,7 @@ func resourceEnterpriseProjectUpdate(ctx context.Context, d *schema.ResourceData
 		_, err = enterpriseprojects.Update(epsClient, updateOpts, d.Id()).Extract()
 
 		if err != nil {
-			return fmtp.DiagErrorf("Error updating HuaweiCloud Enterprise Project: %s", err)
+			return fmtp.DiagErrorf("Error updating HuaweiCloudStack Enterprise Project: %s", err)
 		}
 	}
 
