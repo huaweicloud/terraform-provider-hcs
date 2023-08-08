@@ -30,10 +30,6 @@ func DataSourceEvsVolumesV2() *schema.Resource {
 				Type:     schema.TypeBool,
 				Optional: true,
 			},
-			"server_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
 			"status": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -46,10 +42,6 @@ func DataSourceEvsVolumesV2() *schema.Resource {
 				Type:     schema.TypeMap,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
-			},
-			"with_snapshot": {
-				Type:     schema.TypeBool,
-				Optional: true,
 			},
 			"volumes": {
 				Type:     schema.TypeList,
@@ -120,11 +112,11 @@ func DataSourceEvsVolumesV2() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"create_at": {
+						"created_at": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"update_at": {
+						"updated_at": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
@@ -148,10 +140,8 @@ func buildQueryOpts(d *schema.ResourceData, cfg *config.Config) volumes.ListOpts
 	result := volumes.ListOpts{
 		AvailabilityZone:    d.Get("availability_zone").(string),
 		EnterpriseProjectID: cfg.DataGetEnterpriseProjectID(d),
-		ServerID:            d.Get("server_id").(string),
 		Status:              d.Get("status").(string),
 		Name:                d.Get("name").(string),
-		WithSnapshot:        d.Get("with_snapshot").(bool),
 		MetadataOrigin:      d.Get("metadata").(map[string]interface{}),
 	}
 	return result
@@ -186,9 +176,10 @@ func sourceEvsVolumes(vols []volumes.Volume) ([]map[string]interface{}, []string
 			"multiattach":       volume.Multiattach,
 			"size":              volume.Size,
 			"status":            volume.Status,
-			"create_at":         volume.CreatedAt,
-			"update_at":         volume.UpdatedAt,
+			"created_at":        volume.CreatedAt,
+			"updated_at":        volume.UpdatedAt,
 			"wwn":               volume.WWN,
+			"metadata":          volume.Metadata,
 		}
 		bootable, err := strconv.ParseBool(volume.Bootable)
 		if err != nil {
