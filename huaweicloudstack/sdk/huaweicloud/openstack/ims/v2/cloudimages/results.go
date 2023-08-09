@@ -36,16 +36,12 @@ type Image struct {
 	ContainerFormat string `json:"container_format"`
 	// the minimum memory size (MB) required for running the image
 	MinRam int `json:"min_ram"`
-	// the maximum memory of the image in the unit of MB, notice: string
-	MaxRam string `json:"max_ram"`
 	// the disk format, the value can be [vhd, raw, zvhd, qcow2]
 	DiskFormat string `json:"disk_format"`
 	// the minimum disk space (GB) required for running the image
 	MinDisk int `json:"min_disk"`
 	// the environment where the image is used
 	VirtualEnvType string `json:"virtual_env_type"`
-	// Enterprise project ID
-	EnterpriseProjectID string `json:"enterprise_project_id"`
 	// *size, virtual_size and checksum parameter are unavailable currently*
 	Size        int64  `json:"size"`
 	VirtualSize int    `json:"virtual_size"`
@@ -65,12 +61,10 @@ type Image struct {
 	Imagetype              string `json:"__imagetype"`
 	WholeImage             string `json:"__whole_image"`
 	Originalimagename      string `json:"__originalimagename"`
-	BackupID               string `json:"__backup_id"`
 	Productcode            string `json:"__productcode"`
 	ImageSize              string `json:"__image_size"`
 	DataOrigin             string `json:"__data_origin"`
 	LazyLoading            string `json:"__lazyloading"`
-	ActiveAt               string `json:"active_at"`
 	OsFeatureList          string `json:"__os_feature_list"`
 	SupportKvm             string `json:"__support_kvm"`
 	SupportXen             string `json:"__support_xen"`
@@ -86,6 +80,7 @@ type Image struct {
 	RootOrigin             string `json:"__root_origin"`
 	SequenceNum            string `json:"__sequence_num"`
 	SupportFcInject        string `json:"__support_fc_inject"`
+	HwDiskBus              string `q:"hw_disk_bus"`
 	HwFirmwareType         string `json:"hw_firmware_type"`
 	HwVifMultiqueueEnabled string `json:"hw_vif_multiqueue_enabled"`
 	SupportArm             string `json:"__support_arm"`

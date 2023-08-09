@@ -192,15 +192,6 @@ type UpdateOpts struct {
 	// or false (DOWN).
 	AdminStateUp *bool `json:"admin_state_up,omitempty"`
 
-	// The IP address of the Loadbalancer.
-	VipAddress string `json:"vip_address,omitempty"`
-
-	// The network on which to allocate the Loadbalancer's address.
-	VipSubnetID *string `json:"vip_subnet_cidr_id"`
-
-	// The V6 network on which to allocate the Loadbalancer's address.
-	IpV6VipSubnetID *string `json:"ipv6_vip_virsubnet_id"`
-
 	// The UUID of a l4 flavor.
 	L4Flavor string `json:"l4_flavor_id,omitempty"`
 

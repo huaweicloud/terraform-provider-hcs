@@ -1,8 +1,7 @@
 package services
 
 import (
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/common/tags"
+	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 )
 
 // Service contains the response of the VPC endpoint service
@@ -23,8 +22,6 @@ type Service struct {
 	ServerType string `json:"server_type"`
 	// whether connection approval is required
 	Approval bool `json:"approval_enabled"`
-	// the ID of the virtual NIC to which the virtual IP address is bound
-	VipPortID string `json:"vip_port_id"`
 	// the project ID
 	ProjectID string `json:"project_id"`
 	// the network segment type. The value can be public or internal
@@ -33,13 +30,9 @@ type Service struct {
 	Ports []PortMapping `json:"ports"`
 	// whether the client IP address and port number or marker_id information is transmitted to the server
 	TCPProxy string `json:"tcp_proxy"`
-	// the resource tags
-	Tags []tags.ResourceTag `json:"tags"`
 	// the error message when the status of the VPC endpoint service changes to failed
 	Error []ErrorInfo `json:"error"`
 	// the description of the VPC endpoint service
-	Description string `json:"description"`
-	// the creation time of the VPC endpoint service
 	Created string `json:"created_at"`
 	// the update time of the VPC endpoint service
 	Updated string `json:"updated_at"`

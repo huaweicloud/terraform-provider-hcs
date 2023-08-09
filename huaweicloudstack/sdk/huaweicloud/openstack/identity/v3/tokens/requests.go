@@ -200,24 +200,3 @@ func Get(c *golangsdk.ServiceClient, token string) (r GetResult) {
 	}
 	return
 }
-
-// Validate determines if a specified token is valid or not.
-func Validate(c *golangsdk.ServiceClient, token string) (bool, error) {
-	resp, err := c.Request("HEAD", tokenURL(c), &golangsdk.RequestOpts{
-		MoreHeaders: subjectTokenHeaders(c, token),
-		OkCodes:     []int{200, 204, 404},
-	})
-	if err != nil {
-		return false, err
-	}
-
-	return resp.StatusCode == 200 || resp.StatusCode == 204, nil
-}
-
-// Revoke immediately makes specified token invalid.
-func Revoke(c *golangsdk.ServiceClient, token string) (r RevokeResult) {
-	_, r.Err = c.Delete(tokenURL(c), &golangsdk.RequestOpts{
-		MoreHeaders: subjectTokenHeaders(c, token),
-	})
-	return
-}

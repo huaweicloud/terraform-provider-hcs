@@ -11,14 +11,27 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/as"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/bms"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/cce"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dns"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ecs"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eip"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/elb"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eps"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/evs"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ims"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/nat"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/smn"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpc"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpcep"
 )
 
 const (
 	defaultCloud string = "myhuaweicloud.com"
 )
 
-// Provider returns a schema.Provider for HuaweiCloud.
+// Provider returns a schema.Provider for HuaweiCloudStack.
 func Provider() *schema.Provider {
 	provider := &schema.Provider{
 		Schema: map[string]*schema.Schema{
@@ -28,7 +41,7 @@ func Provider() *schema.Provider {
 				Description:  descriptions["region"],
 				InputDefault: "cn-north-1",
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_REGION_NAME",
+					"HCS_REGION_NAME",
 					"OS_REGION_NAME",
 				}, nil),
 			},
@@ -39,7 +52,7 @@ func Provider() *schema.Provider {
 				Description:  descriptions["access_key"],
 				RequiredWith: []string{"secret_key"},
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_ACCESS_KEY",
+					"HCS_ACCESS_KEY",
 					"OS_ACCESS_KEY",
 				}, nil),
 			},
@@ -50,7 +63,7 @@ func Provider() *schema.Provider {
 				Description:  descriptions["secret_key"],
 				RequiredWith: []string{"access_key"},
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_SECRET_KEY",
+					"HCS_SECRET_KEY",
 					"OS_SECRET_KEY",
 				}, nil),
 			},
@@ -60,7 +73,7 @@ func Provider() *schema.Provider {
 				Optional:     true,
 				Description:  descriptions["security_token"],
 				RequiredWith: []string{"access_key"},
-				DefaultFunc:  schema.EnvDefaultFunc("HW_SECURITY_TOKEN", nil),
+				DefaultFunc:  schema.EnvDefaultFunc("HCS_SECURITY_TOKEN", nil),
 			},
 
 			"domain_id": {
@@ -68,7 +81,7 @@ func Provider() *schema.Provider {
 				Optional:    true,
 				Description: descriptions["domain_id"],
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_DOMAIN_ID",
+					"HCS_DOMAIN_ID",
 					"OS_DOMAIN_ID",
 					"OS_USER_DOMAIN_ID",
 					"OS_PROJECT_DOMAIN_ID",
@@ -80,7 +93,7 @@ func Provider() *schema.Provider {
 				Optional:    true,
 				Description: descriptions["domain_name"],
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_DOMAIN_NAME",
+					"HCS_DOMAIN_NAME",
 					"OS_DOMAIN_NAME",
 					"OS_USER_DOMAIN_NAME",
 					"OS_PROJECT_DOMAIN_NAME",
@@ -92,7 +105,7 @@ func Provider() *schema.Provider {
 				Optional:    true,
 				Description: descriptions["user_name"],
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_USER_NAME",
+					"HCS_USER_NAME",
 					"OS_USERNAME",
 				}, ""),
 			},
@@ -102,7 +115,7 @@ func Provider() *schema.Provider {
 				Optional:    true,
 				Description: descriptions["user_id"],
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_USER_ID",
+					"HCS_USER_ID",
 					"OS_USER_ID",
 				}, ""),
 			},
@@ -113,7 +126,7 @@ func Provider() *schema.Provider {
 				Sensitive:   true,
 				Description: descriptions["password"],
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_USER_PASSWORD",
+					"HCS_USER_PASSWORD",
 					"OS_PASSWORD",
 				}, ""),
 			},
@@ -128,13 +141,13 @@ func Provider() *schema.Provider {
 							Type:        schema.TypeString,
 							Required:    true,
 							Description: descriptions["assume_role_agency_name"],
-							DefaultFunc: schema.EnvDefaultFunc("HW_ASSUME_ROLE_AGENCY_NAME", nil),
+							DefaultFunc: schema.EnvDefaultFunc("HCS_ASSUME_ROLE_AGENCY_NAME", nil),
 						},
 						"domain_name": {
 							Type:        schema.TypeString,
 							Required:    true,
 							Description: descriptions["assume_role_domain_name"],
-							DefaultFunc: schema.EnvDefaultFunc("HW_ASSUME_ROLE_DOMAIN_NAME", nil),
+							DefaultFunc: schema.EnvDefaultFunc("HCS_ASSUME_ROLE_DOMAIN_NAME", nil),
 						},
 					},
 				},
@@ -145,7 +158,7 @@ func Provider() *schema.Provider {
 				Optional:    true,
 				Description: descriptions["project_id"],
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_PROJECT_ID",
+					"HCS_PROJECT_ID",
 					"OS_PROJECT_ID",
 				}, nil),
 			},
@@ -155,7 +168,7 @@ func Provider() *schema.Provider {
 				Optional:    true,
 				Description: descriptions["project_name"],
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_PROJECT_NAME",
+					"HCS_PROJECT_NAME",
 					"OS_PROJECT_NAME",
 				}, nil),
 			},
@@ -179,7 +192,7 @@ func Provider() *schema.Provider {
 				Optional:    true,
 				Description: descriptions["token"],
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_AUTH_TOKEN",
+					"HCS_AUTH_TOKEN",
 					"OS_AUTH_TOKEN",
 				}, ""),
 			},
@@ -189,7 +202,7 @@ func Provider() *schema.Provider {
 				Optional:    true,
 				Description: descriptions["insecure"],
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_INSECURE",
+					"HCS_INSECURE",
 					"OS_INSECURE",
 				}, false),
 			},
@@ -243,7 +256,7 @@ func Provider() *schema.Provider {
 				Optional:    true,
 				Description: descriptions["auth_url"],
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
-					"HW_AUTH_URL",
+					"HCS_AUTH_URL",
 					"OS_AUTH_URL",
 				}, nil),
 			},
@@ -252,7 +265,7 @@ func Provider() *schema.Provider {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: descriptions["cloud"],
-				DefaultFunc: schema.EnvDefaultFunc("HW_CLOUD", ""),
+				DefaultFunc: schema.EnvDefaultFunc("HCS_CLOUD", ""),
 			},
 
 			"endpoints": {
@@ -272,36 +285,148 @@ func Provider() *schema.Provider {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: descriptions["shared_config_file"],
-				DefaultFunc: schema.EnvDefaultFunc("HW_SHARED_CONFIG_FILE", ""),
+				DefaultFunc: schema.EnvDefaultFunc("HCS_SHARED_CONFIG_FILE", ""),
 			},
 
 			"profile": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: descriptions["profile"],
-				DefaultFunc: schema.EnvDefaultFunc("HW_PROFILE", ""),
+				DefaultFunc: schema.EnvDefaultFunc("HCS_PROFILE", ""),
 			},
 
 			"enterprise_project_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: descriptions["enterprise_project_id"],
-				DefaultFunc: schema.EnvDefaultFunc("HW_ENTERPRISE_PROJECT_ID", ""),
+				DefaultFunc: schema.EnvDefaultFunc("HCS_ENTERPRISE_PROJECT_ID", ""),
 			},
 
 			"max_retries": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Description: descriptions["max_retries"],
-				DefaultFunc: schema.EnvDefaultFunc("HW_MAX_RETRIES", 5),
+				DefaultFunc: schema.EnvDefaultFunc("HCS_MAX_RETRIES", 5),
 			},
 		},
 
-		DataSourcesMap: map[string]*schema.Resource{},
+		DataSourcesMap: map[string]*schema.Resource{
+			"hcs_enterprise_project":    eps.DataSourceEnterpriseProject(),
+			"hcs_vpcep_public_services": vpcep.DataSourceVPCEPPublicServices(),
+
+			"hcs_vpc_bandwidth": eip.DataSourceBandWidth(),
+			"hcs_vpc_eip":       eip.DataSourceVpcEip(),
+			"hcs_vpc_eips":      eip.DataSourceVpcEips(),
+
+			"hcs_evs_volumes": evs.DataSourceEvsVolumesV2(),
+
+			"hcs_nat_gateway": nat.DataSourcePublicGateway(),
+			"hcs_smn_topics":  smn.DataSourceTopics(),
+
+			"hcs_ims_images": ims.DataSourceImagesImages(),
+
+			"hcs_vpcs":        vpc.DataSourceVpcs(),
+			"hcs_vpc_subnets": vpc.DataSourceVpcSubnets(),
+
+			"hcs_networking_secgroups": vpc.DataSourceNetworkingSecGroups(),
+
+			"hcs_availability_zones": DataSourceAvailabilityZones(),
+			"hcs_as_configurations":  as.DataSourceASConfigurations(),
+			"hcs_as_groups":          as.DataSourceASGroups(),
+
+			"hcs_bms_flavors": bms.DataSourceBmsFlavors(),
+
+			"hcs_cce_cluster":        cce.DataSourceCCEClusterV3(),
+			"hcs_cce_clusters":       cce.DataSourceCCEClusters(),
+			"hcs_cce_addon_template": cce.DataSourceAddonTemplate(),
+			"hcs_cce_node_pool":      cce.DataSourceCCENodePoolV3(),
+			"hcs_cce_node":           cce.DataSourceNode(),
+			"hcs_cce_nodes":          cce.DataSourceNodes(),
+
+			"hcs_ecs_compute_flavors":      ecs.DataSourceEcsFlavors(),
+			"hcs_ecs_compute_servergroups": ecs.DataSourceComputeServerGroups(),
+		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"hcs_cce_cluster": cce.ResourceCluster(),
-			"hcs_cce_node":    cce.ResourceNode(),
+			"hcs_cce_addon":       cce.ResourceAddon(),
+			"hcs_cce_cluster":     cce.ResourceCluster(),
+			"hcs_cce_namespace":   cce.ResourceCCENamespaceV1(),
+			"hcs_cce_node":        cce.ResourceNode(),
+			"hcs_cce_node_attach": cce.ResourceNodeAttach(),
+			"hcs_cce_node_pool":   cce.ResourceNodePool(),
+			"hcs_cce_pvc":         cce.ResourceCcePersistentVolumeClaimsV1(),
+
+			"hcs_enterprise_project": eps.ResourceEnterpriseProject(),
+			"hcs_dns_recordset":      dns.ResourceDNSRecordset(),
+			"hcs_dns_zone":           dns.ResourceDNSZone(),
+			"hcs_vpcep_approval":     vpcep.ResourceVPCEndpointApproval(),
+			"hcs_vpcep_endpoint":     vpcep.ResourceVPCEndpoint(),
+			"hcs_vpcep_service":      vpcep.ResourceVPCEndpointService(),
+
+			"hcs_vpc_bandwidth":     eip.ResourceVpcBandWidthV2(),
+			"hcs_vpc_eip":           eip.ResourceVpcEIPV1(),
+			"hcs_vpc_eip_associate": eip.ResourceEIPAssociate(),
+
+			"hcs_vpc_bandwidth_v2": eip.ResourceVpcBandWidthV2(),
+			"hcs_vpc_eip_v1":       eip.ResourceVpcEIPV1(),
+
+			"hcs_evs_volume": evs.ResourceEvsVolume(),
+
+			"hcs_elb_certificate":     elb.ResourceCertificateV3(),
+			"hcs_elb_l7policy":        elb.ResourceL7PolicyV3(),
+			"hcs_elb_l7rule":          elb.ResourceL7RuleV3(),
+			"hcs_elb_listener":        elb.ResourceListenerV3(),
+			"hcs_elb_loadbalancer":    elb.ResourceLoadBalancerV3(),
+			"hcs_elb_member":          elb.ResourceMemberV3(),
+			"hcs_elb_monitor":         elb.ResourceMonitorV3(),
+			"hcs_elb_pool":            elb.ResourcePoolV3(),
+			"hcs_elb_security_policy": elb.ResourceSecurityPolicy(),
+
+			"hcs_ecs_compute_volume_attach":    ecs.ResourceComputeVolumeAttach(),
+			"hcs_ecs_compute_server_group":     ecs.ResourceComputeServerGroup(),
+			"hcs_ecs_compute_interface_attach": ecs.ResourceComputeInterfaceAttach(),
+			"hcs_ecs_compute_instance":         ecs.ResourceComputeInstance(),
+
+			// Legacy
+			"hcs_networking_eip_associate": eip.ResourceEIPAssociate(),
+
+			"hcs_nat_gateway":   nat.ResourcePublicGateway(),
+			"hcs_nat_snat_rule": nat.ResourcePublicSnatRule(),
+			"hcs_nat_dnat_rule": nat.ResourcePublicDnatRule(),
+
+			"hcs_smn_topic":            smn.ResourceTopic(),
+			"hcs_smn_subscription":     smn.ResourceSubscription(),
+			"hcs_smn_message_template": smn.ResourceSmnMessageTemplate(),
+			"hcs_smn_topic_v2":         smn.ResourceTopic(),
+			"hcs_smn_subscription_v2":  smn.ResourceSubscription(),
+
+			"hcs_as_bandwidth_policy": as.ResourceASBandWidthPolicy(),
+			"hcs_as_configuration":    as.ResourceASConfiguration(),
+			"hcs_as_group":            as.ResourceASGroup(),
+			"hcs_as_instance_attach":  as.ResourceASInstanceAttach(),
+			"hcs_as_lifecycle_hook":   as.ResourceASLifecycleHook(),
+			"hcs_as_notification":     as.ResourceAsNotification(),
+			"hcs_as_policy":           as.ResourceASPolicy(),
+
+			"hcs_ims_image":                ims.ResourceImsImage(),
+			"hcs_ims_image_share":          ims.ResourceImsImageShare(),
+			"hcs_ims_image_share_accepter": ims.ResourceImsImageShareAccepter(),
+
+			"hcs_vpc":        vpc.ResourceVirtualPrivateCloudV1(),
+			"hcs_vpc_subnet": vpc.ResourceVpcSubnetV1(),
+
+			"hcs_vpc_route_v2":             vpc.ResourceVPCRouteV2(),
+			"hcs_vpc_v1":                   vpc.ResourceVirtualPrivateCloudV1(),
+			"hcs_vpc_subnet_v1":            vpc.ResourceVpcSubnetV1(),
+			"hcs_networking_vip":           vpc.ResourceNetworkingVip(),
+			"hcs_networking_vip_associate": vpc.ResourceNetworkingVIPAssociateV2(),
+
+			"hcs_network_acl":              ResourceNetworkACL(),
+			"hcs_network_acl_rule":         ResourceNetworkACLRule(),
+			"hcs_networking_secgroup":      ResourceNetworkingSecGroup(),
+			"hcs_networking_secgroup_rule": ResourceNetworkingSecGroupRule(),
+
+			"hcs_bms_instance": bms.ResourceBmsInstance(),
 		},
 	}
 
@@ -325,7 +450,7 @@ func init() {
 	descriptions = map[string]string{
 		"auth_url": "The Identity authentication URL.",
 
-		"region": "The HuaweiCloud region to connect to.",
+		"region": "The HuaweiCloudStack region to connect to.",
 
 		"user_name": "Username to login with.",
 
@@ -347,8 +472,8 @@ func init() {
 
 		"domain_name": "The name of the Domain to scope to.",
 
-		"access_key":     "The access key of the HuaweiCloud to use.",
-		"secret_key":     "The secret key of the HuaweiCloud to use.",
+		"access_key":     "The access key of the HuaweiCloudStack to use.",
+		"secret_key":     "The secret key of the HuaweiCloudStack to use.",
 		"security_token": "The security token to authenticate with a temporary security credential.",
 
 		"insecure": "Trust self-signed certificates.",
@@ -390,7 +515,8 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 	var tenantName, tenantID, delegatedProject, identityEndpoint string
 	region := d.Get("region").(string)
 	isRegional := d.Get("regional").(bool)
-	cloud := getCloudDomain(d.Get("cloud").(string), region)
+	// different from hws, there is no default "cloud" in hcs, throw if not provided.
+	cloud := d.Get("cloud").(string)
 
 	// project_name is prior to tenant_name
 	// if neither of them was set, use region as the default project
@@ -421,11 +547,7 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 		identityEndpoint = v.(string)
 	} else {
 		// use cloud as basis for identityEndpoint
-		if isGlobalIamEndpoint(cloud, region, isRegional) {
-			identityEndpoint = fmt.Sprintf("https://iam.%s:443/v3", cloud)
-		} else {
-			identityEndpoint = fmt.Sprintf("https://iam.%s.%s:443/v3", region, cloud)
-		}
+		identityEndpoint = fmt.Sprintf("https://iam-apigateway-proxy.%s:443/v3", cloud)
 	}
 
 	config := config.Config{

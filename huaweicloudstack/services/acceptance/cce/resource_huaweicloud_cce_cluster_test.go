@@ -8,12 +8,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/cce/v3/clusters"
-
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance/common"
-
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/cce/v3/clusters"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance/common"
 )
 
 func TestAccCluster_basic(t *testing.T) {
@@ -111,7 +109,7 @@ func TestAccCluster_withEpsId(t *testing.T) {
 				Config: testAccCluster_withEpsId(rName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckClusterExists(resourceName, &cluster),
-					resource.TestCheckResourceAttr(resourceName, "enterprise_project_id", acceptance.HW_ENTERPRISE_PROJECT_ID_TEST),
+					resource.TestCheckResourceAttr(resourceName, "enterprise_project_id", acceptance.HCS_ENTERPRISE_PROJECT_ID_TEST),
 				),
 			},
 		},
@@ -241,7 +239,7 @@ func TestAccCluster_secGroup(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "container_network_type", "overlay_l2"),
 					resource.TestCheckResourceAttr(resourceName, "authentication_mode", "rbac"),
 					resource.TestCheckResourceAttr(resourceName, "service_network_cidr", "10.248.0.0/16"),
-					resource.TestCheckResourceAttr(resourceName, "security_group_id", acceptance.HW_SG_ID),
+					resource.TestCheckResourceAttrPair(resourceName, "security_group_id", "hcs_networking_secgroup", "id"),
 				),
 			},
 			{
@@ -249,7 +247,7 @@ func TestAccCluster_secGroup(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "description", "created by terraform update"),
 					resource.TestCheckResourceAttr(resourceName, "status", "Available"),
-					resource.TestCheckResourceAttr(resourceName, "security_group_id", acceptance.HW_SG_ID2),
+					resource.TestCheckResourceAttrPair(resourceName, "security_group_id", "hcs_networking_secgroup", "id"),
 				),
 			},
 		},
@@ -258,7 +256,7 @@ func TestAccCluster_secGroup(t *testing.T) {
 
 func testAccCheckClusterDestroy(s *terraform.State) error {
 	config := acceptance.TestAccProvider.Meta().(*config.Config)
-	cceClient, err := config.CceV3Client(acceptance.HW_REGION_NAME)
+	cceClient, err := config.CceV3Client(acceptance.HCS_REGION_NAME)
 	if err != nil {
 		return fmt.Errorf("error creating CCE v3 client: %s", err)
 	}
@@ -289,7 +287,7 @@ func testAccCheckClusterExists(n string, cluster *clusters.Clusters) resource.Te
 		}
 
 		config := acceptance.TestAccProvider.Meta().(*config.Config)
-		cceClient, err := config.CceV3Client(acceptance.HW_REGION_NAME)
+		cceClient, err := config.CceV3Client(acceptance.HCS_REGION_NAME)
 		if err != nil {
 			return fmt.Errorf("error creating CCE v3 client: %s", err)
 		}
@@ -316,8 +314,8 @@ func testAccCluster_basic(rName string) string {
 resource "hcs_cce_cluster" "test" {
   name                   = "%[2]s"
   flavor_id              = "cce.s1.small"
-  vpc_id                 = var.vpc_id
-  subnet_id              = var.subnet_id
+  vpc_id                 = hcs_vpc.test.id
+  subnet_id              = hcs_vpc_subnet.test.id
   container_network_type = "overlay_l2"
   service_network_cidr   = "10.248.0.0/16"
 
@@ -326,7 +324,7 @@ resource "hcs_cce_cluster" "test" {
     key = "value"
   }
 }
-`, common.TestVariables(rName), rName)
+`, common.TestVpc(rName), rName)
 }
 
 func testAccCluster_update(rName string) string {
@@ -336,8 +334,8 @@ func testAccCluster_update(rName string) string {
 resource "hcs_cce_cluster" "test" {
   name                   = "%s"
   flavor_id              = "cce.s1.small"
-  vpc_id                 = var.vpc_id
-  subnet_id              = var.subnet_id
+  vpc_id                 = hcs_vpc.test.id
+  subnet_id              = hcs_vpc_subnet.test.id
   container_network_type = "overlay_l2"
   service_network_cidr   = "10.248.0.0/16"
   description            = "new description"
@@ -347,41 +345,69 @@ resource "hcs_cce_cluster" "test" {
     key = "value"
   }
 }
-`, common.TestVariables(rName), rName)
+`, common.TestVpc(rName), rName)
 }
 
 func testAccCluster_withEip(rName string) string {
 	return fmt.Sprintf(`
 %s
 
+resource "hcs_vpc_eip" "test" {
+  name = "%[2]s"
+
+  publicip {
+    type       = "5_bgp"
+  }
+
+  bandwidth {
+    share_type  = "PER"
+    name        = "%[2]s"
+    size        = 5
+  }
+}
+
 resource "hcs_cce_cluster" "test" {
-  name                   = "%s"
+  name                   = "%[2]s"
   cluster_type           = "VirtualMachine"
   flavor_id              = "cce.s1.small"
   vpc_id                 = var.vpc_id
   subnet_id              = var.subnet_id
   container_network_type = "overlay_l2"
   authentication_mode    = "rbac"
-  eip                    = var.eip_address
+  eip                    = hcs_vpc_eip.test.address
 }
-`, common.TestVariables(rName), rName)
+`, common.TestVpc(rName), rName)
 }
 
 func testAccCluster_withEipUpdate(rName string) string {
 	return fmt.Sprintf(`
 %s
 
+resource "hcs_vpc_eip" "test2" {
+  name = "%[2]s"
+
+  publicip {
+    type       = "5_bgp"
+  }
+
+  bandwidth {
+    share_type  = "PER"
+    name        = "%[2]s"
+    size        = 5
+  }
+}
+
 resource "hcs_cce_cluster" "test" {
-  name                   = "%s"
+  name                   = "%[2]s"
   cluster_type           = "VirtualMachine"
   flavor_id              = "cce.s1.small"
-  vpc_id                 = var.vpc_id
-  subnet_id              = var.subnet_id
+  vpc_id                 = hcs_vpc.test.id
+  subnet_id              = hcs_vpc_subnet.test.id
   container_network_type = "overlay_l2"
   authentication_mode    = "rbac"
-  eip                    = var.eip_address2
+  eip                    = hcs_vpc_eip.test2.address
 }
-`, common.TestVariables(rName), rName)
+`, common.TestVpc(rName), rName)
 }
 
 func testAccCluster_withEpsId(rName string) string {
@@ -397,7 +423,7 @@ resource "hcs_cce_cluster" "test" {
   enterprise_project_id  = "%s"
 }
 
-`, common.TestVpc(rName), rName, acceptance.HW_ENTERPRISE_PROJECT_ID_TEST)
+`, common.TestVpc(rName), rName, acceptance.HCS_ENTERPRISE_PROJECT_ID_TEST)
 }
 
 func testAccCluster_turbo(rName string, eniNum int) string {
@@ -436,8 +462,8 @@ func testAccCluster_hibernate(rName string) string {
 resource "hcs_cce_cluster" "test" {
   name                   = "%s"
   flavor_id              = "cce.s1.small"
-  vpc_id                 = var.vpc_id
-  subnet_id              = var.subnet_id
+  vpc_id                 = hcs_vpc.test.id
+  subnet_id              = hcs_vpc_subnet.test.id
   container_network_type = "overlay_l2"
   service_network_cidr   = "10.248.0.0/16"
   hibernate              = true
@@ -447,7 +473,7 @@ resource "hcs_cce_cluster" "test" {
     key = "value"
   }
 }
-`, common.TestVariables(rName), rName)
+`, common.TestVpc(rName), rName)
 }
 
 func testAccCluster_awake(rName string) string {
@@ -457,8 +483,8 @@ func testAccCluster_awake(rName string) string {
 resource "hcs_cce_cluster" "test" {
   name                   = "%s"
   flavor_id              = "cce.s1.small"
-  vpc_id                 = var.vpc_id
-  subnet_id              = var.subnet_id
+  vpc_id                 = hcs_vpc.test.id
+  subnet_id              = hcs_vpc_subnet.test.id
   container_network_type = "overlay_l2"
   service_network_cidr   = "10.248.0.0/16"
   hibernate              = false
@@ -468,7 +494,7 @@ resource "hcs_cce_cluster" "test" {
     key = "value"
   }
 }
-`, common.TestVariables(rName), rName)
+`, common.TestVpc(rName), rName)
 }
 
 func testAccCluster_multiContainerNetworkCidrs(rName string) string {
@@ -478,8 +504,8 @@ func testAccCluster_multiContainerNetworkCidrs(rName string) string {
 resource "hcs_cce_cluster" "test" {
   name                   = "%s"
   flavor_id              = "cce.s1.small"
-  vpc_id                 = var.vpc_id
-  subnet_id              = var.subnet_id
+  vpc_id                 = hcs_vpc.test.id
+  subnet_id              = hcs_vpc_subnet.test.id
   container_network_type = "vpc-router"
   container_network_cidr = "172.16.0.0/24,172.16.1.0/24"
   service_network_cidr   = "10.248.0.0/16"
@@ -489,49 +515,59 @@ resource "hcs_cce_cluster" "test" {
     key = "value"
   }
 }
-`, common.TestVariables(rName), rName)
+`, common.TestVpc(rName), rName)
 }
 
 func testAccCluster_secGroup(rName string) string {
 	return fmt.Sprintf(`
 %s
 
+resource "hcs_networking_secgroup" "test" {
+  name        = "secgroup_1"
+  description = "My security group"
+}
+
 resource "hcs_cce_cluster" "test" {
   name                   = "%[2]s"
   flavor_id              = "cce.s1.small"
-  vpc_id                 = var.vpc_id
-  subnet_id              = var.subnet_id
+  vpc_id                 = hcs_vpc.test.id
+  subnet_id              = hcs_vpc_subnet.test.id
   container_network_type = "overlay_l2"
   service_network_cidr   = "10.248.0.0/16"
   description            = "created by terraform"
-  security_group_id      = var.sg_id
+  security_group_id      = hcs_networking_secgroup.test.id
 
   tags = {
     foo = "bar"
     key = "value"
   }
 }
-`, common.TestVariables(rName), rName)
+`, common.TestVpc(rName), rName)
 }
 
 func testAccCluster_secGroup_update(rName string) string {
 	return fmt.Sprintf(`
 %s
 
+resource "hcs_networking_secgroup" "test2" {
+  name        = "secgroup_1"
+  description = "My security group"
+}
+
 resource "hcs_cce_cluster" "test" {
   name                   = "%[2]s"
   flavor_id              = "cce.s1.small"
-  vpc_id                 = var.vpc_id
-  subnet_id              = var.subnet_id
+  vpc_id                 = hcs_vpc.test.id
+  subnet_id              = hcs_vpc_subnet.test.id
   container_network_type = "overlay_l2"
   service_network_cidr   = "10.248.0.0/16"
   description            = "created by terraform update"
-  security_group_id      = var.sg_id2
+  security_group_id      = hcs_networking_secgroup.test2.id
 
   tags = {
     foo = "bar"
     key = "value"
   }
 }
-`, common.TestVariables(rName), rName)
+`, common.TestVpc(rName), rName)
 }

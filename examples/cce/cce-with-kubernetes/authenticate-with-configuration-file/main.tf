@@ -1,10 +1,10 @@
-data "huaweicloud_availability_zones" "myaz" {}
+data "hcs_availability_zones" "myaz" {}
 
-data "huaweicloud_vpc" "myvpc" {
+data "hcs_vpc" "myvpc" {
   id = var.vpc_id
 }
 
-data "huaweicloud_vpc_subnet" "mysubnet" {
+data "hcs_vpc_subnet" "mysubnet" {
   id = var.subnet_id
 }
 
@@ -25,19 +25,19 @@ resource "hcs_cce_cluster" "cluster" {
   cluster_type           = "VirtualMachine"
   cluster_version        = "v1.19"
   flavor_id              = "cce.s1.small"
-  vpc_id                 = data.huaweicloud_vpc.myvpc.id
-  subnet_id              = data.huaweicloud_vpc_subnet.mysubnet.id
+  vpc_id                 = data.hcs_vpc.myvpc.id
+  subnet_id              = data.hcs_vpc_subnet.mysubnet.id
   container_network_type = "overlay_l2"
   authentication_mode    = "rbac"
-  eip                    = huaweicloud_vpc_eip.cce.address
+  eip                    = hcs_vpc_eip.cce.address
   delete_all             = "true"
 }
 
 resource "hcs_cce_node" "cce-node1" {
-  cluster_id        = huaweicloud_cce_cluster.cluster.id
+  cluster_id        = hcs_cce_cluster.cluster.id
   name              = "node1"
   flavor_id         = "s6.large.2"
-  availability_zone = data.huaweicloud_availability_zones.myaz.names[0]
+  availability_zone = data.hcs_availability_zones.myaz.names[0]
   key_pair          = var.key_pair_name
 
   root_volume {
@@ -51,10 +51,10 @@ resource "hcs_cce_node" "cce-node1" {
 }
 
 resource "hcs_cce_node" "cce-node2" {
-  cluster_id        = huaweicloud_cce_cluster.cluster.id
+  cluster_id        = hcs_cce_cluster.cluster.id
   name              = "node2"
   flavor_id         = "s6.large.2"
-  availability_zone = data.huaweicloud_availability_zones.myaz.names[0]
+  availability_zone = data.hcs_availability_zones.myaz.names[0]
   key_pair          = var.key_pair_name
 
   root_volume {
@@ -68,7 +68,7 @@ resource "hcs_cce_node" "cce-node2" {
 }
 
 resource "local_file" "kube_config" {
-    content = huaweicloud_cce_cluster.cluster.kube_config_raw
+    content = hcs_cce_cluster.cluster.kube_config_raw
     filename = " ~/.kube/config"
 }
 

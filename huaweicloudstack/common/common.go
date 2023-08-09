@@ -21,7 +21,6 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/bss/v2/orders"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/bss/v2/resources"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/eps/v1/enterpriseprojects"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/networking/v1/eips"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -29,6 +28,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/sdkerr"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils/fmtp"
 )
@@ -47,7 +47,7 @@ func ParseErrorMsg(body []byte) (ErrorResp, error) {
 
 // GetRegion returns the region that was specified ina the resource. If a
 // region was not set, the provider-level region is checked. The provider-level
-// region can either be set by the region argument or by HW_REGION_NAME.
+// region can either be set by the region argument or by HCS_REGION_NAME.
 func GetRegion(d *schema.ResourceData, config *config.Config) string {
 	if v, ok := d.GetOk("region"); ok {
 		return v.(string)
@@ -58,37 +58,13 @@ func GetRegion(d *schema.ResourceData, config *config.Config) string {
 
 // GetEnterpriseProjectID returns the enterprise_project_id that was specified in the resource.
 // If it was not set, the provider-level value is checked. The provider-level value can
-// either be set by the `enterprise_project_id` argument or by HW_ENTERPRISE_PROJECT_ID.
+// either be set by the `enterprise_project_id` argument or by HCS_ENTERPRISE_PROJECT_ID.
 func GetEnterpriseProjectID(d *schema.ResourceData, config *config.Config) string {
 	if v, ok := d.GetOk("enterprise_project_id"); ok {
 		return v.(string)
 	}
 
 	return config.EnterpriseProjectID
-}
-
-func MigrateEnterpriseProject(client *golangsdk.ServiceClient, region, targetEPSId, resourceType, resourceID string) error {
-	if targetEPSId == "" {
-		targetEPSId = "0"
-	} else {
-		// check enterprise_project_id existed
-		if result := enterpriseprojects.Get(client, targetEPSId); result.Err != nil {
-			return fmt.Errorf("failed to query the target enterprise project %s: %s", targetEPSId, result.Err)
-		}
-	}
-
-	migrateOpts := enterpriseprojects.MigrateResourceOpts{
-		RegionId:     region,
-		ProjectId:    client.ProjectID,
-		ResourceType: resourceType,
-		ResourceId:   resourceID,
-	}
-	migrateResult := enterpriseprojects.Migrate(client, migrateOpts, targetEPSId)
-	if err := migrateResult.Err; err != nil {
-		return fmt.Errorf("failed to migrate %s to enterprise project %s, err: %s", resourceID, targetEPSId, err)
-	}
-
-	return nil
 }
 
 // GetEipIDbyAddress returns the EIP ID of address when success.
@@ -160,7 +136,7 @@ func CheckDeletedDiag(d *schema.ResourceData, err error, msg string) diag.Diagno
 func UnsubscribePrePaidResource(d *schema.ResourceData, config *config.Config, resourceIDs []string) error {
 	bssV2Client, err := config.BssV2Client(GetRegion(d, config))
 	if err != nil {
-		return fmtp.Errorf("Error creating HuaweiCloud bss V2 client: %s", err)
+		return fmtp.Errorf("Error creating HuaweiCloudStack bss V2 client: %s", err)
 	}
 
 	unsubscribeOpts := orders.UnsubscribeOpts{

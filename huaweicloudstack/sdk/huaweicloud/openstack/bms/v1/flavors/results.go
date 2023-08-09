@@ -35,7 +35,7 @@ type OsExtraSpecs struct {
 	// the resource type corresponding to the flavor. The value is ironic.
 	Type string `json:"resource_type"`
 	// the CPU architecture of the BMS. The value can be: x86_64 and aarch64
-	CPUArch string `json:"capabilities:cpu_arch"`
+	CPUArch string `json:"capabilities:cpu_info:arch"`
 	// the type of the BMS flavor in the format of flavor abbreviation.
 	// For example, if the flavor name is physical.o2.medium, the flavor type is o2m.
 	FlavorType string `json:"capabilities:board_type"`
@@ -44,7 +44,7 @@ type OsExtraSpecs struct {
 	// whether the BMS flavor supports EVS disks: true/false
 	SupportEvs string `json:"baremetal:__support_evs"`
 	// the boot source of the BMS. The value can be: LocalDisk and Volume
-	BootFrom string `json:"baremetal:extBootType"`
+	BootFrom string `json:"huawei:extBootType"`
 	// the maximum number of NICs on the BMS
 	NetNum string `json:"baremetal:net_num"`
 	// the physical CPU specifications

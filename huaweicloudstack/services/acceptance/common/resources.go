@@ -6,7 +6,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance"
 )
 
-// TestSecGroup can be referred as `huaweicloud_networking_secgroup.test`
+// TestSecGroup can be referred as `hcs_networking_secgroup.test`
 func TestSecGroup(name string) string {
 	return fmt.Sprintf(`
 resource "hcs_networking_secgroup" "test" {
@@ -16,7 +16,7 @@ resource "hcs_networking_secgroup" "test" {
 `, name)
 }
 
-// TestVpc can be referred as `huaweicloud_vpc.test` and `huaweicloud_vpc_subnet.test`
+// TestVpc can be referred as `hcs_vpc.test` and `hcs_vpc_subnet.test`
 func TestVpc(name string) string {
 	return fmt.Sprintf(`
 resource "hcs_vpc" "test" {
@@ -26,7 +26,7 @@ resource "hcs_vpc" "test" {
 
 resource "hcs_vpc_subnet" "test" {
   name       = "%[1]s"
-  vpc_id     = huaweicloud_vpc.test.id
+  vpc_id     = hcs_vpc.test.id
   cidr       = "192.168.0.0/24"
   gateway_ip = "192.168.0.1"
 }
@@ -50,64 +50,54 @@ func TestBaseComputeResources(name string) string {
 # base test resources
 %s
 
-data "huaweicloud_availability_zones" "test" {}
+data "hcs_availability_zones" "test" {}
 
-data "huaweicloud_compute_flavors" "test" {
-  availability_zone = data.huaweicloud_availability_zones.test.names[0]
+data "hcs_compute_flavors" "test" {
+  availability_zone = data.hcs_availability_zones.test.names[0]
   performance_type  = "normal"
   cpu_core_count    = 2
   memory_size       = 4
 }
 
-data "huaweicloud_images_image" "test" {
+data "hcs_ims_image" "test" {
   name        = "Ubuntu 18.04 server 64bit"
   most_recent = true
 }
 `, TestBaseNetwork(name))
 }
 
-// TestVariables can be referred as `huaweicloud_vpc.test` and `huaweicloud_vpc_subnet.test`
-func TestVariables(name string) string {
+// TestVariables can be referred as `hcs_vpc.test` and `hcs_vpc_subnet.test`
+func TestVariables() string {
 	return fmt.Sprintf(`
-variable "vpc_id" {
+variable "availability_zone" {
   type    = string
   default = "%s"
 }
 
-variable "subnet_id" {
+variable "keypair_name" {
   type    = string
   default = "%s"
 }
 
-variable "eip_id" {
+variable "kms_key_id" {
   type    = string
   default = "%s"
 }
 
-variable "eip_id2" {
+variable "server_group_id" {
   type    = string
   default = "%s"
 }
 
-variable "eip_address" {
+variable "ecs_instance_id" {
   type    = string
   default = "%s"
 }
 
-variable "eip_address2" {
+variable "cluster_id" {
   type    = string
   default = "%s"
 }
-
-variable "sg_id" {
-  type    = string
-  default = "%s"
-}
-
-variable "sg_id2" {
-  type    = string
-  default = "%s"
-}
-`, acceptance.HW_VPC_ID, acceptance.HW_SUBNET_ID, acceptance.HW_EIP_ID, acceptance.HW_EIP_ID2, acceptance.HW_EIP_ADDRESS,
-		acceptance.HW_EIP_ADDRESS2, acceptance.HW_SG_ID, acceptance.HW_SG_ID2)
+`, acceptance.HCS_AVAILABILITY_ZONE, acceptance.HCS_KEYPAIR_NAME,
+		acceptance.HCS_KMS_KEY_ID, acceptance.HCS_SERVER_GROUP_ID, acceptance.HCS_ECS_INSTANCE_ID, acceptance.HCS_CCE_CLUSTER_ID)
 }

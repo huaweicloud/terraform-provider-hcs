@@ -14,7 +14,7 @@ import (
 )
 
 func getNodeFunc(cfg *config.Config, state *terraform.ResourceState) (interface{}, error) {
-	client, err := cfg.CceV3Client(acceptance.HW_REGION_NAME)
+	client, err := cfg.CceV3Client(acceptance.HCS_REGION_NAME)
 	if err != nil {
 		return nil, fmt.Errorf("error creating CCE v3 client: %s", err)
 	}
@@ -48,7 +48,7 @@ func TestAccNode_basic(t *testing.T) {
 				Config: testAccNode_basic(name),
 				Check: resource.ComposeTestCheckFunc(
 					rc.CheckResourceExists(),
-					resource.TestCheckResourceAttr(resourceName, "cluster_id", acceptance.HW_CCE_CLUSTER_ID),
+					resource.TestCheckResourceAttr(resourceName, "cluster_id", acceptance.HCS_CCE_CLUSTER_ID),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "flavor_id", "s2.xlarge.2"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zone", "ca1.dc1"),
@@ -104,7 +104,7 @@ resource "hcs_cce_node" "test" {
     key = "value"
   }
 }
-`, acceptance.HW_CCE_CLUSTER_ID, name)
+`, acceptance.HCS_CCE_CLUSTER_ID, name)
 }
 
 func TestAccNode_auto_assign_eip(t *testing.T) {
@@ -168,7 +168,7 @@ resource "hcs_cce_node" "test" {
     size       = 100
   }
 }
-`, acceptance.HW_CCE_CLUSTER_ID, name)
+`, acceptance.HCS_CCE_CLUSTER_ID, name)
 }
 
 func TestAccNode_existing_eip(t *testing.T) {
@@ -189,7 +189,6 @@ func TestAccNode_existing_eip(t *testing.T) {
 		PreCheck: func() {
 			acceptance.TestAccPreCheck(t)
 			acceptance.TestAccPreCheckCceClusterId(t)
-			acceptance.TestAccPreCheckEipId(t)
 		},
 		ProviderFactories: acceptance.TestAccProviderFactories,
 		CheckDestroy:      rc.CheckResourceDestroy(),
@@ -209,6 +208,21 @@ func TestAccNode_existing_eip(t *testing.T) {
 
 func testAccNode_existing_eip(name string) string {
 	return fmt.Sprintf(`
+
+resource "hcs_vpc_eip" "test" {
+  name = "%[2]s"
+
+  publicip {
+    type       = "5_bgp"
+  }
+
+  bandwidth {
+    share_type  = "PER"
+    name        = "%[2]s"
+    size        = 5
+  }
+}
+
 resource "hcs_cce_node" "test" {
   cluster_id        = "%[1]s"
   name              = "%[2]s"
@@ -218,7 +232,7 @@ resource "hcs_cce_node" "test" {
   os                = "EulerOS 2.10"
 
   // Assign existing EIP
-  eip_id = "%[3]s"
+  eip_id = hcs_vpc_eip.test.id
 
   root_volume {
     volumetype = "SSD"
@@ -229,7 +243,7 @@ resource "hcs_cce_node" "test" {
     size       = 100
   }
 }
-`, acceptance.HW_CCE_CLUSTER_ID, name, acceptance.HW_EIP_ID)
+`, acceptance.HCS_CCE_CLUSTER_ID, name)
 }
 
 func TestAccNode_volume_extendParams(t *testing.T) {
@@ -294,7 +308,7 @@ resource "hcs_cce_node" "test" {
 	}
   }
 }
-`, acceptance.HW_CCE_CLUSTER_ID, name)
+`, acceptance.HCS_CCE_CLUSTER_ID, name)
 }
 
 func TestAccNode_volume_encryption(t *testing.T) {
@@ -327,8 +341,8 @@ func TestAccNode_volume_encryption(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					rc.CheckResourceExists(),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "root_volume.0.kms_key_id", acceptance.HW_KMS_KEY_ID),
-					resource.TestCheckResourceAttr(resourceName, "data_volumes.0.kms_key_id", acceptance.HW_KMS_KEY_ID),
+					resource.TestCheckResourceAttr(resourceName, "root_volume.0.kms_key_id", acceptance.HCS_KMS_KEY_ID),
+					resource.TestCheckResourceAttr(resourceName, "data_volumes.0.kms_key_id", acceptance.HCS_KMS_KEY_ID),
 				),
 			},
 		},
@@ -356,7 +370,7 @@ resource "hcs_cce_node" "test" {
     kms_key_id = "%[3]s"
   }
 }
-`, acceptance.HW_CCE_CLUSTER_ID, rName, acceptance.HW_KMS_KEY_ID)
+`, acceptance.HCS_CCE_CLUSTER_ID, rName, acceptance.HCS_KMS_KEY_ID)
 }
 
 func TestAccNode_storage(t *testing.T) {
@@ -469,7 +483,7 @@ resource "hcs_cce_node" "test" {
     }
   }
 }
-`, acceptance.HW_CCE_CLUSTER_ID, name, acceptance.HW_KMS_KEY_ID)
+`, acceptance.HCS_CCE_CLUSTER_ID, name, acceptance.HCS_KMS_KEY_ID)
 }
 
 func testAccCCENodeImportStateIdFunc() resource.ImportStateIdFunc {
@@ -479,8 +493,8 @@ func testAccCCENodeImportStateIdFunc() resource.ImportStateIdFunc {
 			return "", fmt.Errorf("node not found: %s", node)
 		}
 		if node.Primary.ID == "" {
-			return "", fmt.Errorf("resource not found: %s/%s", acceptance.HW_CCE_CLUSTER_ID, node.Primary.ID)
+			return "", fmt.Errorf("resource not found: %s/%s", acceptance.HCS_CCE_CLUSTER_ID, node.Primary.ID)
 		}
-		return fmt.Sprintf("%s/%s", acceptance.HW_CCE_CLUSTER_ID, node.Primary.ID), nil
+		return fmt.Sprintf("%s/%s", acceptance.HCS_CCE_CLUSTER_ID, node.Primary.ID), nil
 	}
 }

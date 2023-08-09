@@ -76,25 +76,6 @@ func (opts CreateOpts) ToProjectCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "project")
 }
 
-// Create creates a new Project.
-func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
-	b, err := opts.ToProjectCreateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	_, r.Err = client.Post(createURL(client), &b, &r.Body, nil)
-	return
-}
-
-// Delete deletes a project.
-func Delete(client *golangsdk.ServiceClient, projectID string) (r DeleteResult) {
-	_, r.Err = client.Delete(deleteURL(client, projectID), &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
 // UpdateOptsBuilder allows extensions to add additional parameters to
 // the Update request.
 type UpdateOptsBuilder interface {
@@ -113,17 +94,4 @@ type UpdateOpts struct {
 // ToUpdateCreateMap formats a UpdateOpts into an update request.
 func (opts UpdateOpts) ToProjectUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "project")
-}
-
-// Update modifies the attributes of a project.
-func Update(client *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
-	b, err := opts.ToProjectUpdateMap()
-	if err != nil {
-		r.Err = err
-		return
-	}
-	_, r.Err = client.Patch(updateURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
 }

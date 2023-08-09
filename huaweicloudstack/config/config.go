@@ -10,14 +10,15 @@ import (
 	"sync"
 	"time"
 
+	"github.com/hashicorp/go-uuid"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/helper/mutexkv"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/identity/v3/domains"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/identity/v3/projects"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/identity/v3/users"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/obs"
-	"github.com/hashicorp/go-uuid"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/helper/mutexkv"
 )
 
 const (
@@ -96,6 +97,10 @@ func (c *Config) LoadAndValidate() error {
 
 	if c.Region == "" {
 		return fmt.Errorf("region should be provided")
+	}
+
+	if c.Cloud == "" && len(c.Endpoints) <= 0 {
+		return fmt.Errorf("cloud or endpoints should be provided")
 	}
 
 	// Assume role
@@ -218,7 +223,7 @@ func (c *Config) ObjectStorageClient(region string) (*obs.ObsClient, error) {
 
 func buildObsUserAgent() string {
 	var agent string = providerUserAgent
-	if customUserAgent := os.Getenv("HW_TF_CUSTOM_UA"); customUserAgent != "" {
+	if customUserAgent := os.Getenv("HCS_TF_CUSTOM_UA"); customUserAgent != "" {
 		agent = fmt.Sprintf("%s %s", customUserAgent, providerUserAgent)
 	}
 
@@ -451,7 +456,7 @@ func (c *Config) GetProjectID(region string) string {
 
 // GetRegion returns the region that was specified in the resource. If a
 // region was not set, the provider-level region is checked. The provider-level
-// region can either be set by the region argument or by HW_REGION_NAME.
+// region can either be set by the region argument or by HCS_REGION_NAME.
 func (c *Config) GetRegion(d *schema.ResourceData) string {
 	if v, ok := d.GetOk("region"); ok {
 		return v.(string)
@@ -462,7 +467,7 @@ func (c *Config) GetRegion(d *schema.ResourceData) string {
 
 // GetEnterpriseProjectID returns the enterprise_project_id that was specified in the resource.
 // If it was not set, the provider-level value is checked. The provider-level value can
-// either be set by the `enterprise_project_id` argument or by HW_ENTERPRISE_PROJECT_ID.
+// either be set by the `enterprise_project_id` argument or by HCS_ENTERPRISE_PROJECT_ID.
 func (c *Config) GetEnterpriseProjectID(d *schema.ResourceData) string {
 	if v, ok := d.GetOk("enterprise_project_id"); ok {
 		return v.(string)
@@ -473,7 +478,7 @@ func (c *Config) GetEnterpriseProjectID(d *schema.ResourceData) string {
 
 // DataGetEnterpriseProjectID returns the enterprise_project_id that was specified in the data source.
 // If it was not set, the provider-level value is checked. The provider-level value can
-// either be set by the `enterprise_project_id` argument or by HW_ENTERPRISE_PROJECT_ID.
+// either be set by the `enterprise_project_id` argument or by HCS_ENTERPRISE_PROJECT_ID.
 // If the provider-level value is also not set, `all_granted_eps` will be returned.
 func (c *Config) DataGetEnterpriseProjectID(d *schema.ResourceData) string {
 	if v, ok := d.GetOk("enterprise_project_id"); ok {
@@ -642,11 +647,6 @@ func (c *Config) NatGatewayClient(region string) (*golangsdk.ServiceClient, erro
 	return c.NewServiceClient("nat", region)
 }
 
-// NatV3Client has the endpoint: https://nat.{{region}}/{{cloud}}/v3/
-func (c *Config) NatV3Client(region string) (*golangsdk.ServiceClient, error) {
-	return c.NewServiceClient("natv3", region)
-}
-
 // ElbV2Client is the client for elb v2.0 (openstack) api
 func (c *Config) ElbV2Client(region string) (*golangsdk.ServiceClient, error) {
 	return c.NewServiceClient("elbv2", region)
@@ -732,7 +732,7 @@ func (c *Config) KmsV3Client(region string) (*golangsdk.ServiceClient, error) {
 	return c.NewServiceClient("kmsv3", region)
 }
 
-// WafV1Client is not avaliable in HuaweiCloud, will be imported by other clouds
+// WafV1Client is not avaliable in HuaweiCloudStack, will be imported by other clouds
 func (c *Config) WafV1Client(region string) (*golangsdk.ServiceClient, error) {
 	return c.NewServiceClient("waf", region)
 }
