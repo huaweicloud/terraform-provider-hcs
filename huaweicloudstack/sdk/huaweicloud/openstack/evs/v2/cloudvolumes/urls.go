@@ -2,7 +2,7 @@ package cloudvolumes
 
 import "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 
-const resourcePath = "cloudvolumes"
+const resourcePath = "volumes"
 
 func createURL(c *golangsdk.ServiceClient) string {
 	return c.ServiceURL(resourcePath)

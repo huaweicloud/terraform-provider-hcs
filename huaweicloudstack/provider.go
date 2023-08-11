@@ -344,6 +344,8 @@ func Provider() *schema.Provider {
 			"hcs_cce_nodes":          cce.DataSourceNodes(),
 
 			"hcs_ecs_compute_flavors":      ecs.DataSourceEcsFlavors(),
+			"hcs_ecs_compute_instance":     ecs.DataSourceComputeInstance(),
+			"hcs_ecs_compute_instances":    ecs.DataSourceComputeInstances(),
 			"hcs_ecs_compute_servergroups": ecs.DataSourceComputeServerGroups(),
 		},
 
