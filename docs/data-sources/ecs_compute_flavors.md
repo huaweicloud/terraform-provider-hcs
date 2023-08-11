@@ -10,7 +10,7 @@ Use this data source to get the available Compute Flavors.
 
 ```hcl
 data "hcs_ecs_compute_flavors" "flavors" {
-  availability_zone = "cn-north-1a"
+  availability_zone = "az1.dc1"
   performance_type  = "normal"
   cpu_core_count    = 2
   memory_size       = 4
