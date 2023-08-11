@@ -323,6 +323,10 @@ type ListOpts struct {
 	// Specifies a page number. The default value is 1.
 	// The value must be greater than or equal to 0. If the value is 0, the first page is displayed.
 	Offset int `q:"offset"`
+
+	ExpectFields string `q:"expect_fields"`
+
+	NotTags string `q:"not-tags"`
 }
 
 // ToServerListQuery formats a ListOpts into a query string.

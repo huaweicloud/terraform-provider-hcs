@@ -9,21 +9,41 @@ Manages a ECS instance resource within HCS.
 ### Basic Instance
 
 ```hcl
-variable "security_group_name" {}
+data "hcs_availability_zones" "zones" {
+	provider = huaweicloudstack
+}
 
-resource "hcs_ecs_compute_instance" "basic" {
-  name     = "server_1"
-  image_id = "ad091b52-742f-469e-8f3c-fd81cadf0743"
-  flavor   = "s1.medium"
-  vpc_id   = "8eed4fc7-e5e5-44a2-b5f2-23b3e5d46235"
+variable "secgroup_id" {
+	type = string
+}
+variable "image_id" {
+	type = string
+}
+variable "flavor_id" {
+	type = string
+}
+variable "network_uuid" {
+	type = string
+}
+resource "hcs_ecs_compute_instance" "instance" {
+  provider = huaweicloudstack
+  name               = "ecs-c695"
+  image_id           = [var.flavor_id]
+  flavor_id = [var.secgroup_id]
+  security_group_ids = [var.secgroup_id]
+  availability_zone  = data.hcs_availability_zones.zones.names[0]
 
-  nics {
-    network_id = "55534eaa-533a-419d-9b40-ec427ea7195a"
+  network {
+    uuid = [var.network_uuid]
   }
-
-  availability_zone = "cn-north-1a"
-  key_name          = "KeyPair-test"
-  security_groups   = [var.security_group_name]
+  
+  block_device_mapping_v2 {
+    source_type  = "image"
+	destination_type = "volume"
+	uuid = [var.network_uuid]
+	volume_type = "business_type_01"
+	volume_size = 20
+  }
 }
 ```
 
