@@ -73,10 +73,6 @@ var securityGroupRuleSchema = &schema.Schema{
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"priority": {
-				Type:     schema.TypeInt,
-				Computed: true,
-			},
 			"port_range_min": {
 				Type:        schema.TypeInt,
 				Computed:    true,
@@ -264,13 +260,12 @@ func resourceNetworkingSecGroupRead(_ context.Context, d *schema.ResourceData, m
 	if err == nil {
 		// If the v3 API method has no error, parse its rules list and timestamp attributes and setup.
 		logp.Printf("[DEBUG] Retrieved Security Group (%s) by v3 client: %v", d.Id(), v3Resp)
-		rules, err := flattenSecurityGroupRulesV3(v3Resp.SecurityGroupRules)
+		_, err := flattenSecurityGroupRulesV3(v3Resp.SecurityGroupRules)
 		if err != nil {
 			return diag.FromErr(err)
 		}
 
 		mErr = multierror.Append(mErr,
-			d.Set("rules", rules), // Override the configuration of the rules list.
 			d.Set("created_at", v3Resp.CreatedAt),
 			d.Set("updated_at", v3Resp.UpdatedAt),
 		)
@@ -315,7 +310,7 @@ func flattenSecurityGroupRulesV3(rules []v3rules.SecurityGroupRule) ([]map[strin
 			"action":                  rule.Action,
 			"priority":                rule.Priority,
 		}
-		if rule.MultiPort != "" {
+		if rule.MultiPort != "None" && rule.MultiPort != "" {
 			ruleInfo["ports"] = rule.MultiPort
 			if !strings.Contains(rule.MultiPort, ",") {
 				re := regexp.MustCompile("^(\\d+)(?:\\-(\\d+))?$")

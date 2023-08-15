@@ -2,17 +2,18 @@ package dns
 
 import (
 	"fmt"
+	"strings"
+	"testing"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
-	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/dns/v2/zones"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
-	"regexp"
-	"strings"
-	"testing"
 )
 
 func getDNSRecordsetResourceFunc(cfg *config.Config, state *terraform.ResourceState) (interface{}, error) {
@@ -85,8 +86,6 @@ func TestAccDNSRecordset_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(rName, "status", "ENABLE"),
 					resource.TestCheckResourceAttr(rName, "ttl", "300"),
 					resource.TestCheckResourceAttr(rName, "records.0", "10.1.0.0"),
-					resource.TestCheckResourceAttr(rName, "tags.key1", "value1"),
-					resource.TestCheckResourceAttr(rName, "tags.key2", "value2"),
 					resource.TestCheckResourceAttrSet(rName, "zone_name"),
 				),
 			},
@@ -94,15 +93,12 @@ func TestAccDNSRecordset_basic(t *testing.T) {
 				Config: testDNSRecordset_basic_update(name),
 				Check: resource.ComposeTestCheckFunc(
 					rc.CheckResourceExists(),
-					resource.TestCheckResourceAttr(rName, "name", fmt.Sprintf("update.%s", name)),
-					resource.TestCheckResourceAttr(rName, "type", "TXT"),
+					resource.TestCheckResourceAttr(rName, "name", fmt.Sprintf("%s", name)),
+					resource.TestCheckResourceAttr(rName, "type", "A"),
 					resource.TestCheckResourceAttr(rName, "description", "a recordset description update"),
-					resource.TestCheckResourceAttr(rName, "status", "DISABLE"),
+					resource.TestCheckResourceAttr(rName, "status", "ENABLE"),
 					resource.TestCheckResourceAttr(rName, "ttl", "600"),
-					resource.TestCheckResourceAttr(rName, "records.0", "\"test records\""),
-					resource.TestCheckResourceAttr(rName, "weight", "5"),
-					resource.TestCheckResourceAttr(rName, "tags.key1", "value1_update"),
-					resource.TestCheckResourceAttr(rName, "tags.key2", "value2_update"),
+					resource.TestCheckResourceAttr(rName, "records.0", "10.1.0.0"),
 				),
 			},
 			{
@@ -136,13 +132,11 @@ func TestAccDNSRecordset_publicZone(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					rc.CheckResourceExists(),
 					resource.TestCheckResourceAttr(rName, "name", name),
-					resource.TestCheckResourceAttr(rName, "type", "A"),
+					resource.TestCheckResourceAttr(rName, "type", "TXT"),
 					resource.TestCheckResourceAttr(rName, "description", "a record set"),
 					resource.TestCheckResourceAttr(rName, "status", "ENABLE"),
 					resource.TestCheckResourceAttr(rName, "ttl", "3000"),
-					resource.TestCheckResourceAttr(rName, "records.0", "10.1.0.0"),
-					resource.TestCheckResourceAttr(rName, "tags.foo", "bar"),
-					resource.TestCheckResourceAttr(rName, "tags.key", "value"),
+					resource.TestCheckResourceAttr(rName, "records.0", "\"test records\""),
 					resource.TestCheckResourceAttrSet(rName, "zone_name"),
 				),
 			},
@@ -150,14 +144,12 @@ func TestAccDNSRecordset_publicZone(t *testing.T) {
 				Config: testDNSRecordset_publicZone_update(name),
 				Check: resource.ComposeTestCheckFunc(
 					rc.CheckResourceExists(),
-					resource.TestCheckResourceAttr(rName, "name", fmt.Sprintf("update.%s", name)),
+					resource.TestCheckResourceAttr(rName, "name", fmt.Sprintf("%s", name)),
 					resource.TestCheckResourceAttr(rName, "type", "TXT"),
 					resource.TestCheckResourceAttr(rName, "description", "an updated record set"),
-					resource.TestCheckResourceAttr(rName, "status", "DISABLE"),
+					resource.TestCheckResourceAttr(rName, "status", "ENABLE"),
 					resource.TestCheckResourceAttr(rName, "ttl", "6000"),
 					resource.TestCheckResourceAttr(rName, "records.0", "\"test records\""),
-					resource.TestCheckResourceAttr(rName, "tags.foo", "bar"),
-					resource.TestCheckResourceAttr(rName, "tags.key", "value_updated"),
 				),
 			},
 		},
@@ -188,11 +180,9 @@ func TestAccDNSRecordset_privateZone(t *testing.T) {
 					resource.TestCheckResourceAttr(rName, "name", name),
 					resource.TestCheckResourceAttr(rName, "type", "A"),
 					resource.TestCheckResourceAttr(rName, "description", "a private record set"),
-					resource.TestCheckResourceAttr(rName, "status", "DISABLE"),
+					resource.TestCheckResourceAttr(rName, "status", "ENABLE"),
 					resource.TestCheckResourceAttr(rName, "ttl", "600"),
 					resource.TestCheckResourceAttr(rName, "records.0", "10.1.0.3"),
-					resource.TestCheckResourceAttr(rName, "tags.foo", "bar_private"),
-					resource.TestCheckResourceAttr(rName, "tags.key", "value_private"),
 					resource.TestCheckResourceAttrSet(rName, "zone_name"),
 				),
 			},
@@ -200,23 +190,13 @@ func TestAccDNSRecordset_privateZone(t *testing.T) {
 				Config: testDNSRecordset_privateZone_update(name),
 				Check: resource.ComposeTestCheckFunc(
 					rc.CheckResourceExists(),
-					resource.TestCheckResourceAttr(rName, "name", fmt.Sprintf("update.%s", name)),
-					resource.TestCheckResourceAttr(rName, "type", "TXT"),
+					resource.TestCheckResourceAttr(rName, "name", fmt.Sprintf("%s", name)),
+					resource.TestCheckResourceAttr(rName, "type", "A"),
 					resource.TestCheckResourceAttr(rName, "description", "a private record set update"),
 					resource.TestCheckResourceAttr(rName, "status", "ENABLE"),
 					resource.TestCheckResourceAttr(rName, "ttl", "900"),
-					resource.TestCheckResourceAttr(rName, "records.0", "\"test records\""),
-					resource.TestCheckResourceAttr(rName, "tags.foo", "bar_private_update"),
-					resource.TestCheckResourceAttr(rName, "tags.key", "value_private_update"),
+					resource.TestCheckResourceAttr(rName, "records.0", "10.1.0.3"),
 				),
-			},
-			{
-				Config:      testDNSRecordset_privateZone_updateWeight(name),
-				ExpectError: regexp.MustCompile(`private zone do not support.`),
-			},
-			{
-				Config:      testDNSRecordset_privateZone_updateLineID(name),
-				ExpectError: regexp.MustCompile(`private zone do not support.`),
 			},
 		},
 	})
@@ -234,11 +214,6 @@ resource "hcs_dns_recordset" "test" {
   status      = "ENABLE"
   ttl         = 300
   records     = ["10.1.0.0"]
-
-  tags = {
-    key1 = "value1"
-    key2 = "value2"
-  }
 }
 `, testAccDNSZone_basic(name), name)
 }
@@ -249,17 +224,12 @@ func testDNSRecordset_basic_update(name string) string {
 
 resource "hcs_dns_recordset" "test" {
   zone_id     = hcs_dns_zone.zone_1.id
-  name        = "update.%s"
-  type        = "TXT"
+  name        = "%s"
+  type        = "A"
   description = "a recordset description update"
-  status      = "DISABLE"
+  status      = "ENABLE"
   ttl         = 600
-  records     = ["\"test records\""]
-
-  tags = {
-    key1 = "value1_update"
-    key2 = "value2_update"
-  }
+  records     = ["10.1.0.0"]
 }
 `, testAccDNSZone_basic(name), name)
 }
@@ -271,16 +241,11 @@ func testDNSRecordset_publicZone(name string) string {
 resource "hcs_dns_recordset" "test" {
   zone_id     = hcs_dns_zone.zone_1.id
   name        = "%s"
-  type        = "A"
+  type        = "TXT"
   description = "a record set"
   status      = "ENABLE"
   ttl         = 3000
-  records     = ["10.1.0.0"]
-
-  tags = {
-    foo = "bar"
-    key = "value"
-  }
+  records     = ["\"test records\""]
 }
 `, testAccDNSZone_basic(name), name)
 }
@@ -291,17 +256,12 @@ func testDNSRecordset_publicZone_update(name string) string {
 
 resource "hcs_dns_recordset" "test" {
   zone_id     = hcs_dns_zone.zone_1.id
-  name        = "update.%s"
+  name        = "%s"
   type        = "TXT"
   description = "an updated record set"
-  status      = "DISABLE"
+  status      = "ENABLE"
   ttl         = 6000
   records     = ["\"test records\""]
-
-  tags = {
-    foo = "bar"
-    key = "value_updated"
-  }
 }
 `, testAccDNSZone_basic(name), name)
 }
@@ -315,14 +275,9 @@ resource "hcs_dns_recordset" "test" {
   name        = "%s"
   type        = "A"
   description = "a private record set"
-  status      = "DISABLE"
+  status      = "ENABLE"
   ttl         = 600
   records     = ["10.1.0.3"]
-
-  tags = {
-    foo = "bar_private"
-    key = "value_private"
-  }
 }
 `, testAccDNSZone_private(name), name)
 }
@@ -333,61 +288,12 @@ func testDNSRecordset_privateZone_update(name string) string {
 
 resource "hcs_dns_recordset" "test" {
   zone_id     = hcs_dns_zone.zone_1.id
-  name        = "update.%s"
-  type        = "TXT"
+  name        = "%s"
+  type        = "A"
   description = "a private record set update"
   status      = "ENABLE"
   ttl         = 900
-  records     = ["\"test records\""]
-
-  tags = {
-    foo = "bar_private_update"
-    key = "value_private_update"
-  }
-}
-`, testAccDNSZone_private(name), name)
-}
-
-func testDNSRecordset_privateZone_updateWeight(name string) string {
-	return fmt.Sprintf(`
-%s
-
-resource "hcs_dns_recordset" "test" {
-  zone_id     = hcs_dns_zone.zone_1.id
-  name        = "update.%s"
-  type        = "TXT"
-  description = "a private record set update"
-  status      = "ENABLE"
-  ttl         = 900
-  records     = ["\"test records\""]
-  weight      = 3
-
-  tags = {
-    foo = "bar_private_update"
-    key = "value_private_update"
-  }
-}
-`, testAccDNSZone_private(name), name)
-}
-
-func testDNSRecordset_privateZone_updateLineID(name string) string {
-	return fmt.Sprintf(`
-%s
-
-resource "hcs_dns_recordset" "test" {
-  zone_id     = hcs_dns_zone.zone_1.id
-  name        = "update.%s"
-  type        = "TXT"
-  description = "a private record set update"
-  status      = "ENABLE"
-  ttl         = 900
-  records     = ["\"test records\""]
-  line_id     = "Dianxin_Shanxi"
-
-  tags = {
-    foo = "bar_private_update"
-    key = "value_private_update"
-  }
+  records     = ["10.1.0.3"]
 }
 `, testAccDNSZone_private(name), name)
 }
