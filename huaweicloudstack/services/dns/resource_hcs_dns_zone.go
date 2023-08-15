@@ -11,7 +11,6 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/common/tags"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/dns/v2/zones"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
 	"log"
@@ -96,7 +95,6 @@ func ResourceDNSZone() *schema.Resource {
 				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
-			"tags": common.TagsSchema(),
 		},
 	}
 }
@@ -216,20 +214,6 @@ func resourceDNSZoneCreate(ctx context.Context, d *schema.ResourceData, meta int
 		}
 	}
 
-	// set tags
-	tagRaw := d.Get("tags").(map[string]interface{})
-	if len(tagRaw) > 0 {
-		resourceType, err := utils.GetDNSZoneTagType(zoneType)
-		if err != nil {
-			return diag.Errorf("error getting resource type of DNS zone %s: %s", n.ID, err)
-		}
-
-		taglist := utils.ExpandResourceTags(tagRaw)
-		if tagErr := tags.Create(dnsClient, resourceType, n.ID, taglist).ExtractErr(); tagErr != nil {
-			return diag.Errorf("error setting tags of DNS zone %s: %s", n.ID, tagErr)
-		}
-	}
-
 	log.Printf("[DEBUG] Created DNS zone %s: %#v", n.ID, n)
 	return resourceDNSZoneRead(ctx, d, meta)
 }
@@ -275,17 +259,6 @@ func resourceDNSZoneRead(_ context.Context, d *schema.ResourceData, meta interfa
 		d.Set("zone_type", zoneInfo.ZoneType),
 		d.Set("enterprise_project_id", zoneInfo.EnterpriseProjectID),
 	)
-
-	// save tags
-	if resourceType, err := utils.GetDNSZoneTagType(zoneInfo.ZoneType); err == nil {
-		resourceTags, err := tags.Get(dnsClient, resourceType, d.Id()).Extract()
-		if err == nil {
-			tagmap := utils.TagsToMap(resourceTags.Tags)
-			mErr = multierror.Append(mErr, d.Set("tags", tagmap))
-		} else {
-			log.Printf("[WARN] Error fetching DNS zone tags: %s", err)
-		}
-	}
 
 	if mErr.ErrorOrNil() != nil {
 		return diag.Errorf("error setting resource: %s", mErr)
