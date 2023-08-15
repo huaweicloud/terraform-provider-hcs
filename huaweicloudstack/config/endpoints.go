@@ -295,14 +295,13 @@ var allServiceCatalog = map[string]ServiceCatalog{
 		Product: "VPCEP",
 	},
 	"dns": {
-		Name:             "dns",
+		Name:             "clouddns",
 		Version:          "v2",
-		Scope:            "global",
 		WithOutProjectID: true,
 		Product:          "DNS",
 	},
 	"dns_region": {
-		Name:             "dns",
+		Name:             "clouddns",
 		Version:          "v2",
 		WithOutProjectID: true,
 		Product:          "DNS",

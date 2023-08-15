@@ -42,7 +42,7 @@ func (p SecurityGroupPage) LastMarker() (string, error) {
 	if len(secgroups) == 0 {
 		return "", nil
 	}
-	return secgroups[len(secgroups)-1].ID, nil
+	return "", nil
 }
 
 // IsEmpty method checks whether the current security group page is empty.

@@ -233,9 +233,6 @@ func resourceNetworkingSecGroupRuleCreateV3(ctx context.Context, d *schema.Resou
 
 func resourceNetworkingSecGroupRuleCreate(ctx context.Context, d *schema.ResourceData,
 	meta interface{}) diag.Diagnostics {
-	if doesAdvanceddParamUsed(d, advancedParams) {
-		return resourceNetworkingSecGroupRuleCreateV3(ctx, d, meta)
-	}
 	return resourceNetworkingSecGroupRuleCreateV1(ctx, d, meta)
 }
 
