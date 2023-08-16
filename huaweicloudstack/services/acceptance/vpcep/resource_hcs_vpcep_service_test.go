@@ -6,6 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/vpcep/v1/services"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance"
@@ -102,7 +103,7 @@ func TestAccVPCEPService_Permission(t *testing.T) {
 	})
 }
 
-func getVpcepServiceResourceFunc(conf *config.Config, state *terraform.ResourceState) (interface{}, error) {
+func getVpcepServiceResourceFunc(conf *config.HcsConfig, state *terraform.ResourceState) (interface{}, error) {
 	vpcepClient, err := conf.VPCEPClient(acceptance.HCS_REGION_NAME)
 	if err != nil {
 		return nil, fmt.Errorf("error creating VPCEP client: %s", err)

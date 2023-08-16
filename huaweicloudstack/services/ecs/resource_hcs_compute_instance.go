@@ -549,7 +549,7 @@ func getSpotDurationCount(d *schema.ResourceData) int {
 }
 
 func resourceComputeInstanceCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	computeClient, err := cfg.ComputeV2Client(region)
 	if err != nil {
@@ -849,7 +849,7 @@ func resourceComputeInstanceCreate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceComputeInstanceRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	ecsClient, err := cfg.ComputeV1Client(region)
 	if err != nil {
@@ -1020,7 +1020,7 @@ func normalizeChargingMode(mode string) string {
 }
 
 func resourceComputeInstanceUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	computeClient, err := cfg.ComputeV2Client(region)
 	if err != nil {
@@ -1292,7 +1292,7 @@ func resourceComputeInstanceUpdate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceComputeInstanceDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	ecsClient, err := cfg.ComputeV1Client(region)
 	if err != nil {
@@ -1357,7 +1357,7 @@ func resourceComputeInstanceDelete(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceComputeInstanceImportState(_ context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	ecsClient, err := cfg.ComputeV1Client(region)
 	if err != nil {
@@ -1460,14 +1460,14 @@ func resourceInstanceSecGroupIdsV1(client *golangsdk.ServiceClient, d *schema.Re
 	return secGroups, nil
 }
 
-func getOpSvcUserID(d *schema.ResourceData, conf *config.Config) string {
+func getOpSvcUserID(d *schema.ResourceData, conf *config.HcsConfig) string {
 	if v, ok := d.GetOk("user_id"); ok {
 		return v.(string)
 	}
 	return conf.UserID
 }
 
-func validateComputeInstanceConfig(d *schema.ResourceData, conf *config.Config) error {
+func validateComputeInstanceConfig(d *schema.ResourceData, conf *config.HcsConfig) error {
 	_, hasSSH := d.GetOk("key_pair")
 	if d.Get("charging_mode").(string) == "prePaid" && hasSSH {
 		if getOpSvcUserID(d, conf) == "" {
@@ -1905,7 +1905,7 @@ func updateSourceDestCheck(d *schema.ResourceData, client *golangsdk.ServiceClie
 	return nil
 }
 
-func calcUnsubscribeResources(d *schema.ResourceData, cfg *config.Config) ([]string, error) {
+func calcUnsubscribeResources(d *schema.ResourceData, cfg *config.HcsConfig) ([]string, error) {
 	var mainResources = []string{d.Id()}
 
 	if shouldUnsubscribeEIP(d) {

@@ -19,7 +19,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func getSecRuleResourceFunc(cfg *config.Config, state *terraform.ResourceState) (interface{}, error) {
+func getSecRuleResourceFunc(cfg *config.HcsConfig, state *terraform.ResourceState) (interface{}, error) {
 	region := acceptance.HCS_REGION_NAME
 	// getDNSRecordset: Query DNS recordset
 	getSecRuleClient, err := cfg.NewServiceClient("vpc", region)

@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
@@ -99,7 +100,7 @@ func ResourceVPCEndpoint() *schema.Resource {
 }
 
 func resourceVPCEndpointCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 	vpcepClient, err := config.VPCEPClient(region)
 	if err != nil {
@@ -152,7 +153,7 @@ func resourceVPCEndpointCreate(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceVPCEndpointRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 	vpcepClient, err := config.VPCEPClient(region)
 	if err != nil {
@@ -188,7 +189,7 @@ func resourceVPCEndpointRead(_ context.Context, d *schema.ResourceData, meta int
 }
 
 func resourceVPCEndpointDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 	vpcepClient, err := config.VPCEPClient(region)
 	if err != nil {

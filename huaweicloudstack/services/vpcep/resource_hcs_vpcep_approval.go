@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/vpcep/v1/services"
@@ -83,7 +84,7 @@ func ResourceVPCEndpointApproval() *schema.Resource {
 }
 
 func resourceVPCEndpointApprovalCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 	vpcepClient, err := config.VPCEPClient(region)
 	if err != nil {
@@ -111,7 +112,7 @@ func resourceVPCEndpointApprovalCreate(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceVPCEndpointApprovalRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 	vpcepClient, err := config.VPCEPClient(region)
 	if err != nil {
@@ -127,7 +128,7 @@ func resourceVPCEndpointApprovalRead(_ context.Context, d *schema.ResourceData, 
 }
 
 func resourceVPCEndpointApprovalUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 	vpcepClient, err := config.VPCEPClient(region)
 	if err != nil {
@@ -156,7 +157,7 @@ func resourceVPCEndpointApprovalUpdate(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceVPCEndpointApprovalDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 	vpcepClient, err := config.VPCEPClient(region)
 	if err != nil {

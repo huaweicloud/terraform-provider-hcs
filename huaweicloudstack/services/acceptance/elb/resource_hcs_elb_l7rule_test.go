@@ -56,7 +56,7 @@ func TestAccElbV3L7Rule_basic(t *testing.T) {
 }
 
 func testAccCheckElbV3L7RuleDestroy(s *terraform.State) error {
-	cfg := acceptance.TestAccProvider.Meta().(*config.Config)
+	cfg := config.GetHcsConfig(acceptance.TestAccProvider.Meta())
 	elbClient, err := cfg.ElbV3Client(acceptance.HCS_REGION_NAME)
 	if err != nil {
 		return fmt.Errorf("error creating ELB client: %s", err)
@@ -99,7 +99,7 @@ func testAccCheckElbV3L7RuleExists(n string, l7rule *l7policies.Rule) resource.T
 			return fmt.Errorf("no ID is set")
 		}
 
-		cfg := acceptance.TestAccProvider.Meta().(*config.Config)
+		cfg := config.GetHcsConfig(acceptance.TestAccProvider.Meta())
 		elbClient, err := cfg.ElbV3Client(acceptance.HCS_REGION_NAME)
 		if err != nil {
 			return fmt.Errorf("error creating ELB client: %s", err)

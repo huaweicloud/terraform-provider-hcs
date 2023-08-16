@@ -100,7 +100,7 @@ func updateInterfacePort(client *golangsdk.ServiceClient, portId string, sourceD
 }
 
 func resourceComputeInterfaceAttachCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	computeClient, err := cfg.ComputeV2Client(region)
 	if err != nil {
@@ -170,7 +170,7 @@ func resourceComputeInterfaceAttachCreate(ctx context.Context, d *schema.Resourc
 }
 
 func resourceComputeInterfaceAttachRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	computeClient, err := cfg.ComputeV2Client(region)
 	if err != nil {
@@ -219,7 +219,7 @@ func resourceComputeInterfaceAttachRead(_ context.Context, d *schema.ResourceDat
 }
 
 func resourceComputeInterfaceAttachDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	computeClient, err := cfg.ComputeV2Client(cfg.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating compute client: %s", err)

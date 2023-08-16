@@ -89,7 +89,7 @@ func ResourceMemberV3() *schema.Resource {
 }
 
 func resourceMemberV3Create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	elbClient, err := cfg.ElbV3Client(cfg.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating ELB client: %s", err)
@@ -120,7 +120,7 @@ func resourceMemberV3Create(ctx context.Context, d *schema.ResourceData, meta in
 }
 
 func resourceMemberV3Read(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	elbClient, err := cfg.ElbV3Client(cfg.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating ELB client: %s", err)
@@ -149,7 +149,7 @@ func resourceMemberV3Read(_ context.Context, d *schema.ResourceData, meta interf
 }
 
 func resourceMemberV3Update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	elbClient, err := cfg.ElbV3Client(cfg.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating ELB client: %s", err)
@@ -174,7 +174,7 @@ func resourceMemberV3Update(ctx context.Context, d *schema.ResourceData, meta in
 }
 
 func resourceMemberV3Delete(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	elbClient, err := cfg.ElbV3Client(cfg.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating elb client: %s", err)

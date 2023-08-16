@@ -14,7 +14,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance"
 )
 
-func getELBResourceFunc(c *config.Config, state *terraform.ResourceState) (interface{}, error) {
+func getELBResourceFunc(c *config.HcsConfig, state *terraform.ResourceState) (interface{}, error) {
 	client, err := c.ElbV3Client(acceptance.HCS_REGION_NAME)
 	if err != nil {
 		return nil, fmt.Errorf("error creating ELB client: %s", err)

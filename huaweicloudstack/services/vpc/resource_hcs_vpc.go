@@ -99,7 +99,7 @@ func ResourceVirtualPrivateCloudV1() *schema.Resource {
 }
 
 func resourceVirtualPrivateCloudCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 	vpcClient, err := config.NetworkingV1Client(region)
 	if err != nil {
@@ -158,7 +158,7 @@ func resourceVirtualPrivateCloudCreate(ctx context.Context, d *schema.ResourceDa
 }
 
 // GetVpcById is a method to obtain vpc informations from special region through vpc ID.
-func GetVpcById(config *config.Config, region, vpcId string) (*vpcs.Vpc, error) {
+func GetVpcById(config *config.HcsConfig, region, vpcId string) (*vpcs.Vpc, error) {
 	client, err := config.NetworkingV1Client(region)
 	if err != nil {
 		return nil, err
@@ -168,7 +168,7 @@ func GetVpcById(config *config.Config, region, vpcId string) (*vpcs.Vpc, error) 
 }
 
 func resourceVirtualPrivateCloudRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	n, err := GetVpcById(config, config.GetRegion(d), d.Id())
 	if err != nil {
 		return common.CheckDeletedDiag(d, err, "Error obtain VPC information")
@@ -210,7 +210,7 @@ func resourceVirtualPrivateCloudRead(_ context.Context, d *schema.ResourceData, 
 }
 
 func resourceVirtualPrivateCloudUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 	vpcClient, err := config.NetworkingV1Client(region)
 	if err != nil {
@@ -252,7 +252,7 @@ func resourceVirtualPrivateCloudUpdate(ctx context.Context, d *schema.ResourceDa
 
 func resourceVirtualPrivateCloudDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	vpcClient, err := config.NetworkingV1Client(config.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating VPC client: %s", err)

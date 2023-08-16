@@ -159,7 +159,7 @@ func publicSnatRuleStateRefreshFunc(client *golangsdk.ServiceClient, ruleId stri
 }
 
 func resourcePublicSnatRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	client, err := cfg.NatGatewayClient(cfg.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating NAT v2 client: %s", err)
@@ -193,7 +193,7 @@ func resourcePublicSnatRuleCreate(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourcePublicSnatRuleRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	natClient, err := cfg.NatGatewayClient(region)
 	if err != nil {
@@ -222,7 +222,7 @@ func resourcePublicSnatRuleRead(_ context.Context, d *schema.ResourceData, meta 
 }
 
 func resourcePublicSnatRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	natClient, err := cfg.NatGatewayClient(region)
 	if err != nil {
@@ -280,7 +280,7 @@ func resourcePublicSnatRuleUpdate(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourcePublicSnatRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	client, err := cfg.NatGatewayClient(cfg.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating NAT v2 client: %s", err)

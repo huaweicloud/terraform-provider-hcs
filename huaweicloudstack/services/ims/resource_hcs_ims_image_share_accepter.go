@@ -48,7 +48,7 @@ func ResourceImsImageShareAccepter() *schema.Resource {
 }
 
 func resourceImsImageShareAccepterCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	// createImageShareAccepter: create IMS image share accepter
@@ -119,7 +119,7 @@ func resourceImsImageShareAccepterRead(_ context.Context, _ *schema.ResourceData
 }
 
 func resourceImsImageShareAccepterDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	// deleteImageShareAccepter: delete IMS image share accepter

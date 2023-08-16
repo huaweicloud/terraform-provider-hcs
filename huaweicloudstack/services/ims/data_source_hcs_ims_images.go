@@ -187,7 +187,7 @@ func ImagesImageRefSchema() *schema.Resource {
 
 // dataSourceImagesImagesRead performs the image lookup.
 func dataSourceImagesImagesRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	imageClient, err := cfg.ImageV2Client(region)

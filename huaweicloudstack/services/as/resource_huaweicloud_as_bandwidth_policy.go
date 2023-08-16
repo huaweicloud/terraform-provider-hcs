@@ -7,12 +7,13 @@ package as
 
 import (
 	"context"
+	"log"
+	"strings"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
-	"log"
-	"strings"
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -180,7 +181,7 @@ func ASBandWidthScheduledPolicySchema() *schema.Resource {
 }
 
 func resourceASBandWidthPolicyCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 
 	// createBandwidthPolicy: create an AS bandwidth scaling policy
@@ -222,7 +223,7 @@ func resourceASBandWidthPolicyCreate(ctx context.Context, d *schema.ResourceData
 	return resourceASBandWidthPolicyRead(ctx, d, meta)
 }
 
-func buildCreateBandwidthPolicyBodyParams(d *schema.ResourceData, config *config.Config) map[string]interface{} {
+func buildCreateBandwidthPolicyBodyParams(d *schema.ResourceData, config *config.HcsConfig) map[string]interface{} {
 	bodyParams := map[string]interface{}{
 		"scaling_policy_name":   utils.ValueIngoreEmpty(d.Get("scaling_policy_name")),
 		"scaling_policy_type":   utils.ValueIngoreEmpty(d.Get("scaling_policy_type")),
@@ -272,7 +273,7 @@ func buildCreateBandwidthPolicyScheduledPolicyChildBody(d *schema.ResourceData) 
 }
 
 func resourceASBandWidthPolicyRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 
 	var mErr *multierror.Error
@@ -364,7 +365,7 @@ func flattenGetBandwidthPolicyResponseBodyScheduledPolicy(resp interface{}) []in
 }
 
 func resourceASBandWidthPolicyUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 
 	updateBandwidthPolicyhasChanges := []string{
@@ -409,7 +410,7 @@ func resourceASBandWidthPolicyUpdate(ctx context.Context, d *schema.ResourceData
 	return resourceASBandWidthPolicyRead(ctx, d, meta)
 }
 
-func buildUpdateBandwidthPolicyBodyParams(d *schema.ResourceData, config *config.Config) map[string]interface{} {
+func buildUpdateBandwidthPolicyBodyParams(d *schema.ResourceData, config *config.HcsConfig) map[string]interface{} {
 	bodyParams := map[string]interface{}{
 		"scaling_policy_name":   utils.ValueIngoreEmpty(d.Get("scaling_policy_name")),
 		"scaling_policy_type":   utils.ValueIngoreEmpty(d.Get("scaling_policy_type")),

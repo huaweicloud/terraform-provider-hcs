@@ -82,7 +82,7 @@ func ResourceEnterpriseProject() *schema.Resource {
 }
 
 func resourceEnterpriseProjectCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	epsClient, err := config.EnterpriseProjectClient(config.GetRegion(d))
 
 	if err != nil {
@@ -107,7 +107,7 @@ func resourceEnterpriseProjectCreate(ctx context.Context, d *schema.ResourceData
 }
 
 func resourceEnterpriseProjectRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	epsClient, err := config.EnterpriseProjectClient(config.GetRegion(d))
 
 	if err != nil {
@@ -142,7 +142,7 @@ func resourceEnterpriseProjectRead(_ context.Context, d *schema.ResourceData, me
 }
 
 func resourceEnterpriseProjectUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	epsClient, err := config.EnterpriseProjectClient(config.GetRegion(d))
 
 	if err != nil {

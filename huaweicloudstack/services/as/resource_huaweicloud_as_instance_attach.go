@@ -4,14 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
+	"strings"
+	"time"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/autoscaling/v1/instances"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
-	"log"
-	"strings"
-	"time"
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -84,7 +85,7 @@ func ResourceASInstanceAttach() *schema.Resource {
 }
 
 func resourceInstanceAttachCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	asClient, err := cfg.AutoscalingV1Client(region)
 	if err != nil {
@@ -148,7 +149,7 @@ func resourceInstanceAttachCreate(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourceInstanceAttachRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	asClient, err := cfg.AutoscalingV1Client(region)
 	if err != nil {
@@ -182,7 +183,7 @@ func resourceInstanceAttachRead(_ context.Context, d *schema.ResourceData, meta 
 }
 
 func resourceInstanceAttachUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	asClient, err := cfg.AutoscalingV1Client(region)
 	if err != nil {
@@ -236,7 +237,7 @@ func resourceInstanceAttachUpdate(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourceInstanceAttachDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	asClient, err := cfg.AutoscalingV1Client(region)
 	if err != nil {
