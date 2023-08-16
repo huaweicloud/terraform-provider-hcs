@@ -98,7 +98,7 @@ func SecurityPoliciesV3ListenerRefSchema() *schema.Resource {
 }
 
 func resourceSecurityPoliciesV3Create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	// createSecurityPolicy: create an ELB security policy
@@ -140,13 +140,13 @@ func resourceSecurityPoliciesV3Create(ctx context.Context, d *schema.ResourceDat
 	return resourceSecurityPoliciesV3Read(ctx, d, meta)
 }
 
-func buildCreateSecurityPolicyBodyParams(d *schema.ResourceData, cfg *config.Config) map[string]interface{} {
+func buildCreateSecurityPolicyBodyParams(d *schema.ResourceData, cfg *config.HcsConfig) map[string]interface{} {
 	return map[string]interface{}{
 		"security_policy": buildCreateSecurityPolicyChildBodyParams(d, cfg),
 	}
 }
 
-func buildCreateSecurityPolicyChildBodyParams(d *schema.ResourceData, cfg *config.Config) map[string]interface{} {
+func buildCreateSecurityPolicyChildBodyParams(d *schema.ResourceData, cfg *config.HcsConfig) map[string]interface{} {
 	return map[string]interface{}{
 		"name":                  utils.ValueIngoreEmpty(d.Get("name")),
 		"description":           utils.ValueIngoreEmpty(d.Get("description")),
@@ -157,7 +157,7 @@ func buildCreateSecurityPolicyChildBodyParams(d *schema.ResourceData, cfg *confi
 }
 
 func resourceSecurityPoliciesV3Delete(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	// deleteSecurityPolicy: missing operation notes
@@ -189,7 +189,7 @@ func resourceSecurityPoliciesV3Delete(_ context.Context, d *schema.ResourceData,
 }
 
 func resourceSecurityPoliciesV3Read(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	var mErr *multierror.Error
@@ -254,7 +254,7 @@ func flattenGetSecurityPolicyResponseBodyListenerRef(resp interface{}) []interfa
 }
 
 func resourceSecurityPoliciesV3Update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	updateSecurityPolicyHasChanges := []string{
@@ -294,13 +294,13 @@ func resourceSecurityPoliciesV3Update(ctx context.Context, d *schema.ResourceDat
 	return resourceSecurityPoliciesV3Read(ctx, d, meta)
 }
 
-func buildUpdateSecurityPolicyBodyParams(d *schema.ResourceData, cfg *config.Config) map[string]interface{} {
+func buildUpdateSecurityPolicyBodyParams(d *schema.ResourceData, cfg *config.HcsConfig) map[string]interface{} {
 	return map[string]interface{}{
 		"security_policy": buildUpdateSecurityPolicyChildBodyParams(d, cfg),
 	}
 }
 
-func buildUpdateSecurityPolicyChildBodyParams(d *schema.ResourceData, _ *config.Config) map[string]interface{} {
+func buildUpdateSecurityPolicyChildBodyParams(d *schema.ResourceData, _ *config.HcsConfig) map[string]interface{} {
 	return map[string]interface{}{
 		"name":        utils.ValueIngoreEmpty(d.Get("name")),
 		"description": utils.ValueIngoreEmpty(d.Get("description")),

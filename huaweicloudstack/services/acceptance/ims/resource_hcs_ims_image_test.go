@@ -58,7 +58,7 @@ func TestAccImsImage_basic(t *testing.T) {
 }
 
 func testAccCheckImsImageDestroy(s *terraform.State) error {
-	cfg := acceptance.TestAccProvider.Meta().(*config.Config)
+	cfg := config.GetHcsConfig(acceptance.TestAccProvider.Meta())
 	imageClient, err := cfg.ImageV2Client(acceptance.HCS_REGION_NAME)
 	if err != nil {
 		return fmt.Errorf("error creating Image: %s", err)
@@ -89,7 +89,7 @@ func testAccCheckImsImageExists(n string, image *cloudimages.Image) resource.Tes
 			return fmt.Errorf("no ID is set")
 		}
 
-		cfg := acceptance.TestAccProvider.Meta().(*config.Config)
+		cfg := config.GetHcsConfig(acceptance.TestAccProvider.Meta())
 		imageClient, err := cfg.ImageV2Client(acceptance.HCS_REGION_NAME)
 		if err != nil {
 			return fmt.Errorf("error creating Image: %s", err)

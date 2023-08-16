@@ -57,7 +57,7 @@ func DataSourceComputeServerGroups() *schema.Resource {
 }
 
 func dataSourceComputeServerGroupsRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conf := meta.(*config.Config)
+	conf := config.GetHcsConfig(meta)
 	region := conf.GetRegion(d)
 	ecsClient, err := conf.ComputeV1Client(region)
 	if err != nil {

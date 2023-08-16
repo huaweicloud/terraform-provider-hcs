@@ -3,12 +3,13 @@ package as
 import (
 	"context"
 	"fmt"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/autoscaling/v1/lifecyclehooks"
 	"log"
 	"regexp"
 	"strings"
+
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/autoscaling/v1/lifecyclehooks"
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -92,7 +93,7 @@ func ResourceASLifecycleHook() *schema.Resource {
 }
 
 func resourceASLifecycleHookCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	client, err := config.AutoscalingV1Client(config.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating autoscaling client: %s", err)
@@ -124,7 +125,7 @@ func resourceASLifecycleHookCreate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceASLifecycleHookRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 	client, err := config.AutoscalingV1Client(region)
 	if err != nil {
@@ -146,7 +147,7 @@ func resourceASLifecycleHookRead(_ context.Context, d *schema.ResourceData, meta
 }
 
 func resourceASLifecycleHookUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	client, err := config.AutoscalingV1Client(config.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating autoscaling client: %s", err)
@@ -185,7 +186,7 @@ func resourceASLifecycleHookUpdate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceASLifecycleHookDelete(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	client, err := config.AutoscalingV1Client(config.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating autoscaling client: %s", err)

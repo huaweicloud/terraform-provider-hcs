@@ -246,7 +246,7 @@ func ResourceBmsInstance() *schema.Resource {
 }
 
 func resourceBmsInstanceCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	bmsClient, err := cfg.BmsV1Client(cfg.GetRegion(d))
 	if err != nil {
 		return fmtp.DiagErrorf("Error creating HuaweiCloudStack bms client: %s", err)
@@ -335,7 +335,7 @@ func normalizeChargingModeToNumber(mode string) string {
 }
 
 func resourceBmsInstanceRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	bmsClient, err := cfg.ComputeV1Client(region)
 	if err != nil {
@@ -391,7 +391,7 @@ func resourceBmsInstanceRead(_ context.Context, d *schema.ResourceData, meta int
 	return nil
 }
 
-func buildListOpts(d *schema.ResourceData, conf *config.Config) *baremetalservers.ListOpts {
+func buildListOpts(d *schema.ResourceData, conf *config.HcsConfig) *baremetalservers.ListOpts {
 	result := &baremetalservers.ListOpts{
 		EnterpriseProjectID: conf.DataGetEnterpriseProjectID(d),
 		Name:                d.Get("name").(string),
@@ -406,7 +406,7 @@ func resourceBmsInstanceUpdate(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceBmsInstanceDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	bmsClient, err := cfg.BmsV1Client(region)
 	if err != nil {
@@ -498,7 +498,7 @@ func resourceBmsInstanceSecGroupsV1(d *schema.ResourceData) []baremetalservers.S
 func flattenBmsInstanceNicsV1(d *schema.ResourceData, meta interface{},
 	addresses map[string][]baremetalservers.Address) []map[string]interface{} {
 
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	networkingClient, err := config.NetworkingV2Client(config.GetRegion(d))
 	if err != nil {
 		logp.Printf("Error creating HuaweiCloudStack networking client: %s", err)

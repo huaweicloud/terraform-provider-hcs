@@ -69,7 +69,7 @@ func ResourceComputeVolumeAttach() *schema.Resource {
 }
 
 func resourceComputeVolumeAttachCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conf := meta.(*config.Config)
+	conf := config.GetHcsConfig(meta)
 	region := conf.GetRegion(d)
 	computeClient, err := conf.ComputeV1Client(region)
 	if err != nil {
@@ -122,7 +122,7 @@ func resourceComputeVolumeAttachCreate(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceComputeVolumeAttachRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conf := meta.(*config.Config)
+	conf := config.GetHcsConfig(meta)
 	region := conf.GetRegion(d)
 	computeClient, err := conf.ComputeV1Client(region)
 	if err != nil {
@@ -153,7 +153,7 @@ func resourceComputeVolumeAttachRead(_ context.Context, d *schema.ResourceData, 
 }
 
 func resourceComputeVolumeAttachDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conf := meta.(*config.Config)
+	conf := config.GetHcsConfig(meta)
 	region := conf.GetRegion(d)
 	computeClient, err := conf.ComputeV1Client(region)
 	if err != nil {

@@ -17,7 +17,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance"
 )
 
-func getSecResourceFunc(conf *config.Config, state *terraform.ResourceState) (interface{}, error) {
+func getSecResourceFunc(conf *config.HcsConfig, state *terraform.ResourceState) (interface{}, error) {
 	c, err := conf.NetworkingV1Client(acceptance.HCS_REGION_NAME)
 	if err != nil {
 		return nil, fmt.Errorf("error creating DNS client: %s", err)

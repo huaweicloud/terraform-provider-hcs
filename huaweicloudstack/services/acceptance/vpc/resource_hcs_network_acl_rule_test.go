@@ -19,7 +19,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func getaclRuleResourceFunc(cfg *config.Config, state *terraform.ResourceState) (interface{}, error) {
+func getaclRuleResourceFunc(cfg *config.HcsConfig, state *terraform.ResourceState) (interface{}, error) {
 	region := acceptance.HCS_REGION_NAME
 	// getDNSRecordset: Query DNS recordset
 	getaclRuleClient, err := cfg.NewServiceClient("networkv2", region)

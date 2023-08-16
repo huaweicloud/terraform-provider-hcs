@@ -68,7 +68,7 @@ func ResourceAddressGroup() *schema.Resource {
 }
 
 func resourceAddressGroupCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	// createAddressGroup: Create a CFW IP address group.
@@ -123,7 +123,7 @@ func buildCreateAddressGroupBodyParams(d *schema.ResourceData) map[string]interf
 }
 
 func resourceAddressGroupRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	var mErr *multierror.Error
@@ -173,7 +173,7 @@ func resourceAddressGroupRead(_ context.Context, d *schema.ResourceData, meta in
 }
 
 func resourceAddressGroupUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	updateAddressGroupChanges := []string{
@@ -221,7 +221,7 @@ func buildUpdateAddressGroupBodyParams(d *schema.ResourceData) map[string]interf
 }
 
 func resourceAddressGroupDelete(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	// deleteAddressGroup: Delete an existing CFW IP address group

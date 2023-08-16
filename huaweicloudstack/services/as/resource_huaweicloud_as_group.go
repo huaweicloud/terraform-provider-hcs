@@ -3,6 +3,11 @@ package as
 import (
 	"context"
 	"fmt"
+	"log"
+	"regexp"
+	"strings"
+	"time"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
@@ -10,10 +15,6 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/autoscaling/v1/instances"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/autoscaling/v1/tags"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
-	"log"
-	"regexp"
-	"strings"
-	"time"
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -485,7 +486,7 @@ func checkASGroupRemoved(ctx context.Context, client *golangsdk.ServiceClient, g
 }
 
 func resourceASGroupCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	asClient, err := config.AutoscalingV1Client(config.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating autoscaling client: %s", err)
@@ -566,7 +567,7 @@ func resourceASGroupCreate(ctx context.Context, d *schema.ResourceData, meta int
 }
 
 func resourceASGroupRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conf := meta.(*config.Config)
+	conf := config.GetHcsConfig(meta)
 	region := conf.GetRegion(d)
 	asClient, err := conf.AutoscalingV1Client(region)
 	if err != nil {
@@ -671,7 +672,7 @@ func flattenLBaaSListeners(listeners []groups.LBaaSListener) []map[string]interf
 }
 
 func resourceASGroupUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conf := meta.(*config.Config)
+	conf := config.GetHcsConfig(meta)
 	region := conf.GetRegion(d)
 	asClient, err := conf.AutoscalingV1Client(region)
 	if err != nil {
@@ -763,7 +764,7 @@ func resourceASGroupUpdate(ctx context.Context, d *schema.ResourceData, meta int
 }
 
 func resourceASGroupDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	asClient, err := config.AutoscalingV1Client(config.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating autoscaling client: %s", err)

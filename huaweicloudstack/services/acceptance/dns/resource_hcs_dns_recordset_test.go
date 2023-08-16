@@ -16,7 +16,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
 )
 
-func getDNSRecordsetResourceFunc(cfg *config.Config, state *terraform.ResourceState) (interface{}, error) {
+func getDNSRecordsetResourceFunc(cfg *config.HcsConfig, state *terraform.ResourceState) (interface{}, error) {
 	region := acceptance.HCS_REGION_NAME
 	// getDNSRecordset: Query DNS recordset
 	getDNSRecordsetClient, err := cfg.NewServiceClient("dns_region", region)

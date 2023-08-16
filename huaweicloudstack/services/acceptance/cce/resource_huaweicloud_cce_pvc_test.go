@@ -8,15 +8,16 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cce"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/cce/v1/persistentvolumeclaims"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/cce"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils/fmtp"
 )
 
-func getPvcResourceFunc(conf *config.Config, state *terraform.ResourceState) (interface{}, error) {
-	c, err := conf.CceV1Client(acceptance.HCS_REGION_NAME)
+func getPvcResourceFunc(conf *config.HcsConfig, state *terraform.ResourceState) (interface{}, error) {
+	c, err := conf.Config.CceV1Client(acceptance.HCS_REGION_NAME)
 	if err != nil {
 		return nil, fmt.Errorf("error creating HuaweiCloudStack CCE v1 client: %s", err)
 	}

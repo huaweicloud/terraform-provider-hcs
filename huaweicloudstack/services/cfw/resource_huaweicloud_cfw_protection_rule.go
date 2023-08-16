@@ -18,10 +18,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"github.com/jmespath/go-jmespath"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
-	"github.com/jmespath/go-jmespath"
 )
 
 func ResourceProtectionRule() *schema.Resource {
@@ -255,7 +256,7 @@ func ProtectionRuleRuleAddressDtoSchema() *schema.Resource {
 }
 
 func resourceProtectionRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 
 	// createProtectionRule: Create a CFW Protection Rule.
@@ -297,7 +298,7 @@ func resourceProtectionRuleCreate(ctx context.Context, d *schema.ResourceData, m
 	return resourceProtectionRuleRead(ctx, d, meta)
 }
 
-func buildCreateProtectionRuleBodyParams(d *schema.ResourceData, config *config.Config) map[string]interface{} {
+func buildCreateProtectionRuleBodyParams(d *schema.ResourceData, config *config.HcsConfig) map[string]interface{} {
 	bodyParams := map[string]interface{}{
 		"object_id": utils.ValueIngoreEmpty(d.Get("object_id")),
 		"type":      d.Get("type"),
@@ -381,7 +382,7 @@ func buildCreateProtectionRuleRequestBodyRuleAddressDto(rawParams interface{}) m
 }
 
 func resourceProtectionRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 
 	var mErr *multierror.Error
@@ -535,7 +536,7 @@ func buildGetProtectionRuleQueryParams(d *schema.ResourceData) string {
 }
 
 func resourceProtectionRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 
 	updateProtectionRulehasChanges := []string{
@@ -606,7 +607,7 @@ func resourceProtectionRuleUpdate(ctx context.Context, d *schema.ResourceData, m
 	return resourceProtectionRuleRead(ctx, d, meta)
 }
 
-func buildUpdateProtectionRuleBodyParams(d *schema.ResourceData, config *config.Config) map[string]interface{} {
+func buildUpdateProtectionRuleBodyParams(d *schema.ResourceData, config *config.HcsConfig) map[string]interface{} {
 	bodyParams := map[string]interface{}{
 		"action_type":              d.Get("action_type"),
 		"address_type":             d.Get("address_type"),
@@ -680,7 +681,7 @@ func buildUpdateProtectionRuleRequestBodyRuleAddressDto(rawParams interface{}) m
 }
 
 func resourceProtectionRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 
 	// deleteProtectionRule: Delete an existing CFW Protection Rule

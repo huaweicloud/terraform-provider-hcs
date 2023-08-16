@@ -132,7 +132,7 @@ func publicGatewayStateRefreshFunc(client *golangsdk.ServiceClient, gatewayId st
 }
 
 func resourcePublicGatewayCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	client, err := cfg.NatGatewayClient(region)
 	if err != nil {
@@ -180,7 +180,7 @@ func resourcePublicGatewayCreate(ctx context.Context, d *schema.ResourceData, me
 }
 
 func resourcePublicGatewayRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	client, err := cfg.NatGatewayClient(region)
 	if err != nil {
@@ -222,7 +222,7 @@ func resourcePublicGatewayRead(_ context.Context, d *schema.ResourceData, meta i
 
 func resourcePublicGatewayUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var (
-		cfg       = meta.(*config.Config)
+		cfg       = config.GetHcsConfig(meta)
 		region    = cfg.GetRegion(d)
 		gatewayId = d.Id()
 	)
@@ -270,7 +270,7 @@ func resourcePublicGatewayUpdate(ctx context.Context, d *schema.ResourceData, me
 }
 
 func resourcePublicGatewayDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	client, err := cfg.NatGatewayClient(cfg.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating NAT v2 client: %s", err)

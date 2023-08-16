@@ -96,7 +96,7 @@ func publicIPListComputedSchema() *schema.Schema {
 }
 
 func resourceVpcBandWidthV2Create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	networkingClient, err := config.NetworkingV2Client(config.GetRegion(d))
 	NetworkingV1Client, err := config.NetworkingV1Client(config.GetRegion(d))
 	if err != nil {
@@ -137,7 +137,7 @@ func resourceVpcBandWidthV2Create(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourceVpcBandWidthV2Update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	networkingClient, err := config.NetworkingV2Client(config.GetRegion(d))
 	if err != nil {
 		return fmtp.DiagErrorf("Error creating networking client: %s", err)
@@ -160,7 +160,7 @@ func resourceVpcBandWidthV2Update(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourceVpcBandWidthV2Read(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	networkingClient, err := config.NetworkingV1Client(config.GetRegion(d))
 	if err != nil {
 		return fmtp.DiagErrorf("Error creating networking client: %s", err)
@@ -187,7 +187,7 @@ func resourceVpcBandWidthV2Read(_ context.Context, d *schema.ResourceData, meta 
 }
 
 func resourceVpcBandWidthV2Delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	networkingClient, err := config.NetworkingV2Client(config.GetRegion(d))
 	NetworkingV1Client, err := config.NetworkingV1Client(config.GetRegion(d))
 	if err != nil {

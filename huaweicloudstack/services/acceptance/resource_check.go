@@ -13,7 +13,7 @@ import (
 )
 
 // ServiceFunc the resource query functions
-type ServiceFunc func(*config.Config, *terraform.ResourceState) (interface{}, error)
+type ServiceFunc func(*config.HcsConfig, *terraform.ResourceState) (interface{}, error)
 
 // ResourceCheck resource check object
 type ResourceCheck struct {
@@ -148,7 +148,7 @@ func (rc *ResourceCheck) CheckResourceDestroy() resource.TestCheckFunc {
 			return fmt.Errorf("the 'getResourceFunc' is nil, please set it during initialization")
 		}
 
-		conf := TestAccProvider.Meta().(*config.Config)
+		conf := config.GetHcsConfig(TestAccProvider.Meta())
 		for _, rs := range s.RootModule().Resources {
 			if rs.Type != resourceType {
 				continue
@@ -180,7 +180,7 @@ func (rc *ResourceCheck) checkResourceExists(s *terraform.State) error {
 		return fmt.Errorf("the 'getResourceFunc' is nil, please set it during initialization")
 	}
 
-	conf := TestAccProvider.Meta().(*config.Config)
+	conf := config.GetHcsConfig(TestAccProvider.Meta())
 	r, err := rc.getResourceFunc(conf, rs)
 	if err != nil {
 		return fmt.Errorf("checking resource %s %s exists error: %s ",

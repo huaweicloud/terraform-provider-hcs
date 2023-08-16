@@ -255,7 +255,7 @@ func TestAccCluster_secGroup(t *testing.T) {
 }
 
 func testAccCheckClusterDestroy(s *terraform.State) error {
-	config := acceptance.TestAccProvider.Meta().(*config.Config)
+	config := config.GetHcsConfig(acceptance.TestAccProvider.Meta())
 	cceClient, err := config.CceV3Client(acceptance.HCS_REGION_NAME)
 	if err != nil {
 		return fmt.Errorf("error creating CCE v3 client: %s", err)
@@ -286,7 +286,7 @@ func testAccCheckClusterExists(n string, cluster *clusters.Clusters) resource.Te
 			return fmt.Errorf("resource ID is not set")
 		}
 
-		config := acceptance.TestAccProvider.Meta().(*config.Config)
+		config := config.GetHcsConfig(acceptance.TestAccProvider.Meta())
 		cceClient, err := config.CceV3Client(acceptance.HCS_REGION_NAME)
 		if err != nil {
 			return fmt.Errorf("error creating CCE v3 client: %s", err)

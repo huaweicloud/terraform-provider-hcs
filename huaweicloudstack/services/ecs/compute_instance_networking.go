@@ -70,7 +70,7 @@ func expandInstanceNetworks(d *schema.ResourceData) ([]servers.Network, error) {
 // getInstanceAddresses parses a server.Server's Address field into a structured
 // InstanceNIC list struct.
 func getInstanceAddresses(d *schema.ResourceData, meta interface{}, server *cloudservers.CloudServer) ([]InstanceNIC, error) {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	networkingClient, err := cfg.NetworkingV1Client(region)
 	if err != nil {

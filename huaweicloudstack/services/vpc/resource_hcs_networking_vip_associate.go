@@ -126,7 +126,7 @@ func updateNetworkingVIPAssociate(client *golangsdk.ServiceClient, vipID string,
 }
 
 func resourceNetworkingVIPAssociateV2Create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	networkingClient, err := config.NetworkingV2Client(config.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating networking client: %s", err)
@@ -150,7 +150,7 @@ func resourceNetworkingVIPAssociateV2Create(ctx context.Context, d *schema.Resou
 }
 
 func resourceNetworkingVIPAssociateV2Update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	networkingClient, err := config.NetworkingV2Client(config.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating networking client: %s", err)
@@ -172,7 +172,7 @@ func resourceNetworkingVIPAssociateV2Update(ctx context.Context, d *schema.Resou
 }
 
 func resourceNetworkingVIPAssociateV2Read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	networkingClient, err := config.NetworkingV2Client(config.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating networking client: %s", err)
@@ -225,7 +225,7 @@ func resourceNetworkingVIPAssociateV2Read(ctx context.Context, d *schema.Resourc
 }
 
 func resourceNetworkingVIPAssociateV2Delete(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	networkingClient, err := config.NetworkingV2Client(config.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating networking client: %s", err)

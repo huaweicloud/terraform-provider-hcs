@@ -3,13 +3,14 @@ package smn
 import (
 	"context"
 	"fmt"
+	"log"
+	"net/url"
+	"strings"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/smn/v2/subscriptions"
-	"log"
-	"net/url"
-	"strings"
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -73,7 +74,7 @@ func ResourceSubscription() *schema.Resource {
 }
 
 func resourceSubscriptionCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	client, err := cfg.SmnV2Client(region)
 	if err != nil {
@@ -99,7 +100,7 @@ func resourceSubscriptionCreate(ctx context.Context, d *schema.ResourceData, met
 }
 
 func resourceSubscriptionRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	client, err := cfg.SmnV2Client(region)
 	if err != nil {
@@ -145,7 +146,7 @@ func resourceSubscriptionRead(_ context.Context, d *schema.ResourceData, meta in
 }
 
 func resourceSubscriptionDelete(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	client, err := cfg.SmnV2Client(region)
 	if err != nil {
