@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func getDNSZoneResourceFunc(c *config.Config, state *terraform.ResourceState) (interface{}, error) {
+func getDNSZoneResourceFunc(c *config.HcsConfig, state *terraform.ResourceState) (interface{}, error) {
 	dnsClient, err := c.DnsV2Client(acceptance.HCS_REGION_NAME)
 	if err != nil {
 		return nil, fmt.Errorf("error creating DNS client: %s", err)

@@ -3,18 +3,20 @@ package dns
 import (
 	"context"
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/dns/v2/zones"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
-	"log"
-	"time"
 )
 
 func ResourceDNSZone() *schema.Resource {
@@ -119,7 +121,7 @@ func resourceDNSRouter(d *schema.ResourceData, region string) *zones.RouterOpts 
 }
 
 func resourceDNSZoneCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conf := meta.(*config.Config)
+	conf := config.GetHcsConfig(meta)
 	region := conf.GetRegion(d)
 	var dnsClient *golangsdk.ServiceClient
 
@@ -219,7 +221,7 @@ func resourceDNSZoneCreate(ctx context.Context, d *schema.ResourceData, meta int
 }
 
 func resourceDNSZoneRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conf := meta.(*config.Config)
+	conf := config.GetHcsConfig(meta)
 	region := conf.GetRegion(d)
 
 	// we can not get the corresponding client by zone type in import scene
@@ -268,7 +270,7 @@ func resourceDNSZoneRead(_ context.Context, d *schema.ResourceData, meta interfa
 }
 
 func resourceDNSZoneUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conf := meta.(*config.Config)
+	conf := config.GetHcsConfig(meta)
 	region := conf.GetRegion(d)
 	var dnsClient *golangsdk.ServiceClient
 
@@ -417,7 +419,7 @@ func updateDNSZoneRouters(ctx context.Context, d *schema.ResourceData, client *g
 }
 
 func resourceDNSZoneDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conf := meta.(*config.Config)
+	conf := config.GetHcsConfig(meta)
 	var dnsClient *golangsdk.ServiceClient
 	var err error
 

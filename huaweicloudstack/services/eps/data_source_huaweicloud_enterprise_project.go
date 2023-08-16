@@ -50,7 +50,7 @@ func DataSourceEnterpriseProject() *schema.Resource {
 }
 
 func dataSourceEnterpriseProjectRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 	epsClient, err := config.EnterpriseProjectClient(region)
 	if err != nil {

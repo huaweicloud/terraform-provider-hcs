@@ -82,7 +82,7 @@ func ResourceBlackWhiteList() *schema.Resource {
 }
 
 func resourceBlackWhiteListCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	// createBlackWhiteList: Create a CFW black white list.
@@ -142,7 +142,7 @@ func buildCreateBlackWhiteListBodyParams(d *schema.ResourceData) map[string]inte
 }
 
 func resourceBlackWhiteListRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	var mErr *multierror.Error
@@ -223,7 +223,7 @@ func buildGetBlackWhiteListQueryParams(d *schema.ResourceData) string {
 }
 
 func resourceBlackWhiteListUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	updateBlackWhiteListChanges := []string{
@@ -280,7 +280,7 @@ func buildUpdateBlackWhiteListBodyParams(d *schema.ResourceData) map[string]inte
 }
 
 func resourceBlackWhiteListDelete(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	// deleteBlackWhiteList: Delete an existing CFW black white list

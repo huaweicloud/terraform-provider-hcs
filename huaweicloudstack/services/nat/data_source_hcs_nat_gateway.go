@@ -88,7 +88,7 @@ func DataSourcePublicGateway() *schema.Resource {
 }
 
 func dataSourcePublicGatewayRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	natClient, err := cfg.NatGatewayClient(cfg.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating NAT v2 client: %s", err)

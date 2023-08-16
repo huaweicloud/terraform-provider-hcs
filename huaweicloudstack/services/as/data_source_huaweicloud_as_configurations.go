@@ -2,6 +2,7 @@ package as
 
 import (
 	"context"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/helper/hashcode"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/autoscaling/v1/configurations"
@@ -228,7 +229,7 @@ func ConfigurationPublicIpSchema() *schema.Resource {
 }
 
 func dataSourceASConfigurationRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conf := meta.(*config.Config)
+	conf := config.GetHcsConfig(meta)
 	region := conf.GetRegion(d)
 	asClient, err := conf.AutoscalingV1Client(region)
 	if err != nil {

@@ -81,7 +81,7 @@ func ResourceServiceGroupMember() *schema.Resource {
 }
 
 func resourceServiceGroupMemberCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	// createServiceGroupMember: Create a CFW service group member.
@@ -142,7 +142,7 @@ func buildCreateServiceGroupMemberBodyParams(d *schema.ResourceData) map[string]
 }
 
 func resourceServiceGroupMemberRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	var mErr *multierror.Error
@@ -227,7 +227,7 @@ func buildGetServiceGroupMemberQueryParams(d *schema.ResourceData) string {
 }
 
 func resourceServiceGroupMemberDelete(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	// deleteServiceGroupMember: Delete an existing CFW service group member

@@ -66,7 +66,7 @@ func buildServerGroupPolicies(d *schema.ResourceData) []string {
 }
 
 func resourceComputeServerGroupCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	ecsClient, err := cfg.ComputeV1Client(cfg.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating compute client: %s", err)
@@ -104,7 +104,7 @@ func resourceComputeServerGroupCreate(ctx context.Context, d *schema.ResourceDat
 }
 
 func resourceComputeServerGroupRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	ecsClient, err := cfg.ComputeV1Client(region)
 	if err != nil {
@@ -132,7 +132,7 @@ func resourceComputeServerGroupRead(_ context.Context, d *schema.ResourceData, m
 }
 
 func resourceComputeServerGroupUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	ecsClient, err := cfg.ComputeV1Client(cfg.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating compute client: %s", err)
@@ -201,7 +201,7 @@ func UnlockAll(ids []interface{}) {
 }
 
 func resourceComputeServerGroupDelete(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	ecsClient, err := cfg.ComputeV1Client(cfg.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating compute client: %s", err)

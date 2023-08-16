@@ -15,7 +15,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/nat"
 )
 
-func getPublicGatewayResourceFunc(cfg *config.Config, state *terraform.ResourceState) (interface{}, error) {
+func getPublicGatewayResourceFunc(cfg *config.HcsConfig, state *terraform.ResourceState) (interface{}, error) {
 	client, err := cfg.NatGatewayClient(acceptance.HCS_REGION_NAME)
 	if err != nil {
 		return nil, fmt.Errorf("error creating NAT v2 client: %s", err)

@@ -8,11 +8,12 @@ package as
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
-	"strings"
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -70,7 +71,7 @@ func ResourceAsNotification() *schema.Resource {
 }
 
 func resourceAsNotificationPut(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	// putASNotification: put an AS notification.
@@ -115,7 +116,7 @@ func buildCreateOrUpdateASNotificationBodyParams(d *schema.ResourceData) map[str
 }
 
 func resourceAsNotificationRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	var mErr *multierror.Error
@@ -184,7 +185,7 @@ func filterTargetASNotificationByTopicUrn(resp interface{}, topicUrn string) map
 }
 
 func resourceAsNotificationDelete(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	// deleteASNotification: Delete the AS notification.

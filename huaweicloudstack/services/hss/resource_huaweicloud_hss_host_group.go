@@ -7,15 +7,17 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
+
 	hssv5 "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/hss/v5"
 	hssv5model "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/hss/v5/model"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
@@ -149,7 +151,7 @@ func hostStatusRefreshFunc(client *hssv5.HssClient, hostId string) resource.Stat
 }
 
 func resourceHostGroupCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	client, err := cfg.HcHssV5Client(region)
 	if err != nil {
@@ -257,7 +259,7 @@ func QueryHostGroupById(client *hssv5.HssClient, region, epsId, groupId string) 
 
 func resourceHostGroupRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var (
-		cfg     = meta.(*config.Config)
+		cfg     = config.GetHcsConfig(meta)
 		region  = cfg.GetRegion(d)
 		groupId = d.Id()
 		epsId   = common.GetEnterpriseProjectID(d, cfg)
@@ -290,7 +292,7 @@ func resourceHostGroupRead(_ context.Context, d *schema.ResourceData, meta inter
 }
 
 func resourceHostGroupUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	client, err := cfg.HcHssV5Client(region)
 	if err != nil {
@@ -332,7 +334,7 @@ func resourceHostGroupUpdate(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func resourceHostGroupDelete(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	client, err := cfg.HcHssV5Client(cfg.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating HSS v5 client: %s", err)

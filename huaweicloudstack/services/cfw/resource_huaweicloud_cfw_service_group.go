@@ -60,7 +60,7 @@ func ResourceServiceGroup() *schema.Resource {
 }
 
 func resourceServiceGroupCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	// createServiceGroup: Create a CFW service group.
@@ -114,7 +114,7 @@ func buildCreateServiceGroupBodyParams(d *schema.ResourceData) map[string]interf
 }
 
 func resourceServiceGroupRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	var mErr *multierror.Error
@@ -163,7 +163,7 @@ func resourceServiceGroupRead(_ context.Context, d *schema.ResourceData, meta in
 }
 
 func resourceServiceGroupUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	updateServiceGroupChanges := []string{
@@ -211,7 +211,7 @@ func buildUpdateServiceGroupBodyParams(d *schema.ResourceData) map[string]interf
 }
 
 func resourceServiceGroupDelete(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	// deleteServiceGroup: Delete an existing CFW service group

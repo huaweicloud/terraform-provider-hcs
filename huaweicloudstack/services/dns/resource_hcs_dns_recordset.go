@@ -8,19 +8,21 @@ package dns
 import (
 	"context"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"github.com/jmespath/go-jmespath"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/dns/v2/zones"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
-	"github.com/jmespath/go-jmespath"
-	"strings"
-	"time"
 )
 
 func ResourceDNSRecordset() *schema.Resource {
@@ -111,7 +113,7 @@ type WaitForConfig struct {
 }
 
 func resourceDNSRecordsetCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	createDNSRecordsetClient, err := cfg.NewServiceClient("dns_region", region)
 	if err != nil {
@@ -212,7 +214,7 @@ func buildCreateDNSRecordsetBodyParams(d *schema.ResourceData) map[string]interf
 }
 
 func resourceDNSRecordsetRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	var mErr *multierror.Error
@@ -296,7 +298,7 @@ func getDNSRecordsetStatus(getDNSRecordsetRespBody interface{}) string {
 }
 
 func resourceDNSRecordsetUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	recordsetClient, err := cfg.NewServiceClient("dns_region", region)
@@ -424,7 +426,7 @@ func buildUpdateDNSRecordsetStatusBodyParams(d *schema.ResourceData) map[string]
 }
 
 func resourceDNSRecordsetDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	// deleteDNSRecordset: Delete DNS recordset

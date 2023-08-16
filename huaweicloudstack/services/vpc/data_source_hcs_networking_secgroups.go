@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/helper/hashcode"
 	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
@@ -171,7 +172,7 @@ func filterAvailableSecGroupsV3(secGroups []v3groups.SecurityGroup, descKey stri
 }
 
 func dataSourceNetworkingSecGroupsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 	v3Client, err := config.NetworkingV3Client(region)
 	if err != nil {
@@ -210,7 +211,7 @@ func dataSourceNetworkingSecGroupsRead(ctx context.Context, d *schema.ResourceDa
 }
 
 func dataSourceNetworkingSecGroupsReadV1(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 	v1Client, err := config.NetworkingV1Client(region)
 	if err != nil {

@@ -17,7 +17,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func getACLZoneResourceFunc(conf *config.Config, state *terraform.ResourceState) (interface{}, error) {
+func getACLZoneResourceFunc(conf *config.HcsConfig, state *terraform.ResourceState) (interface{}, error) {
 	c, err := conf.NetworkingV2Client(acceptance.HCS_REGION_NAME)
 	if err != nil {
 		return nil, fmt.Errorf("error creating DNS client: %s", err)

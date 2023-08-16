@@ -76,7 +76,7 @@ func DataSourceBmsFlavors() *schema.Resource {
 }
 
 func dataSourceBmsFlavorsRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 	bmsClient, err := config.BmsV1Client(region)
 	if err != nil {

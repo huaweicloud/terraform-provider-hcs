@@ -2,10 +2,12 @@ package vpcep
 
 import (
 	"context"
+
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/go-uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/vpcep/v1/services"
 )
@@ -57,7 +59,7 @@ func DataSourceVPCEPPublicServices() *schema.Resource {
 }
 
 func dataSourceVpcepPublicRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 	vpcepClient, err := config.VPCEPClient(region)
 	if err != nil {
