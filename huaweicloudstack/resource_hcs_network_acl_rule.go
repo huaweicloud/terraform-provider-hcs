@@ -89,7 +89,7 @@ func ResourceNetworkACLRule() *schema.Resource {
 }
 
 func resourceNetworkACLRuleCreate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	fwClient, err := config.FwV2Client(common.GetRegion(d, config))
 	if err != nil {
 		return fmtp.Errorf("Error creating HuaweiCloudStack fw client: %s", err)
@@ -125,7 +125,7 @@ func resourceNetworkACLRuleCreate(d *schema.ResourceData, meta interface{}) erro
 }
 
 func resourceNetworkACLRuleRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	fwClient, err := config.FwV2Client(common.GetRegion(d, config))
 	if err != nil {
 		return fmtp.Errorf("Error creating HuaweiCloudStack fw client: %s", err)
@@ -158,7 +158,7 @@ func resourceNetworkACLRuleRead(d *schema.ResourceData, meta interface{}) error 
 }
 
 func resourceNetworkACLRuleUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	fwClient, err := config.FwV2Client(common.GetRegion(d, config))
 	if err != nil {
 		return fmtp.Errorf("Error creating HuaweiCloudStack fw client: %s", err)
@@ -216,7 +216,7 @@ func resourceNetworkACLRuleUpdate(d *schema.ResourceData, meta interface{}) erro
 }
 
 func resourceNetworkACLRuleDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	fwClient, err := config.FwV2Client(common.GetRegion(d, config))
 	if err != nil {
 		return fmtp.Errorf("Error creating HuaweiCloudStack fw client: %s", err)

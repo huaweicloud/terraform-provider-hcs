@@ -42,7 +42,7 @@ import (
 This file is used to impl the configuration of huaweicloudstack-sdk-go-v3 package and
 genetate service clients.
 */
-func buildAuthCredentials(c *Config, region string) (*basic.Credentials, error) {
+func buildAuthCredentials(c *HcsConfig, region string) (*basic.Credentials, error) {
 	if c.AccessKey == "" || c.SecretKey == "" {
 		return nil, fmt.Errorf("access_key or secret_key is missing in the provider")
 	}
@@ -59,7 +59,7 @@ func buildAuthCredentials(c *Config, region string) (*basic.Credentials, error) 
 	projectID, ok := c.RegionProjectIDMap[region]
 	if !ok {
 		// Not find in the map, then try to query and store.
-		client := c.HwClient
+		client := c.HcsHwClient
 		err := c.loadUserProjects(client, region)
 		if err != nil {
 			return nil, err
@@ -71,7 +71,7 @@ func buildAuthCredentials(c *Config, region string) (*basic.Credentials, error) 
 	return &credentials, nil
 }
 
-func buildGlobalAuthCredentials(c *Config, region string) (*global.Credentials, error) {
+func buildGlobalAuthCredentials(c *HcsConfig, region string) (*global.Credentials, error) {
 	if c.AccessKey == "" || c.SecretKey == "" {
 		return nil, fmt.Errorf("access_key or secret_key is missing in the provider")
 	}
@@ -87,7 +87,7 @@ func buildGlobalAuthCredentials(c *Config, region string) (*global.Credentials, 
 	return &credentials, nil
 }
 
-func buildHTTPConfig(c *Config) *hcconfig.HttpConfig {
+func buildHTTPConfig(c *HcsConfig) *hcconfig.HttpConfig {
 	httpConfig := hcconfig.DefaultHttpConfig()
 
 	if c.MaxRetries > 0 {
@@ -126,7 +126,7 @@ func buildHTTPConfig(c *Config) *hcconfig.HttpConfig {
 }
 
 // HcVpcV3Client is the VPC service client using huaweicloudstack-sdk-go-v3 package
-func (c *Config) HcVpcV3Client(region string) (*vpcv3.VpcClient, error) {
+func (c *HcsConfig) HcVpcV3Client(region string) (*vpcv3.VpcClient, error) {
 	hcClient, err := NewHcClient(c, region, "vpc", false)
 	if err != nil {
 		return nil, err
@@ -136,7 +136,7 @@ func (c *Config) HcVpcV3Client(region string) (*vpcv3.VpcClient, error) {
 }
 
 // HcTmsV1Client is the TMS service client using huaweicloudstack-sdk-go-v3 package
-func (c *Config) HcTmsV1Client(region string) (*tmsv1.TmsClient, error) {
+func (c *HcsConfig) HcTmsV1Client(region string) (*tmsv1.TmsClient, error) {
 	hcClient, err := NewHcClient(c, region, "tms", true)
 	if err != nil {
 		return nil, err
@@ -145,7 +145,7 @@ func (c *Config) HcTmsV1Client(region string) (*tmsv1.TmsClient, error) {
 }
 
 // HcKmsV3Client is the KMS service client using huaweicloudstack-sdk-go-v3 package
-func (c *Config) HcKmsV3Client(region string) (*kpsv3.KpsClient, error) {
+func (c *HcsConfig) HcKmsV3Client(region string) (*kpsv3.KpsClient, error) {
 	hcClient, err := NewHcClient(c, region, "kms", false)
 	if err != nil {
 		return nil, err
@@ -154,7 +154,7 @@ func (c *Config) HcKmsV3Client(region string) (*kpsv3.KpsClient, error) {
 }
 
 // HcIamV3Client is the IAM service client using huaweicloudstack-sdk-go-v3 package
-func (c *Config) HcIamV3Client(region string) (*iamv3.IamClient, error) {
+func (c *HcsConfig) HcIamV3Client(region string) (*iamv3.IamClient, error) {
 	hcClient, err := NewHcClient(c, region, "iam", true)
 	if err != nil {
 		return nil, err
@@ -163,7 +163,7 @@ func (c *Config) HcIamV3Client(region string) (*iamv3.IamClient, error) {
 }
 
 // HcCtsV3Client is the CTS service client using huaweicloudstack-sdk-go-v3 package
-func (c *Config) HcCtsV3Client(region string) (*ctsv3.CtsClient, error) {
+func (c *HcsConfig) HcCtsV3Client(region string) (*ctsv3.CtsClient, error) {
 	hcClient, err := NewHcClient(c, region, "cts", false)
 	if err != nil {
 		return nil, err
@@ -172,7 +172,7 @@ func (c *Config) HcCtsV3Client(region string) (*ctsv3.CtsClient, error) {
 }
 
 // HcRdsV3Client is the RDS service client using huaweicloudstack-sdk-go-v3 package
-func (c *Config) HcRdsV3Client(region string) (*rdsv3.RdsClient, error) {
+func (c *HcsConfig) HcRdsV3Client(region string) (*rdsv3.RdsClient, error) {
 	hcClient, err := NewHcClient(c, region, "rds", false)
 	if err != nil {
 		return nil, err
@@ -181,7 +181,7 @@ func (c *Config) HcRdsV3Client(region string) (*rdsv3.RdsClient, error) {
 }
 
 // HcCptsV1Client is the CPTS service client using huaweicloudstack-sdk-go-v3 package
-func (c *Config) HcCptsV1Client(region string) (*cptsv1.CptsClient, error) {
+func (c *HcsConfig) HcCptsV1Client(region string) (*cptsv1.CptsClient, error) {
 	hcClient, err := NewHcClient(c, region, "cpts", false)
 	if err != nil {
 		return nil, err
@@ -190,7 +190,7 @@ func (c *Config) HcCptsV1Client(region string) (*cptsv1.CptsClient, error) {
 }
 
 // HcVodV1Client is the AOM service client using huaweicloudstack-sdk-go-v3 package
-func (c *Config) HcVodV1Client(region string) (*vodv1.VodClient, error) {
+func (c *HcsConfig) HcVodV1Client(region string) (*vodv1.VodClient, error) {
 	hcClient, err := NewHcClient(c, region, "vod", false)
 	if err != nil {
 		return nil, err
@@ -199,7 +199,7 @@ func (c *Config) HcVodV1Client(region string) (*vodv1.VodClient, error) {
 }
 
 // HcAomV2Client is the AOM service client using huaweicloudstack-sdk-go-v3 package
-func (c *Config) HcAomV2Client(region string) (*aomv2.AomClient, error) {
+func (c *HcsConfig) HcAomV2Client(region string) (*aomv2.AomClient, error) {
 	hcClient, err := NewHcClient(c, region, "aom", false)
 	if err != nil {
 		return nil, err
@@ -208,7 +208,7 @@ func (c *Config) HcAomV2Client(region string) (*aomv2.AomClient, error) {
 }
 
 // HcLiveV1Client is the live service client using huaweicloudstack-sdk-go-v3 package
-func (c *Config) HcLiveV1Client(region string) (*livev1.LiveClient, error) {
+func (c *HcsConfig) HcLiveV1Client(region string) (*livev1.LiveClient, error) {
 	hcClient, err := NewHcClient(c, region, "live", false)
 	if err != nil {
 		return nil, err
@@ -217,7 +217,7 @@ func (c *Config) HcLiveV1Client(region string) (*livev1.LiveClient, error) {
 }
 
 // HcMpcV1Client is the MPC service client using huaweicloudstack-sdk-go-v3 package
-func (c *Config) HcMpcV1Client(region string) (*mpcv1.MpcClient, error) {
+func (c *HcsConfig) HcMpcV1Client(region string) (*mpcv1.MpcClient, error) {
 	hcClient, err := NewHcClient(c, region, "mpc", false)
 	if err != nil {
 		return nil, err
@@ -226,7 +226,7 @@ func (c *Config) HcMpcV1Client(region string) (*mpcv1.MpcClient, error) {
 }
 
 // HcIoTdaV5Client is the live service client using huaweicloudstack-sdk-go-v3 package
-func (c *Config) HcIoTdaV5Client(region string) (*iotdav5.IoTDAClient, error) {
+func (c *HcsConfig) HcIoTdaV5Client(region string) (*iotdav5.IoTDAClient, error) {
 	hcClient, err := NewHcClient(c, region, "iotda", false)
 	if err != nil {
 		return nil, err
@@ -235,7 +235,7 @@ func (c *Config) HcIoTdaV5Client(region string) (*iotdav5.IoTDAClient, error) {
 }
 
 // HcMpcV1Client is the MPC service client using huaweicloudstack-sdk-go-v3 package
-func (c *Config) HcOmsV2Client(region string) (*omsv2.OmsClient, error) {
+func (c *HcsConfig) HcOmsV2Client(region string) (*omsv2.OmsClient, error) {
 	hcClient, err := NewHcClient(c, region, "oms", false)
 	if err != nil {
 		return nil, err
@@ -244,7 +244,7 @@ func (c *Config) HcOmsV2Client(region string) (*omsv2.OmsClient, error) {
 }
 
 // HcCssV1Client is the css service client using huaweicloudstack-sdk-go-v3 package
-func (c *Config) HcCssV1Client(region string) (*cssv1.CssClient, error) {
+func (c *HcsConfig) HcCssV1Client(region string) (*cssv1.CssClient, error) {
 	hcClient, err := NewHcClient(c, region, "css", false)
 	if err != nil {
 		return nil, err
@@ -253,7 +253,7 @@ func (c *Config) HcCssV1Client(region string) (*cssv1.CssClient, error) {
 }
 
 // HcCssV2Client is the css service client using huaweicloudstack-sdk-go-v3 package
-func (c *Config) HcCssV2Client(region string) (*cssv2.CssClient, error) {
+func (c *HcsConfig) HcCssV2Client(region string) (*cssv2.CssClient, error) {
 	hcClient, err := NewHcClient(c, region, "css", false)
 	if err != nil {
 		return nil, err
@@ -262,7 +262,7 @@ func (c *Config) HcCssV2Client(region string) (*cssv2.CssClient, error) {
 }
 
 // HcCdnV1Client is the CDN service client using huaweicloudstack-sdk-go-v3 package
-func (c *Config) HcCdnV1Client(region string) (*cdnv1.CdnClient, error) {
+func (c *HcsConfig) HcCdnV1Client(region string) (*cdnv1.CdnClient, error) {
 	hcClient, err := NewHcClient(c, region, "cdn", false)
 	if err != nil {
 		return nil, err
@@ -271,7 +271,7 @@ func (c *Config) HcCdnV1Client(region string) (*cdnv1.CdnClient, error) {
 }
 
 // HcDmsV2Client is the DMS service client using huaweicloudstack-sdk-go-v3 package
-func (c *Config) HcDmsV2Client(region string) (*dmsv2.KafkaClient, error) {
+func (c *HcsConfig) HcDmsV2Client(region string) (*dmsv2.KafkaClient, error) {
 	hcClient, err := NewHcClient(c, region, "dmsv2", false)
 	if err != nil {
 		return nil, err
@@ -280,7 +280,7 @@ func (c *Config) HcDmsV2Client(region string) (*dmsv2.KafkaClient, error) {
 }
 
 // HcHssV5Client is the HSS service client using huaweicloudstack-sdk-go-v3 package
-func (c *Config) HcHssV5Client(region string) (*hssv5.HssClient, error) {
+func (c *HcsConfig) HcHssV5Client(region string) (*hssv5.HssClient, error) {
 	hcClient, err := NewHcClient(c, region, "hss", false)
 	if err != nil {
 		return nil, err
@@ -289,7 +289,7 @@ func (c *Config) HcHssV5Client(region string) (*hssv5.HssClient, error) {
 }
 
 // NewHcClient is the common client using huaweicloudstack-sdk-go-v3 package
-func NewHcClient(c *Config, region, product string, globalFlag bool) (*core.HcHttpClient, error) {
+func NewHcClient(c *HcsConfig, region, product string, globalFlag bool) (*core.HcHttpClient, error) {
 	endpoint := GetServiceEndpoint(c, product, region)
 	if endpoint == "" {
 		return nil, fmt.Errorf("failed to get the endpoint of %q service in region %s", product, region)
