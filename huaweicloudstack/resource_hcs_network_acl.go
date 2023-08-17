@@ -97,7 +97,7 @@ func resourceNetworkACLCreate(d *schema.ResourceData, meta interface{}) error {
 	var portIds []string
 	var inboundPolicyID, outboundPolicyID string
 
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	fwClient, err := config.FwV2Client(common.GetRegion(d, config))
 	if err != nil {
 		return fmtp.Errorf("Error creating HuaweiCloudStack fw client: %s", err)
@@ -227,7 +227,7 @@ func resourceNetworkACLCreate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceNetworkACLRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	fwClient, err := config.FwV2Client(common.GetRegion(d, config))
 	if err != nil {
 		return fmtp.Errorf("Error creating HuaweiCloudStack fw client: %s", err)
@@ -254,7 +254,7 @@ func resourceNetworkACLRead(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceNetworkACLUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	fwClient, err := config.FwV2Client(common.GetRegion(d, config))
 	if err != nil {
 		return fmtp.Errorf("Error creating HuaweiCloudStack fw client: %s", err)
@@ -337,7 +337,7 @@ func resourceNetworkACLUpdate(d *schema.ResourceData, meta interface{}) error {
 func resourceNetworkACLDelete(d *schema.ResourceData, meta interface{}) error {
 	logp.Printf("[DEBUG] Destroy firewall group: %s", d.Id())
 
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	fwClient, err := config.FwV2Client(common.GetRegion(d, config))
 	if err != nil {
 		return fmtp.Errorf("Error creating HuaweiCloudStack fw client: %s", err)
@@ -384,7 +384,7 @@ func resourceNetworkACLDelete(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
-func getGWPortFromSubnet(config *config.Config, subnetID string) (string, error) {
+func getGWPortFromSubnet(config *config.HcsConfig, subnetID string) (string, error) {
 	var gatewayIP string
 	var gatewayPort string
 

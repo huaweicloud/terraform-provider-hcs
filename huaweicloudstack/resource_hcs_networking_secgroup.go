@@ -141,7 +141,7 @@ func ResourceNetworkingSecGroup() *schema.Resource {
 }
 
 func resourceNetworkingSecGroupCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := common.GetRegion(d, config)
 	v3Client, err := config.NetworkingV3Client(region)
 	if err != nil {
@@ -190,7 +190,7 @@ func resourceNetworkingSecGroupCreate(ctx context.Context, d *schema.ResourceDat
 }
 
 func resourceNetworkingSecGroupCreateV1(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := common.GetRegion(d, config)
 	// The v3 API does not exist or has not been published in this region, retry creation using v1 client.
 	v1Client, err := config.NetworkingV1Client(region)
@@ -229,7 +229,7 @@ func resourceNetworkingSecGroupCreateV1(ctx context.Context, d *schema.ResourceD
 }
 
 func resourceNetworkingSecGroupRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := common.GetRegion(d, config)
 	v1Client, err := config.NetworkingV1Client(region)
 	if err != nil {
@@ -339,7 +339,7 @@ func flattenSecurityGroupRulesV3(rules []v3rules.SecurityGroupRule) ([]map[strin
 
 func resourceNetworkingSecGroupUpdate(ctx context.Context, d *schema.ResourceData,
 	meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := common.GetRegion(d, config)
 	client, err := config.NetworkingV3Client(region)
 	if err != nil {
@@ -370,7 +370,7 @@ func resourceNetworkingSecGroupUpdate(ctx context.Context, d *schema.ResourceDat
 	return resourceNetworkingSecGroupRead(ctx, d, meta)
 }
 
-func resourceNetworkingSecGroupUpdateV2(d *schema.ResourceData, config *config.Config, region string) error {
+func resourceNetworkingSecGroupUpdateV2(d *schema.ResourceData, config *config.HcsConfig, region string) error {
 	v2Client, err := config.NetworkingV2Client(region)
 	if err != nil {
 		return fmtp.Errorf("Error creating HuaweiCloudStack networking v2 client: %s", err)
@@ -388,7 +388,7 @@ func resourceNetworkingSecGroupUpdateV2(d *schema.ResourceData, config *config.C
 }
 
 func resourceNetworkingSecGroupDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	client, err := config.NetworkingV1Client(common.GetRegion(d, config))
 	if err != nil {
 		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v1 client: %s", err)
