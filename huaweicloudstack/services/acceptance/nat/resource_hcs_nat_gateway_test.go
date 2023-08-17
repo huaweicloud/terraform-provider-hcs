@@ -54,9 +54,6 @@ func TestAccPublicGateway_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(rName, "name", name),
 					resource.TestCheckResourceAttr(rName, "spec", string(nat.PublicSpecTypeSmall)),
 					resource.TestCheckResourceAttr(rName, "description", "Created by acc test"),
-					resource.TestCheckResourceAttr(rName, "enterprise_project_id", "0"),
-					resource.TestCheckResourceAttr(rName, "tags.foo", "bar"),
-					resource.TestCheckResourceAttr(rName, "tags.key", "value"),
 				),
 			},
 			{
@@ -66,9 +63,6 @@ func TestAccPublicGateway_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(rName, "name", updateName),
 					resource.TestCheckResourceAttr(rName, "spec", string(nat.PublicSpecTypeMedium)),
 					resource.TestCheckResourceAttr(rName, "description", ""),
-					resource.TestCheckResourceAttr(rName, "enterprise_project_id", "0"),
-					resource.TestCheckResourceAttr(rName, "tags.foo", "baaar"),
-					resource.TestCheckResourceAttr(rName, "tags.newkey", "value"),
 				),
 			},
 			{
@@ -90,12 +84,6 @@ resource "hcs_nat_gateway" "test" {
   description           = "Created by acc test"
   vpc_id                = hcs_vpc.test.id
   subnet_id             = hcs_vpc_subnet.test.id
-  enterprise_project_id = "0"
-
-  tags = {
-    foo = "bar"
-    key = "value"
-  }
 }
 `, relatedConfig, name)
 }
@@ -109,12 +97,6 @@ resource "hcs_nat_gateway" "test" {
   spec                  = "2"
   vpc_id                = hcs_vpc.test.id
   subnet_id             = hcs_vpc_subnet.test.id
-  enterprise_project_id = "0"
-
-  tags = {
-    foo    = "baaar"
-    newkey = "value"
-  }
 }
 `, relatedConfig, name)
 }

@@ -52,16 +52,15 @@ func TestBaseComputeResources(name string) string {
 
 data "hcs_availability_zones" "test" {}
 
-data "hcs_compute_flavors" "test" {
+data "hcs_ecs_compute_flavors" "test" {
   availability_zone = data.hcs_availability_zones.test.names[0]
-  performance_type  = "normal"
+  performance_type  = "dpdk"
   cpu_core_count    = 2
   memory_size       = 4
 }
 
-data "hcs_ims_image" "test" {
+data "hcs_ims_images" "test" {
   name        = "Ubuntu 18.04 server 64bit"
-  most_recent = true
 }
 `, TestBaseNetwork(name))
 }
