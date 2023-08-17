@@ -43,7 +43,6 @@ resource "hcs_nat_gateway" "test" {
   spec                  = "1"
   subnet_id             = hcs_vpc_subnet.test.id
   vpc_id                = hcs_vpc.test.id
-  enterprise_project_id = "0"
 }
 
 data "hcs_nat_gateway" "name_filter" {
@@ -59,7 +58,6 @@ data "hcs_nat_gateway" "all_params_filter" {
   spec                  = hcs_nat_gateway.test.spec
   subnet_id             = hcs_nat_gateway.test.subnet_id
   vpc_id                = hcs_nat_gateway.test.vpc_id
-  enterprise_project_id = hcs_nat_gateway.test.enterprise_project_id
 }
 `, common.TestBaseNetwork(name), name)
 }
