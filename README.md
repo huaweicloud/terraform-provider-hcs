@@ -8,7 +8,7 @@ Terraform HuaweiCloudStack Provider
 * Mailing list: [Google Groups](http://groups.google.com/group/terraform-tool)
 
 <!-- markdownlint-disable-next-line MD033 -->
-<a href="https://www.huaweicloud.com/"><img width="450px" height="102px" src="https://console-static.huaweicloud.com/static/authui/20210202115135/public/custom/images/logo-en.svg"></a>
+<a href="https://www.huaweicloud.com/intl/en-us/product/huaweicloudstack.html"><img width="450px" height="76px" src="./docs/img/huaweicloudstack_log.png"></a>
 
 Requirements
 ------------
