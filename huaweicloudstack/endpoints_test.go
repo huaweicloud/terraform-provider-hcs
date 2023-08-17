@@ -51,7 +51,7 @@ func TestAccServiceEndpoints_IAM(t *testing.T) {
 	var expectedURL, actualURL string
 	var serviceClient *golangsdk.ServiceClient
 	var err error
-	cfg := testProvider.Meta().(*config.Config)
+	cfg := config.GetHcsConfig(testProvider.Meta())
 
 	// test the endpoint of IAM service
 	serviceClient, err = cfg.IAMV3Client(HCS_REGION_NAME)
@@ -103,7 +103,7 @@ func TestAccServiceEndpoints_Global(t *testing.T) {
 	var expectedURL, actualURL string
 	var serviceClient *golangsdk.ServiceClient
 	var err error
-	cfg := testProvider.Meta().(*config.Config)
+	cfg := config.GetHcsConfig(testProvider.Meta())
 
 	// test the endpoint of CDN service
 	serviceClient, err = cfg.CdnV1Client(HCS_REGION_NAME)
@@ -179,7 +179,7 @@ func TestAccServiceEndpoints_Management(t *testing.T) {
 	var expectedURL, actualURL string
 	var serviceClient *golangsdk.ServiceClient
 	var err error
-	cfg := testProvider.Meta().(*config.Config)
+	cfg := config.GetHcsConfig(testProvider.Meta())
 
 	// test the endpoint of CTS service
 	serviceClient, err = cfg.CtsV1Client(HCS_REGION_NAME)
@@ -231,7 +231,7 @@ func TestAccServiceEndpoints_Database(t *testing.T) {
 	var expectedURL, actualURL string
 	var serviceClient *golangsdk.ServiceClient
 	var err error
-	cfg := testProvider.Meta().(*config.Config)
+	cfg := config.GetHcsConfig(testProvider.Meta())
 
 	// test the endpoint of RDS v1 service
 	serviceClient, err = cfg.RdsV1Client(HCS_REGION_NAME)
@@ -343,7 +343,7 @@ func TestAccServiceEndpoints_Security(t *testing.T) {
 	var expectedURL, actualURL string
 	var serviceClient *golangsdk.ServiceClient
 	var err error
-	cfg := testProvider.Meta().(*config.Config)
+	cfg := config.GetHcsConfig(testProvider.Meta())
 
 	// test the endpoint of anti-ddos service
 	serviceClient, err = cfg.AntiDDosV1Client(HCS_REGION_NAME)
@@ -443,7 +443,7 @@ func TestAccServiceEndpoints_Application(t *testing.T) {
 	var expectedURL, actualURL string
 	var serviceClient *golangsdk.ServiceClient
 	var err error
-	cfg := testProvider.Meta().(*config.Config)
+	cfg := config.GetHcsConfig(testProvider.Meta())
 
 	// test the endpoint of API-GW service
 	serviceClient, err = cfg.ApiGatewayV1Client(HCS_REGION_NAME)
@@ -579,7 +579,7 @@ func TestAccServiceEndpoints_Compute(t *testing.T) {
 		t.Fatalf("Unexpected error when configure HuaweiCloudStack provider: %s", diags[0].Summary)
 	}
 
-	cfg := testProvider.Meta().(*config.Config)
+	cfg := config.GetHcsConfig(testProvider.Meta())
 	var expectedURL, actualURL string
 	var serviceClient *golangsdk.ServiceClient
 	var err error
@@ -707,7 +707,7 @@ func TestAccServiceEndpoints_Storage(t *testing.T) {
 		t.Fatalf("Unexpected error when configure HuaweiCloudStack provider: %s", diags[0].Summary)
 	}
 
-	cfg := testProvider.Meta().(*config.Config)
+	cfg := config.GetHcsConfig(testProvider.Meta())
 	var expectedURL, actualURL string
 	var serviceClient *golangsdk.ServiceClient
 	var err error
@@ -788,7 +788,7 @@ func TestAccServiceEndpoints_Network(t *testing.T) {
 		t.Fatalf("Unexpected error when configure HuaweiCloudStack provider: %s", diags[0].Summary)
 	}
 
-	cfg := testProvider.Meta().(*config.Config)
+	cfg := config.GetHcsConfig(testProvider.Meta())
 	var expectedURL, actualURL string
 	var serviceClient *golangsdk.ServiceClient
 	var err error
@@ -948,7 +948,7 @@ func TestAccServiceEndpoints_EnterpriseIntelligence(t *testing.T) {
 	var expectedURL, actualURL string
 	var serviceClient *golangsdk.ServiceClient
 	var err error
-	cfg := testProvider.Meta().(*config.Config)
+	cfg := config.GetHcsConfig(testProvider.Meta())
 
 	// test the endpoint of MRS v1.1 service
 	serviceClient, err = cfg.MrsV1Client(HCS_REGION_NAME)
@@ -1180,7 +1180,7 @@ func TestAccServiceEndpoints_Edge(t *testing.T) {
 	var expectedURL, actualURL string
 	var serviceClient *golangsdk.ServiceClient
 	var err error
-	cfg := testProvider.Meta().(*config.Config)
+	cfg := config.GetHcsConfig(testProvider.Meta())
 
 	// test the endpoint of iec service
 	serviceClient, err = cfg.IECV1Client(HCS_REGION_NAME)
@@ -1208,7 +1208,7 @@ func TestAccServiceEndpoints_Others(t *testing.T) {
 	var expectedURL, actualURL string
 	var serviceClient *golangsdk.ServiceClient
 	var err error
-	cfg := testProvider.Meta().(*config.Config)
+	cfg := config.GetHcsConfig(testProvider.Meta())
 
 	// test the endpoint of MAAS service
 	serviceClient, err = cfg.MaasV1Client(HCS_REGION_NAME)

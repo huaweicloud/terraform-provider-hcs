@@ -167,7 +167,7 @@ func doesAdvanceddParamUsed(d *schema.ResourceData, params []string) bool {
 
 func resourceNetworkingSecGroupRuleCreateV1(ctx context.Context, d *schema.ResourceData,
 	meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	v1Client, err := config.NetworkingV1Client(common.GetRegion(d, config))
 	if err != nil {
 		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v1 client: %s", err)
@@ -197,7 +197,7 @@ func resourceNetworkingSecGroupRuleCreateV1(ctx context.Context, d *schema.Resou
 
 func resourceNetworkingSecGroupRuleCreateV3(ctx context.Context, d *schema.ResourceData,
 	meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	v3Client, err := config.NetworkingV3Client(common.GetRegion(d, config))
 	if err != nil {
 		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v3 client: %s", err)
@@ -238,7 +238,7 @@ func resourceNetworkingSecGroupRuleCreate(ctx context.Context, d *schema.Resourc
 
 func resourceNetworkingSecGroupRuleRead(_ context.Context, d *schema.ResourceData,
 	meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := common.GetRegion(d, config)
 
 	v1Client, err := config.NetworkingV1Client(region)
@@ -290,7 +290,7 @@ func resourceNetworkingSecGroupRuleDelete(ctx context.Context, d *schema.Resourc
 	meta interface{}) diag.Diagnostics {
 	logp.Printf("[DEBUG] Destroy security group rule: %s", d.Id())
 
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	client, err := config.NetworkingV1Client(common.GetRegion(d, config))
 	if err != nil {
 		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v1 client: %s", err)

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/json"
@@ -15,8 +16,10 @@ import (
 	"github.com/jmespath/go-jmespath"
 	"github.com/mitchellh/go-homedir"
 
+	hw_golangsdk "github.com/chnsz/golangsdk"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
-	huaweisdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack"
 
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/helper/pathorcontents"
 )
@@ -47,7 +50,7 @@ type Profile struct {
 	AgencyName       string `json:"agencyName"`
 }
 
-func buildClient(c *Config) error {
+func buildClient(c *HcsConfig) error {
 	if c.Token != "" {
 		return buildClientByToken(c)
 	} else if c.AccessKey != "" && c.SecretKey != "" {
@@ -61,7 +64,7 @@ func buildClient(c *Config) error {
 	return buildClientByMeta(c)
 }
 
-func generateTLSConfig(c *Config) (*tls.Config, error) {
+func generateTLSConfig(c *HcsConfig) (*tls.Config, error) {
 	config := &tls.Config{
 		MinVersion:         tls.VersionTLS12,
 		InsecureSkipVerify: c.Insecure,
@@ -100,8 +103,8 @@ func generateTLSConfig(c *Config) (*tls.Config, error) {
 	return config, nil
 }
 
-func genClient(c *Config, ao golangsdk.AuthOptionsProvider) (*golangsdk.ProviderClient, error) {
-	client, err := huaweisdk.NewClient(ao.GetIdentityEndpoint())
+func genClient(c *HcsConfig, ao golangsdk.AuthOptionsProvider) (*golangsdk.ProviderClient, error) {
+	client, err := openstack.NewClient(ao.GetIdentityEndpoint())
 	if err != nil {
 		return nil, err
 	}
@@ -145,7 +148,7 @@ func genClient(c *Config, ao golangsdk.AuthOptionsProvider) (*golangsdk.Provider
 	}
 
 	// Validate authentication normally.
-	err = huaweisdk.Authenticate(client, ao)
+	err = openstack.Authenticate(client, ao)
 	if err != nil {
 		return nil, err
 	}
@@ -153,21 +156,89 @@ func genClient(c *Config, ao golangsdk.AuthOptionsProvider) (*golangsdk.Provider
 	return client, nil
 }
 
-func genClients(c *Config, projectAuthOptions, domainAuthOptions golangsdk.AuthOptionsProvider) error {
+func convertHCSClientToHWClient(client *golangsdk.ProviderClient) *hw_golangsdk.ProviderClient {
+
+	EndpointLocator := func(x hw_golangsdk.EndpointOpts) (string, error) {
+		opts := golangsdk.EndpointOpts{
+			Type:         x.Type,
+			Name:         x.Name,
+			Region:       x.Region,
+			Availability: golangsdk.Availability(x.Availability),
+		}
+		return client.EndpointLocator(opts)
+	}
+
+	AKSKAuthOptions := hw_golangsdk.AKSKAuthOptions{
+		IdentityEndpoint: client.AKSKAuthOptions.IdentityEndpoint,
+		Region:           client.AKSKAuthOptions.Region,
+		ProjectId:        client.AKSKAuthOptions.ProjectId,
+		ProjectName:      client.AKSKAuthOptions.ProjectName,
+		Domain:           client.AKSKAuthOptions.Domain,
+		DomainID:         client.AKSKAuthOptions.DomainID,
+		BssDomain:        client.AKSKAuthOptions.BssDomain,
+		BssDomainID:      client.AKSKAuthOptions.BssDomainID,
+		AccessKey:        client.AKSKAuthOptions.AccessKey,
+		SecretKey:        client.AKSKAuthOptions.SecretKey,
+		SecurityToken:    client.AKSKAuthOptions.SecurityToken,
+		AgencyName:       client.AKSKAuthOptions.AgencyName,
+		AgencyDomainName: client.AKSKAuthOptions.AgencyDomainName,
+		DelegatedProject: client.AKSKAuthOptions.DelegatedProject,
+		WithUserCatalog:  client.AKSKAuthOptions.WithUserCatalog,
+	}
+	hwClient := &hw_golangsdk.ProviderClient{
+		IdentityBase:     client.IdentityBase,
+		IdentityEndpoint: client.IdentityEndpoint,
+		TokenID:          client.TokenID,
+		ProjectID:        client.ProjectID,
+		DomainID:         client.DomainID,
+		EndpointLocator:  EndpointLocator,
+		HTTPClient:       client.HTTPClient,
+		ReauthFunc:       client.ReauthFunc,
+		AKSKAuthOptions:  AKSKAuthOptions,
+		Context:          client.Context,
+		RetryBackoffFunc: func(ctx context.Context, rsp *hw_golangsdk.ErrUnexpectedResponseCode, err error, status uint) error {
+			hwRsp := &golangsdk.ErrUnexpectedResponseCode{
+				BaseError: golangsdk.BaseError{
+					DefaultErrString: rsp.DefaultErrString,
+					Info:             rsp.Info,
+				},
+				URL:      rsp.URL,
+				Method:   rsp.Method,
+				Expected: rsp.Expected,
+				Actual:   rsp.Actual,
+				Body:     rsp.Body,
+			}
+			return client.RetryBackoffFunc(ctx, hwRsp, err, status)
+		},
+		MaxBackoffRetries: client.MaxBackoffRetries,
+	}
+
+	hwClient.UserAgent.Prepend(client.UserAgent.Join())
+
+	// Initial TokenLock
+	hwClient.UseTokenLock()
+
+	return hwClient
+}
+
+func genClients(c *HcsConfig, projectAuthOptions, domainAuthOptions golangsdk.AuthOptionsProvider) error {
 	client, err := genClient(c, projectAuthOptions)
 	if err != nil {
 		return err
 	}
-	c.HwClient = client
+	c.HcsHwClient = client
+	c.HwClient = convertHCSClientToHWClient(client)
 
 	client, err = genClient(c, domainAuthOptions)
 	if err == nil {
-		c.DomainClient = client
+		c.HcsDomainClient = client
+		c.DomainClient = convertHCSClientToHWClient(client)
 	}
+
 	return err
 }
 
-func buildClientByToken(c *Config) error {
+func buildClientByToken(c *HcsConfig) error {
 	var projectAuthOptions, domainAuthOptions golangsdk.AuthOptions
 
 	if c.AgencyDomainName != "" && c.AgencyName != "" {
@@ -203,7 +274,7 @@ func buildClientByToken(c *Config) error {
 	return genClients(c, projectAuthOptions, domainAuthOptions)
 }
 
-func buildClientByAKSK(c *Config) error {
+func buildClientByAKSK(c *HcsConfig) error {
 	var projectAuthOptions, domainAuthOptions golangsdk.AKSKAuthOptions
 
 	if c.AgencyDomainName != "" && c.AgencyName != "" {
@@ -249,7 +320,7 @@ func buildClientByAKSK(c *Config) error {
 	return genClients(c, projectAuthOptions, domainAuthOptions)
 }
 
-func buildClientByConfig(c *Config) error {
+func buildClientByConfig(c *HcsConfig) error {
 	profilePath, err := homedir.Expand(c.SharedConfigFile)
 	if err != nil {
 		return err
@@ -311,7 +382,7 @@ func buildClientByConfig(c *Config) error {
 	return buildClientByAKSK(c)
 }
 
-func buildClientByPassword(c *Config) error {
+func buildClientByPassword(c *HcsConfig) error {
 	var projectAuthOptions, domainAuthOptions golangsdk.AuthOptions
 
 	if c.AgencyDomainName != "" && c.AgencyName != "" {
@@ -352,7 +423,7 @@ func buildClientByPassword(c *Config) error {
 	return genClients(c, projectAuthOptions, domainAuthOptions)
 }
 
-func buildClientByAgency(c *Config) error {
+func buildClientByAgency(c *HcsConfig) error {
 	client, err := c.HcIamV3Client(c.Region)
 	if err != nil {
 		return fmt.Errorf("Error creating Huaweicloud IAM client: %s", err)
@@ -388,7 +459,7 @@ func buildClientByAgency(c *Config) error {
 	return buildClientByAKSK(c)
 }
 
-func (c *Config) reloadSecurityKey() error {
+func (c *HcsConfig) reloadSecurityKey() error {
 	err := getAuthConfigByMeta(c)
 	if err != nil {
 		return fmt.Errorf("Error reloading Auth credentials from ECS Metadata API: %s", err)
@@ -397,7 +468,7 @@ func (c *Config) reloadSecurityKey() error {
 	return buildClientByAKSK(c)
 }
 
-func getAuthConfigByMeta(c *Config) error {
+func getAuthConfigByMeta(c *HcsConfig) error {
 	req, err := http.NewRequest("GET", securityKeyURL, nil)
 	if err != nil {
 		return fmt.Errorf("Error building metadata API request: %s", err.Error())
@@ -454,7 +525,7 @@ func getAuthConfigByMeta(c *Config) error {
 	return nil
 }
 
-func buildClientByMeta(c *Config) error {
+func buildClientByMeta(c *HcsConfig) error {
 	err := getAuthConfigByMeta(c)
 	if err != nil {
 		return fmt.Errorf("Error fetching Auth credentials from ECS Metadata API, AkSk or ECS agency must be provided: %s", err)

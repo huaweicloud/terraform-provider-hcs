@@ -776,7 +776,7 @@ var allServiceCatalog = map[string]ServiceCatalog{
 }
 
 // GetServiceEndpoint try to get the endpoint from customizing map
-func GetServiceEndpoint(c *Config, srv, region string) string {
+func GetServiceEndpoint(c *HcsConfig, srv, region string) string {
 	if endpoint, ok := c.Endpoints[srv]; ok {
 		return endpoint
 	}
