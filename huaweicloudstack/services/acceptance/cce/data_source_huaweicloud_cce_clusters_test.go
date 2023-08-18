@@ -40,5 +40,5 @@ data "hcs_cce_clusters" "test" {
 
   depends_on = [hcs_cce_cluster.test]
 }
-`, testAccCceCluster_config(rName))
+`, testAccCluster_basic(rName))
 }
