@@ -224,9 +224,6 @@ The following arguments are supported:
 * `extend_param` - (Optional, Map, ForceNew) Specifies the extended parameter.
   Changing this parameter will create a new cluster resource.
 
-* `enterprise_project_id` - (Optional, String, ForceNew) The enterprise project ID of the CCE cluster.
-  Changing this parameter will create a new cluster resource.
-
 * `tags` - (Optional, Map, ForceNew) Specifies the tags of the CCE cluster, key/value pair format.
   Changing this parameter will create a new cluster resource.
 

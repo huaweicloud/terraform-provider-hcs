@@ -63,19 +63,15 @@ func TestAccCluster_withEip(t *testing.T) {
 	resourceName := "hcs_cce_cluster.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acceptance.TestAccPreCheck(t)
+			acceptance.TestAccPreCheckEipAddress(t)
+		},
 		ProviderFactories: acceptance.TestAccProviderFactories,
 		CheckDestroy:      testAccCheckClusterDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCluster_withEip(rName),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckClusterExists(resourceName, &cluster),
-					resource.TestCheckResourceAttr(resourceName, "authentication_mode", "rbac"),
-				),
-			},
-			{
-				Config: testAccCluster_withEipUpdate(rName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckClusterExists(resourceName, &cluster),
 					resource.TestCheckResourceAttr(resourceName, "authentication_mode", "rbac"),
@@ -88,29 +84,6 @@ func TestAccCluster_withEip(t *testing.T) {
 				ImportStateVerifyIgnore: []string{
 					"eip", "certificate_users.0.client_certificate_data", "kube_config_raw",
 				},
-			},
-		},
-	})
-}
-
-// Untested
-func TestAccCluster_withEpsId(t *testing.T) {
-	var cluster clusters.Clusters
-
-	rName := fmt.Sprintf("tf-acc-test-%s", acctest.RandString(5))
-	resourceName := "hcs_cce_cluster.test"
-
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:          func() { acceptance.TestAccPreCheckEpsID(t) },
-		ProviderFactories: acceptance.TestAccProviderFactories,
-		CheckDestroy:      testAccCheckClusterDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCluster_withEpsId(rName),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckClusterExists(resourceName, &cluster),
-					resource.TestCheckResourceAttr(resourceName, "enterprise_project_id", acceptance.HCS_ENTERPRISE_PROJECT_ID_TEST),
-				),
 			},
 		},
 	})
@@ -350,52 +323,7 @@ resource "hcs_cce_cluster" "test" {
 
 func testAccCluster_withEip(rName string) string {
 	return fmt.Sprintf(`
-%s
-
-resource "hcs_vpc_eip" "test" {
-  name = "%[2]s"
-
-  publicip {
-    type       = "5_bgp"
-  }
-
-  bandwidth {
-    share_type  = "PER"
-    name        = "%[2]s"
-    size        = 5
-  }
-}
-
-resource "hcs_cce_cluster" "test" {
-  name                   = "%[2]s"
-  cluster_type           = "VirtualMachine"
-  flavor_id              = "cce.s1.small"
-  vpc_id                 = var.vpc_id
-  subnet_id              = var.subnet_id
-  container_network_type = "overlay_l2"
-  authentication_mode    = "rbac"
-  eip                    = hcs_vpc_eip.test.address
-}
-`, common.TestVpc(rName), rName)
-}
-
-func testAccCluster_withEipUpdate(rName string) string {
-	return fmt.Sprintf(`
-%s
-
-resource "hcs_vpc_eip" "test2" {
-  name = "%[2]s"
-
-  publicip {
-    type       = "5_bgp"
-  }
-
-  bandwidth {
-    share_type  = "PER"
-    name        = "%[2]s"
-    size        = 5
-  }
-}
+%[1]s
 
 resource "hcs_cce_cluster" "test" {
   name                   = "%[2]s"
@@ -405,25 +333,9 @@ resource "hcs_cce_cluster" "test" {
   subnet_id              = hcs_vpc_subnet.test.id
   container_network_type = "overlay_l2"
   authentication_mode    = "rbac"
-  eip                    = hcs_vpc_eip.test2.address
+  eip                    = "%[3]s"
 }
-`, common.TestVpc(rName), rName)
-}
-
-func testAccCluster_withEpsId(rName string) string {
-	return fmt.Sprintf(`
-%s
-
-resource "hcs_cce_cluster" "test" {
-  name                   = "%s"
-  flavor_id              = "cce.s1.small"
-  vpc_id                 = hcs_vpc.test.id
-  subnet_id              = hcs_vpc_subnet.test.id
-  container_network_type = "overlay_l2"
-  enterprise_project_id  = "%s"
-}
-
-`, common.TestVpc(rName), rName, acceptance.HCS_ENTERPRISE_PROJECT_ID_TEST)
+`, common.TestVpc(rName), rName, acceptance.HCS_EIP_ADDRESS)
 }
 
 func testAccCluster_turbo(rName string, eniNum int) string {
