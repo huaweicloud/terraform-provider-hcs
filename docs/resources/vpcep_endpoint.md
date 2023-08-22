@@ -10,7 +10,7 @@ Provides a resource to manage a VPC endpoint resource.
 
 ```
 
-### Access to the private service
+### Access to the vpcep service
 
 ```hcl
 variable "service_vpc_id" {}
@@ -34,8 +34,7 @@ resource "hcs_vpcep_endpoint" "demo" {
   service_id  = hcs_vpcep_service.demo.id
   vpc_id      = var.vpc_id
   network_id  = var.network_id
-  enable_dns  = true
-  description = "test description"
+  enable_dns  = false
 }
 ```
 
