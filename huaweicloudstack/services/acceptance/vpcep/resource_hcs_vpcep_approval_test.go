@@ -50,82 +50,58 @@ func TestAccVPCEndpointApproval_Basic(t *testing.T) {
 
 func testAccVPCEndpointApproval_Basic(rName string) string {
 	return fmt.Sprintf(`
-%s
-
 resource "hcs_vpcep_service" "test" {
-  name        = "%s"
+  name        = "%[1]s"
   server_type = "VM"
-  vpc_id      = data.hcs_vpc.myvpc.id
-  port_id     = hcs_compute_instance.ecs.network[0].port
+  vpc_id      = "%[2]s"
+  port_id     = "%[3]s"
   approval    = true
 
   port_mapping {
-    service_port  = 8080
-    terminal_port = 80
-  }
-  tags = {
-    owner = "tf-acc"
+    service_port  = 333
+    terminal_port = 444
   }
 }
 
 resource "hcs_vpcep_endpoint" "test" {
   service_id  = hcs_vpcep_service.test.id
-  vpc_id      = data.hcs_vpc.myvpc.id
-  network_id  = data.hcs_vpc_subnet.test.id
-  enable_dns  = true
-
-  tags = {
-    owner = "tf-acc"
-  }
-  lifecycle {
-    ignore_changes = [enable_dns]
-  }
+  vpc_id      = "%[2]s"
+  network_id  = "%[4]s"
+  enable_dns  = false
 }
 
 resource "hcs_vpcep_approval" "approval" {
   service_id = hcs_vpcep_service.test.id
   endpoints  = [hcs_vpcep_endpoint.test.id]
 }
-`, testAccVPCEndpoint_Precondition(rName), rName)
+`, rName, acceptance.HCS_VPC_ID, acceptance.HCS_ECS_PORT_ID, acceptance.HCS_NETWORK_ID)
 }
 
 func testAccVPCEndpointApproval_Update(rName string) string {
 	return fmt.Sprintf(`
-%s
-
 resource "hcs_vpcep_service" "test" {
-  name        = "%s"
+  name        = "%[1]s"
   server_type = "VM"
-  vpc_id      = data.hcs_vpc.myvpc.id
-  port_id     = hcs_compute_instance.ecs.network[0].port
+  vpc_id      = "%[2]s"
+  port_id     = "%[3]s"
   approval    = true
 
   port_mapping {
     service_port  = 8080
     terminal_port = 80
   }
-  tags = {
-    owner = "tf-acc"
-  }
 }
 
 resource "hcs_vpcep_endpoint" "test" {
   service_id  = hcs_vpcep_service.test.id
-  vpc_id      = data.hcs_vpc.myvpc.id
-  network_id  = data.hcs_vpc_subnet.test.id
-  enable_dns  = true
-
-  tags = {
-    owner = "tf-acc"
-  }
-  lifecycle {
-    ignore_changes = [enable_dns]
-  }
+  vpc_id      = "%[2]s"
+  network_id  = "%[4]s"
+  enable_dns  = false
 }
 
 resource "hcs_vpcep_approval" "approval" {
   service_id = hcs_vpcep_service.test.id
   endpoints  = []
 }
-`, testAccVPCEndpoint_Precondition(rName), rName)
+`, rName, acceptance.HCS_VPC_ID, acceptance.HCS_ECS_PORT_ID, acceptance.HCS_NETWORK_ID)
 }
