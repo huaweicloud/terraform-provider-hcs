@@ -30,6 +30,5 @@ func TestAccVPCEPPublicServicesDataSource_Basic(t *testing.T) {
 
 var testAccVPCEPPublicServicesDataSourceBasic = `
 data "hcs_vpcep_public_services" "services" {
-  service_name = "dns"
 }
 `

@@ -33,6 +33,7 @@ var (
 	HCS_IMAGE_ID                  = os.Getenv("HCS_IMAGE_ID")
 	HCS_IMAGE_NAME                = os.Getenv("HCS_IMAGE_NAME")
 	HCS_VPC_ID                    = os.Getenv("HCS_VPC_ID")
+	HCS_ECS_PORT_ID               = os.Getenv("HCS_ECS_PORT_ID")
 	HCS_NETWORK_ID                = os.Getenv("HCS_NETWORK_ID")
 	HCS_SUBNET_ID                 = os.Getenv("HCS_SUBNET_ID")
 	HCS_ENTERPRISE_PROJECT_ID     = os.Getenv("HCS_ENTERPRISE_PROJECT_ID")
