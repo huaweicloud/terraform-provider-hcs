@@ -33,7 +33,7 @@ data "hcs_networking_port" "myport" {
 
 resource "hcs_vpc_eip" "myeip" {
   publicip {
-    type = "5_bgp"
+    type = "eip"
   }
   bandwidth {
     name        = "test"
