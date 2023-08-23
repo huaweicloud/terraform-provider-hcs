@@ -15,7 +15,7 @@ var "bandwidth_name" {}
 
 resource "hcs_vpc_eip" "dedicated" {
   publicip {
-    type = "5_bgp"
+    type = "eip"
   }
 
   bandwidth {
@@ -38,7 +38,7 @@ resource "hcs_vpc_bandwidth" "test" {
 
 resource "hcs_vpc_eip" "shared" {
   publicip {
-    type = "5_bgp"
+    type = "eip"
   }
 
   bandwidth {
@@ -70,8 +70,7 @@ The following arguments are supported:
 <a name="vpc_eip_publicip"></a>
 The `publicip` block supports:
 
-* `type` - (Optional, String, ForceNew) Specifies the EIP type. Possible values are **5_bgp** (dynamic BGP)
-  and **5_sbgp** (static BGP), the default value is **5_bgp**. Changing this will create a new resource.
+* `type` - (Optional, String, ForceNew) Specifies the EIP type. The name of EIP external network. Changing this will create a new resource.
 
 * `ip_address` - (Optional, String, ForceNew) Specifies the EIP address to be assigned.  
   The value must be a valid **IPv4** address in the available IP address range.
