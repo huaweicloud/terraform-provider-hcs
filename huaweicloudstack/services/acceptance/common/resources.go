@@ -2,7 +2,6 @@ package common
 
 import (
 	"fmt"
-
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance"
 )
 
