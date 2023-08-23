@@ -10,6 +10,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/vpcep/v1/endpoints"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance/common"
 )
 
 func TestAccVPCEndpoint_Basic(t *testing.T) {
@@ -37,6 +38,7 @@ func TestAccVPCEndpoint_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "service_type", "interface"),
 					resource.TestCheckResourceAttrSet(resourceName, "service_name"),
 				),
+				ExpectNonEmptyPlan: true,
 			},
 			{
 				ResourceName:      resourceName,
@@ -58,11 +60,13 @@ func getVpcepEndpointResourceFunc(conf *config.HcsConfig, state *terraform.Resou
 
 func testAccVPCEndpoint_Basic(rName string) string {
 	return fmt.Sprintf(`
+%[1]s
+
 resource "hcs_vpcep_service" "test" {
-  name        = "%[1]s"
+  name        = "%[2]s"
   server_type = "VM"
-  vpc_id      = "%[2]s"
-  port_id     = "%[3]s"
+  vpc_id      = hcs_vpc.test.id
+  port_id     = hcs_ecs_compute_instance.test.network[0].port
   approval    = false
 
   port_mapping {
@@ -73,9 +77,37 @@ resource "hcs_vpcep_service" "test" {
 
 resource "hcs_vpcep_endpoint" "test" {
   service_id  = hcs_vpcep_service.test.id
-  vpc_id      = "%[2]s"
-  network_id  = "%[4]s"
+  vpc_id      = hcs_vpc.test.id
+  network_id  = hcs_vpc_subnet.test.id
   enable_dns  = false
 }
-`, rName, acceptance.HCS_VPC_ID, acceptance.HCS_ECS_PORT_ID, acceptance.HCS_NETWORK_ID)
+`, testAccVPCService_base(rName), rName)
+}
+
+func testAccVPCService_base(rName string) string {
+	return fmt.Sprintf(`
+%[1]s
+
+data "hcs_availability_zones" "test" {}
+
+resource "hcs_ecs_compute_instance" "test" {
+  name               = "%[2]s"
+  image_id           = "%[3]s"
+  flavor_id          = "%[4]s"
+  security_group_ids = [hcs_networking_secgroup.test.id]
+  availability_zone  = data.hcs_availability_zones.test.names[0]
+
+  network {
+    uuid = hcs_vpc_subnet.test.id
+  }
+
+  block_device_mapping_v2 {
+    source_type  = "image"
+    destination_type = "volume"
+    uuid = "%[3]s"
+    volume_type = "business_type_01"
+    volume_size = 20
+  }
+}
+`, common.TestBaseNetwork(rName), rName, acceptance.HCS_IMAGE_ID, acceptance.HCS_FLAVOR_ID)
 }
