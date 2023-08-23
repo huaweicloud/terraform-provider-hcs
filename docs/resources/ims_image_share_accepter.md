@@ -11,7 +11,7 @@ Manages an IMS image share accepter resource within HuaweiCloudStack.
 ```hcl
 variable "image_id" {}
 
-resource "resource_hcs_ims_image_share_accepter" "test" {
+resource "hcs_ims_image_share_accepter" "test" {
   image_id = var.image_id
 }
 ```
