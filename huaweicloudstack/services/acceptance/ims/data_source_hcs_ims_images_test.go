@@ -12,7 +12,7 @@ import (
 )
 
 func TestAccImsImagesDataSource_basic(t *testing.T) {
-	imageName := "CentOS 7.4 64bit"
+	imageName := "CentOS_7.4_64bit"
 	dataSourceName := "data.hcs_ims_images.test"
 	dc := acceptance.InitDataSourceCheck(dataSourceName)
 
@@ -31,7 +31,7 @@ func TestAccImsImagesDataSource_basic(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccImsImagesDataSource_osVersion(imageName),
+				Config: testAccImsImagesDataSource_osVersion("CentOS 7.4 64bit"),
 				Check: resource.ComposeTestCheckFunc(
 					dc.CheckResourceExists(),
 					resource.TestCheckResourceAttr(dataSourceName, "images.0.protected", "true"),
@@ -40,7 +40,7 @@ func TestAccImsImagesDataSource_basic(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccImsImagesDataSource_nameRegex("^CentOS 7.4"),
+				Config: testAccImsImagesDataSource_nameRegex("^CentOS_7.4"),
 				Check: resource.ComposeTestCheckFunc(
 					dc.CheckResourceExists(),
 					resource.TestCheckResourceAttr(dataSourceName, "images.0.protected", "true"),
@@ -49,11 +49,11 @@ func TestAccImsImagesDataSource_basic(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccImsImagesDataSource_market(),
+				Config: testAccImsImagesDataSource_public(),
 				Check: resource.ComposeTestCheckFunc(
 					dc.CheckResourceExists(),
 					resource.TestCheckResourceAttr(dataSourceName, "images.0.protected", "true"),
-					resource.TestCheckResourceAttr(dataSourceName, "images.0.visibility", "market"),
+					resource.TestCheckResourceAttr(dataSourceName, "images.0.visibility", "public"),
 					resource.TestCheckResourceAttr(dataSourceName, "images.0.status", "active"),
 				),
 			},
@@ -105,7 +105,7 @@ data "hcs_ims_images" "test" {
 func testAccImsImagesDataSource_nameRegex(regexp string) string {
 	return fmt.Sprintf(`
 data "hcs_ims_images" "test" {
-  architecture = "x86"
+  architecture = "x86_64"
   name_regex   = "%s"
   visibility   = "public"
 }
@@ -115,18 +115,18 @@ data "hcs_ims_images" "test" {
 func testAccImsImagesDataSource_osVersion(osVersion string) string {
 	return fmt.Sprintf(`
 data "hcs_ims_images" "test" {
-  architecture = "x86"
+  architecture = "x86_64"
   os_version   = "%s"
   visibility   = "public"
 }
 `, osVersion)
 }
 
-func testAccImsImagesDataSource_market() string {
+func testAccImsImagesDataSource_public() string {
 	return `
 data "hcs_ims_images" "test" {
   os         = "CentOS"
-  visibility = "market"
+  visibility = "public"
 }
 `
 }
@@ -135,10 +135,19 @@ func testAccImsImagesDataSource_base(rName string) string {
 	return fmt.Sprintf(`
 %[1]s
 
-resource "hcs_ecs_instance" "test" {
+data "hcs_availability_zones" "test" {}
+
+data "hcs_ecs_compute_flavors" "test" {
+  availability_zone = data.hcs_availability_zones.test.names[0]
+  performance_type  = "normal"
+  cpu_core_count    = 2
+  memory_size       = 4
+}
+
+resource "hcs_ecs_compute_instance" "test" {
   name       = "%[2]s"
-  image_name = "Ubuntu 18.04 server 64bit"
-  flavor_id  = data.hcs_compute_flavors.test.ids[0]
+  image_name = "CentOS_7.4_64bit"
+  flavor_id  = data.hcs_ecs_compute_flavors.test.ids[0]
 
   security_group_ids = [
     hcs_networking_secgroup.test.id
@@ -153,7 +162,7 @@ resource "hcs_ecs_instance" "test" {
 
 resource "hcs_ims_image" "test" {
   name        = "%[2]s"
-  instance_id = hcs_ecs_instance.test.id
+  instance_id = hcs_ecs_compute_instance.test.id
   description = "created by Terraform AccTest"
 }
 `, common.TestBaseNetwork(rName), rName)

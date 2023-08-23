@@ -32,6 +32,7 @@ resource "hcs_ims_image" "ims_test_file" {
   name        = "ims_test_file"
   image_url   = "ims-image:centos70.qcow2"
   min_disk    = 40
+  os_version  = "Other(64 bit) 64bit"
   description = "Create an image from the OBS bucket."
 }
 ```
