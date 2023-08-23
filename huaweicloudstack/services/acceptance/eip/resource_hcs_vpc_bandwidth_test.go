@@ -62,39 +62,6 @@ func TestAccVpcBandWidth_basic(t *testing.T) {
 	})
 }
 
-func TestAccVpcBandWidth_WithEpsId(t *testing.T) {
-	var bandwidth bandwidths.BandWidth
-
-	randName := acceptance.RandomAccResourceName()
-	resourceName := "hcs_vpc_bandwidth.test"
-
-	rc := acceptance.InitResourceCheck(
-		resourceName,
-		&bandwidth,
-		getBandwidthResourceFunc,
-	)
-
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck: func() {
-			acceptance.TestAccPreCheck(t)
-			acceptance.TestAccPreCheckEpsID(t)
-		},
-		ProviderFactories: acceptance.TestAccProviderFactories,
-		CheckDestroy:      rc.CheckResourceDestroy(),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccVpcBandWidth_epsId(randName, 5),
-				Check: resource.ComposeTestCheckFunc(
-					rc.CheckResourceExists(),
-					resource.TestCheckResourceAttr(resourceName, "name", randName),
-					resource.TestCheckResourceAttr(resourceName, "enterprise_project_id",
-						acceptance.HCS_ENTERPRISE_PROJECT_ID_TEST),
-				),
-			},
-		},
-	})
-}
-
 func testAccVpcBandWidth_basic(rName string, size int) string {
 	return fmt.Sprintf(`
 resource "hcs_vpc_bandwidth" "test" {
@@ -102,14 +69,4 @@ resource "hcs_vpc_bandwidth" "test" {
   size = "%d"
 }
 `, rName, size)
-}
-
-func testAccVpcBandWidth_epsId(rName string, size int) string {
-	return fmt.Sprintf(`
-resource "hcs_vpc_bandwidth" "test" {
-  name                  = "%s"
-  size                  = "%d"
-  enterprise_project_id = "%s"
-}
-`, rName, size, acceptance.HCS_ENTERPRISE_PROJECT_ID_TEST)
 }

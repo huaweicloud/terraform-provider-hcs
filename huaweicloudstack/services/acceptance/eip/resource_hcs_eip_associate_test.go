@@ -41,6 +41,7 @@ func TestAccEIPAssociate_basic(t *testing.T) {
 						associateName, "public_ip", resourceName, "address"),
 					resource.TestMatchOutput("public_ip_address", regexp.MustCompile(partten)),
 				),
+				ExpectNonEmptyPlan: true,
 			},
 			{
 				ResourceName:      associateName,
@@ -126,86 +127,71 @@ func TestAccEIPAssociate_compatible(t *testing.T) {
 
 func testAccEIPAssociate_base(rName string) string {
 	return fmt.Sprintf(`
-%s
-
 resource "hcs_vpc_eip" "test" {
   publicip {
-    type = "5_bgp"
+    type = "%[2]s"
   }
 
   bandwidth {
     share_type  = "PER"
     size        = 5
-    name        = "%s"
+    name        = "%[1]s"
   }
-}`, common.TestVpc(rName), rName)
+}`, rName, acceptance.HCS_EIP_EXTERNAL_NETWORK_NAME)
 }
 
 func testAccEIPAssociate_basic(rName string) string {
 	return fmt.Sprintf(`
-%s
+%[1]s
+%[2]s
 
 data "hcs_availability_zones" "test" {}
 
-data "hcs_compute_flavors" "test" {
-  availability_zone = data.hcs_availability_zones.test.names[0]
-  performance_type  = "normal"
-  cpu_core_count    = 8
-  memory_size       = 16
-}
-
-data "hcs_images_image" "test" {
-  name        = "Ubuntu 18.04 server 64bit"
-  most_recent = true
-}
-
-resource "hcs_networking_secgroup" "test" {
-  name                 = "%[2]s"
-  delete_default_rules = true
-}
-
-resource "hcs_kps_keypair" "test" {
-  name = "%[2]s"
-}
-
-resource "hcs_compute_instance" "test" {
-  name               = "%[2]s"
-  image_id           = data.hcs_images_image.test.id
-  flavor_id          = data.hcs_compute_flavors.test.ids[0]
-  availability_zone  = data.hcs_availability_zones.test.names[0]
+resource "hcs_ecs_compute_instance" "test" {
+  name               = "%[3]s"
+  image_id           = "%[4]s"
+  flavor_id          = "%[5]s"
   security_group_ids = [hcs_networking_secgroup.test.id]
-
-  key_pair = hcs_kps_keypair.test.name
+  availability_zone  = data.hcs_availability_zones.test.names[0]
 
   network {
     uuid = hcs_vpc_subnet.test.id
+  }
+
+  block_device_mapping_v2 {
+    source_type  = "image"
+    destination_type = "volume"
+    uuid = "%[4]s"
+    volume_type = "business_type_01"
+    volume_size = 20
   }
 }
 
 resource "hcs_vpc_eip_associate" "test" {
   public_ip  = hcs_vpc_eip.test.address
-  network_id = hcs_compute_instance.test.network[0].uuid
-  fixed_ip   = hcs_compute_instance.test.network[0].fixed_ip_v4
+  network_id = hcs_ecs_compute_instance.test.network[0].uuid
+  fixed_ip   = hcs_ecs_compute_instance.test.network[0].fixed_ip_v4
 }
 
-data "hcs_compute_instance" "test" {
+data "hcs_ecs_compute_instance" "test" {
   depends_on = [hcs_vpc_eip_associate.test]
 
-  name = "%[2]s"
+  name = "%[3]s"
 }
 
 output "public_ip_address" {
-  value = data.hcs_compute_instance.test.public_ip
+  value = data.hcs_ecs_compute_instance.test.public_ip
 }
-`, testAccEIPAssociate_base(rName), rName)
+`, testAccEIPAssociate_base(rName), common.TestBaseNetwork(rName), rName, acceptance.HCS_IMAGE_ID, acceptance.HCS_FLAVOR_ID)
 }
 
 func testAccEIPAssociate_port(rName string) string {
 	return fmt.Sprintf(`
-%s
+%[1]s
+%[2]s
 
 resource "hcs_networking_vip" "test" {
-  name       = "%s"
+  name       = "%[3]s"
   network_id = hcs_vpc_subnet.test.id
 }
 
@@ -213,15 +199,16 @@ resource "hcs_vpc_eip_associate" "test" {
   public_ip = hcs_vpc_eip.test.address
   port_id   = hcs_networking_vip.test.id
 }
-`, testAccEIPAssociate_base(rName), rName)
+`, common.TestVpc(rName), testAccEIPAssociate_base(rName), rName)
 }
 
 func testAccEIPAssociate_compatible(rName string) string {
 	return fmt.Sprintf(`
-%s
+%[1]s
+%[2]s
 
 resource "hcs_networking_vip" "test" {
-  name       = "%s"
+  name       = "%[3]s"
   network_id = hcs_vpc_subnet.test.id
 }
   
@@ -229,5 +216,5 @@ resource "hcs_networking_eip_associate" "test" {
   public_ip = hcs_vpc_eip.test.address
   port_id   = hcs_networking_vip.test.id
 }
-`, testAccEIPAssociate_base(rName), rName)
+`, common.TestVpc(rName), testAccEIPAssociate_base(rName), rName)
 }

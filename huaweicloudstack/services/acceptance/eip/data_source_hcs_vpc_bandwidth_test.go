@@ -39,13 +39,13 @@ func TestAccBandWidthDataSource_basic(t *testing.T) {
 func testAccBandWidthDataSource_basic(rName string) string {
 	return fmt.Sprintf(`
 resource "hcs_vpc_bandwidth" "test" {
-  name = "%s"
+  name = "%[1]s"
   size = 10
 }
 
 resource "hcs_vpc_eip" "test" {
   publicip {
-    type = "5_bgp"
+    type = "%[2]s"
   }
   bandwidth {
     share_type = "WHOLE"
@@ -58,5 +58,5 @@ data "hcs_vpc_bandwidth" "test" {
 
   name = hcs_vpc_bandwidth.test.name
 }
-`, rName)
+`, rName, acceptance.HCS_EIP_EXTERNAL_NETWORK_NAME)
 }
