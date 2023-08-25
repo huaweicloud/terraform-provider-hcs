@@ -21,8 +21,6 @@ variable "user_id" {}
 
 variable "key_pair" {}
 
-variable "enterprise_project_id" {}
-
 data "hcs_availability_zones" "myaz" {}
 
 data "hcs_vpc" "myvpc" {
@@ -51,7 +49,6 @@ resource "hcs_bms_instance" "test" {
   vpc_id                = data.hcs_vpc.myvpc.id
   eip_id                = data.hcs_vpc_eip.myeip.id
   key_pair              = var.key_pair
-  enterprise_project_id = var.enterprise_project_id
 
   data_disks {
     type = "SSD"
