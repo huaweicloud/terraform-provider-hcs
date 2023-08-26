@@ -10,12 +10,10 @@ Manages a CFW IP address group member resource within HuaweiCloudStack.
 
 ```hcl
 variable "group_id" {}
-variable "name" {}
 variable "address" {}
 
 resource "hcs_cfw_address_group_member" "test" {
   group_id = var.group_id
-  name     = var.name
   address  = var.address
 }
 ```
@@ -28,10 +26,6 @@ The following arguments are supported:
   If omitted, the provider-level region will be used. Changing this parameter will create a new resource.
 
 * `group_id` - (Required, String, ForceNew) Specifies the ID of the IP address group.
-
-  Changing this parameter will create a new resource.
-
-* `name` - (Required, String, ForceNew) Specifies the address name.
 
   Changing this parameter will create a new resource.
 
