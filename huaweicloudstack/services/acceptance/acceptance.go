@@ -44,6 +44,8 @@ var (
 	HCS_EIP_ID                    = os.Getenv("HCS_EIP_ID")
 	HCS_EIP_ADDRESS               = os.Getenv("HCS_EIP_ADDRESS")
 	HCS_EIP_EXTERNAL_NETWORK_NAME = os.Getenv("HCS_EIP_EXTERNAL_NETWORK_NAME")
+	HCS_EIP_ID                    = os.Getenv("HCS_EIP_ID")
+	HCS_EIP_ADDRESS               = os.Getenv("HCS_EIP_ADDRESS")
 
 	HCS_OBS_BUCKET_NAME        = os.Getenv("HCS_OBS_BUCKET_NAME")
 	HCS_OBS_DESTINATION_BUCKET = os.Getenv("HCS_OBS_DESTINATION_BUCKET")
@@ -434,6 +436,12 @@ func TestAccPreCheckOBSDestinationBucket(t *testing.T) {
 func TestAccPreCheckChargingMode(t *testing.T) {
 	if HCS_CHARGING_MODE != "prePaid" {
 		t.Skip("This environment does not support prepaid tests")
+	}
+}
+
+func TestAccPreCheckEip(t *testing.T) {
+	if HCS_EIP_ID == "" || HCS_EIP_ADDRESS == "" {
+		t.Skip("HCS_EIP_ID and HCS_EIP_ADDRESS must be set for EIP corresponding acceptance test")
 	}
 }
 

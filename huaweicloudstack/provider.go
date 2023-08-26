@@ -9,7 +9,9 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cce"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cfw"
 
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/as"
@@ -314,6 +316,8 @@ func Provider() *schema.Provider {
 			"hcs_enterprise_project":    eps.DataSourceEnterpriseProject(),
 			"hcs_vpcep_public_services": vpcep.DataSourceVPCEPPublicServices(),
 
+			"hcs_cfw_firewalls": cfw.DataSourceFirewalls(),
+
 			"hcs_vpc_bandwidth": eip.DataSourceBandWidth(),
 			"hcs_vpc_eip":       eip.DataSourceVpcEip(),
 			"hcs_vpc_eips":      eip.DataSourceVpcEips(),
@@ -357,6 +361,14 @@ func Provider() *schema.Provider {
 			"hcs_cce_node_attach": cce.ResourceNodeAttach(),
 			"hcs_cce_node_pool":   cce.ResourceNodePool(),
 			"hcs_cce_pvc":         cce.ResourceCcePersistentVolumeClaimsV1(),
+
+			"hcs_cfw_address_group":        cfw.ResourceAddressGroup(),
+			"hcs_cfw_address_group_member": cfw.ResourceAddressGroupMember(),
+			"hcs_cfw_black_white_list":     cfw.ResourceBlackWhiteList(),
+			"hcs_cfw_eip_protection":       cfw.ResourceEipProtection(),
+			"hcs_cfw_protection_rule":      cfw.ResourceProtectionRule(),
+			"hcs_cfw_service_group_member": cfw.ResourceServiceGroupMember(),
+			"hcs_cfw_service_group":        cfw.ResourceServiceGroup(),
 
 			"hcs_enterprise_project": eps.ResourceEnterpriseProject(),
 			"hcs_dns_recordset":      dns.ResourceDNSRecordset(),
