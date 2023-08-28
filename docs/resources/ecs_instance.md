@@ -9,161 +9,294 @@ Manages a ECS instance resource within HCS.
 ### Basic Instance
 
 ```hcl
-data "hcs_availability_zones" "zones" {
-	provider = huaweicloudstack
+data "hcs_availability_zones" "test" {
+  provider = huaweicloudstack
 }
 
-variable "secgroup_id" {
-	type = string
+resource "hcs_vpc" "vpc" {
+  provider = huaweicloudstack
+  name = "tf_vpc_test"
+  cidr = "192.168.0.0/16"
 }
-variable "image_id" {
-	type = string
+
+resource "hcs_vpc_subnet" "subnet" {
+  provider = huaweicloudstack
+  name       = "subnet_1"
+  cidr       = "192.168.0.0/16"
+  gateway_ip = "192.168.0.1"
+  vpc_id     = hcs_vpc.vpc.id
 }
-variable "flavor_id" {
-	type = string
+
+resource "hcs_networking_secgroup_rule" "test" {
+  provider = huaweicloudstack
+  security_group_id       = hcs_networking_secgroup.secgroup.id
+  direction               = "ingress"
+  action                  = "allow"
+  ethertype               = "IPv4"
+  remote_ip_prefix  = "0.0.0.0/0"
 }
-variable "network_uuid" {
-	type = string
+
+resource "hcs_networking_secgroup" "secgroup" {
+  provider = huaweicloudstack
+  name        = "secgroup_1"
+  description = "My security group"
 }
+
+data "hcs_ims_images" "centos" {
+  provider = huaweicloudstack
+  name       = "222"
+  visibility = "public"
+}
+
+data "hcs_ecs_compute_flavors" "flavors" {
+  provider = huaweicloudstack
+  availability_zone = data.hcs_availability_zones.test.names[0]
+  cpu_core_count    = 2
+  memory_size       = 4
+}
+
 resource "hcs_ecs_compute_instance" "instance" {
   provider = huaweicloudstack
-  name               = "ecs-c695"
-  image_id           = [var.flavor_id]
-  flavor_id = [var.secgroup_id]
-  security_group_ids = [var.secgroup_id]
-  availability_zone  = data.hcs_availability_zones.zones.names[0]
+  name               = "tf_ecs-test2"
+  image_id           = data.hcs_ims_images.centos.images[0].id
+  flavor_id = data.hcs_ecs_compute_flavors.flavors.ids[0]
+  security_groups = [hcs_networking_secgroup.secgroup.name]
+  availability_zone  = data.hcs_availability_zones.test.names[0]
 
   network {
-    uuid = [var.network_uuid]
+    uuid = hcs_vpc_subnet.subnet.id
   }
-  
+
   block_device_mapping_v2 {
     source_type  = "image"
-	destination_type = "volume"
-	uuid = [var.network_uuid]
-	volume_type = "business_type_01"
-	volume_size = 20
+    destination_type = "volume"
+    uuid = data.hcs_ims_images.centos.images[0].id
+    volume_type = "business_type_01"
+    volume_size = 20
   }
-}
-```
-
-### Instance with Data Disks
-
-```hcl
-variable "security_group_name" {}
-
-resource "hcs_ecs_compute_instance" "basic" {
-  name     = "server_1"
-  image_id = "ad091b52-742f-469e-8f3c-fd81cadf0743"
-  flavor   = "s1.medium"
-  vpc_id   = "8eed4fc7-e5e5-44a2-b5f2-23b3e5d46235"
-
-  nics {
-    network_id = "55534eaa-533a-419d-9b40-ec427ea7195a"
-  }
-
-  system_disk_type = "SAS"
-  system_disk_size = 40
-  
-  data_disks {
-    type = "SATA"
-    size = "10"
-  }
-  data_disks {
-    type = "SAS"
-    size = "20"
-  }
-
-  delete_disks_on_termination = true
-  availability_zone           = "cn-north-1a"
-  key_name                    = "KeyPair-test"
-  security_groups             = [var.security_group_name]
 }
 ```
 
 ### Instance With Attached Volume
 
-```hcl
-variable "security_group_name" {}
-
-resource "hcs_blockstorage_volume_v2" "myvol" {
-  name = "myvol"
-  size = 1
+data "hcs_availability_zones" "test" {
+  provider = huaweicloudstack
 }
 
-resource "hcs_ecs_compute_instance" "basic" {
-  name     = "server_1"
-  image_id = "ad091b52-742f-469e-8f3c-fd81cadf0743"
-  flavor   = "s1.medium"
-  vpc_id   = "8eed4fc7-e5e5-44a2-b5f2-23b3e5d46235"
+resource "hcs_vpc" "vpc" {
+  provider = huaweicloudstack
+  name = "tf_vpc"
+  cidr = "192.168.0.0/16"
+}
 
-  nics {
-    network_id = "55534eaa-533a-419d-9b40-ec427ea7195a"
+resource "hcs_vpc_subnet" "subnet" {
+  provider = huaweicloudstack
+  name       = "subnet_10010"
+  cidr       = "192.168.0.0/16"
+  gateway_ip = "192.168.0.1"
+  vpc_id     = hcs_vpc.vpc.id
+}
+
+resource "hcs_networking_secgroup_rule" "test" {
+  provider = huaweicloudstack
+  security_group_id       = hcs_networking_secgroup.secgroup.id
+  direction               = "ingress"
+  action                  = "allow"
+  ethertype               = "IPv4"
+  remote_ip_prefix  = "0.0.0.0/0"
+}
+
+resource "hcs_networking_secgroup" "secgroup" {
+  provider = huaweicloudstack
+  name        = "secgroup_10010"
+  description = "My security group"
+}
+
+data "hcs_ims_images" "centos" {
+  provider = huaweicloudstack
+  name       = "mini_image"
+  visibility = "public"
+}
+
+data "hcs_ecs_compute_flavors" "flavors" {
+  provider = huaweicloudstack
+  availability_zone = data.hcs_availability_zones.test.names[0]
+  cpu_core_count    = 2
+  memory_size       = 4
+}
+
+resource "hcs_ecs_compute_instance" "instance" {
+  provider = huaweicloudstack
+  name               = "tf_ecs-test2"
+  image_id           = data.hcs_ims_images.centos.images[0].id
+  flavor_id = data.hcs_ecs_compute_flavors.flavors.ids[0]
+  security_groups = [hcs_networking_secgroup.secgroup.name]
+  availability_zone  = data.hcs_availability_zones.test.names[0]
+
+  network {
+    uuid = hcs_vpc_subnet.subnet.id
   }
-
-  availability_zone = "cn-north-1a"
-  key_name          = "KeyPair-test"
-  security_groups   = [var.security_group_name]
+  block_device_mapping_v2 {
+    source_type  = "image"
+    destination_type = "volume"
+    uuid = data.hcs_ims_images.centos.images[0].id
+    volume_type = "business_type_01"
+    volume_size = 20
+    }
 }
 
-resource "hcs_compute_volume_attach" "attached" {
-  instance_id = hcs_ecs_compute_instance.basic.id
-  volume_id   = hcs_blockstorage_volume_v2.myvol.id
+resource "hcs_ecs_compute_volume_attach" "attached" {
+  provider = huaweicloudstack
+  instance_id = hcs_ecs_compute_instance.instance.id
+  volume_id   = "0f2ee145-adfe-4270-b126-ad1e49a6f775"
+  device = "/dev/vdb"
 }
 ```
 
 ### Instance With Multiple Networks
 
 ```hcl
-variable "security_group_name" {}
-
-resource "hcs_networking_floatingip_v2" "myip" {
+data "hcs_availability_zones" "test" {
+  provider = huaweicloudstack
 }
 
-resource "hcs_ecs_compute_instance" "multi-net" {
-  name     = "server_1"
-  image_id = "ad091b52-742f-469e-8f3c-fd81cadf0743"
-  flavor   = "s1.medium"
-  vpc_id   = "8eed4fc7-e5e5-44a2-b5f2-23b3e5d46235"
-
-  nics {
-    network_id = "55534eaa-533a-419d-9b40-ec427ea7195a"
-  }
-
-  nics {
-    network_id = "2c0a74a9-4395-4e62-a17b-e3e86fbf66b7"
-  }
-
-  availability_zone = "cn-north-1a"
-  key_name          = "KeyPair-test"
-  security_groups   = [var.security_group_name]
+resource "hcs_vpc" "vpc" {
+  provider = huaweicloudstack
+  name = "tf_vpc_10086"
+  cidr = "192.168.0.0/16"
 }
 
-resource "hcs_compute_eip_associate" "myip" {
-  floating_ip = hcs_networking_floatingip_v2.myip.address
-  instance_id = hcs_ecs_compute_instance.multi-net.id
-  fixed_ip    = hcs_ecs_compute_instance.multi-net.nics.0.ip_address
+resource "hcs_vpc_subnet" "subnet" {
+  provider = huaweicloudstack
+  name       = "subnet_10086"
+  cidr       = "192.168.0.0/16"
+  gateway_ip = "192.168.0.1"
+  vpc_id     = hcs_vpc.vpc.id
+}
+
+resource "hcs_networking_secgroup_rule" "test" {
+  provider = huaweicloudstack
+  security_group_id       = hcs_networking_secgroup.secgroup.id
+  direction               = "ingress"
+  action                  = "allow"
+  ethertype               = "IPv4"
+  remote_ip_prefix  = "0.0.0.0/0"
+}
+
+resource "hcs_networking_secgroup" "secgroup" {
+  provider = huaweicloudstack
+  name        = "secgroup_10086"
+  description = "My security group"
+}
+
+data "hcs_ims_images" "centos" {
+  provider = huaweicloudstack
+  name       = "mini_image"
+  visibility = "public"
+}
+
+data "hcs_ecs_compute_flavors" "flavors" {
+  provider = huaweicloudstack
+  availability_zone = data.hcs_availability_zones.test.names[0]
+  cpu_core_count    = 2
+  memory_size       = 4
+}
+
+resource "hcs_ecs_compute_instance" "instance" {
+  provider = huaweicloudstack
+  name               = "tf_ecs-test3"
+  image_id           = data.hcs_ims_images.centos.images[0].id
+  flavor_id = data.hcs_ecs_compute_flavors.flavors.ids[0]
+  security_groups = [hcs_networking_secgroup.secgroup.name]
+  availability_zone  = data.hcs_availability_zones.test.names[0]
+
+  network {
+    uuid = hcs_vpc_subnet.subnet.id
+  }
+  
+  network {
+    uuid = hcs_vpc_subnet.subnet.id
+  }
+  
+  block_device_mapping_v2 {
+    source_type  = "image"
+    destination_type = "volume"
+    uuid = data.hcs_ims_images.centos.images[0].id
+    volume_type = "business_type_01"
+    volume_size = 20
+  }
 }
 ```
 
 ### Instance with User Data (cloud-init)
 
 ```hcl
-variable "security_group_name" {}
+data "hcs_availability_zones" "test" {
+  provider = huaweicloudstack
+}
 
-resource "hcs_ecs_compute_instance" "basic" {
-  name     = "server_1"
-  image_id = "ad091b52-742f-469e-8f3c-fd81cadf0743"
-  flavor   = "s1.medium"
-  vpc_id   = "8eed4fc7-e5e5-44a2-b5f2-23b3e5d46235"
+resource "hcs_vpc" "vpc" {
+  provider = huaweicloudstack
+  name = "tf_vpc_10086"
+  cidr = "192.168.0.0/16"
+}
 
-  nics {
-    network_id = "55534eaa-533a-419d-9b40-ec427ea7195a"
-  }
+resource "hcs_vpc_subnet" "subnet" {
+  provider = huaweicloudstack
+  name       = "subnet_10086"
+  cidr       = "192.168.0.0/16"
+  gateway_ip = "192.168.0.1"
+  vpc_id     = hcs_vpc.vpc.id
+}
 
-  user_data       = "#cloud-config\nhostname: server_1.example.com\nfqdn: server_1.example.com"
-  key_name        = "KeyPair-test"
-  security_groups = [var.security_group_name]
+resource "hcs_networking_secgroup_rule" "test" {
+  provider = huaweicloudstack
+  security_group_id       = hcs_networking_secgroup.secgroup.id
+  direction               = "ingress"
+  action                  = "allow"
+  ethertype               = "IPv4"
+  remote_ip_prefix  = "0.0.0.0/0"
+}
+
+resource "hcs_networking_secgroup" "secgroup" {
+  provider = huaweicloudstack
+  name        = "secgroup_10086"
+  description = "My security group"
+}
+
+data "hcs_ims_images" "centos" {
+  provider = huaweicloudstack
+  name       = "ecs_cloudinit_image"
+  visibility = "public"
+}
+
+data "hcs_ecs_compute_flavors" "flavors" {
+  provider = huaweicloudstack
+  availability_zone = data.hcs_availability_zones.test.names[0]
+  cpu_core_count    = 2
+  memory_size       = 4
+}
+
+resource "hcs_ecs_compute_instance" "instance" {
+  provider = huaweicloudstack
+  name               = "tf_ecs-test3"
+  image_id           = data.hcs_ims_images.centos.images[0].id
+  flavor_id = data.hcs_ecs_compute_flavors.flavors.ids[0]
+  security_groups = [hcs_networking_secgroup.secgroup.name]
+  availability_zone  = data.hcs_availability_zones.test.names[0]
+  user_data       = "xxxxxxxxxxxxxxxxxxxxxxx"
+
+network {
+  uuid = hcs_vpc_subnet.subnet.id
+}
+
+block_device_mapping_v2 {
+  source_type  = "image"
+  destination_type = "volume"
+  uuid = data.hcs_ims_images.centos.images[0].id
+  volume_type = "business_type_01"
+  volume_size = 20
+}
 }
 ```
 
@@ -179,21 +312,21 @@ The following arguments are supported:
 * `image_id` - (Required, String, ForceNew) The ID of the desired image for the server. Changing this creates a new
   server.
 
-* `flavor` - (Required, String) The name of the desired flavor for the server. Changing this resizes the existing
+* `flavor_id` - (Required, String) The ID of the desired flavor for the server. Changing this resizes the existing
   server.
 
-* `user_data` - (Optional, String, ForceNew) The user data to provide when launching the instance. Changing this creates
-  a new server.
+* `user_data` - (Optional, String, ForceNew) The user data to provide when launching the instance.The string length 
+   must be less than 65535 and must be encrypted using Base64. Changing this creates a new server.
 
-* `password` - (Optional, String, ForceNew) The administrative password to assign to the server. Changing this creates a
-  new server.
+* `admin_pass` - (Optional, String, ForceNew) The administrative password to assign to the server. Changing this creates
+  a new server.
 
 * `key_name` - (Optional, String, ForceNew) The name of a key pair to put on the server. The key pair must already be
   created and associated with the tenant's account. Changing this creates a new server.
 
 * `vpc_id` - (Required, String, ForceNew) The ID of the desired VPC for the server. Changing this creates a new server.
 
-* `nics` - (Optional, List, ForceNew) An array of one or more networks to attach to the instance. The nics object
+* `network` - (Optional, List, ForceNew) An array of one or more networks to attach to the instance. The network object
   structure is documented below. Changing this creates a new server.
 
 * `system_disk_type` - (Optional, String, ForceNew) The system disk type of the server.
@@ -202,8 +335,8 @@ The following arguments are supported:
 * `system_disk_size` - (Optional, Int, ForceNew) The system disk size in GB, The value range is 1 to 1024. Changing this
   creates a new server.  
 
-* `data_disks` - (Optional, List, ForceNew) An array of one or more data disks to attach to the instance. The data_disks
-  object structure is documented below. Changing this creates a new server.
+* `block_device_mapping_v2` - (Optional, List, ForceNew) An array of one or more data disks to attach to the instance.
+  The data_disks object structure is documented below. Changing this creates a new server.
 
 * `security_groups` - (Optional, String) An array of one or more security group names to associate with the server.
   Changing this results in adding/removing security groups from the existing server.
@@ -221,32 +354,47 @@ The following arguments are supported:
 * `op_svc_userid` - (Optional, String, ForceNew) User ID, required when using key_name. Changing this creates a new
   server.
 
-The `nics` block supports:
+The `network` block supports:
 
-* `network_id` - (Required, String, ForceNew) The network UUID to attach to the server. Changing this creates a new
+* `uuid` - (Optional, String, ForceNew) The network UUID to attach to the server. Changing this creates a new
   server.
 
-* `ip_address` - (Optional, String, ForceNew) Specifies a fixed IPv4 address to be used on this network. Changing this
+* `port` - (Optional, String, ForceNew) Specifies the IP address of the. Among the three network parameters (port, UUID,
+  and fixed_ip), port has the highest priority. The UUID must be specified when fixed_ip is specified.. Changing this
   creates a new server.
 
-The `data_disks` block supports:
+The `block_device_mapping_v2` block supports:
 
-* `type` - (Required, String, ForceNew) The data disk type of the server.
+* `boot_index` - (Optional, Int, ForceNew)Boot flag. The value 0 indicates the boot disk, and the value - 1 indicates 
+  the non-boot disk. Note: When the source types of all volume devices are volume, one value of boot_index is 0.
   Changing this creates a new server.
   
-* `size` - (Required, Int, ForceNew) The size of the data disk in GB. The value range is 10 to 32768. Changing this
-  creates a new server.
+* `destination_type` - (Optional, String) Indicates the current type of the volume device. Currently, only the 
+  volume type is supported. Changing this creates a new server.
 
-* `snapshot_id` - (Optional, String, ForceNew) Specifies the snapshot ID or ID of the original data disk contained in
-  the full-ECS image. Changing this creates a new server.
+* `source_type` - (Required, String) SSource type of a volume device. Currently, only the volume, image, and 
+   snapshot types are supported. If a volume is used to create an ECS, set source_type to volume. If you use an image to
+   create an ECS, set source_type to image. To create an ECS using a snapshot, set source_type to snapshot. Note: If the
+   source type of a volume device is snapshot and boot_index is 0, the EVS disk corresponding to the snapshot must be a 
+   system disk. Changing this creates a new server.
 
-## Attributes Reference
+* `uuid` - (Required, String, ForceNew) Specifies the UUID of the volume or snapshot. If source_type is image, the value 
+   is the UUID of the image.. Changing this creates a new server.
 
-In addition to all arguments above, the following attributes are exported:
+* `volume_size` - (Optional, Int, ForceNew) Specifies the volume size. The value is an integer. This parameter is 
+   mandatory when source_type is set to image and destination_type is set to volume. The unit is GB.
+   Changing this creates a new server.
 
-* `id` - The ID of the server.
-* `nics/mac_address` - The MAC address of the NIC on that network.
-* `nics/port_id` - The port ID of the NIC on that network.
+* `device_name` - (Optional, String, ForceNew) Specifies the volume device name. The value is a string of 0 to 255 
+   characters and must comply with the regular expression (^/dev/x{0, 1}[a-z]{0, 1}d{0, 1})([a-z]+)[0-9]*$ . Example: 
+   /dev/vda; User-specified device_name.The configuration does not take effect. The system generates a device_name by 
+   default.
+
+* `delete_on_termination` - (Optional, Bool, ForceNew) Specifies whether to delete the volume when deleting an ECS. 
+   The default value is false.
+
+* `volume_type` - (Optional, String, ForceNew) Specifies the volume type. This parameter is used when source_type is 
+   set to image and destination_type is set to volume.
 
 ## Timeouts
 
