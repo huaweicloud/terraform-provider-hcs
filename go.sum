@@ -104,8 +104,8 @@ github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d h1:kJCB4vdITiW1eC1
 github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d/go.mod h1:+NfK9FKeTrX5uv1uIXGdwYDTeHna2qgaIlx54MXqjAM=
 github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.47 h1:ulL5LGKt5Rz+zGPfSS/d9la7+gO2I8XEglfKgg3saSw=
 github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.47/go.mod h1:bsqx6o47Kl4YsniIjPwuoeqiIB5Fc3JbSpB2b3o3WFQ=
-github.com/huaweicloud/terraform-provider-huaweicloud v1.54.1 h1:B5Hh4/Fz3l+MRwZTBJh9ZSs3dQkVoku2bzMePrbi4og=
-github.com/huaweicloud/terraform-provider-huaweicloud v1.54.1/go.mod h1:+FnX6G9HoeQpKITuGpjFcFp2XfSoSjF4q8K8HkqUfMw=
+github.com/huaweicloud/terraform-provider-huaweicloud v1.54.2-0.20230826060825-5266c5be9940 h1:4xb3gCnufcBMzxh+vFPlG4/565MDNXeTjSOQRKIZfyw=
+github.com/huaweicloud/terraform-provider-huaweicloud v1.54.2-0.20230826060825-5266c5be9940/go.mod h1:+FnX6G9HoeQpKITuGpjFcFp2XfSoSjF4q8K8HkqUfMw=
 github.com/imdario/mergo v0.3.12 h1:b6R2BslTbIEToALKP7LxUvijTsNI9TAe80pLWN2g/HU=
 github.com/imdario/mergo v0.3.12/go.mod h1:jmQim1M+e3UYxmgPu/WyfjB3N3VflVyUjjjwH0dnCYA=
 github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 h1:BQSFePA1RWJOlocH6Fxy8MmwDt+yVQYULKfN0RoTN8A=
