@@ -11,64 +11,17 @@ Attaches a volume to an ECS Instance.
 ### Basic attachment of a single volume to a single instance
 
 ```hcl
-variable "security_group_id" {}
+variable "instance_id" {}
 
-resource "hcs_evs_volume" "myvol" {
-  name              = "volume"
-  availability_zone = "cn-north-4a"
-  volume_type       = "SAS"
-  size              = 10
-}
+variable "volume_id" {}
 
-resource "hcs_ecs_compute_instance" "myinstance" {
-  name               = "instance"
-  image_id           = "ad091b52-742f-469e-8f3c-fd81cadf0743"
-  flavor_id          = "s6.small.1"
-  key_pair           = "my_key_pair_name"
-  security_group_ids = [var.security_group_id]
-  availability_zone  = "cn-north-4a"
-
-  network {
-    uuid = "55534eaa-533a-419d-9b40-ec427ea7195a"
-  }
-}
+variable "device" {}
 
 resource "hcs_ecs_compute_volume_attach" "attached" {
-  instance_id = hcs_ecs_compute_instance.myinstance.id
-  volume_id   = hcs_evs_volume.myvol.id
-}
-```
-
-### Attaching multiple volumes to a single instance
-
-```hcl
-variable "security_group_id" {}
-
-resource "hcs_evs_volume" "myvol" {
-  count             = 2
-  name              = "volume_1"
-  availability_zone = "cn-north-4a"
-  volume_type       = "SAS"
-  size              = 10
-}
-
-resource "hcs_ecs_compute_instance" "myinstance" {
-  name               = "instance"
-  image_id           = "ad091b52-742f-469e-8f3c-fd81cadf0743"
-  flavor_id          = "s6.small.1"
-  key_pair           = "my_key_pair_name"
-  security_group_ids = [var.security_group_id]
-  availability_zone  = "cn-north-4a"
-}
-
-resource "hcs_ecs_compute_volume_attach" "attachments" {
-  count       = 2
-  instance_id = hcs_ecs_compute_instance.myinstance.id
-  volume_id   = element(hcs_evs_volume.myvol[*].id, count.index)
-}
-
-output "volume devices" {
-  value = hcs_ecs_compute_volume_attach.attachments[*].device
+  provider = huaweicloudstack
+  instance_id = var.instance_id
+  volume_id   = var.volume_id
+  device = var.device
 }
 ```
 

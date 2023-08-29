@@ -1,4 +1,6 @@
 ---
+subcategory: "Elastic Cloud Server (ECS)"
+---
 
 # hcs_ecs_compute_instance
 
@@ -78,7 +80,7 @@ resource "hcs_ecs_compute_instance" "instance" {
 ```
 
 ### Instance With Attached Volume
-
+```
 data "hcs_availability_zones" "test" {
   provider = huaweicloudstack
 }
