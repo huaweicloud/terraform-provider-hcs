@@ -15,6 +15,7 @@ variable "instance_id" {}
 variable "network_id" {}
 
 resource "hcs_ecs_compute_interface_attach" "test" {
+  provider = huaweicloudstack
   instance_id = var.instance_id
   network_id  = var.network_id
 }
@@ -23,10 +24,11 @@ resource "hcs_ecs_compute_interface_attach" "test" {
 ### Attach a port (under the specified network) to the ECS instance and use the custom security groups
 
 ```hcl
-variable "instance_id" {
-variable "network_id" {
+variable "instance_id" {}
+variable "network_id" {}
 
 resource "hcs_ecs_compute_interface_attach" "test" {
+  provider = huaweicloudstack
   instance_id        = var.instance_id
   network_id         = var.network_id
   fixed_ip           = "192.168.10.199"
@@ -36,32 +38,15 @@ resource "hcs_ecs_compute_interface_attach" "test" {
 ### Attach a custom port to the ECS instance
 
 ```hcl
-variable "security_group_id" {}
+variable "instance_id" {}
 
-data "hcs_vpc_subnets" "mynet" {
-  name = "subnet-default"
-}
-
-data "hcs_networking_port" "myport" {
-  network_id = data.hcs_vpc_subnet.mynet.id
-  fixed_ip   = "192.168.0.100"
-}
-
-resource "hcs_ecs_compute_instance" "myinstance" {
-  name               = "instance"
-  image_id           = "ad091b52-742f-469e-8f3c-fd81cadf0743"
-  flavor_id          = "s6.small.1"
-  key_pair           = "my_key_pair_name"
-  availability_zone  = "cn-north-4a"
-
-  network {
-    uuid = "55534eaa-533a-419d-9b40-ec427ea7195a"
-  }
-}
+variable "port_id" {}
 
 resource "hcs_ecs_compute_interface_attach" "attached" {
-  instance_id = hcs_ecs_compute_instance.myinstance.id
-  port_id     = data.hcs_networking_port.myport.id
+  provider = huaweicloudstack
+  instance_id = var.instance_id
+  port_id = var.port_id
+  
 }
 ```
 

@@ -15,13 +15,6 @@ data "hcs_ecs_compute_flavors" "flavors" {
   cpu_core_count    = 2
   memory_size       = 4
 }
-
-# Create ECS instance with the first matched flavor
-resource "hcs_ecs_compute_instance" "instance" {
-  flavor_id = data.hcs_ecs_compute_flavors.flavors.ids[0]
-
-  # Other properties...
-}
 ```
 
 ## Argument Reference

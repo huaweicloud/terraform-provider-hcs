@@ -10,10 +10,12 @@ Manages Server Group resource within HuaweiCloudStack.
 
 ```hcl
 data "hcs_ecs_compute_instance" "instance_demo" {
+  provider = huaweicloudstack
   name = "ecs-servergroup-demo"
 }
 
 resource "hcs_ecs_compute_server_group" "test-sg" {
+  provider = huaweicloudstack
   name     = "my-sg"
   policies = ["anti-affinity"]
   members  = [
