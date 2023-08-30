@@ -29,8 +29,6 @@ The following arguments are supported:
 
 * `display_name` - (Optional, String) Specifies the topic display name.
 
-* `enterprise_project_id` - (Optional, String) Specifies the enterprise project ID of the SMN topic.
-
 ## Attributes Reference
 
 In addition to all arguments above, the following attributes are exported:
@@ -49,10 +47,6 @@ The `topics` block supports:
 
 * `display_name` - The topic display name.
 
-* `enterprise_project_id` - The enterprise project ID of the SMN topic.
-
 * `push_policy` - Message pushing policy.
   + **0**: indicates that the message sending fails and the message is cached in the queue.
   + **1**: indicates that the failed message is discarded.
-
-* `tags` - The tags of the SMN topic, key/value pair format.

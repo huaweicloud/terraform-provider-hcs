@@ -53,12 +53,6 @@ func ResourceTopic() *schema.Resource {
 				Optional:     true,
 				ValidateFunc: validation.StringLenBetween(0, 192),
 			},
-			"enterprise_project_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-				Computed: true,
-			},
 			"tags": common.TagsSchema(),
 
 			"topic_urn": {
@@ -146,7 +140,6 @@ func resourceTopicRead(_ context.Context, d *schema.ResourceData, meta interface
 		d.Set("push_policy", topicGet.PushPolicy),
 		d.Set("update_time", topicGet.UpdateTime),
 		d.Set("create_time", topicGet.CreateTime),
-		d.Set("enterprise_project_id", topicGet.EnterpriseProjectId),
 	)
 
 	// fetch tags

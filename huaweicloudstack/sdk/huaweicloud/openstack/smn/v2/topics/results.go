@@ -11,13 +11,12 @@ type Topic struct {
 }
 
 type TopicGet struct {
-	TopicUrn            string `json:"topic_urn"`
-	DisplayName         string `json:"display_name"`
-	Name                string `json:"name"`
-	PushPolicy          int    `json:"push_policy"`
-	UpdateTime          string `json:"update_time"`
-	CreateTime          string `json:"create_time"`
-	EnterpriseProjectId string `json:"enterprise_project_id"`
+	TopicUrn    string `json:"topic_urn"`
+	DisplayName string `json:"display_name"`
+	Name        string `json:"name"`
+	PushPolicy  int    `json:"push_policy"`
+	UpdateTime  string `json:"update_time"`
+	CreateTime  string `json:"create_time"`
 }
 
 type Policies struct {
