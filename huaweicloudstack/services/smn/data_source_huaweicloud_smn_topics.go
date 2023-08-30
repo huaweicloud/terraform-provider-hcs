@@ -38,10 +38,6 @@ func DataSourceTopics() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"enterprise_project_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
 
 			"topics": {
 				Type:     schema.TypeList,
@@ -61,10 +57,6 @@ func DataSourceTopics() *schema.Resource {
 							Computed: true,
 						},
 						"display_name": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"enterprise_project_id": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
@@ -107,10 +99,9 @@ func dataSourceTopicsRead(_ context.Context, d *schema.ResourceData, meta interf
 
 	log.Printf("[DEBUG] retrieved SMN topics: %#v", allTopics)
 	filter := map[string]interface{}{
-		"TopicUrn":            d.Get("topic_urn"),
-		"Name":                d.Get("name"),
-		"EnterpriseProjectId": d.Get("enterprise_project_id"),
-		"DisplayName":         d.Get("display_name"),
+		"TopicUrn":    d.Get("topic_urn"),
+		"Name":        d.Get("name"),
+		"DisplayName": d.Get("display_name"),
 	}
 
 	filterTopics, err := utils.FilterSliceWithField(allTopics, filter)
@@ -143,12 +134,11 @@ func dataSourceTopicsRead(_ context.Context, d *schema.ResourceData, meta interf
 
 func flattenSourceTopic(tagClient *golangsdk.ServiceClient, topic topics.TopicGet) map[string]interface{} {
 	stateTopic := map[string]interface{}{
-		"topic_urn":             topic.TopicUrn,
-		"id":                    topic.TopicUrn,
-		"display_name":          topic.DisplayName,
-		"name":                  topic.Name,
-		"push_policy":           topic.PushPolicy,
-		"enterprise_project_id": topic.EnterpriseProjectId,
+		"topic_urn":    topic.TopicUrn,
+		"id":           topic.TopicUrn,
+		"display_name": topic.DisplayName,
+		"name":         topic.Name,
+		"push_policy":  topic.PushPolicy,
 	}
 
 	if resourceTags, err := tags.Get(tagClient, "smn_topic", topic.Name).Extract(); err == nil {
