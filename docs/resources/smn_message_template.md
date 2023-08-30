@@ -36,10 +36,6 @@ The following arguments are supported:
   + **default**: the default protocol
   + **email**: the email protocol
   + **sms**: the SMS protocol
-  + **functionstage**: the FunctionGraph transport protocol
-  + **dms**: the DMS transport protocol
-  + **http**: the http protocol
-  + **https**: the https protocol
 
   Changing this parameter will create a new resource.
 
