@@ -58,7 +58,7 @@ func TestAccImsImage_basic(t *testing.T) {
 }
 
 func testAccCheckImsImageDestroy(s *terraform.State) error {
-	cfg := acceptance.TestAccProvider.Meta().(*config.Config)
+	cfg := config.GetHcsConfig(acceptance.TestAccProvider.Meta())
 	imageClient, err := cfg.ImageV2Client(acceptance.HCS_REGION_NAME)
 	if err != nil {
 		return fmt.Errorf("error creating Image: %s", err)
@@ -89,7 +89,7 @@ func testAccCheckImsImageExists(n string, image *cloudimages.Image) resource.Tes
 			return fmt.Errorf("no ID is set")
 		}
 
-		cfg := acceptance.TestAccProvider.Meta().(*config.Config)
+		cfg := config.GetHcsConfig(acceptance.TestAccProvider.Meta())
 		imageClient, err := cfg.ImageV2Client(acceptance.HCS_REGION_NAME)
 		if err != nil {
 			return fmt.Errorf("error creating Image: %s", err)
@@ -111,17 +111,17 @@ func testAccImsImage_basic(rName string) string {
 
 data "hcs_availability_zones" "test" {}
 
-data "hcs_ecs_flavors" "test" {
+data "hcs_ecs_compute_flavors" "test" {
   availability_zone = data.hcs_availability_zones.test.names[0]
   performance_type  = "normal"
   cpu_core_count    = 2
   memory_size       = 4
 }
 
-resource "hcs_ecs_instance" "test" {
+resource "hcs_ecs_compute_instance" "test" {
   name               = "%[2]s"
-  image_name         = "Ubuntu 18.04 server 64bit"
-  flavor_id          = data.hcs_ecs_flavors.test.ids[0]
+  image_name         = "CentOS_7.4_64bit"
+  flavor_id          = data.hcs_ecs_compute_flavors.test.ids[0]
   security_group_ids = [hcs_networking_secgroup.test.id]
   availability_zone  = data.hcs_availability_zones.test.names[0]
 
@@ -132,7 +132,7 @@ resource "hcs_ecs_instance" "test" {
 
 resource "hcs_ims_image" "test" {
   name        = "%[2]s"
-  instance_id = hcs_ecs_instance.test.id
+  instance_id = hcs_ecs_compute_instance.test.id
   description = "created by Terraform AccTest"
 }
 `, common.TestBaseNetwork(rName), rName)

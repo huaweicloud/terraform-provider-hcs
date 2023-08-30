@@ -1,14 +1,13 @@
+<a href="https://www.huaweicloud.com/intl/en-us/product/huaweicloudstack.html"><img width="225px" height="38px" align="right" src="./docs/img/huaweicloudstack_log.png"></a>
+
 Terraform HuaweiCloudStack Provider
 ==============================
 
 <!-- markdownlint-disable-next-line MD034 -->
 * Website: https://www.terraform.io
 * [![Documentation](https://img.shields.io/badge/documentation-blue)](https://registry.terraform.io/providers/huaweicloud/huaweicloud/latest/docs)
-* [![Gitter chat](https://badges.gitter.im/hashicorp-terraform/Lobby.png)](https://gitter.im/hashicorp-terraform/Lobby)
+* [![Gitter chat](https://img.shields.io/badge/chat-on_gitter-yellowgreen)](https://gitter.im/hashicorp-terraform/Lobby)
 * Mailing list: [Google Groups](http://groups.google.com/group/terraform-tool)
-
-<!-- markdownlint-disable-next-line MD033 -->
-<a href="https://www.huaweicloud.com/"><img width="450px" height="102px" src="https://console-static.huaweicloud.com/static/authui/20210202115135/public/custom/images/logo-en.svg"></a>
 
 Requirements
 ------------

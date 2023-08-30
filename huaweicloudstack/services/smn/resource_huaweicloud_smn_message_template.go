@@ -7,11 +7,12 @@ package smn
 
 import (
 	"context"
+	"strings"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
-	"strings"
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -64,7 +65,7 @@ func ResourceSmnMessageTemplate() *schema.Resource {
 }
 
 func resourceSmnMessageTemplateCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	// createMessageTemplate: create SMN message template
@@ -118,7 +119,7 @@ func buildCreateMessageTemplateBodyParams(d *schema.ResourceData) map[string]int
 }
 
 func resourceSmnMessageTemplateUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	updateMessageTemplateHasChanges := []string{
@@ -164,7 +165,7 @@ func buildUpdateMessageTemplateBodyParams(d *schema.ResourceData) map[string]int
 }
 
 func resourceSmnMessageTemplateRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	var mErr *multierror.Error
@@ -216,7 +217,7 @@ func resourceSmnMessageTemplateRead(_ context.Context, d *schema.ResourceData, m
 }
 
 func resourceSmnMessageTemplateDelete(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	// deleteMessageTemplate: Delete SMN message template

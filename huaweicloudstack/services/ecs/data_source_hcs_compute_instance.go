@@ -198,13 +198,16 @@ func computedSchemaSchedulerHints() *schema.Schema {
 	return &computedSchema
 }
 
-func buildListOptsWithoutStatus(d *schema.ResourceData, conf *config.Config) *cloudservers.ListOpts {
+func buildListOptsWithoutStatus(d *schema.ResourceData, conf *config.HcsConfig) *cloudservers.ListOpts {
 	result := cloudservers.ListOpts{
+		Offset:              1,
 		Limit:               100,
 		EnterpriseProjectID: conf.DataGetEnterpriseProjectID(d),
 		Name:                d.Get("name").(string),
 		Flavor:              d.Get("flavor_id").(string),
 		IP:                  d.Get("fixed_ip_v4").(string),
+		ExpectFields:        "basic,flavor,scheduler_hints,image_meta,flavor_detail,metadata,addresses,tags,capabilities,resize_or_migrate,cdrom,device_limit,vmtools_detail,operation_rights,action_rights,block_device,vcpu_model,advanced_properties,os_hostname,enterprise_project_id",
+		NotTags:             "__type_baremetal",
 	}
 
 	return &result
@@ -219,7 +222,7 @@ func queryEcsInstances(client *golangsdk.ServiceClient, opt *cloudservers.ListOp
 }
 
 func dataSourceComputeInstanceRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conf := meta.(*config.Config)
+	conf := config.GetHcsConfig(meta)
 	region := conf.GetRegion(d)
 	ecsClient, err := conf.ComputeV1Client(region)
 	if err != nil {
@@ -255,7 +258,7 @@ func dataSourceComputeInstanceRead(_ context.Context, d *schema.ResourceData, me
 	return setEcsInstanceParams(d, conf, ecsClient, server)
 }
 
-func setEcsInstanceParams(d *schema.ResourceData, conf *config.Config, ecsClient *golangsdk.ServiceClient,
+func setEcsInstanceParams(d *schema.ResourceData, conf *config.HcsConfig, ecsClient *golangsdk.ServiceClient,
 	server cloudservers.CloudServer) diag.Diagnostics {
 	region := conf.GetRegion(d)
 	networkingClient, err := conf.NetworkingV2Client(region)

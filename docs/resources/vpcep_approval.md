@@ -31,15 +31,7 @@ resource "hcs_vpcep_endpoint" "demo" {
   service_id = hcs_vpcep_service.demo.id
   vpc_id     = var.vpc_id
   network_id = var.network_id
-  enable_dns = true
-
-  lifecycle {
-    # enable_dns and ip_address are not assigned until connecting to the service
-    ignore_changes = [
-      enable_dns,
-      ip_address
-    ]
-  }
+  enable_dns = false
 }
 
 resource "hcs_vpcep_approval" "approval" {

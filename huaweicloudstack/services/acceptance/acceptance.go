@@ -28,19 +28,22 @@ var (
 	HCS_ENTERPRISE_PROJECT_ID_TEST         = os.Getenv("HCS_ENTERPRISE_PROJECT_ID_TEST")
 	HCS_ENTERPRISE_MIGRATE_PROJECT_ID_TEST = os.Getenv("HCS_ENTERPRISE_MIGRATE_PROJECT_ID_TEST")
 
-	HCS_FLAVOR_ID             = os.Getenv("HCS_FLAVOR_ID")
-	HCS_FLAVOR_NAME           = os.Getenv("HCS_FLAVOR_NAME")
-	HCS_IMAGE_ID              = os.Getenv("HCS_IMAGE_ID")
-	HCS_IMAGE_NAME            = os.Getenv("HCS_IMAGE_NAME")
-	HCS_VPC_ID                = os.Getenv("HCS_VPC_ID")
-	HCS_NETWORK_ID            = os.Getenv("HCS_NETWORK_ID")
-	HCS_SUBNET_ID             = os.Getenv("HCS_SUBNET_ID")
-	HCS_ENTERPRISE_PROJECT_ID = os.Getenv("HCS_ENTERPRISE_PROJECT_ID")
-	HCS_MAPREDUCE_CUSTOM      = os.Getenv("HCS_MAPREDUCE_CUSTOM")
-	HCS_ADMIN                 = os.Getenv("HCS_ADMIN")
-	HCS_KEYPAIR_NAME          = os.Getenv("HCS_KEYPAIR_NAME")
-	HCS_SERVER_GROUP_ID       = os.Getenv("HCS_SERVER_GROUP_ID")
-	HCS_ECS_INSTANCE_ID       = os.Getenv("HCS_ECS_INSTANCE_ID")
+	HCS_FLAVOR_ID                 = os.Getenv("HCS_FLAVOR_ID")
+	HCS_FLAVOR_NAME               = os.Getenv("HCS_FLAVOR_NAME")
+	HCS_IMAGE_ID                  = os.Getenv("HCS_IMAGE_ID")
+	HCS_IMAGE_NAME                = os.Getenv("HCS_IMAGE_NAME")
+	HCS_VPC_ID                    = os.Getenv("HCS_VPC_ID")
+	HCS_NETWORK_ID                = os.Getenv("HCS_NETWORK_ID")
+	HCS_SUBNET_ID                 = os.Getenv("HCS_SUBNET_ID")
+	HCS_ENTERPRISE_PROJECT_ID     = os.Getenv("HCS_ENTERPRISE_PROJECT_ID")
+	HCS_MAPREDUCE_CUSTOM          = os.Getenv("HCS_MAPREDUCE_CUSTOM")
+	HCS_ADMIN                     = os.Getenv("HCS_ADMIN")
+	HCS_KEYPAIR_NAME              = os.Getenv("HCS_KEYPAIR_NAME")
+	HCS_SERVER_GROUP_ID           = os.Getenv("HCS_SERVER_GROUP_ID")
+	HCS_ECS_INSTANCE_ID           = os.Getenv("HCS_ECS_INSTANCE_ID")
+	HCS_EIP_ID                    = os.Getenv("HCS_EIP_ID")
+	HCS_EIP_ADDRESS               = os.Getenv("HCS_EIP_ADDRESS")
+	HCS_EIP_EXTERNAL_NETWORK_NAME = os.Getenv("HCS_EIP_EXTERNAL_NETWORK_NAME")
 
 	HCS_OBS_BUCKET_NAME        = os.Getenv("HCS_OBS_BUCKET_NAME")
 	HCS_OBS_DESTINATION_BUCKET = os.Getenv("HCS_OBS_DESTINATION_BUCKET")
@@ -372,6 +375,20 @@ func TestAccPreCheckAdminOnly(t *testing.T) {
 }
 
 // lintignore:AT003
+func TestAccPreCheckEipId(t *testing.T) {
+	if HCS_EIP_ID == "" {
+		t.Skip("Skipping test because it requires the public IP ID (HCS_EIP_ID)")
+	}
+}
+
+// lintignore:AT003
+func TestAccPreCheckEipAddress(t *testing.T) {
+	if HCS_EIP_ADDRESS == "" {
+		t.Skip("Skipping test because it requires the public IP address (HCS_EIP_ADDRESS)")
+	}
+}
+
+// lintignore:AT003
 func TestAccPreCheckReplication(t *testing.T) {
 	if HCS_DEST_REGION == "" || HCS_DEST_PROJECT_ID == "" {
 		t.Skip("Jump the replication policy acceptance tests.")
@@ -417,6 +434,12 @@ func TestAccPreCheckOBSDestinationBucket(t *testing.T) {
 func TestAccPreCheckChargingMode(t *testing.T) {
 	if HCS_CHARGING_MODE != "prePaid" {
 		t.Skip("This environment does not support prepaid tests")
+	}
+}
+
+func TestAccPreCheckEip(t *testing.T) {
+	if HCS_EIP_ID == "" || HCS_EIP_ADDRESS == "" {
+		t.Skip("HCS_EIP_ID and HCS_EIP_ADDRESS must be set for EIP corresponding acceptance test")
 	}
 }
 

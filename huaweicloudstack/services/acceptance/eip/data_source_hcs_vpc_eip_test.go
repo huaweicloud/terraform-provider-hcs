@@ -23,8 +23,6 @@ func TestAccVpcEipDataSource_basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					dc.CheckResourceExists(),
 					resource.TestCheckResourceAttr(dataSourceName, "status", "UNBOUND"),
-					resource.TestCheckResourceAttr(dataSourceName, "type", "5_bgp"),
-					resource.TestCheckResourceAttr(dataSourceName, "ip_version", "4"),
 					resource.TestCheckResourceAttr(dataSourceName, "bandwidth_size", "5"),
 					resource.TestCheckResourceAttr(dataSourceName, "bandwidth_share_type", "PER"),
 				),
@@ -37,10 +35,10 @@ func testAccDataSourceVpcEipConfig_basic(rName string) string {
 	return fmt.Sprintf(`
 resource "hcs_vpc_eip" "test" {
   publicip {
-    type = "5_bgp"
+    type = "%[2]s"
   }
   bandwidth {
-    name        = "%s"
+    name        = "%[1]s"
     size        = 5
     share_type  = "PER"
   }
@@ -49,5 +47,5 @@ resource "hcs_vpc_eip" "test" {
 data "hcs_vpc_eip" "test" {
   public_ip = hcs_vpc_eip.test.address
 }
-`, rName)
+`, rName, acceptance.HCS_EIP_EXTERNAL_NETWORK_NAME)
 }

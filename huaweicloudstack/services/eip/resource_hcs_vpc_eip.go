@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
@@ -203,7 +204,7 @@ func buildVpcEipCreateOpts(d *schema.ResourceData) (eips.ApplyOpts, error) {
 	return result, nil
 }
 
-func createPostPaidEip(ctx context.Context, config *config.Config, client *golangsdk.ServiceClient,
+func createPostPaidEip(ctx context.Context, config *config.HcsConfig, client *golangsdk.ServiceClient,
 	d *schema.ResourceData) error {
 	createOpts, err := buildVpcEipCreateOpts(d)
 	if err != nil {
@@ -235,7 +236,7 @@ func createPostPaidEip(ctx context.Context, config *config.Config, client *golan
 }
 
 func resourceVpcEipCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 
 	vpcV1Client, err := config.NetworkingV1Client(region)
@@ -328,7 +329,7 @@ func flattenEipBandwidthDetails(publicIp eips.PublicIp, bandWidth bandwidths.Ban
 }
 
 func resourceVpcEipRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 	networkingClient, err := config.NetworkingV1Client(region)
 	if err != nil {
@@ -405,7 +406,7 @@ func updateEipPortId(vpcV1Client *golangsdk.ServiceClient, d *schema.ResourceDat
 	return nil
 }
 
-func updateEipBandwidth(vpcV1Client *golangsdk.ServiceClient, config *config.Config, d *schema.ResourceData) error {
+func updateEipBandwidth(vpcV1Client *golangsdk.ServiceClient, config *config.HcsConfig, d *schema.ResourceData) error {
 	old, new := d.GetChange("bandwidth")
 	oldRaw := old.([]interface{})
 	newRaw := new.([]interface{})
@@ -429,7 +430,7 @@ func updateEipBandwidth(vpcV1Client *golangsdk.ServiceClient, config *config.Con
 }
 
 func resourceVpcEipUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 	vpcV1Client, err := config.NetworkingV1Client(region)
 	if err != nil {
@@ -454,7 +455,7 @@ func resourceVpcEipUpdate(ctx context.Context, d *schema.ResourceData, meta inte
 }
 
 func resourceVpcEipDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	networkingClient, err := config.NetworkingV1Client(config.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating VPC client: %s", err)

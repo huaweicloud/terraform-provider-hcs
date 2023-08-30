@@ -134,7 +134,7 @@ func DataSourceComputeInstances() *schema.Resource {
 	}
 }
 
-func buildListOptsWithoutIP(d *schema.ResourceData, conf *config.Config) *cloudservers.ListOpts {
+func buildListOptsWithoutIP(d *schema.ResourceData, conf *config.HcsConfig) *cloudservers.ListOpts {
 	result := cloudservers.ListOpts{
 		Limit:               100,
 		EnterpriseProjectID: conf.DataGetEnterpriseProjectID(d),
@@ -175,7 +175,7 @@ func filterCloudServers(d *schema.ResourceData, servers []cloudservers.CloudServ
 }
 
 func dataSourceComputeInstancesRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conf := meta.(*config.Config)
+	conf := config.GetHcsConfig(meta)
 	region := conf.GetRegion(d)
 	ecsClient, err := conf.ComputeV1Client(region)
 	if err != nil {
@@ -195,7 +195,7 @@ func dataSourceComputeInstancesRead(_ context.Context, d *schema.ResourceData, m
 	return setComputeInstancesParams(d, conf, servers)
 }
 
-func setComputeInstancesParams(d *schema.ResourceData, conf *config.Config, servers []cloudservers.CloudServer) diag.Diagnostics {
+func setComputeInstancesParams(d *schema.ResourceData, conf *config.HcsConfig, servers []cloudservers.CloudServer) diag.Diagnostics {
 	region := conf.GetRegion(d)
 	ecsClient, err := conf.ComputeV1Client(region)
 	if err != nil {

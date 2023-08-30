@@ -136,7 +136,7 @@ func DataSourceEvsVolumesV2() *schema.Resource {
 	}
 }
 
-func buildQueryOpts(d *schema.ResourceData, cfg *config.Config) volumes.ListOpts {
+func buildQueryOpts(d *schema.ResourceData, cfg *config.HcsConfig) volumes.ListOpts {
 	result := volumes.ListOpts{
 		AvailabilityZone:    d.Get("availability_zone").(string),
 		EnterpriseProjectID: cfg.DataGetEnterpriseProjectID(d),
@@ -196,7 +196,7 @@ func sourceEvsVolumes(vols []volumes.Volume) ([]map[string]interface{}, []string
 }
 
 func dataSourceEvsVolumesV2Read(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	client, err := cfg.BlockStorageV2Client(cfg.GetRegion(d))
 	if err != nil {
 		return fmtp.DiagErrorf("Error creating HuaweiCloudStack EVS v2 client: %s", err)

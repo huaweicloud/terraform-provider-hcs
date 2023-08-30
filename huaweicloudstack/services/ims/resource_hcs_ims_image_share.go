@@ -57,7 +57,7 @@ func ResourceImsImageShare() *schema.Resource {
 }
 
 func resourceImsImageShareCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	sourceImageId := d.Get("source_image_id")
 	projectIds := d.Get("target_project_ids")
 	err := dealImageMembers(ctx, d, cfg, "POST", schema.TimeoutCreate, sourceImageId, projectIds.(*schema.Set).List())
@@ -71,7 +71,7 @@ func resourceImsImageShareCreate(ctx context.Context, d *schema.ResourceData, me
 }
 
 func resourceImsImageShareUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 
 	if d.HasChange("target_project_ids") {
 		oProjectIdsRaw, nProjectIdsRaw := d.GetChange("target_project_ids")
@@ -99,7 +99,7 @@ func resourceImsImageShareRead(_ context.Context, _ *schema.ResourceData, _ inte
 }
 
 func resourceImsImageShareDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 
 	projectIds := d.Get("target_project_ids")
 	err := dealImageMembers(ctx, d, cfg, "DELETE", schema.TimeoutDelete, nil, projectIds.(*schema.Set).List())
@@ -110,7 +110,7 @@ func resourceImsImageShareDelete(ctx context.Context, d *schema.ResourceData, me
 	return nil
 }
 
-func dealImageMembers(ctx context.Context, d *schema.ResourceData, cfg *config.Config, requestMethod,
+func dealImageMembers(ctx context.Context, d *schema.ResourceData, cfg *config.HcsConfig, requestMethod,
 	timeout string, imageId interface{}, projectIds []interface{}) error {
 	region := cfg.GetRegion(d)
 	var (

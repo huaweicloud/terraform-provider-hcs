@@ -159,7 +159,7 @@ func DataSourceVpcSubnets() *schema.Resource {
 }
 
 func dataSourceVpcSubnetsRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 	client, err := config.NetworkingV1Client(region)
 	if err != nil {

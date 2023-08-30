@@ -116,7 +116,7 @@ func ResourceImsImage() *schema.Resource {
 }
 
 func resourceImsImageCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	imsClient, err := cfg.ImageV2Client(region)
@@ -211,7 +211,7 @@ func getInstanceID(data string) string {
 }
 
 func resourceImsImageRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	imsClient, err := cfg.ImageV2Client(region)
@@ -250,7 +250,7 @@ func resourceImsImageRead(_ context.Context, d *schema.ResourceData, meta interf
 }
 
 func resourceImsImageUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	imsClient, err := cfg.ImageV2Client(region)
@@ -279,7 +279,7 @@ func resourceImsImageUpdate(ctx context.Context, d *schema.ResourceData, meta in
 }
 
 func resourceImsImageDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 
 	imageClient, err := cfg.ImageV2Client(region)

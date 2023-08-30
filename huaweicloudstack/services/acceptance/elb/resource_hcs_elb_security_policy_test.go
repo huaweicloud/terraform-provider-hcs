@@ -15,7 +15,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
 )
 
-func getSecurityPoliciesV3ResourceFunc(cfg *config.Config, state *terraform.ResourceState) (interface{}, error) {
+func getSecurityPoliciesV3ResourceFunc(cfg *config.HcsConfig, state *terraform.ResourceState) (interface{}, error) {
 	region := acceptance.HCS_REGION_NAME
 	// getSecurityPolicy: Query the ELB security policy
 	var (

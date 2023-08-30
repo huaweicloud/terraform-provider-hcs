@@ -11,9 +11,10 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/cce/v3/nodes"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance/common"
 )
 
-func getNodeFunc(cfg *config.Config, state *terraform.ResourceState) (interface{}, error) {
+func getNodeFunc(cfg *config.HcsConfig, state *terraform.ResourceState) (interface{}, error) {
 	client, err := cfg.CceV3Client(acceptance.HCS_REGION_NAME)
 	if err != nil {
 		return nil, fmt.Errorf("error creating CCE v3 client: %s", err)
@@ -81,10 +82,32 @@ func TestAccNode_basic(t *testing.T) {
 	})
 }
 
+func testAccNode_base(name string) string {
+	return fmt.Sprintf(`
+%[1]s
+
+resource "hcs_cce_cluster" "test" {
+  name                   = "%[2]s"
+  flavor_id              = "cce.s1.small"
+  vpc_id                 = hcs_vpc.test.id
+  subnet_id              = hcs_vpc_subnet.test.id
+  container_network_type = "overlay_l2"
+  service_network_cidr   = "10.248.0.0/16"
+
+  tags = {
+    foo = "bar"
+    key = "value"
+  }
+}
+`, common.TestVpc(name), name)
+}
+
 func testAccNode_basic(name string) string {
 	return fmt.Sprintf(`
+%[1]s
+
 resource "hcs_cce_node" "test" {
-  cluster_id        = "%[1]s"
+  cluster_id        = hcs_cce_cluster.test.id
   name              = "%[2]s"
   flavor_id         = "s2.xlarge.2"
   availability_zone = "ca1.dc1"
@@ -104,7 +127,7 @@ resource "hcs_cce_node" "test" {
     key = "value"
   }
 }
-`, acceptance.HCS_CCE_CLUSTER_ID, name)
+`, testAccNode_base(name), name)
 }
 
 func TestAccNode_auto_assign_eip(t *testing.T) {
@@ -145,8 +168,10 @@ func TestAccNode_auto_assign_eip(t *testing.T) {
 
 func testAccNode_auto_assign_eip(name string) string {
 	return fmt.Sprintf(`
+%[1]s
+
 resource "hcs_cce_node" "test" {
-  cluster_id        = "%[1]s"
+  cluster_id        = hcs_cce_cluster.test.id
   name              = "%[2]s"
   flavor_id         = "s2.xlarge.2"
   availability_zone = "ca1.dc1"
@@ -168,7 +193,7 @@ resource "hcs_cce_node" "test" {
     size       = 100
   }
 }
-`, acceptance.HCS_CCE_CLUSTER_ID, name)
+`, testAccNode_base(name), name)
 }
 
 func TestAccNode_existing_eip(t *testing.T) {
@@ -208,23 +233,10 @@ func TestAccNode_existing_eip(t *testing.T) {
 
 func testAccNode_existing_eip(name string) string {
 	return fmt.Sprintf(`
-
-resource "hcs_vpc_eip" "test" {
-  name = "%[2]s"
-
-  publicip {
-    type       = "5_bgp"
-  }
-
-  bandwidth {
-    share_type  = "PER"
-    name        = "%[2]s"
-    size        = 5
-  }
-}
+%[1]s
 
 resource "hcs_cce_node" "test" {
-  cluster_id        = "%[1]s"
+  cluster_id        = hcs_cce_cluster.test.id
   name              = "%[2]s"
   flavor_id         = "s2.xlarge.2"
   availability_zone = "ca1.dc1"
@@ -232,7 +244,7 @@ resource "hcs_cce_node" "test" {
   os                = "EulerOS 2.10"
 
   // Assign existing EIP
-  eip_id = hcs_vpc_eip.test.id
+  eip_id = "%[3]s"
 
   root_volume {
     volumetype = "SSD"
@@ -243,7 +255,7 @@ resource "hcs_cce_node" "test" {
     size       = 100
   }
 }
-`, acceptance.HCS_CCE_CLUSTER_ID, name)
+`, testAccNode_basic(name), name, acceptance.HCS_EIP_ID)
 }
 
 func TestAccNode_volume_extendParams(t *testing.T) {

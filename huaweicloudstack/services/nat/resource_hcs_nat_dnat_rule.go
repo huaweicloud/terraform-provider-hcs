@@ -154,7 +154,7 @@ func publicDnatRuleStateRefreshFunc(client *golangsdk.ServiceClient, ruleId stri
 }
 
 func resourcePublicDnatRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	client, err := cfg.NatGatewayClient(region)
 	if err != nil {
@@ -184,7 +184,7 @@ func resourcePublicDnatRuleCreate(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourcePublicDnatRuleRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	client, err := cfg.NatGatewayClient(region)
 	if err != nil {
@@ -234,7 +234,7 @@ func buildPublicDnatRuleUpdateOpts(d *schema.ResourceData) dnats.UpdateOpts {
 }
 
 func resourcePublicDnatRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	client, err := cfg.NatGatewayClient(region)
 	if err != nil {
@@ -264,7 +264,7 @@ func resourcePublicDnatRuleUpdate(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourcePublicDnatRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	client, err := cfg.NatGatewayClient(region)
 	if err != nil {

@@ -113,7 +113,7 @@ func waitForStateCompleted(ctx context.Context, f resource.StateRefreshFunc, t t
 }
 
 func resourceEIPAssociateCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	vpcClient, err := config.NetworkingV1Client(config.GetRegion(d))
 	if err != nil {
 		return fmtp.DiagErrorf("Error creating HuaweiCloudStack VPC client: %s", err)
@@ -155,7 +155,7 @@ func resourceEIPAssociateCreate(ctx context.Context, d *schema.ResourceData, met
 }
 
 func resourceEIPAssociateRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 	vpcClient, err := config.NetworkingV1Client(region)
 	if err != nil {
@@ -202,7 +202,7 @@ func resourceEIPAssociateRead(_ context.Context, d *schema.ResourceData, meta in
 }
 
 func resourceEIPAssociateDelete(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	vpcClient, err := config.NetworkingV1Client(config.GetRegion(d))
 	if err != nil {
 		return fmtp.DiagErrorf("Error creating HuaweiCloudStack VPC client: %s", err)

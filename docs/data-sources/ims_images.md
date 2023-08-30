@@ -9,20 +9,20 @@ Use this data source to get available HuaweiCloudStack IMS images.
 ## Example Usage
 
 ```hcl
-data "hcs_ims_images" "ubuntu" {
-  name       = "Ubuntu 18.04 server 64bit"
+data "hcs_ims_images" "centos" {
+  name       = "CentOS_7.4_64bit"
   visibility = "public"
 }
 
 data "hcs_ims_images" "centos-1" {
-  architecture = "x86"
+  architecture = "x86_64"
   os_version   = "CentOS 7.4 64bit"
   visibility   = "public"
 }
 
 data "hcs_ims_images" "centos-2" {
-  architecture = "x86"
-  name_regex   = "^CentOS 7.4"
+  architecture = "x86_64"
+  name_regex   = "^CentOS_7.4"
   visibility   = "public"
 }
 ```
@@ -38,9 +38,9 @@ data "hcs_ims_images" "centos-2" {
   Cannot be used simultaneously with `name`.
 
 * `visibility` - (Optional, String) The visibility of the image. Must be one of
-  **public**, **private**, **market** or **shared**.
+  **public**, **private**, or **shared**.
 
-* `architecture` - (Optional, String) Specifies the image architecture type. The value can be **x86** and **arm**.
+* `architecture` - (Optional, String) Specifies the image architecture type. The value can be **x86_64** and **aarch64**.
 
 * `os` - (Optional, String) Specifies the image OS type. The value can be **Windows**, **Ubuntu**,
   **RedHat**, **SUSE**, **CentOS**, **Debian**, **OpenSUSE**, **Oracle Linux**, **Fedora**, **Other**,

@@ -3,14 +3,15 @@ package as
 import (
 	"context"
 	"fmt"
+	"log"
+	"regexp"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/autoscaling/v1/configurations"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/autoscaling/v1/groups"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
-	"log"
-	"regexp"
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -383,7 +384,7 @@ func buildInstanceConfig(configDataMap map[string]interface{}) (configurations.I
 }
 
 func resourceASConfigurationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conf := meta.(*config.Config)
+	conf := config.GetHcsConfig(meta)
 	region := conf.GetRegion(d)
 	asClient, err := conf.AutoscalingV1Client(region)
 	if err != nil {
@@ -419,7 +420,7 @@ func resourceASConfigurationCreate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceASConfigurationRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conf := meta.(*config.Config)
+	conf := config.GetHcsConfig(meta)
 	region := conf.GetRegion(d)
 	asClient, err := conf.AutoscalingV1Client(region)
 	if err != nil {
@@ -450,7 +451,7 @@ func resourceASConfigurationRead(_ context.Context, d *schema.ResourceData, meta
 }
 
 func resourceASConfigurationDelete(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	asClient, err := config.AutoscalingV1Client(config.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating autoscaling client: %s", err)

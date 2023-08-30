@@ -178,7 +178,7 @@ func ResourceVpcSubnetV1() *schema.Resource {
 }
 
 func resourceVpcSubnetCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 	subnetClient, err := config.NetworkingV1Client(region)
 	if err != nil {
@@ -243,7 +243,7 @@ func resourceVpcSubnetCreate(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 // GetVpcSubnetById is a method to obtain subnet informations from special region through subnet ID.
-func GetVpcSubnetById(config *config.Config, region, networkId string) (*subnets.Subnet, error) {
+func GetVpcSubnetById(config *config.HcsConfig, region, networkId string) (*subnets.Subnet, error) {
 	subnetClient, err := config.NetworkingV1Client(region)
 	if err != nil {
 		return nil, err
@@ -253,7 +253,7 @@ func GetVpcSubnetById(config *config.Config, region, networkId string) (*subnets
 }
 
 func resourceVpcSubnetRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 
 	n, err := GetVpcSubnetById(config, region, d.Id())
@@ -301,7 +301,7 @@ func resourceVpcSubnetRead(_ context.Context, d *schema.ResourceData, meta inter
 }
 
 func resourceVpcSubnetUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	subnetClient, err := config.NetworkingV1Client(config.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating networking client: %s", err)
@@ -364,7 +364,7 @@ func resourceVpcSubnetUpdate(ctx context.Context, d *schema.ResourceData, meta i
 
 func resourceVpcSubnetDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	subnetClient, err := config.NetworkingV1Client(config.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating networking client: %s", err)

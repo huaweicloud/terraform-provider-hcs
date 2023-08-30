@@ -14,7 +14,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance/common"
 )
 
-func getPublicSnatRuleResourceFunc(cfg *config.Config, state *terraform.ResourceState) (interface{}, error) {
+func getPublicSnatRuleResourceFunc(cfg *config.HcsConfig, state *terraform.ResourceState) (interface{}, error) {
 	client, err := cfg.NatGatewayClient(acceptance.HCS_REGION_NAME)
 	if err != nil {
 		return nil, fmt.Errorf("error creating NAT v2 client: %s", err)
@@ -81,26 +81,13 @@ resource "hcs_vpc_eip" "test" {
   count = 2
 
   publicip {
-    type = "5_bgp"
+    type = "%[3]s"
   }
 
   bandwidth {
     name        = format("%[2]s-%%d", count.index)
     size        = 5
     share_type  = "PER"
-    charge_mode = "traffic"
-  }
-}
-
-resource "hcs_compute_instance" "test" {
-  name               = "%[2]s"
-  image_id           = data.hcs_images_image.test.id
-  flavor_id          = data.hcs_compute_flavors.test.ids[0]
-  security_group_ids = [hcs_networking_secgroup.test.id]
-  availability_zone  = data.hcs_availability_zones.test.names[0]
-
-  network {
-    uuid = hcs_vpc_subnet.test.id
   }
 }
 
@@ -109,9 +96,8 @@ resource "hcs_nat_gateway" "test" {
   spec                  = "2"
   vpc_id                = hcs_vpc.test.id
   subnet_id             = hcs_vpc_subnet.test.id
-  enterprise_project_id = "0"
 }
-`, common.TestBaseComputeResources(name), name)
+`, common.TestBaseComputeResources(name), name, acceptance.HCS_EIP_EXTERNAL_NETWORK_NAME)
 }
 
 func testAccPublicSnatRule_basic_step_1(name string) string {

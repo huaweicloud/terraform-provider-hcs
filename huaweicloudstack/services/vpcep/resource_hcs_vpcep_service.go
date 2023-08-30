@@ -2,7 +2,6 @@ package vpcep
 
 import (
 	"context"
-
 	"log"
 	"regexp"
 	"strings"
@@ -12,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
@@ -171,7 +171,7 @@ func doPermissionAction(client *golangsdk.ServiceClient, serviceID, action strin
 }
 
 func resourceVPCEndpointServiceCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 	vpcepClient, err := config.VPCEPClient(region)
 	if err != nil {
@@ -222,7 +222,7 @@ func resourceVPCEndpointServiceCreate(ctx context.Context, d *schema.ResourceDat
 }
 
 func resourceVPCEndpointServiceRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 	vpcepClient, err := config.VPCEPClient(region)
 	if err != nil {
@@ -272,7 +272,7 @@ func resourceVPCEndpointServiceRead(_ context.Context, d *schema.ResourceData, m
 }
 
 func resourceVPCEndpointServiceUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 	vpcepClient, err := config.VPCEPClient(region)
 	if err != nil {
@@ -322,7 +322,7 @@ func resourceVPCEndpointServiceUpdate(ctx context.Context, d *schema.ResourceDat
 }
 
 func resourceVPCEndpointServiceDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
 	vpcepClient, err := config.VPCEPClient(region)
 	if err != nil {

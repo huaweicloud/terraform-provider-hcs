@@ -228,7 +228,7 @@ func resourceElbV3AvailabilityZone(d *schema.ResourceData) []string {
 }
 
 func resourceLoadBalancerV3Create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	elbClient, err := cfg.ElbV3Client(cfg.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating ELB client: %s", err)
@@ -348,7 +348,7 @@ func resourceLoadBalancerV3Create(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourceLoadBalancerV3Read(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	elbClient, err := cfg.ElbV3Client(cfg.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating ELB client: %s", err)
@@ -415,7 +415,7 @@ func resourceLoadBalancerV3Read(_ context.Context, d *schema.ResourceData, meta 
 }
 
 func resourceLoadBalancerV3Update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	elbClient, err := cfg.ElbV3Client(cfg.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating ELB client: %s", err)
@@ -509,7 +509,7 @@ func buildUpdateLoadBalancerBodyParams(d *schema.ResourceData) loadbalancers.Upd
 	return updateOpts
 }
 
-func updateLoadBalancer(ctx context.Context, d *schema.ResourceData, cfg *config.Config, updateOpts loadbalancers.UpdateOpts,
+func updateLoadBalancer(ctx context.Context, d *schema.ResourceData, cfg *config.HcsConfig, updateOpts loadbalancers.UpdateOpts,
 	elbClient *golangsdk.ServiceClient) diag.Diagnostics {
 	// Wait for LoadBalancer to become active before continuing
 	timeout := d.Timeout(schema.TimeoutUpdate)
@@ -558,7 +558,7 @@ func updateLoadBalancer(ctx context.Context, d *schema.ResourceData, cfg *config
 }
 
 func resourceLoadBalancerV3Delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
+	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 	elbClient, err := cfg.ElbV3Client(region)
 	if err != nil {

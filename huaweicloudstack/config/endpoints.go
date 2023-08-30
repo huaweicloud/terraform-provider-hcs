@@ -295,14 +295,13 @@ var allServiceCatalog = map[string]ServiceCatalog{
 		Product: "VPCEP",
 	},
 	"dns": {
-		Name:             "dns",
+		Name:             "clouddns",
 		Version:          "v2",
-		Scope:            "global",
 		WithOutProjectID: true,
 		Product:          "DNS",
 	},
 	"dns_region": {
-		Name:             "dns",
+		Name:             "clouddns",
 		Version:          "v2",
 		WithOutProjectID: true,
 		Product:          "DNS",
@@ -777,7 +776,7 @@ var allServiceCatalog = map[string]ServiceCatalog{
 }
 
 // GetServiceEndpoint try to get the endpoint from customizing map
-func GetServiceEndpoint(c *Config, srv, region string) string {
+func GetServiceEndpoint(c *HcsConfig, srv, region string) string {
 	if endpoint, ok := c.Endpoints[srv]; ok {
 		return endpoint
 	}

@@ -2,35 +2,67 @@
  * Copyright (c) Huawei Technologies Co., Ltd. 2023-2023. All rights reserved.
  */
 
-package huaweicloudstack
+package vpc
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/networking/v2/extensions/fwaas_v2/rules"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils/fmtp"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
+func getaclRuleResourceFunc(cfg *config.HcsConfig, state *terraform.ResourceState) (interface{}, error) {
+	region := acceptance.HCS_REGION_NAME
+	// getDNSRecordset: Query DNS recordset
+	getaclRuleClient, err := cfg.NewServiceClient("networkv2", region)
+	if err != nil {
+		return nil, fmt.Errorf("error creating network Client: %s", err)
+	}
+	getaclRuleHttpUrl := "v2.0/fwaas/firewall_rules/{firewall_rule_id}"
+
+	getaclRulePath := getaclRuleClient.Endpoint + getaclRuleHttpUrl
+	getaclRulePath = strings.ReplaceAll(getaclRulePath, "{firewall_rule_id}", state.Primary.ID)
+
+	getaclRuleOpt := golangsdk.RequestOpts{
+		KeepResponseBody: true,
+		OkCodes: []int{
+			200,
+		},
+	}
+	getDNSRecordsetResp, err := getaclRuleClient.Request("GET", getaclRulePath, &getaclRuleOpt)
+	if err != nil {
+		return nil, fmt.Errorf("error retrieving DNS recordset: %s", err)
+	}
+	return utils.FlattenResponse(getDNSRecordsetResp)
+}
+
 func TestAccNetworkACLRule_basic(t *testing.T) {
 	resourceKey := "hcs_network_acl_rule.rule_1"
 	rName := fmt.Sprintf("tf-acc-test-%s", acctest.RandString(5))
+	var obj interface{}
+	rc := acceptance.InitResourceCheck(
+		resourceKey,
+		&obj,
+		getaclRuleResourceFunc,
+	)
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckNetworkACLRuleDestroy,
+		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
+		ProviderFactories: acceptance.TestAccProviderFactories,
+		CheckDestroy:      rc.CheckResourceDestroy(),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccNetworkACLRule_basic_1(rName),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckNetworkACLRuleExists(resourceKey),
+					rc.CheckResourceExists(),
 					resource.TestCheckResourceAttr(resourceKey, "name", rName),
 					resource.TestCheckResourceAttr(resourceKey, "protocol", "udp"),
 					resource.TestCheckResourceAttr(resourceKey, "action", "deny"),
@@ -40,7 +72,7 @@ func TestAccNetworkACLRule_basic(t *testing.T) {
 			{
 				Config: testAccNetworkACLRule_basic_2(rName),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckNetworkACLRuleExists(resourceKey),
+					rc.CheckResourceExists(),
 					resource.TestCheckResourceAttr(resourceKey, "name", rName),
 					resource.TestCheckResourceAttr(resourceKey, "protocol", "udp"),
 					resource.TestCheckResourceAttr(resourceKey, "action", "deny"),
@@ -54,7 +86,7 @@ func TestAccNetworkACLRule_basic(t *testing.T) {
 			{
 				Config: testAccNetworkACLRule_basic_3(rName),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckNetworkACLRuleExists(resourceKey),
+					rc.CheckResourceExists(),
 					resource.TestCheckResourceAttr(resourceKey, "name", rName),
 					resource.TestCheckResourceAttr(resourceKey, "protocol", "tcp"),
 					resource.TestCheckResourceAttr(resourceKey, "action", "allow"),
@@ -77,16 +109,22 @@ func TestAccNetworkACLRule_basic(t *testing.T) {
 func TestAccNetworkACLRule_anyProtocol(t *testing.T) {
 	resourceKey := "hcs_network_acl_rule.rule_any"
 	rName := fmt.Sprintf("tf-acc-test-%s", acctest.RandString(5))
+	var obj interface{}
+	rc := acceptance.InitResourceCheck(
+		resourceKey,
+		&obj,
+		getaclRuleResourceFunc,
+	)
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckNetworkACLRuleDestroy,
+		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
+		ProviderFactories: acceptance.TestAccProviderFactories,
+		CheckDestroy:      rc.CheckResourceDestroy(),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccNetworkACLRule_anyProtocol(rName),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckNetworkACLRuleExists(resourceKey),
+					rc.CheckResourceExists(),
 					resource.TestCheckResourceAttr(resourceKey, "name", rName),
 					resource.TestCheckResourceAttr(resourceKey, "protocol", "any"),
 					resource.TestCheckResourceAttr(resourceKey, "action", "allow"),
@@ -96,58 +134,6 @@ func TestAccNetworkACLRule_anyProtocol(t *testing.T) {
 			},
 		},
 	})
-}
-
-func testAccCheckNetworkACLRuleDestroy(s *terraform.State) error {
-	config := testAccProvider.Meta().(*config.Config)
-	fwClient, err := config.FwV2Client(HCS_REGION_NAME)
-	if err != nil {
-		return fmtp.Errorf("Error creating HuaweiCloudStack fw client: %s", err)
-	}
-
-	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "hcs_network_acl_rule" {
-			continue
-		}
-		_, err = rules.Get(fwClient, rs.Primary.ID).Extract()
-		if err == nil {
-			return fmtp.Errorf("Network ACL rule (%s) still exists.", rs.Primary.ID)
-		}
-		if _, ok := err.(golangsdk.ErrDefault404); !ok {
-			return err
-		}
-	}
-	return nil
-}
-
-func testAccCheckNetworkACLRuleExists(key string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		rs, ok := s.RootModule().Resources[key]
-		if !ok {
-			return fmtp.Errorf("Not found: %s", key)
-		}
-
-		if rs.Primary.ID == "" {
-			return fmtp.Errorf("No ID is set in %s", key)
-		}
-
-		config := testAccProvider.Meta().(*config.Config)
-		fwClient, err := config.FwV2Client(HCS_REGION_NAME)
-		if err != nil {
-			return fmtp.Errorf("Error creating HuaweiCloudStack fw client: %s", err)
-		}
-
-		found, err := rules.Get(fwClient, rs.Primary.ID).Extract()
-		if err != nil {
-			return err
-		}
-
-		if found.ID != rs.Primary.ID {
-			return fmtp.Errorf("Network ACL rule not found")
-		}
-
-		return nil
-	}
 }
 
 func testAccNetworkACLRule_basic_1(rName string) string {

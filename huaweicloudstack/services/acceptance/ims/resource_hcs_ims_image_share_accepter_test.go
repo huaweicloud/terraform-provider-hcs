@@ -14,7 +14,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
 )
 
-func getImsImageShareAccepterResourceFunc(cfg *config.Config, state *terraform.ResourceState) (interface{}, error) {
+func getImsImageShareAccepterResourceFunc(cfg *config.HcsConfig, state *terraform.ResourceState) (interface{}, error) {
 	region := acceptance.HCS_REGION_NAME
 	// getImage: Query IMS image
 	var (

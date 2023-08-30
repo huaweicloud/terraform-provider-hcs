@@ -10,10 +10,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cce"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cfw"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/as"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/bms"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/cce"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dns"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ecs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eip"
@@ -314,6 +316,8 @@ func Provider() *schema.Provider {
 			"hcs_enterprise_project":    eps.DataSourceEnterpriseProject(),
 			"hcs_vpcep_public_services": vpcep.DataSourceVPCEPPublicServices(),
 
+			"hcs_cfw_firewalls": cfw.DataSourceFirewalls(),
+
 			"hcs_vpc_bandwidth": eip.DataSourceBandWidth(),
 			"hcs_vpc_eip":       eip.DataSourceVpcEip(),
 			"hcs_vpc_eips":      eip.DataSourceVpcEips(),
@@ -344,6 +348,8 @@ func Provider() *schema.Provider {
 			"hcs_cce_nodes":          cce.DataSourceNodes(),
 
 			"hcs_ecs_compute_flavors":      ecs.DataSourceEcsFlavors(),
+			"hcs_ecs_compute_instance":     ecs.DataSourceComputeInstance(),
+			"hcs_ecs_compute_instances":    ecs.DataSourceComputeInstances(),
 			"hcs_ecs_compute_servergroups": ecs.DataSourceComputeServerGroups(),
 		},
 
@@ -355,6 +361,14 @@ func Provider() *schema.Provider {
 			"hcs_cce_node_attach": cce.ResourceNodeAttach(),
 			"hcs_cce_node_pool":   cce.ResourceNodePool(),
 			"hcs_cce_pvc":         cce.ResourceCcePersistentVolumeClaimsV1(),
+
+			"hcs_cfw_address_group":        cfw.ResourceAddressGroup(),
+			"hcs_cfw_address_group_member": cfw.ResourceAddressGroupMember(),
+			"hcs_cfw_black_white_list":     cfw.ResourceBlackWhiteList(),
+			"hcs_cfw_eip_protection":       cfw.ResourceEipProtection(),
+			"hcs_cfw_protection_rule":      cfw.ResourceProtectionRule(),
+			"hcs_cfw_service_group_member": cfw.ResourceServiceGroupMember(),
+			"hcs_cfw_service_group":        cfw.ResourceServiceGroup(),
 
 			"hcs_enterprise_project": eps.ResourceEnterpriseProject(),
 			"hcs_dns_recordset":      dns.ResourceDNSRecordset(),
@@ -550,45 +564,50 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 		identityEndpoint = fmt.Sprintf("https://iam-apigateway-proxy.%s:443/v3", cloud)
 	}
 
-	config := config.Config{
-		AccessKey:           d.Get("access_key").(string),
-		SecretKey:           d.Get("secret_key").(string),
-		CACertFile:          d.Get("cacert_file").(string),
-		ClientCertFile:      d.Get("cert").(string),
-		ClientKeyFile:       d.Get("key").(string),
-		DomainID:            d.Get("domain_id").(string),
-		DomainName:          d.Get("domain_name").(string),
-		IdentityEndpoint:    identityEndpoint,
-		Insecure:            d.Get("insecure").(bool),
-		Password:            d.Get("password").(string),
-		Token:               d.Get("token").(string),
-		SecurityToken:       d.Get("security_token").(string),
-		Region:              region,
-		TenantID:            tenantID,
-		TenantName:          tenantName,
-		Username:            d.Get("user_name").(string),
-		UserID:              d.Get("user_id").(string),
-		AgencyName:          d.Get("agency_name").(string),
-		AgencyDomainName:    d.Get("agency_domain_name").(string),
-		DelegatedProject:    delegatedProject,
-		Cloud:               cloud,
-		RegionClient:        isRegional,
-		MaxRetries:          d.Get("max_retries").(int),
-		EnterpriseProjectID: d.Get("enterprise_project_id").(string),
-		SharedConfigFile:    d.Get("shared_config_file").(string),
-		Profile:             d.Get("profile").(string),
-		TerraformVersion:    terraformVersion,
-		RegionProjectIDMap:  make(map[string]string),
-		RPLock:              new(sync.Mutex),
-		SecurityKeyLock:     new(sync.Mutex),
+	hcsConfig := config.HcsConfig{
+		Config: config.Config{
+			AccessKey:           d.Get("access_key").(string),
+			SecretKey:           d.Get("secret_key").(string),
+			CACertFile:          d.Get("cacert_file").(string),
+			ClientCertFile:      d.Get("cert").(string),
+			ClientKeyFile:       d.Get("key").(string),
+			DomainID:            d.Get("domain_id").(string),
+			DomainName:          d.Get("domain_name").(string),
+			IdentityEndpoint:    identityEndpoint,
+			Insecure:            d.Get("insecure").(bool),
+			Password:            d.Get("password").(string),
+			Token:               d.Get("token").(string),
+			SecurityToken:       d.Get("security_token").(string),
+			Region:              region,
+			TenantID:            tenantID,
+			TenantName:          tenantName,
+			Username:            d.Get("user_name").(string),
+			UserID:              d.Get("user_id").(string),
+			AgencyName:          d.Get("agency_name").(string),
+			AgencyDomainName:    d.Get("agency_domain_name").(string),
+			DelegatedProject:    delegatedProject,
+			Cloud:               cloud,
+			RegionClient:        isRegional,
+			MaxRetries:          d.Get("max_retries").(int),
+			EnterpriseProjectID: d.Get("enterprise_project_id").(string),
+			SharedConfigFile:    d.Get("shared_config_file").(string),
+			Profile:             d.Get("profile").(string),
+			TerraformVersion:    terraformVersion,
+			RegionProjectIDMap:  make(map[string]string),
+			RPLock:              new(sync.Mutex),
+			SecurityKeyLock:     new(sync.Mutex),
+		},
 	}
+
+	// Save hcsConfig to config.Config for extend
+	hcsConfig.Metadata = &hcsConfig
 
 	// get assume role
 	assumeRoleList := d.Get("assume_role").([]interface{})
 	if len(assumeRoleList) == 1 {
 		assumeRole := assumeRoleList[0].(map[string]interface{})
-		config.AssumeRoleAgency = assumeRole["agency_name"].(string)
-		config.AssumeRoleDomain = assumeRole["domain_name"].(string)
+		hcsConfig.AssumeRoleAgency = assumeRole["agency_name"].(string)
+		hcsConfig.AssumeRoleDomain = assumeRole["domain_name"].(string)
 	}
 
 	// get custom endpoints
@@ -596,13 +615,13 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 	if err != nil {
 		return nil, diag.FromErr(err)
 	}
-	config.Endpoints = endpoints
+	hcsConfig.Endpoints = endpoints
 
-	if err := config.LoadAndValidate(); err != nil {
+	if err := hcsConfig.LoadAndValidate(); err != nil {
 		return nil, diag.FromErr(err)
 	}
 
-	return &config, nil
+	return &hcsConfig.Config, nil
 }
 
 func flattenProviderEndpoints(d *schema.ResourceData) (map[string]string, error) {

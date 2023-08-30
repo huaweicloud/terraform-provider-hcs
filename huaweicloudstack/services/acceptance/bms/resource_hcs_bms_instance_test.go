@@ -50,7 +50,7 @@ func TestAccBmsInstance_basic(t *testing.T) {
 }
 
 func testAccCheckBmsInstanceDestroy(s *terraform.State) error {
-	cfg := acceptance.TestAccProvider.Meta().(*config.Config)
+	cfg := config.GetHcsConfig(acceptance.TestAccProvider.Meta())
 	bmsClient, err := cfg.BmsV1Client(acceptance.HCS_REGION_NAME)
 	if err != nil {
 		return fmt.Errorf("error creating HuaweiCloudStack bms client: %s", err)
@@ -86,7 +86,7 @@ func testAccCheckBmsInstanceExists(n string, instance *baremetalservers.CloudSer
 			return fmt.Errorf("No ID is set")
 		}
 
-		cfg := acceptance.TestAccProvider.Meta().(*config.Config)
+		cfg := config.GetHcsConfig(acceptance.TestAccProvider.Meta())
 		bmsClient, err := cfg.BmsV1Client(acceptance.HCS_REGION_NAME)
 		if err != nil {
 			return fmt.Errorf("Error creating HuaweiCloudStack bms client: %s", err)

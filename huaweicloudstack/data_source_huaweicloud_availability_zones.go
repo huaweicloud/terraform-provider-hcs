@@ -39,7 +39,7 @@ func DataSourceAvailabilityZones() *schema.Resource {
 }
 
 func dataSourceAvailabilityZonesRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	region := GetRegion(d, config)
 	computeClient, err := config.ComputeV2Client(region)
 	if err != nil {

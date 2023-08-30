@@ -7,10 +7,11 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 )
 
 const (
@@ -30,7 +31,7 @@ type HttpClientGo struct {
 	Transport   *http.Transport
 }
 
-func NewHttpClientGo(c *config.Config, product, region string) (*HttpClientGo, error) {
+func NewHttpClientGo(c *config.HcsConfig, product, region string) (*HttpClientGo, error) {
 	client, err := c.NewServiceClient(product, region)
 	if err != nil {
 		return nil, err
@@ -54,7 +55,7 @@ func (client *HttpClientGo) WithUrl(url string) *HttpClientGo {
 	return client
 }
 
-func (client *HttpClientGo) WithUrlWithoutEndpoint(cfg *config.Config, srv, region, path string) *HttpClientGo {
+func (client *HttpClientGo) WithUrlWithoutEndpoint(cfg *config.HcsConfig, srv, region, path string) *HttpClientGo {
 	endpoint := config.GetServiceEndpoint(cfg, srv, region)
 
 	client.Url = endpoint + path

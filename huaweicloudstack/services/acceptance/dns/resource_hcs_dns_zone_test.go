@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func getDNSZoneResourceFunc(c *config.Config, state *terraform.ResourceState) (interface{}, error) {
+func getDNSZoneResourceFunc(c *config.HcsConfig, state *terraform.ResourceState) (interface{}, error) {
 	dnsClient, err := c.DnsV2Client(acceptance.HCS_REGION_NAME)
 	if err != nil {
 		return nil, fmt.Errorf("error creating DNS client: %s", err)
@@ -43,26 +43,21 @@ func TestAccDNSZone_basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					rc.CheckResourceExists(),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "zone_type", "public"),
+					resource.TestCheckResourceAttr(resourceName, "zone_type", "private"),
 					resource.TestCheckResourceAttr(resourceName, "description", "a zone"),
 					resource.TestCheckResourceAttr(resourceName, "ttl", "300"),
-					resource.TestCheckResourceAttr(resourceName, "tags.zone_type", "public"),
-					resource.TestCheckResourceAttr(resourceName, "tags.owner", "terraform"),
 					resource.TestCheckResourceAttrSet(resourceName, "email"),
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName: resourceName,
+				ImportState:  true,
 			},
 			{
 				Config: testAccDNSZone_update(name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "description", "an updated zone"),
 					resource.TestCheckResourceAttr(resourceName, "ttl", "600"),
-					resource.TestCheckResourceAttr(resourceName, "tags.zone_type", "public"),
-					resource.TestCheckResourceAttr(resourceName, "tags.owner", "tf-acc"),
 					resource.TestCheckResourceAttrSet(resourceName, "email"),
 				),
 			},
@@ -95,8 +90,6 @@ func TestAccDNSZone_private(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "a private zone"),
 					resource.TestCheckResourceAttr(resourceName, "email", "email@example.com"),
 					resource.TestCheckResourceAttr(resourceName, "ttl", "300"),
-					resource.TestCheckResourceAttr(resourceName, "tags.zone_type", "private"),
-					resource.TestCheckResourceAttr(resourceName, "tags.owner", "terraform"),
 				),
 			},
 		},
@@ -130,78 +123,70 @@ func TestAccDNSZone_readTTL(t *testing.T) {
 	})
 }
 
-func TestAccDNSZone_withEpsId(t *testing.T) {
-	var zone zones.Zone
-	resourceName := "hcs_dns_zone.zone_1"
-	name := fmt.Sprintf("acpttest-zone-%s.com.", acctest.RandString(5))
-
-	rc := acceptance.InitResourceCheck(
-		resourceName,
-		&zone,
-		getDNSZoneResourceFunc,
-	)
-
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:          func() { acceptance.TestAccPreCheck(t); acceptance.TestAccPreCheckEpsID(t) },
-		ProviderFactories: acceptance.TestAccProviderFactories,
-		CheckDestroy:      rc.CheckResourceDestroy(),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccDNSZone_withEpsId(name),
-				Check: resource.ComposeTestCheckFunc(
-					rc.CheckResourceExists(),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "zone_type", "private"),
-					resource.TestCheckResourceAttr(resourceName, "enterprise_project_id", acceptance.HCS_ENTERPRISE_PROJECT_ID_TEST),
-				),
-			},
-		},
-	})
-}
-
 func testAccDNSZone_basic(zoneName string) string {
 	return fmt.Sprintf(`
+resource "hcs_vpc" "default" {
+  name = "%s"
+  cidr = "1.0.0.0/24"
+}
+
 resource "hcs_dns_zone" "zone_1" {
   name        = "%s"
   description = "a zone"
   ttl         = 300
+  zone_type             = "private"
 
-  tags = {
-    zone_type = "public"
-    owner     = "terraform"
+  router {
+    router_id = resource.hcs_vpc.default.id
   }
 }
-`, zoneName)
+`, zoneName, zoneName)
 }
 
 func testAccDNSZone_update(zoneName string) string {
 	return fmt.Sprintf(`
+resource "hcs_vpc" "default" {
+  name = "%s"
+  cidr = "1.0.0.0/24"
+}
+
 resource "hcs_dns_zone" "zone_1" {
   name        = "%s"
   description = "an updated zone"
   ttl         = 600
+  zone_type             = "private"
 
-  tags = {
-    zone_type = "public"
-    owner     = "tf-acc"
+  router {
+    router_id = resource.hcs_vpc.default.id
   }
 }
-`, zoneName)
+`, zoneName, zoneName)
 }
 
 func testAccDNSZone_readTTL(zoneName string) string {
 	return fmt.Sprintf(`
+resource "hcs_vpc" "default" {
+  name = "%s"
+  cidr = "1.0.0.0/24"
+}
+
 resource "hcs_dns_zone" "zone_1" {
   name  = "%s"
   email = "email1@example.com"
+  zone_type             = "private"
+
+  router {
+    router_id = resource.hcs_vpc.default.id
+  }
 }
-`, zoneName)
+`, zoneName, zoneName)
 }
 
 func testAccDNSZone_private(zoneName string) string {
 	return fmt.Sprintf(`
-data "hcs_vpc" "default" {
-  name = "vpc-default"
+resource "hcs_vpc" "default" {
+  name = "%s"
+  cidr = "1.0.0.0/24"
 }
 
 resource "hcs_dns_zone" "zone_1" {
@@ -211,36 +196,8 @@ resource "hcs_dns_zone" "zone_1" {
   zone_type   = "private"
 
   router {
-    router_id = data.hcs_vpc.default.id
-  }
-  tags = {
-    zone_type = "private"
-    owner     = "terraform"
+    router_id = resource.hcs_vpc.default.id
   }
 }
-`, zoneName)
-}
-
-func testAccDNSZone_withEpsId(zoneName string) string {
-	return fmt.Sprintf(`
-data "hcs_vpc" "default" {
-  name = "vpc-default"
-}
-
-resource "hcs_dns_zone" "zone_1" {
-  name                  = "%s"
-  email                 = "email@example.com"
-  description           = "a private zone"
-  zone_type             = "private"
-  enterprise_project_id = "%s"
-
-  router {
-    router_id = data.hcs_vpc.default.id
-  }
-  tags = {
-    zone_type = "private"
-    owner     = "terraform"
-  }
-}
-`, zoneName, acceptance.HCS_ENTERPRISE_PROJECT_ID_TEST)
+`, zoneName, zoneName)
 }

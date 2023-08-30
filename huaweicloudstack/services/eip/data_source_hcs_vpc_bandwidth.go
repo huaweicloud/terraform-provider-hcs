@@ -58,7 +58,7 @@ func DataSourceBandWidth() *schema.Resource {
 }
 
 func dataSourceBandWidthRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*config.Config)
+	config := config.GetHcsConfig(meta)
 	vpcClient, err := config.NetworkingV1Client(config.GetRegion(d))
 	if err != nil {
 		return fmtp.DiagErrorf("Error creating HuaweiCloudStack VPC client: %s", err)

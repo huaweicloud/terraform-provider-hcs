@@ -3,19 +3,20 @@ package dns
 import (
 	"context"
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/common/tags"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/dns/v2/zones"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
-	"log"
-	"time"
 )
 
 func ResourceDNSZone() *schema.Resource {
@@ -96,7 +97,6 @@ func ResourceDNSZone() *schema.Resource {
 				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
-			"tags": common.TagsSchema(),
 		},
 	}
 }
@@ -121,7 +121,7 @@ func resourceDNSRouter(d *schema.ResourceData, region string) *zones.RouterOpts 
 }
 
 func resourceDNSZoneCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conf := meta.(*config.Config)
+	conf := config.GetHcsConfig(meta)
 	region := conf.GetRegion(d)
 	var dnsClient *golangsdk.ServiceClient
 
@@ -216,26 +216,12 @@ func resourceDNSZoneCreate(ctx context.Context, d *schema.ResourceData, meta int
 		}
 	}
 
-	// set tags
-	tagRaw := d.Get("tags").(map[string]interface{})
-	if len(tagRaw) > 0 {
-		resourceType, err := utils.GetDNSZoneTagType(zoneType)
-		if err != nil {
-			return diag.Errorf("error getting resource type of DNS zone %s: %s", n.ID, err)
-		}
-
-		taglist := utils.ExpandResourceTags(tagRaw)
-		if tagErr := tags.Create(dnsClient, resourceType, n.ID, taglist).ExtractErr(); tagErr != nil {
-			return diag.Errorf("error setting tags of DNS zone %s: %s", n.ID, tagErr)
-		}
-	}
-
 	log.Printf("[DEBUG] Created DNS zone %s: %#v", n.ID, n)
 	return resourceDNSZoneRead(ctx, d, meta)
 }
 
 func resourceDNSZoneRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conf := meta.(*config.Config)
+	conf := config.GetHcsConfig(meta)
 	region := conf.GetRegion(d)
 
 	// we can not get the corresponding client by zone type in import scene
@@ -276,17 +262,6 @@ func resourceDNSZoneRead(_ context.Context, d *schema.ResourceData, meta interfa
 		d.Set("enterprise_project_id", zoneInfo.EnterpriseProjectID),
 	)
 
-	// save tags
-	if resourceType, err := utils.GetDNSZoneTagType(zoneInfo.ZoneType); err == nil {
-		resourceTags, err := tags.Get(dnsClient, resourceType, d.Id()).Extract()
-		if err == nil {
-			tagmap := utils.TagsToMap(resourceTags.Tags)
-			mErr = multierror.Append(mErr, d.Set("tags", tagmap))
-		} else {
-			log.Printf("[WARN] Error fetching DNS zone tags: %s", err)
-		}
-	}
-
 	if mErr.ErrorOrNil() != nil {
 		return diag.Errorf("error setting resource: %s", mErr)
 	}
@@ -295,7 +270,7 @@ func resourceDNSZoneRead(_ context.Context, d *schema.ResourceData, meta interfa
 }
 
 func resourceDNSZoneUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conf := meta.(*config.Config)
+	conf := config.GetHcsConfig(meta)
 	region := conf.GetRegion(d)
 	var dnsClient *golangsdk.ServiceClient
 
@@ -444,7 +419,7 @@ func updateDNSZoneRouters(ctx context.Context, d *schema.ResourceData, client *g
 }
 
 func resourceDNSZoneDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conf := meta.(*config.Config)
+	conf := config.GetHcsConfig(meta)
 	var dnsClient *golangsdk.ServiceClient
 	var err error
 

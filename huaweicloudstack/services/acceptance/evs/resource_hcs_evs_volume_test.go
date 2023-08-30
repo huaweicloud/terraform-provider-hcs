@@ -18,7 +18,7 @@ const (
 	updateSize = "2"
 )
 
-func getVolumeResourceFunc(conf *config.Config, state *terraform.ResourceState) (interface{}, error) {
+func getVolumeResourceFunc(conf *config.HcsConfig, state *terraform.ResourceState) (interface{}, error) {
 	c, err := conf.BlockStorageV2Client(acceptance.HCS_REGION_NAME)
 	if err != nil {
 		return nil, fmt.Errorf("Error creating HuaweiCloudStack block storage v2 client: %s", err)

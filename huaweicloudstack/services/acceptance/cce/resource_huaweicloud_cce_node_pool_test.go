@@ -13,7 +13,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance/common"
 )
 
-func getNodePoolFunc(cfg *config.Config, state *terraform.ResourceState) (interface{}, error) {
+func getNodePoolFunc(cfg *config.HcsConfig, state *terraform.ResourceState) (interface{}, error) {
 	client, err := cfg.CceV3Client(acceptance.HCS_REGION_NAME)
 	if err != nil {
 		return nil, fmt.Errorf("error creating CCE v3 client: %s", err)
