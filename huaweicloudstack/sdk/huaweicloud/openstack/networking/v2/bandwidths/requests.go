@@ -77,7 +77,6 @@ func (opts BandWidthInsertOpts) ToBandWidthInsertMap() (map[string]interface{}, 
 }
 
 type BandWidthRemoveOpts struct {
-	ChargeMode   string           `json:"charge_mode" required:"true"`
 	Size         *int             `json:"size" required:"true"`
 	PublicipInfo []PublicIpInfoID `json:"publicip_info" required:"true"`
 }
