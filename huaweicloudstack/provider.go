@@ -329,9 +329,11 @@ func Provider() *schema.Provider {
 
 			"hcs_ims_images": ims.DataSourceImagesImages(),
 
-			"hcs_vpcs":        vpc.DataSourceVpcs(),
-			"hcs_vpc_subnets": vpc.DataSourceVpcSubnets(),
+			"hcs_vpcs":                   vpc.DataSourceVpcs(),
+			"hcs_vpc_subnets":            vpc.DataSourceVpcSubnets(),
+			"hcs_vpc_peering_connection": vpc.DataSourceVpcPeeringConnectionV2(),
 
+			"hcs_networking_secgroup":  vpc.DataSourceNetworkingSecGroup(),
 			"hcs_networking_secgroups": vpc.DataSourceNetworkingSecGroups(),
 
 			"hcs_availability_zones": DataSourceAvailabilityZones(),
@@ -431,16 +433,18 @@ func Provider() *schema.Provider {
 			"hcs_vpc":        vpc.ResourceVirtualPrivateCloudV1(),
 			"hcs_vpc_subnet": vpc.ResourceVpcSubnetV1(),
 
-			"hcs_vpc_route_v2":             vpc.ResourceVPCRouteV2(),
-			"hcs_vpc_v1":                   vpc.ResourceVirtualPrivateCloudV1(),
-			"hcs_vpc_subnet_v1":            vpc.ResourceVpcSubnetV1(),
-			"hcs_networking_vip":           vpc.ResourceNetworkingVip(),
-			"hcs_networking_vip_associate": vpc.ResourceNetworkingVIPAssociateV2(),
+			"hcs_vpc_route_v2":                    vpc.ResourceVPCRouteV2(),
+			"hcs_vpc_v1":                          vpc.ResourceVirtualPrivateCloudV1(),
+			"hcs_vpc_subnet_v1":                   vpc.ResourceVpcSubnetV1(),
+			"hcs_networking_vip":                  vpc.ResourceNetworkingVip(),
+			"hcs_networking_vip_associate":        vpc.ResourceNetworkingVIPAssociateV2(),
+			"hcs_vpc_peering_connection":          vpc.ResourceVpcPeeringConnectionV2(),
+			"hcs_vpc_peering_connection_accepter": vpc.ResourceVpcPeeringConnectionAccepterV2(),
 
 			"hcs_network_acl":              ResourceNetworkACL(),
 			"hcs_network_acl_rule":         ResourceNetworkACLRule(),
-			"hcs_networking_secgroup":      ResourceNetworkingSecGroup(),
-			"hcs_networking_secgroup_rule": ResourceNetworkingSecGroupRule(),
+			"hcs_networking_secgroup":      vpc.ResourceNetworkingSecGroup(),
+			"hcs_networking_secgroup_rule": vpc.ResourceNetworkingSecGroupRule(),
 
 			"hcs_bms_instance": bms.ResourceBmsInstance(),
 		},
