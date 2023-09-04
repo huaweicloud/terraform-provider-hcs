@@ -384,7 +384,8 @@ func Provider() *schema.Provider {
 			"hcs_vpc_bandwidth_v2": eip.ResourceVpcBandWidthV2(),
 			"hcs_vpc_eip_v1":       eip.ResourceVpcEIPV1(),
 
-			"hcs_evs_volume": evs.ResourceEvsVolume(),
+			"hcs_evs_volume":   evs.ResourceEvsVolume(),
+			"hcs_evs_snapshot": evs.ResourceEvsSnapshotV2(),
 
 			"hcs_elb_certificate":     elb.ResourceCertificateV3(),
 			"hcs_elb_l7policy":        elb.ResourceL7PolicyV3(),
