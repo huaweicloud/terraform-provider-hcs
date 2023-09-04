@@ -1,8 +1,4 @@
-/*
- * Copyright (c) Huawei Technologies Co., Ltd. 2023-2023. All rights reserved.
- */
-
-package huaweicloudstack
+package vpc
 
 import (
 	"context"
@@ -27,7 +23,7 @@ import (
 )
 
 // Some parameters are only support creation in ver.3 API.
-var advancedParams = []string{"ports", "remote_address_group_id", "action", "priority"}
+var advancedParams = []string{"ports", "action"}
 
 func ResourceNetworkingSecGroupRule() *schema.Resource {
 	return &schema.Resource{
@@ -110,14 +106,7 @@ func ResourceNetworkingSecGroupRule() *schema.Resource {
 				Optional:     true,
 				ForceNew:     true,
 				Computed:     true,
-				ExactlyOneOf: []string{"remote_address_group_id", "remote_ip_prefix"},
-			},
-			"remote_address_group_id": {
-				Type:          schema.TypeString,
-				Optional:      true,
-				ForceNew:      true,
-				Computed:      true,
-				ConflictsWith: []string{"port_range_min", "port_range_max"},
+				ExactlyOneOf: []string{"remote_ip_prefix"},
 			},
 			"remote_ip_prefix": {
 				Type:         schema.TypeString,
@@ -167,8 +156,8 @@ func doesAdvanceddParamUsed(d *schema.ResourceData, params []string) bool {
 
 func resourceNetworkingSecGroupRuleCreateV1(ctx context.Context, d *schema.ResourceData,
 	meta interface{}) diag.Diagnostics {
-	config := config.GetHcsConfig(meta)
-	v1Client, err := config.NetworkingV1Client(common.GetRegion(d, config))
+	cfg := config.GetHcsConfig(meta)
+	v1Client, err := cfg.NetworkingV1Client(common.GetRegion(d, cfg))
 	if err != nil {
 		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v1 client: %s", err)
 	}
@@ -197,24 +186,23 @@ func resourceNetworkingSecGroupRuleCreateV1(ctx context.Context, d *schema.Resou
 
 func resourceNetworkingSecGroupRuleCreateV3(ctx context.Context, d *schema.ResourceData,
 	meta interface{}) diag.Diagnostics {
-	config := config.GetHcsConfig(meta)
-	v3Client, err := config.NetworkingV3Client(common.GetRegion(d, config))
+	cfg := config.GetHcsConfig(meta)
+	v3Client, err := cfg.NetworkingV3Client(common.GetRegion(d, cfg))
 	if err != nil {
 		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v3 client: %s", err)
 	}
 
 	opt := v3Rules.CreateOpts{
-		Description:          d.Get("description").(string),
-		SecurityGroupId:      d.Get("security_group_id").(string),
-		RemoteGroupId:        d.Get("remote_group_id").(string),
-		RemoteAddressGroupId: d.Get("remote_address_group_id").(string),
-		RemoteIpPrefix:       d.Get("remote_ip_prefix").(string),
-		Protocol:             d.Get("protocol").(string),
-		Ethertype:            d.Get("ethertype").(string),
-		Direction:            d.Get("direction").(string),
-		MultiPort:            d.Get("ports").(string),
-		Action:               d.Get("action").(string),
-		Priority:             d.Get("priority").(int),
+		Description:     d.Get("description").(string),
+		SecurityGroupId: d.Get("security_group_id").(string),
+		RemoteGroupId:   d.Get("remote_group_id").(string),
+		RemoteIpPrefix:  d.Get("remote_ip_prefix").(string),
+		Protocol:        d.Get("protocol").(string),
+		Ethertype:       d.Get("ethertype").(string),
+		Direction:       d.Get("direction").(string),
+		MultiPort:       d.Get("ports").(string),
+		Action:          d.Get("action").(string),
+		Priority:        d.Get("priority").(int),
 	}
 
 	logp.Printf("[DEBUG] The createOpts of the Security Group rule is: %#v", opt)
@@ -238,14 +226,14 @@ func resourceNetworkingSecGroupRuleCreate(ctx context.Context, d *schema.Resourc
 
 func resourceNetworkingSecGroupRuleRead(_ context.Context, d *schema.ResourceData,
 	meta interface{}) diag.Diagnostics {
-	config := config.GetHcsConfig(meta)
-	region := common.GetRegion(d, config)
+	cfg := config.GetHcsConfig(meta)
+	region := common.GetRegion(d, cfg)
 
-	v1Client, err := config.NetworkingV1Client(region)
+	v1Client, err := cfg.NetworkingV1Client(region)
 	if err != nil {
 		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v1 client: %s", err)
 	}
-	v3Client, err := config.NetworkingV3Client(common.GetRegion(d, config))
+	v3Client, err := cfg.NetworkingV3Client(common.GetRegion(d, cfg))
 	if err != nil {
 		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v3 client: %s", err)
 	}
@@ -257,7 +245,7 @@ func resourceNetworkingSecGroupRuleRead(_ context.Context, d *schema.ResourceDat
 	}
 
 	mErr := multierror.Append(nil,
-		d.Set("region", common.GetRegion(d, config)),
+		d.Set("region", common.GetRegion(d, cfg)),
 		d.Set("direction", resp.Direction),
 		d.Set("description", resp.Description),
 		d.Set("ethertype", resp.Ethertype),
@@ -277,7 +265,6 @@ func resourceNetworkingSecGroupRuleRead(_ context.Context, d *schema.ResourceDat
 			d.Set("ports", rule.MultiPort),
 			d.Set("action", rule.Action),
 			d.Set("priority", rule.Priority),
-			d.Set("remote_address_group_id", rule.RemoteAddressGroupId),
 		)
 	}
 
@@ -290,8 +277,8 @@ func resourceNetworkingSecGroupRuleDelete(ctx context.Context, d *schema.Resourc
 	meta interface{}) diag.Diagnostics {
 	logp.Printf("[DEBUG] Destroy security group rule: %s", d.Id())
 
-	config := config.GetHcsConfig(meta)
-	client, err := config.NetworkingV1Client(common.GetRegion(d, config))
+	cfg := config.GetHcsConfig(meta)
+	client, err := cfg.NetworkingV1Client(common.GetRegion(d, cfg))
 	if err != nil {
 		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v1 client: %s", err)
 	}
