@@ -110,6 +110,17 @@ func (r commonResult) Extract() (*Snapshot, error) {
 	return s.Snapshot, err
 }
 
+func (r commonResult) ExtractId() (string, error) {
+	var s struct {
+		ID string `json:"id"`
+	}
+	err := r.ExtractIntoStructPtr(&s, "snapshot")
+	if err != nil {
+		return "", err
+	}
+	return s.ID, nil
+}
+
 type Link struct {
 	Href string `json:"href"`
 	Rel  string `json:"rel"`

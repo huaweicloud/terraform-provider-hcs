@@ -3,15 +3,15 @@ package snapshots
 import "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 
 func createURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL("cloudsnapshots")
+	return c.ServiceURL("snapshots")
 }
 
 func listURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL("cloudsnapshots/detail")
+	return c.ServiceURL("snapshots/detail")
 }
 
 func deleteURL(c *golangsdk.ServiceClient, id string) string {
-	return c.ServiceURL("cloudsnapshots", id)
+	return c.ServiceURL("snapshots", id)
 }
 
 func updateURL(c *golangsdk.ServiceClient, id string) string {
