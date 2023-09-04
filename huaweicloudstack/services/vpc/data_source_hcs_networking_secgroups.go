@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Huawei Technologies Co., Ltd. 2023-2023. All rights reserved.
- */
-
 package vpc
 
 import (
@@ -42,10 +38,6 @@ func DataSourceNetworkingSecGroups() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"enterprise_project_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
 			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -60,10 +52,6 @@ func DataSourceNetworkingSecGroups() *schema.Resource {
 							Computed: true,
 						},
 						"name": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"enterprise_project_id": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
@@ -91,19 +79,17 @@ func flattenSecGroupDetail(secGroup interface{}) map[string]interface{} {
 	switch entity := secGroup.(type) {
 	case v1Group:
 		result = map[string]interface{}{
-			"id":                    entity.ID,
-			"name":                  entity.Name,
-			"enterprise_project_id": entity.EnterpriseProjectId,
-			"description":           entity.Description,
+			"id":          entity.ID,
+			"name":        entity.Name,
+			"description": entity.Description,
 		}
 	case v3Group:
 		result = map[string]interface{}{
-			"id":                    entity.ID,
-			"name":                  entity.Name,
-			"enterprise_project_id": entity.EnterpriseProjectId,
-			"description":           entity.Description,
-			"created_at":            entity.CreatedAt,
-			"updated_at":            entity.UpdatedAt,
+			"id":          entity.ID,
+			"name":        entity.Name,
+			"description": entity.Description,
+			"created_at":  entity.CreatedAt,
+			"updated_at":  entity.UpdatedAt,
 		}
 	}
 	return result
@@ -172,9 +158,9 @@ func filterAvailableSecGroupsV3(secGroups []v3groups.SecurityGroup, descKey stri
 }
 
 func dataSourceNetworkingSecGroupsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := config.GetHcsConfig(meta)
-	region := config.GetRegion(d)
-	v3Client, err := config.NetworkingV3Client(region)
+	cfg := config.GetHcsConfig(meta)
+	region := cfg.GetRegion(d)
+	v3Client, err := cfg.NetworkingV3Client(region)
 	if err != nil {
 		return diag.Errorf("error creating networking v3 client: %s", err)
 	}
@@ -184,7 +170,7 @@ func dataSourceNetworkingSecGroupsRead(ctx context.Context, d *schema.ResourceDa
 	listOpts := v3groups.ListOpts{
 		ID:                  d.Get("id").(string),
 		Name:                d.Get("name").(string),
-		EnterpriseProjectId: config.DataGetEnterpriseProjectID(d),
+		EnterpriseProjectId: cfg.DataGetEnterpriseProjectID(d),
 	}
 
 	var groupList []map[string]interface{}
@@ -203,7 +189,7 @@ func dataSourceNetworkingSecGroupsRead(ctx context.Context, d *schema.ResourceDa
 	d.SetId(hashcode.Strings(ids))
 
 	mErr := multierror.Append(nil,
-		d.Set("region", config.GetRegion(d)),
+		d.Set("region", cfg.GetRegion(d)),
 		d.Set("security_groups", groupList),
 	)
 
@@ -211,15 +197,15 @@ func dataSourceNetworkingSecGroupsRead(ctx context.Context, d *schema.ResourceDa
 }
 
 func dataSourceNetworkingSecGroupsReadV1(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := config.GetHcsConfig(meta)
-	region := config.GetRegion(d)
-	v1Client, err := config.NetworkingV1Client(region)
+	cfg := config.GetHcsConfig(meta)
+	region := cfg.GetRegion(d)
+	v1Client, err := cfg.NetworkingV1Client(region)
 	if err != nil {
 		return diag.Errorf("error creating networking v1 client: %s", err)
 	}
 
 	listOpts := v1groups.ListOpts{
-		EnterpriseProjectId: config.DataGetEnterpriseProjectID(d),
+		EnterpriseProjectId: cfg.DataGetEnterpriseProjectID(d),
 	}
 	pages, err := v1groups.List(v1Client, listOpts).AllPages()
 	if err != nil {
@@ -234,7 +220,7 @@ func dataSourceNetworkingSecGroupsReadV1(_ context.Context, d *schema.ResourceDa
 	groupList, ids := filterAvailableSecGroupsV1(allSecGroups, d.Get("name").(string), d.Get("description").(string))
 	d.SetId(hashcode.Strings(ids))
 	mErr := multierror.Append(nil,
-		d.Set("region", config.GetRegion(d)),
+		d.Set("region", cfg.GetRegion(d)),
 		d.Set("security_groups", groupList),
 	)
 	return diag.FromErr(mErr.ErrorOrNil())

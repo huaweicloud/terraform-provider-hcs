@@ -60,7 +60,7 @@ func (r RouteTablePage) LastMarker() (string, error) {
 	if len(tables) == 0 {
 		return "", nil
 	}
-	return tables[len(tables)-1].ID, nil
+	return "", nil
 }
 
 // IsEmpty checks whether a RouteTablePage struct is empty.
