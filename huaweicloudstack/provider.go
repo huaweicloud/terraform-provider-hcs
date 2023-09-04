@@ -377,9 +377,10 @@ func Provider() *schema.Provider {
 			"hcs_vpcep_endpoint":     vpcep.ResourceVPCEndpoint(),
 			"hcs_vpcep_service":      vpcep.ResourceVPCEndpointService(),
 
-			"hcs_vpc_bandwidth":     eip.ResourceVpcBandWidthV2(),
-			"hcs_vpc_eip":           eip.ResourceVpcEIPV1(),
-			"hcs_vpc_eip_associate": eip.ResourceEIPAssociate(),
+			"hcs_vpc_bandwidth":           eip.ResourceVpcBandWidthV2(),
+			"hcs_vpc_eip":                 eip.ResourceVpcEIPV1(),
+			"hcs_vpc_eip_associate":       eip.ResourceEIPAssociate(),
+			"hcs_vpc_bandwidth_associate": eip.ResourceBandWidthAssociate(),
 
 			"hcs_vpc_bandwidth_v2": eip.ResourceVpcBandWidthV2(),
 			"hcs_vpc_eip_v1":       eip.ResourceVpcEIPV1(),

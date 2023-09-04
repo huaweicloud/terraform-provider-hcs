@@ -26,9 +26,8 @@ resource "hcs_vpc_eip_associate" "associated" {
 ```hcl
 variable "network_id" {}
 
-data "hcs_networking_port" "myport" {
+resource "hcs_networking_vip" "myport" {
   network_id = var.network_id
-  fixed_ip   = "192.168.0.100"
 }
 
 resource "hcs_vpc_eip" "myeip" {
@@ -44,7 +43,7 @@ resource "hcs_vpc_eip" "myeip" {
 
 resource "hcs_vpc_eip_associate" "associated" {
   public_ip = hcs_vpc_eip.myeip.address
-  port_id   = data.hcs_networking_port.myport.id
+  port_id   = hcs_networking_vip.myport.id
 }
 ```
 
