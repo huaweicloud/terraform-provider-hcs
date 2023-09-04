@@ -11,7 +11,7 @@ Manages an EIP resource within HuaweiCloudStack.
 ### Create an EIP with Dedicated Bandwidth
 
 ```hcl
-var "bandwidth_name" {}
+variable "bandwidth_name" {}
 
 resource "hcs_vpc_eip" "dedicated" {
   publicip {
@@ -29,7 +29,7 @@ resource "hcs_vpc_eip" "dedicated" {
 ### Create an EIP with Shared Bandwidth
 
 ```hcl
-var "bandwidth_name" {}
+variable "bandwidth_name" {}
 
 resource "hcs_vpc_bandwidth" "test" {
   name = var.bandwidth_name
