@@ -342,9 +342,8 @@ func Provider() *schema.Provider {
 			"hcs_networking_secgroup":  vpc.DataSourceNetworkingSecGroup(),
 			"hcs_networking_secgroups": vpc.DataSourceNetworkingSecGroups(),
 
-			"hcs_availability_zones": DataSourceAvailabilityZones(),
-			"hcs_as_configurations":  as.DataSourceASConfigurations(),
-			"hcs_as_groups":          as.DataSourceASGroups(),
+			"hcs_as_configurations": as.DataSourceASConfigurations(),
+			"hcs_as_groups":         as.DataSourceASGroups(),
 
 			"hcs_bms_flavors": bms.DataSourceBmsFlavors(),
 
@@ -355,6 +354,7 @@ func Provider() *schema.Provider {
 			"hcs_cce_node":           cce.DataSourceNode(),
 			"hcs_cce_nodes":          cce.DataSourceNodes(),
 
+			"hcs_availability_zones":       ecs.DataSourceAvailabilityZones(),
 			"hcs_ecs_compute_flavors":      ecs.DataSourceEcsFlavors(),
 			"hcs_ecs_compute_instance":     ecs.DataSourceComputeInstance(),
 			"hcs_ecs_compute_instances":    ecs.DataSourceComputeInstances(),
@@ -410,6 +410,7 @@ func Provider() *schema.Provider {
 			"hcs_ecs_compute_server_group":     ecs.ResourceComputeServerGroup(),
 			"hcs_ecs_compute_interface_attach": ecs.ResourceComputeInterfaceAttach(),
 			"hcs_ecs_compute_instance":         ecs.ResourceComputeInstance(),
+			"hcs_ecs_compute_keypair":          ecs.ResourceComputeKeypairV2(),
 
 			// Legacy
 			"hcs_networking_eip_associate": eip.ResourceEIPAssociate(),

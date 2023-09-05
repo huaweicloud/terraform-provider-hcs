@@ -59,7 +59,7 @@ data "hcs_ecs_compute_flavors" "test" {
 }
 
 data "hcs_ims_images" "test" {
-  name        = "Ubuntu 18.04 server 64bit"
+  name        = "ims-xdoc"
 }
 `, TestBaseNetwork(name))
 }
