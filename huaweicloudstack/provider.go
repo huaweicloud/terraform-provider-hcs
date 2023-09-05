@@ -329,10 +329,16 @@ func Provider() *schema.Provider {
 
 			"hcs_ims_images": ims.DataSourceImagesImages(),
 
+			"hcs_vpc":                    vpc.DataSourceVpcV1(),
+			"hcs_vpc_subnet":             vpc.DataSourceVpcSubnetV1(),
+			"hcs_vpc_subnet_v1":          vpc.DataSourceVpcSubnetV1(),
+			"hcs_vpc_subnet_ids":         vpc.DataSourceVpcSubnetIdsV1(),
+			"hcs_vpc_subnet_ids_v1":      vpc.DataSourceVpcSubnetIdsV1(),
 			"hcs_vpcs":                   vpc.DataSourceVpcs(),
 			"hcs_vpc_subnets":            vpc.DataSourceVpcSubnets(),
 			"hcs_vpc_peering_connection": vpc.DataSourceVpcPeeringConnectionV2(),
 
+			"hcs_networking_port":      vpc.DataSourceNetworkingPortV2(),
 			"hcs_networking_secgroup":  vpc.DataSourceNetworkingSecGroup(),
 			"hcs_networking_secgroups": vpc.DataSourceNetworkingSecGroups(),
 
@@ -432,6 +438,8 @@ func Provider() *schema.Provider {
 
 			"hcs_vpc":        vpc.ResourceVirtualPrivateCloudV1(),
 			"hcs_vpc_subnet": vpc.ResourceVpcSubnetV1(),
+
+			"hcs_vpc_route": vpc.ResourceVPCRouteV2(),
 
 			"hcs_vpc_route_v2":                    vpc.ResourceVPCRouteV2(),
 			"hcs_vpc_v1":                          vpc.ResourceVirtualPrivateCloudV1(),
