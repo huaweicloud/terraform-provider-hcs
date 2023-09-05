@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"strconv"
 	"time"
 
 	"github.com/hashicorp/go-multierror"
@@ -278,16 +277,6 @@ func resourceLoadBalancerV3Create(ctx context.Context, d *schema.ResourceData, m
 
 	var loadBalancerID string
 	if d.Get("charging_mode").(string) == "prePaid" {
-		autoRenew, _ := strconv.ParseBool(d.Get("auto_renew").(string))
-		prepaidOpts := loadbalancers.PrepaidOpts{
-			PeriodType: d.Get("period_unit").(string),
-			PeriodNum:  d.Get("period").(int),
-			AutoRenew:  autoRenew,
-		}
-		if d.Get("auto_pay").(string) != "false" {
-			prepaidOpts.AutoPay = true
-		}
-		createOpts.PrepaidOpts = &prepaidOpts
 
 		log.Printf("[DEBUG] Create Options: %#v", createOpts)
 		resp, err := loadbalancers.Create(elbClient, createOpts).ExtractPrepaid()
@@ -519,14 +508,6 @@ func updateLoadBalancer(ctx context.Context, d *schema.ResourceData, cfg *config
 	}
 
 	if d.Get("charging_mode").(string) == "prePaid" && d.HasChanges("l4_flavor_id", "l7_flavor_id") {
-		prepaidOpts := loadbalancers.PrepaidOpts{
-			PeriodType: d.Get("period_unit").(string),
-			PeriodNum:  d.Get("period").(int),
-		}
-		if d.Get("auto_pay").(string) != "false" {
-			prepaidOpts.AutoPay = true
-		}
-		updateOpts.PrepaidOpts = &prepaidOpts
 
 		resp, err := loadbalancers.Update(elbClient, d.Id(), updateOpts).ExtractPrepaid()
 		if err != nil {

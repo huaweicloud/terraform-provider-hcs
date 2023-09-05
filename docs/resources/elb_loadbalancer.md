@@ -5,6 +5,7 @@ subcategory: "Dedicated Load Balance (Dedicated ELB)"
 # hcs_elb_loadbalancer
 
 Manages a Dedicated Load Balancer resource within HCS.
+Before the test, create a subnet named subnet-default and whose CIDR is 192.168.0.0/24 under the test tenant.
 
 ## Example Usage
 
@@ -22,11 +23,6 @@ resource "hcs_elb_loadbalancer" "basic" {
   l4_flavor_id = "{{ l4_flavor_id }}"
   l7_flavor_id = "{{ l7_flavor_id }}"
 
-  availability_zone = [
-    "cn-north-4a",
-    "cn-north-4b",
-  ]
-
   enterprise_project_id = "{{ eps_id }}"
 }
 ```
@@ -40,17 +36,11 @@ resource "hcs_elb_loadbalancer" "basic" {
   cross_vpc_backend = true
 
   vpc_id            = "{{ vpc_id }}"
-  ipv6_network_id   = "{{ ipv6_network_id }}"
   ipv6_bandwidth_id = "{{ ipv6_bandwidth_id }}"
   ipv4_subnet_id    = "{{ ipv4_subnet_id }}"
 
   l4_flavor_id = "{{ l4_flavor_id }}"
   l7_flavor_id = "{{ l7_flavor_id }}"
-
-  availability_zone = [
-    "cn-north-4a",
-    "cn-north-4b",
-  ]
 
   enterprise_project_id = "{{ eps_id }}"
 
@@ -67,21 +57,15 @@ resource "hcs_elb_loadbalancer" "basic" {
   cross_vpc_backend = true
 
   vpc_id            = "{{ vpc_id }}"
-  ipv6_network_id   = "{{ ipv6_network_id }}"
   ipv6_bandwidth_id = "{{ ipv6_bandwidth_id }}"
   ipv4_subnet_id    = "{{ ipv4_subnet_id }}"
 
   l4_flavor_id = "{{ l4_flavor_id }}"
   l7_flavor_id = "{{ l7_flavor_id }}"
 
-  availability_zone = [
-    "cn-north-4a",
-    "cn-north-4b",
-  ]
-
   enterprise_project_id = "{{ eps_id }}"
 
-  iptype                = "5_bgp"
+  iptype                = "{{ eip_network_name }}"
   bandwidth_charge_mode = "traffic"
   sharetype             = "PER"
   bandwidth_size        = 10
@@ -95,9 +79,6 @@ The following arguments are supported:
 * `region` - (Optional, String, ForceNew) The region in which to create the loadbalancer resource. If omitted, the
   provider-level region will be used. Changing this creates a new loadbalancer.
 
-* `availability_zone` - (Required, List, ForceNew) Specifies the list of AZ names. Changing this parameter will create a
-  new resource.
-
 * `name` - (Required, String) Human-readable name for the loadbalancer.
 
 * `description` - (Optional, String) Human-readable description for the loadbalancer.
@@ -110,8 +91,6 @@ The following arguments are supported:
 
 * `ipv4_subnet_id` - (Optional, String) The **IPv4 subnet ID** of the subnet on which to allocate the loadbalancer's
   ipv4 address.
-
-* `ipv6_network_id` - (Optional, String) The **ID** of the subnet on which to allocate the loadbalancer's ipv6 address.
 
 * `ipv6_bandwidth_id` - (Optional, String) The ipv6 bandwidth id. Only support shared bandwidth.
 

@@ -160,16 +160,9 @@ data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "hcs_availability_zones" "test" {}
-
 resource "hcs_elb_loadbalancer" "test" {
   name            = "%s"
   ipv4_subnet_id  = data.hcs_vpc_subnet.test.ipv4_subnet_id
-  ipv6_network_id = data.hcs_vpc_subnet.test.id
-
-  availability_zone = [
-    data.hcs_availability_zones.test.names[0]
-  ]
 }
 
 resource "hcs_elb_listener" "test" {
@@ -179,7 +172,6 @@ resource "hcs_elb_listener" "test" {
   protocol_port   = 8080
   loadbalancer_id = hcs_elb_loadbalancer.test.id
 
-  forward_eip      = true
   idle_timeout     = 60
   request_timeout  = 60
   response_timeout = 60
@@ -214,16 +206,9 @@ data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "hcs_availability_zones" "test" {}
-
 resource "hcs_elb_loadbalancer" "test" {
   name            = "%s"
   ipv4_subnet_id  = data.hcs_vpc_subnet.test.ipv4_subnet_id
-  ipv6_network_id = data.hcs_vpc_subnet.test.id
-
-  availability_zone = [
-    data.hcs_availability_zones.test.names[0]
-  ]
 }
 
 resource "hcs_elb_listener" "test" {
@@ -233,7 +218,6 @@ resource "hcs_elb_listener" "test" {
   protocol_port   = 8080
   loadbalancer_id = hcs_elb_loadbalancer.test.id
 
-  forward_eip      = true
   idle_timeout     = 60
   request_timeout  = 60
   response_timeout = 60
@@ -270,17 +254,10 @@ data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "hcs_availability_zones" "test" {}
-
 resource "hcs_elb_loadbalancer" "test" {
   name              = "%s"
   cross_vpc_backend = true
   ipv4_subnet_id    = data.hcs_vpc_subnet.test.ipv4_subnet_id
-  ipv6_network_id   = data.hcs_vpc_subnet.test.id
-
-  availability_zone = [
-    data.hcs_availability_zones.test.names[0]
-  ]
 }
 
 resource "hcs_elb_listener" "test" {
@@ -290,7 +267,6 @@ resource "hcs_elb_listener" "test" {
   protocol_port   = 8080
   loadbalancer_id = hcs_elb_loadbalancer.test.id
 
-  forward_eip      = true
   idle_timeout     = 60
   request_timeout  = 60
   response_timeout = 60
@@ -323,17 +299,10 @@ data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "hcs_availability_zones" "test" {}
-
 resource "hcs_elb_loadbalancer" "test" {
   name              = "%s"
   cross_vpc_backend = true
   ipv4_subnet_id    = data.hcs_vpc_subnet.test.ipv4_subnet_id
-  ipv6_network_id   = data.hcs_vpc_subnet.test.id
-
-  availability_zone = [
-    data.hcs_availability_zones.test.names[0]
-  ]
 }
 
 resource "hcs_elb_listener" "test" {
@@ -343,7 +312,6 @@ resource "hcs_elb_listener" "test" {
   protocol_port   = 8080
   loadbalancer_id = hcs_elb_loadbalancer.test.id
 
-  forward_eip      = true
   idle_timeout     = 60
   request_timeout  = 60
   response_timeout = 60

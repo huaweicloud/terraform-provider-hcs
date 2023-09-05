@@ -114,16 +114,9 @@ data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "hcs_availability_zones" "test" {}
-
 resource "hcs_elb_loadbalancer" "test" {
   name            = "%s"
   ipv4_subnet_id  = data.hcs_vpc_subnet.test.ipv4_subnet_id
-  ipv6_network_id = data.hcs_vpc_subnet.test.id
-
-  availability_zone = [
-    data.hcs_availability_zones.test.names[0]
-  ]
 }
 
 resource "hcs_elb_pool" "test" {

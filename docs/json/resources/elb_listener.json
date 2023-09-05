@@ -27,11 +27,6 @@
                 "type": "string",
                 "optional": true
               },
-              "forward_eip": {
-                "type": "bool",
-                "optional": true,
-                "default": false
-              },
               "http2_enable": {
                 "type": "bool",
                 "optional": true,
