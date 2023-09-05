@@ -1,16 +1,17 @@
-package huaweicloudstack
+package ecs
 
 import (
 	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance"
 )
 
 func TestAccAvailabilityZones_basic(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
+		ProviderFactories: acceptance.TestAccProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccAvailabilityZonesConfig_all,
