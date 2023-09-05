@@ -63,8 +63,8 @@ func ResourceVPCRouteV2() *schema.Resource {
 }
 
 func resourceVpcRouteV2Create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := config.GetHcsConfig(meta)
-	vpcRouteClient, err := config.NetworkingV2Client(config.GetRegion(d))
+	hcsConfig := config.GetHcsConfig(meta)
+	vpcRouteClient, err := hcsConfig.NetworkingV2Client(hcsConfig.GetRegion(d))
 
 	if err != nil {
 		return diag.Errorf("error creating vpc route client: %s", err)

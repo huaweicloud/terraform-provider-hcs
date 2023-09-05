@@ -4,14 +4,12 @@ import (
 	"context"
 	"log"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/helper/hashcode"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/common/tags"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/networking/v1/subnets"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func DataSourceVpcSubnets() *schema.Resource {
@@ -60,11 +58,6 @@ func DataSourceVpcSubnets() *schema.Resource {
 			"availability_zone": {
 				Type:     schema.TypeString,
 				Optional: true,
-			},
-			"tags": {
-				Type:     schema.TypeMap,
-				Optional: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 			"subnets": {
 				Type:     schema.TypeList,
@@ -146,11 +139,6 @@ func DataSourceVpcSubnets() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"tags": {
-							Type:     schema.TypeMap,
-							Computed: true,
-							Elem:     &schema.Schema{Type: schema.TypeString},
-						},
 					},
 				},
 			},
@@ -159,14 +147,13 @@ func DataSourceVpcSubnets() *schema.Resource {
 }
 
 func dataSourceVpcSubnetsRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := config.GetHcsConfig(meta)
-	region := config.GetRegion(d)
-	client, err := config.NetworkingV1Client(region)
+	hcsConfig := config.GetHcsConfig(meta)
+	region := hcsConfig.GetRegion(d)
+	client, err := hcsConfig.NetworkingV1Client(region)
 	if err != nil {
 		return diag.Errorf("error creating VPC client: %s", err)
 	}
 
-	clientV2, err := config.NetworkingV2Client(region)
 	if err != nil {
 		return diag.Errorf("error creating VPC V2 client: %s", err)
 	}
@@ -191,7 +178,6 @@ func dataSourceVpcSubnetsRead(_ context.Context, d *schema.ResourceData, meta in
 	log.Printf("[DEBUG] Retrieved subnets using given filter: %+v", subnetList)
 
 	var subnets []map[string]interface{}
-	tagFilter := d.Get("tags").(map[string]interface{})
 	var ids []string
 	for _, item := range subnetList {
 		subnet := map[string]interface{}{
@@ -213,17 +199,6 @@ func dataSourceVpcSubnetsRead(_ context.Context, d *schema.ResourceData, meta in
 			"ipv6_subnet_id":    item.IPv6SubnetId,
 			"ipv6_cidr":         item.IPv6CIDR,
 			"ipv6_gateway":      item.IPv6Gateway,
-		}
-
-		if resourceTags, err := tags.Get(clientV2, "subnets", item.ID).Extract(); err == nil {
-			tagmap := utils.TagsToMap(resourceTags.Tags)
-
-			if !utils.HasMapContains(tagmap, tagFilter) {
-				continue
-			}
-			subnet["tags"] = tagmap
-		} else {
-			return diag.Errorf("error query tags of subnets (%s): %s", item.ID, err)
 		}
 
 		subnets = append(subnets, subnet)

@@ -6,15 +6,13 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/helper/hashcode"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/networking/v1/vpcs"
 )
 
-func DataSourceVpcs() *schema.Resource {
+func DataSourceVpcV1() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceVpcsRead,
+		ReadContext: dataSourceVpcV1Read,
 
 		Schema: map[string]*schema.Schema{
 			"region": {
@@ -30,37 +28,33 @@ func DataSourceVpcs() *schema.Resource {
 			"name": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"cidr": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"status": {
 				Type:     schema.TypeString,
 				Optional: true,
-			},
-			"vpcs": {
-				Type:     schema.TypeList,
 				Computed: true,
+			},
+			"description": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"routes": {
+				Type:       schema.TypeList,
+				Computed:   true,
+				Deprecated: "use huaweicloud_vpc_route_table data source to get all routes",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"id": {
+						"destination": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"name": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"cidr": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"status": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"description": {
+						"nexthop": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
@@ -71,10 +65,9 @@ func DataSourceVpcs() *schema.Resource {
 	}
 }
 
-func dataSourceVpcsRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func dataSourceVpcV1Read(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	hcsConfig := config.GetHcsConfig(meta)
-	region := hcsConfig.GetRegion(d)
-	client, err := hcsConfig.NetworkingV1Client(region)
+	vpcClient, err := hcsConfig.NetworkingV1Client(hcsConfig.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating VPC client: %s", err)
 	}
@@ -87,34 +80,40 @@ func dataSourceVpcsRead(_ context.Context, d *schema.ResourceData, meta interfac
 		EnterpriseProjectID: hcsConfig.DataGetEnterpriseProjectID(d),
 	}
 
-	vpcList, err := vpcs.List(client, listOpts)
+	refinedVpcs, err := vpcs.List(vpcClient, listOpts)
 	if err != nil {
 		return diag.Errorf("unable to retrieve vpcs: %s", err)
 	}
 
-	log.Printf("[DEBUG] Retrieved Vpc using given filter: %+v", vpcList)
+	if len(refinedVpcs) < 1 {
+		return diag.Errorf("your query returned no results. " +
+			"Please change your search criteria and try again.")
+	}
 
-	var vpcs []map[string]interface{}
-	var ids []string
-	for _, vpcResource := range vpcList {
-		vpc := map[string]interface{}{
-			"id":          vpcResource.ID,
-			"name":        vpcResource.Name,
-			"cidr":        vpcResource.CIDR,
-			"status":      vpcResource.Status,
-			"description": vpcResource.Description,
+	if len(refinedVpcs) > 1 {
+		return diag.Errorf("your query returned more than one result." +
+			" Please try a more specific search criteria")
+	}
+
+	Vpc := refinedVpcs[0]
+
+	log.Printf("[INFO] Retrieved Vpc using given filter %s: %+v", Vpc.ID, Vpc)
+	d.SetId(Vpc.ID)
+
+	d.Set("region", hcsConfig.GetRegion(d))
+	d.Set("name", Vpc.Name)
+	d.Set("cidr", Vpc.CIDR)
+	d.Set("status", Vpc.Status)
+	d.Set("description", Vpc.Description)
+
+	var s []map[string]interface{}
+	for _, route := range Vpc.Routes {
+		mapping := map[string]interface{}{
+			"destination": route.DestinationCIDR,
+			"nexthop":     route.NextHop,
 		}
-
-		vpcs = append(vpcs, vpc)
-		ids = append(ids, vpcResource.ID)
+		s = append(s, mapping)
 	}
-	log.Printf("[DEBUG] Vpc List after filter, count=%d :%+v", len(vpcs), vpcs)
-
-	mErr := d.Set("vpcs", vpcs)
-	if mErr != nil {
-		return diag.Errorf("set vpcs err:%s", mErr)
-	}
-
-	d.SetId(hashcode.Strings(ids))
+	d.Set("routes", s)
 	return nil
 }
