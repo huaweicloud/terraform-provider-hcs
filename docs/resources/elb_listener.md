@@ -56,10 +56,6 @@ The following arguments are supported:
 * `http2_enable` - (Optional, Bool) Specifies whether to use HTTP/2. The default value is false. This parameter is valid
   only when the protocol is set to *HTTPS*.
 
-* `forward_eip` - (Optional, Bool) Specifies whether transfer the load balancer EIP in the X-Forward-EIP header to
-  backend servers. The default value is false. This parameter is valid only when the protocol is set to *HTTP* or
-  *HTTPS*.
-
 * `access_policy` - (Optional, String) Specifies the access policy for the listener. Valid options are *white* and
   *black*.
 

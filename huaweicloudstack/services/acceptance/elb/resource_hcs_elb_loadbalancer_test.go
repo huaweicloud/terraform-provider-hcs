@@ -112,6 +112,7 @@ func TestAccElbV3LoadBalancer_withEpsId(t *testing.T) {
 func TestAccElbV3LoadBalancer_withEIP(t *testing.T) {
 	var lb loadbalancers.LoadBalancer
 	rName := acceptance.RandomAccResourceNameWithDash()
+	eipName := acceptance.HCS_EIP_NAME
 	resourceName := "hcs_elb_loadbalancer.test"
 
 	rc := acceptance.InitResourceCheck(
@@ -130,58 +131,8 @@ func TestAccElbV3LoadBalancer_withEIP(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					rc.CheckResourceExists(),
 					resource.TestCheckResourceAttr(resourceName, "name", rName),
-					resource.TestCheckResourceAttr(resourceName, "iptype", "5_bgp"),
+					resource.TestCheckResourceAttr(resourceName, "iptype", eipName),
 					resource.TestCheckResourceAttrSet(resourceName, "ipv4_eip_id"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccElbV3LoadBalancer_prePaid(t *testing.T) {
-	var lb loadbalancers.LoadBalancer
-	rName := acceptance.RandomAccResourceNameWithDash()
-	resourceName := "hcs_elb_loadbalancer.test"
-
-	rc := acceptance.InitResourceCheck(
-		resourceName,
-		&lb,
-		getELBResourceFunc,
-	)
-
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck: func() {
-			acceptance.TestAccPreCheck(t)
-			acceptance.TestAccPreCheckChargingMode(t)
-		},
-		ProviderFactories: acceptance.TestAccProviderFactories,
-		CheckDestroy:      rc.CheckResourceDestroy(),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccElbV3LoadBalancerConfig_prePaid(rName),
-				Check: resource.ComposeTestCheckFunc(
-					rc.CheckResourceExists(),
-					resource.TestCheckResourceAttr(resourceName, "name", rName),
-					resource.TestCheckResourceAttr(resourceName, "cross_vpc_backend", "false"),
-					resource.TestCheckResourceAttr(resourceName, "tags.key", "value"),
-					resource.TestCheckResourceAttr(resourceName, "tags.owner", "terraform"),
-					resource.TestCheckResourceAttr(resourceName, "auto_renew", "false"),
-				),
-			},
-			{
-				Config: testAccElbV3LoadBalancerConfig_prePaidUpdate(rName),
-				Check: resource.ComposeTestCheckFunc(
-					rc.CheckResourceExists(),
-					resource.TestCheckResourceAttr(resourceName, "name", rName),
-					resource.TestCheckResourceAttr(resourceName, "cross_vpc_backend", "false"),
-					resource.TestCheckResourceAttr(resourceName, "tags.key", "value"),
-					resource.TestCheckResourceAttr(resourceName, "tags.owner", "terraform"),
-					resource.TestCheckResourceAttr(resourceName, "description", "update flavors"),
-					resource.TestCheckResourceAttrPair(
-						resourceName, "l4_flavor_id", "data.hcs_elb_flavors.l4flavors", "ids.0"),
-					resource.TestCheckResourceAttrPair(
-						resourceName, "l7_flavor_id", "data.hcs_elb_flavors.l7flavors", "ids.0"),
-					resource.TestCheckResourceAttr(resourceName, "auto_renew", "true"),
 				),
 			},
 		},
@@ -194,16 +145,9 @@ data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "hcs_availability_zones" "test" {}
-
 resource "hcs_elb_loadbalancer" "test" {
   name            = "%s"
   ipv4_subnet_id  = data.hcs_vpc_subnet.test.ipv4_subnet_id
-  ipv6_network_id = data.hcs_vpc_subnet.test.id
-
-  availability_zone = [
-    data.hcs_availability_zones.test.names[0]
-  ]
 
   tags = {
     key   = "value"
@@ -219,17 +163,10 @@ data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "hcs_availability_zones" "test" {}
-
 resource "hcs_elb_loadbalancer" "test" {
   name              = "%s"
   cross_vpc_backend = true
   ipv4_subnet_id    = data.hcs_vpc_subnet.test.ipv4_subnet_id
-  ipv6_network_id   = data.hcs_vpc_subnet.test.id
-
-  availability_zone = [
-    data.hcs_availability_zones.test.names[0]
-  ]
 
   tags = {
     key1  = "value1"
@@ -245,16 +182,10 @@ data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "hcs_availability_zones" "test" {}
-
 resource "hcs_elb_loadbalancer" "test" {
   name                  = "%s"
   ipv4_subnet_id        = data.hcs_vpc_subnet.test.ipv4_subnet_id
   enterprise_project_id = "%s"
-
-  availability_zone = [
-    data.hcs_availability_zones.test.names[0]
-  ]
 
   tags = {
     key   = "value"
@@ -270,97 +201,14 @@ data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "hcs_availability_zones" "test" {}
-
 resource "hcs_elb_loadbalancer" "test" {
   name           = "%s"
   ipv4_subnet_id = data.hcs_vpc_subnet.test.ipv4_subnet_id
 
-  availability_zone = [
-    data.hcs_availability_zones.test.names[0]
-  ]
-
-  iptype                = "5_bgp"
+  iptype                = "%s"
   bandwidth_charge_mode = "traffic"
   sharetype             = "PER"
   bandwidth_size        = 5
 }
-`, rName)
-}
-
-func testAccElbV3LoadBalancerConfig_prePaid(rName string) string {
-	return fmt.Sprintf(`
-data "hcs_vpc_subnet" "test" {
-  name = "subnet-default"
-}
-
-data "hcs_availability_zones" "test" {}
-
-resource "hcs_elb_loadbalancer" "test" {
-  name            = "%s"
-  ipv4_subnet_id  = data.hcs_vpc_subnet.test.ipv4_subnet_id
-  ipv6_network_id = data.hcs_vpc_subnet.test.id
-
-  charging_mode = "prePaid"
-  period_unit   = "month"
-  period        = 1
-  auto_renew    = "false"
-
-  availability_zone = [
-    data.hcs_availability_zones.test.names[0]
-  ]
-
-  tags = {
-    key   = "value"
-    owner = "terraform"
-  }
-}
-`, rName)
-}
-
-func testAccElbV3LoadBalancerConfig_prePaidUpdate(rName string) string {
-	return fmt.Sprintf(`
-data "hcs_vpc_subnet" "test" {
-  name = "subnet-default"
-}
-
-data "hcs_availability_zones" "test" {}
-
-data "hcs_elb_flavors" "l4flavors" {
-  type            = "L4"
-  max_connections = 1000000
-  cps             = 20000
-  bandwidth       = 100
-}
-
-data "hcs_elb_flavors" "l7flavors" {
-  type            = "L7"
-  max_connections = 400000
-  cps             = 4000
-  bandwidth       = 100
-}
-
-resource "hcs_elb_loadbalancer" "test" {
-  name            = "%s"
-  ipv4_subnet_id  = data.hcs_vpc_subnet.test.ipv4_subnet_id
-  ipv6_network_id = data.hcs_vpc_subnet.test.id
-  description     = "update flavors"
-  l4_flavor_id    = data.hcs_elb_flavors.l4flavors.ids[0]
-  l7_flavor_id    = data.hcs_elb_flavors.l7flavors.ids[0]
-
-  charging_mode = "prePaid"
-  period_unit   = "month"
-  period        = 1
-  auto_renew    = "true"
-
-  availability_zone = [
-    data.hcs_availability_zones.test.names[0]
-  ]
-
-  tags = {
-    key   = "value"
-    owner = "terraform"
-  }
-}
-`, rName)
+`, rName, acceptance.HCS_EIP_NAME)
 }

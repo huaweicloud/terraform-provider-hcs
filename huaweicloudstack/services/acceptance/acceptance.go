@@ -42,6 +42,7 @@ var (
 	HCS_SERVER_GROUP_ID           = os.Getenv("HCS_SERVER_GROUP_ID")
 	HCS_ECS_INSTANCE_ID           = os.Getenv("HCS_ECS_INSTANCE_ID")
 	HCS_EIP_ID                    = os.Getenv("HCS_EIP_ID")
+	HCS_EIP_NAME                  = os.Getenv("HCS_EIP_NAME")
 	HCS_EIP_ADDRESS               = os.Getenv("HCS_EIP_ADDRESS")
 	HCS_EIP_EXTERNAL_NETWORK_NAME = os.Getenv("HCS_EIP_EXTERNAL_NETWORK_NAME")
 
