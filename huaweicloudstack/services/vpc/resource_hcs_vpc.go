@@ -16,7 +16,6 @@ import (
 
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/common/tags"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/networking/v1/vpcs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
 )
@@ -54,7 +53,7 @@ func ResourceVirtualPrivateCloudV1() *schema.Resource {
 			},
 			"cidr": {
 				Type:         schema.TypeString,
-				Required:     true,
+				Optional:     true,
 				ValidateFunc: utils.ValidateCIDR,
 			},
 			"description": {
@@ -65,12 +64,6 @@ func ResourceVirtualPrivateCloudV1() *schema.Resource {
 					validation.StringMatch(regexp.MustCompile("^[^<>]*$"),
 						"The angle brackets (< and >) are not allowed."),
 				),
-			},
-			"enterprise_project_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-				Computed: true,
 			},
 			"status": {
 				Type:     schema.TypeString,
@@ -93,7 +86,6 @@ func ResourceVirtualPrivateCloudV1() *schema.Resource {
 					},
 				},
 			},
-			"tags": common.TagsSchema(),
 		},
 	}
 }
@@ -141,19 +133,6 @@ func resourceVirtualPrivateCloudCreate(ctx context.Context, d *schema.ResourceDa
 			n.ID, stateErr)
 	}
 
-	// set tags
-	tagRaw := d.Get("tags").(map[string]interface{})
-	if len(tagRaw) > 0 {
-		vpcV2Client, err := config.NetworkingV2Client(region)
-		if err != nil {
-			return diag.Errorf("error creating VPC client: %s", err)
-		}
-		taglist := utils.ExpandResourceTags(tagRaw)
-		if tagErr := tags.Create(vpcV2Client, "vpcs", n.ID, taglist).ExtractErr(); tagErr != nil {
-			return diag.Errorf("error setting tags of VPC %q: %s", n.ID, tagErr)
-		}
-	}
-
 	return resourceVirtualPrivateCloudRead(ctx, d, meta)
 }
 
@@ -177,7 +156,6 @@ func resourceVirtualPrivateCloudRead(_ context.Context, d *schema.ResourceData, 
 	d.Set("name", n.Name)
 	d.Set("cidr", n.CIDR)
 	d.Set("description", n.Description)
-	d.Set("enterprise_project_id", n.EnterpriseProjectID)
 	d.Set("status", n.Status)
 	d.Set("region", config.GetRegion(d))
 
@@ -191,20 +169,6 @@ func resourceVirtualPrivateCloudRead(_ context.Context, d *schema.ResourceData, 
 		routes[i] = route
 	}
 	d.Set("routes", routes)
-
-	// save VirtualPrivateCloudV2 tags
-	if vpcV2Client, err := config.NetworkingV2Client(config.GetRegion(d)); err == nil {
-		if resourceTags, err := tags.Get(vpcV2Client, "vpcs", d.Id()).Extract(); err == nil {
-			tagmap := utils.TagsToMap(resourceTags.Tags)
-			if err := d.Set("tags", tagmap); err != nil {
-				return diag.Errorf("error saving tags to state for VPC (%s): %s", d.Id(), err)
-			}
-		} else {
-			log.Printf("[WARN] Error fetching tags of VPC (%s): %s", d.Id(), err)
-		}
-	} else {
-		return diag.Errorf("error creating VPC client: %s", err)
-	}
 
 	return nil
 }
@@ -231,19 +195,6 @@ func resourceVirtualPrivateCloudUpdate(ctx context.Context, d *schema.ResourceDa
 		_, err = vpcs.Update(vpcClient, vpcID, updateOpts).Extract()
 		if err != nil {
 			return diag.Errorf("error updating VPC: %s", err)
-		}
-	}
-
-	// update tags
-	if d.HasChange("tags") {
-		vpcV2Client, err := config.NetworkingV2Client(region)
-		if err != nil {
-			return diag.Errorf("error creating VPC client: %s", err)
-		}
-
-		tagErr := utils.UpdateResourceTags(vpcV2Client, d, "vpcs", vpcID)
-		if tagErr != nil {
-			return diag.Errorf("error updating tags of VPC %s: %s", vpcID, tagErr)
 		}
 	}
 
