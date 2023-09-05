@@ -39,8 +39,7 @@ The following arguments are supported:
 * `topic_urn` - (Required, String, ForceNew) Specifies the resource identifier of a topic, which is unique.
   Changing this parameter will create a new resource.
 
-* `protocol` - (Required, String, ForceNew) Specifies the protocol of the message endpoint. Currently, email, sms, http,
-  https, functionstage and functiongraph are supported. Changing this parameter will create a new resource.
+* `protocol` - (Required, String, ForceNew) Specifies the protocol of the message endpoint. Currently, email, sms are supported. Changing this parameter will create a new resource.
 
 * `endpoint` - (Required, String, ForceNew) Message endpoint. Changing this parameter will create a new resource.
   + **For an email subscription**, the endpoint is an mail address.
