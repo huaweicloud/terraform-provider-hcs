@@ -411,6 +411,7 @@ func Provider() *schema.Provider {
 			"hcs_ecs_compute_interface_attach": ecs.ResourceComputeInterfaceAttach(),
 			"hcs_ecs_compute_instance":         ecs.ResourceComputeInstance(),
 			"hcs_ecs_compute_keypair":          ecs.ResourceComputeKeypairV2(),
+			"hcs_ecs_compute_eip_associate":    ecs.ResourceComputeEIPAssociate(),
 
 			// Legacy
 			"hcs_networking_eip_associate": eip.ResourceEIPAssociate(),
