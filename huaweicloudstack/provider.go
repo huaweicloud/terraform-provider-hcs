@@ -324,6 +324,9 @@ func Provider() *schema.Provider {
 
 			"hcs_evs_volumes": evs.DataSourceEvsVolumesV2(),
 
+			"hcs_elb_certificate": elb.DataSourceELBCertificateV3(),
+			"hcs_elb_pools":       elb.DataSourcePools(),
+
 			"hcs_nat_gateway": nat.DataSourcePublicGateway(),
 			"hcs_smn_topics":  smn.DataSourceTopics(),
 

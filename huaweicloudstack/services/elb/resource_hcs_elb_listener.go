@@ -89,12 +89,6 @@ func ResourceListenerV3() *schema.Resource {
 				Default:  false,
 			},
 
-			"forward_eip": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Default:  false,
-			},
-
 			"access_policy": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -210,15 +204,6 @@ func resourceListenerV3Create(ctx context.Context, d *schema.ResourceData, meta 
 			IpGroupId: d.Get("ip_group").(string),
 		}
 	}
-	if v, ok := d.GetOk("forward_eip"); ok {
-		fEip := v.(bool)
-		// X-Forwarded-Host defaults to true
-		fHost := true
-		createOpts.InsertHeaders = &listeners.InsertHeaders{
-			ForwardedELBIP: &fEip,
-			ForwardedHost:  &fHost,
-		}
-	}
 
 	log.Printf("[DEBUG] Create Options: %#v", createOpts)
 
@@ -288,7 +273,6 @@ func resourceListenerV3Read(_ context.Context, d *schema.ResourceData, meta inte
 		d.Set("protocol_port", listener.ProtocolPort),
 		d.Set("default_pool_id", listener.DefaultPoolID),
 		d.Set("http2_enable", listener.Http2Enable),
-		d.Set("forward_eip", listener.InsertHeaders.ForwardedELBIP),
 		d.Set("sni_certificate", listener.SniContainerRefs),
 		d.Set("server_certificate", listener.DefaultTlsContainerRef),
 		d.Set("ca_certificate", listener.CAContainerRef),
@@ -337,7 +321,7 @@ func resourceListenerV3Update(ctx context.Context, d *schema.ResourceData, meta 
 	// lintignore:R019
 	if d.HasChanges("name", "description", "ca_certificate", "default_pool_id",
 		"idle_timeout", "request_timeout", "response_timeout", "server_certificate",
-		"access_policy", "ip_group", "forward_eip", "tls_ciphers_policy",
+		"access_policy", "ip_group", "tls_ciphers_policy",
 		"sni_certificate", "http2_enable", "advanced_forwarding_enabled") {
 		err := updateListener(ctx, d, elbClient)
 		if err != nil {
@@ -388,15 +372,6 @@ func updateListener(ctx context.Context, d *schema.ResourceData, elbClient *gola
 		updateOpts.IpGroup = &listeners.IpGroupUpdate{
 			Type:      d.Get("access_policy").(string),
 			IpGroupId: d.Get("ip_group").(string),
-		}
-	}
-	if d.HasChange("forward_eip") {
-		fEip := d.Get("forward_eip").(bool)
-		// X-Forwarded-Host defaults to true
-		fHost := true
-		updateOpts.InsertHeaders = &listeners.InsertHeaders{
-			ForwardedELBIP: &fEip,
-			ForwardedHost:  &fHost,
 		}
 	}
 	if d.HasChange("ca_certificate") {

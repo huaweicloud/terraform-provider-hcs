@@ -268,18 +268,18 @@ var allServiceCatalog = map[string]ServiceCatalog{
 		Product:          "NAT",
 	},
 	"elbv2": {
-		Name:             "elb",
+		Name:             "vpc",
 		Version:          "v2.0",
 		WithOutProjectID: true,
 		Product:          "ELB",
 	},
 	"elbv3": {
-		Name:    "elb",
+		Name:    "vpc",
 		Version: "v3",
 		Product: "ELB",
 	},
 	"elb": {
-		Name:    "elb",
+		Name:    "vpc",
 		Version: "v2",
 		Product: "ELB",
 	},
