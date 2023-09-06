@@ -21,18 +21,6 @@ resource "hcs_vpc_subnet" "subnet" {
   vpc_id     = hcs_vpc.vpc.id
 }
 
-resource "hcs_vpc_subnet" "subnet_with_tags" {
-  name       = var.subnet_name
-  cidr       = var.subnet_cidr
-  gateway_ip = var.subnet_gateway_ip
-  vpc_id     = hcs_vpc.vpc.id
-
-  tags = {
-    foo = "bar"
-    key = "value"
-  }
-}
-
  ```
 
 ## Argument Reference
@@ -74,8 +62,6 @@ The following arguments are supported:
 
 * `availability_zone` - (Optional, String, ForceNew) Specifies the availability zone (AZ) to which the subnet belongs.
   The value must be an existing AZ in the system. Changing this creates a new Subnet.
-
-* `tags` - (Optional, Map) The key/value pairs to associate with the subnet.
 
 ## Attributes Reference
 
