@@ -13,10 +13,6 @@ An example filter by name and tag
 ```hcl
 data "hcs_vpc_subnets" "subnet" {
   name = var.subnet_name
-
-  tags = {
-    foo = "bar"
-  }
 }
 
 output "subnet_vpc_ids" {
@@ -51,8 +47,6 @@ All subnets that meet the filter criteria will be exported as attributes.
 
 * `availability_zone` - (Optional, String) Specifies the availability zone (AZ) to which the desired subnet belongs to.
 
-* `tags` - (Optional, Map) Specifies the included key/value pairs which associated with the desired subnet.
-
  -> A maximum of 10 tag keys are allowed for each query operation. Each tag key can have up to 10 tag values.
   The tag key cannot be left blank or set to an empty string. Each tag key must be unique, and each tag value in a
   tag must be unique, use commas(,) to separate the multiple values. An empty for values indicates any value.
@@ -84,4 +78,3 @@ The `subnets` block supports:
 * `ipv6_subnet_id` - Indicates the ID of the IPv6 subnet (Native OpenStack API).
 * `ipv6_cidr` - Indicates the IPv6 subnet CIDR block.
 * `ipv6_gateway` - Indicates the IPv6 subnet gateway.
-* `tags` - Indicates the key/value pairs which associated with the subnet.
