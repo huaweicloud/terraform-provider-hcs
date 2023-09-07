@@ -167,8 +167,8 @@ func resourceHostGroupCreate(ctx context.Context, d *schema.ResourceData, meta i
 			Region:              region,
 			EnterpriseProjectId: utils.StringIgnoreEmpty(epsId),
 			Body: &hssv5model.AddHostsGroupRequestInfo{
-				GroupName:  utils.StringIgnoreEmpty(groupName),
-				HostIdList: &hostIds,
+				GroupName:  groupName,
+				HostIdList: hostIds,
 			},
 		}
 	)
@@ -309,7 +309,7 @@ func resourceHostGroupUpdate(ctx context.Context, d *schema.ResourceData, meta i
 			Region:              region,
 			EnterpriseProjectId: utils.StringIgnoreEmpty(epsId),
 			Body: &hssv5model.ChangeHostsGroupRequestInfo{
-				GroupId:    utils.String(groupId),
+				GroupId:    groupId,
 				GroupName:  utils.StringIgnoreEmpty(groupName),
 				HostIdList: &hostIds,
 			},
@@ -346,7 +346,7 @@ func resourceHostGroupDelete(_ context.Context, d *schema.ResourceData, meta int
 		request = hssv5model.DeleteHostsGroupRequest{
 			Region:              cfg.GetRegion(d),
 			EnterpriseProjectId: utils.StringIgnoreEmpty(common.GetEnterpriseProjectID(d, cfg)),
-			GroupId:             utils.StringIgnoreEmpty(groupId),
+			GroupId:             groupId,
 		}
 	)
 
