@@ -29,10 +29,6 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpcep"
 )
 
-const (
-	defaultCloud string = "myhuaweicloud.com"
-)
-
 // Provider returns a schema.Provider for HuaweiCloudStack.
 func Provider() *schema.Provider {
 	provider := &schema.Provider{
@@ -679,21 +675,4 @@ func flattenProviderEndpoints(d *schema.ResourceData) (map[string]string, error)
 
 	log.Printf("[DEBUG] customer endpoints: %+v", epMap)
 	return epMap, nil
-}
-
-func getCloudDomain(cloud, region string) string {
-	// first, use the specified value
-	if cloud != "" {
-		return cloud
-	}
-
-	return defaultCloud
-}
-
-func isGlobalIamEndpoint(domain, region string, isRegional bool) bool {
-	if !isRegional && domain == defaultCloud && !strings.HasPrefix(region, "eu-west-1") {
-		return true
-	}
-
-	return false
 }
