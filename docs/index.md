@@ -21,11 +21,11 @@ terraform {
 
 # Configure the huaweicloudstack Provider
 provider "huaweicloudstack" {
-  region     = "cn-north-4"
+  region       = "cn-north-4"
   project_name = "my-project-name"
-  cloud      = "mycloud.com"
-  access_key = "my-access-key"
-  secret_key = "my-secret-key"
+  cloud        = "mycloud.com"
+  access_key   = "my-access-key"
+  secret_key   = "my-secret-key"
 }
 
 # Create a VPC
@@ -40,12 +40,12 @@ Terraform 0.12 and earlier:
 ```hcl
 # Configure the huaweicloudstack Provider
 provider "huaweicloudstack" {
-  version    = "~> 2.3.0"
-  region     = "cn-north-4"
+  version      = "~> 2.3.0"
+  region       = "cn-north-4"
   project_name = "my-project-name"
-  cloud      = "mycloud.com"
-  access_key = "my-access-key"
-  secret_key = "my-secret-key"
+  cloud        = "mycloud.com"
+  access_key   = "my-access-key"
+  secret_key   = "my-secret-key"
 }
 
 # Create a VPC
@@ -80,11 +80,11 @@ Usage:
 
 ```hcl
 provider "huaweicloudstack" {
-  region     = "cn-north-4"
+  region       = "cn-north-4"
   project_name = "my-project-name"
-  cloud      = "mycloud.com"
-  access_key = "my-access-key"
-  secret_key = "my-secret-key"
+  cloud        = "mycloud.com"
+  access_key   = "my-access-key"
+  secret_key   = "my-secret-key"
 }
 ```
 
@@ -154,11 +154,11 @@ Usage:
 
 ```hcl
 provider "huaweicloudstack" {
-  region     = "cn-north-4"
+  region       = "cn-north-4"
   project_name = "my-project-name"
-  cloud      = "mycloud.com"
-  access_key = "my-access-key"
-  secret_key = "my-secret-key"
+  cloud        = "mycloud.com"
+  access_key   = "my-access-key"
+  secret_key   = "my-secret-key"
 
   assume_role {
     agency_name = "agency"
