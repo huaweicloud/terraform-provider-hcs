@@ -14,21 +14,9 @@ resource "hcs_vpc_subnet" "mysubnet" {
   vpc_id        = hcs_vpc.myvpc.id
 }
 
-resource "hcs_vpc_eip" "myeip" {
-  publicip {
-    type = "5_bgp"
-  }
-  bandwidth {
-    name        = var.bandwidth_name
-    size        = 8
-    share_type  = "PER"
-    charge_mode = "traffic"
-  }
-}
-
 data "hcs_availability_zones" "myaz" {}
 
-resource "hcs_compute_keypair" "mykeypair" {
+resource "hcs_ecs_compute_keypair" "mykeypair" {
   name = var.key_pair_name
 }
 resource "hcs_cce_cluster" "mycce" {
@@ -36,8 +24,8 @@ resource "hcs_cce_cluster" "mycce" {
   flavor_id              = var.cce_cluster_flavor
   vpc_id                 = hcs_vpc.myvpc.id
   subnet_id              = hcs_vpc_subnet.mysubnet.id
+  cluster_type           = "ARM64"
   container_network_type = "overlay_l2"
-  eip                    = hcs_vpc_eip.myeip.address
 }
 
 resource "hcs_cce_node" "mynode" {
@@ -45,7 +33,7 @@ resource "hcs_cce_node" "mynode" {
   name              = var.node_name
   flavor_id         = var.node_flavor
   availability_zone = data.hcs_availability_zones.myaz.names[0]
-  key_pair          = hcs_compute_keypair.mykeypair.name
+  key_pair          = hcs_ecs_compute_keypair.mykeypair.name
 
   root_volume {
     size       = var.root_volume_size
@@ -55,37 +43,4 @@ resource "hcs_cce_node" "mynode" {
     size       = var.data_volume_size
     volumetype = var.data_volume_type
   }
-}
-
-data "hcs_images_image" "myimage" {
-  name        = var.image_name
-  most_recent = true
-}
-
-resource "hcs_compute_instance" "myecs" {
-  name                        = var.ecs_name
-  image_id                    = data.hcs_images_image.myimage.id
-  flavor_id                   = var.ecs_flavor
-  availability_zone           = data.hcs_availability_zones.myaz.names[0]
-  key_pair                    = hcs_compute_keypair.mykeypair.name
-  delete_disks_on_termination = true
-
-  system_disk_type = var.root_volume_type
-  system_disk_size = var.root_volume_size
-
-  data_disks {
-    type = var.data_volume_type
-    size = var.data_volume_size
-  }
-
-  network {
-    uuid = hcs_vpc_subnet.mysubnet.id
-  }
-}
-
-resource "hcs_cce_node_attach" "test" {
-  cluster_id = hcs_cce_cluster.mycce.id
-  server_id  = hcs_compute_instance.myecs.id
-  key_pair   = hcs_compute_keypair.mykeypair.name
-  os         = var.os
 }

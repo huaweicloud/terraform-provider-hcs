@@ -43,7 +43,6 @@ func TestAccElbV3Listener_basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					rc.CheckResourceExists(),
 					resource.TestCheckResourceAttr(resourceName, "name", rName),
-					resource.TestCheckResourceAttr(resourceName, "forward_eip", "true"),
 					resource.TestCheckResourceAttr(resourceName, "tags.key", "value"),
 					resource.TestCheckResourceAttr(resourceName, "tags.owner", "terraform"),
 					resource.TestCheckResourceAttr(resourceName, "advanced_forwarding_enabled", "false"),
@@ -53,7 +52,6 @@ func TestAccElbV3Listener_basic(t *testing.T) {
 				Config: testAccElbV3ListenerConfig_update(rNameUpdate),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rNameUpdate),
-					resource.TestCheckResourceAttr(resourceName, "forward_eip", "false"),
 					resource.TestCheckResourceAttr(resourceName, "tags.key1", "value1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.owner", "terraform_update"),
 					resource.TestCheckResourceAttr(resourceName, "advanced_forwarding_enabled", "true"),
@@ -74,16 +72,9 @@ data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "hcs_availability_zones" "test" {}
-
 resource "hcs_elb_loadbalancer" "test" {
   name            = "%s"
   ipv4_subnet_id  = data.hcs_vpc_subnet.test.ipv4_subnet_id
-  ipv6_network_id = data.hcs_vpc_subnet.test.id
-
-  availability_zone = [
-    data.hcs_availability_zones.test.names[0]
-  ]
 
   tags = {
     key   = "value"
@@ -98,8 +89,6 @@ resource "hcs_elb_listener" "test" {
   protocol_port               = 8080
   loadbalancer_id             = hcs_elb_loadbalancer.test.id
   advanced_forwarding_enabled = false
-
-  forward_eip = true
 
   idle_timeout = 62
   request_timeout = 63
@@ -119,17 +108,10 @@ data "hcs_vpc_subnet" "test" {
   name = "subnet-default"
 }
 
-data "hcs_availability_zones" "test" {}
-
 resource "hcs_elb_loadbalancer" "test" {
   name              = "%s"
   cross_vpc_backend = true
   ipv4_subnet_id    = data.hcs_vpc_subnet.test.ipv4_subnet_id
-  ipv6_network_id   = data.hcs_vpc_subnet.test.id
-
-  availability_zone = [
-    data.hcs_availability_zones.test.names[0]
-  ]
 
   tags = {
     key   = "value"

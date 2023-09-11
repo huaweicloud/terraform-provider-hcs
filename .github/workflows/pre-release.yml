@@ -59,7 +59,7 @@ jobs:
           cat>${{ github.workspace }}/hw_dev.tfrc<<EOF
           provider_installation {
             dev_overrides {
-              "huaweicloud/huaweicloud" = "/home/runner/go/bin"
+              "huaweicloud/hcs" = "/home/runner/go/bin"
             }
             direct {}
           }

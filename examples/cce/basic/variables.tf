@@ -47,7 +47,7 @@ variable "node_name" {
 }
 
 variable "node_flavor" {
-  default = "t6.large.2"
+  default = "rc6.large.2"
 }
 
 variable "root_volume_size" {
@@ -67,7 +67,7 @@ variable "data_volume_type" {
 }
 
 variable "ecs_flavor" {
-  default = "sn3.large.2"
+  default = "rc6.large.2"
 }
 
 variable "ecs_name" {

@@ -114,7 +114,7 @@ The following arguments are supported:
 
 * `alarm_id` - (Optional, String) Specifies the alarm rule ID. This parameter is mandatory when `scaling_policy_type`
   is set to `ALARM`. You can create an alarm rule with
-  [hcs_ces_alarmrule](https://registry.terraform.io/providers/huaweicloud/huaweicloud/latest/docs/resources/ces_alarmrule).
+  [hcs_ces_alarmrule](https://registry.terraform.io/providers/huaweicloud/hcs/latest/docs/resources/ces_alarmrule).
 
 * `scheduled_policy` - (Optional, List) Specifies the periodic or scheduled AS policy.
   This parameter is mandatory when `scaling_policy_type` is set to `SCHEDULED` or `RECURRENCE`.

@@ -1,20 +1,21 @@
-package huaweicloudstack
+package ecs
 
 import (
+	"context"
 	"sort"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/helper/hashcode"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/compute/v2/extensions/availabilityzones"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils/fmtp"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func DataSourceAvailabilityZones() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceAvailabilityZonesRead,
+		ReadContext: dataSourceAvailabilityZonesRead,
+
 		Schema: map[string]*schema.Schema{
 			"region": {
 				Type:     schema.TypeString,
@@ -38,21 +39,21 @@ func DataSourceAvailabilityZones() *schema.Resource {
 	}
 }
 
-func dataSourceAvailabilityZonesRead(d *schema.ResourceData, meta interface{}) error {
-	config := config.GetHcsConfig(meta)
-	region := GetRegion(d, config)
-	computeClient, err := config.ComputeV2Client(region)
+func dataSourceAvailabilityZonesRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	cfg := config.GetHcsConfig(meta)
+	region := cfg.GetRegion(d)
+	computeClient, err := cfg.ComputeV2Client(region)
 	if err != nil {
-		return fmtp.Errorf("Error creating HuaweiCloudStack compute client: %s", err)
+		return diag.Errorf("Error creating HuaweiCloudStack compute client: %s", err)
 	}
 
 	allPages, err := availabilityzones.List(computeClient).AllPages()
 	if err != nil {
-		return fmtp.Errorf("Error retrieving Availability Zones: %s", err)
+		return diag.Errorf("Error retrieving Availability Zones: %s", err)
 	}
 	zoneInfo, err := availabilityzones.ExtractAvailabilityZones(allPages)
 	if err != nil {
-		return fmtp.Errorf("Error extracting Availability Zones: %s", err)
+		return diag.Errorf("Error extracting Availability Zones: %s", err)
 	}
 
 	stateBool := d.Get("state").(string) == "available"

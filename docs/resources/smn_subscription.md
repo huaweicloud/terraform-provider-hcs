@@ -39,17 +39,12 @@ The following arguments are supported:
 * `topic_urn` - (Required, String, ForceNew) Specifies the resource identifier of a topic, which is unique.
   Changing this parameter will create a new resource.
 
-* `protocol` - (Required, String, ForceNew) Specifies the protocol of the message endpoint. Currently, email, sms, http,
-  https, functionstage and functiongraph are supported. Changing this parameter will create a new resource.
+* `protocol` - (Required, String, ForceNew) Specifies the protocol of the message endpoint. Currently, email, sms are supported. Changing this parameter will create a new resource.
 
 * `endpoint` - (Required, String, ForceNew) Message endpoint. Changing this parameter will create a new resource.
-  + **For an HTTP subscription**, the endpoint starts with `http://`.
-  + **For an HTTPS subscription**, the endpoint starts with `https://`.
   + **For an email subscription**, the endpoint is an mail address.
   + **For an SMS message subscription**, the endpoint is a phone number,
     the format is \[+\]\[country code\]\[phone number\], e.g. +86185xxxx0000.
-  + **For a functionstage subscription**, the endpoint is a function urn.
-  + **For a functiongraph subscription**, the endpoint is a workflow ID.
 
 * `remark` - (Optional, String, ForceNew) Remark information. The remarks must be a UTF-8-coded character string
   containing 128 bytes. Changing this parameter will create a new resource.

@@ -22,15 +22,6 @@ resource "hcs_vpc" "vpc" {
   cidr = var.vpc_cidr
 }
 
-resource "hcs_vpc" "vpc_with_tags" {
-  name = var.vpc_name
-  cidr = var.vpc_cidr
-
-  tags = {
-    foo = "bar"
-    key = "value"
-  }
-}
 ```
 
 ## Argument Reference
@@ -48,11 +39,6 @@ The following arguments are supported:
 
 * `description` - (Optional, String) Specifies supplementary information about the VPC. The value is a string of
   no more than 255 characters and cannot contain angle brackets (< or >).
-
-* `tags` - (Optional, Map) Specifies the key/value pairs to associate with the VPC.
-
-* `enterprise_project_id` - (Optional, String, ForceNew) Specifies the enterprise project id of the VPC. Changing this
-  creates a new VPC resource.
 
 ## Attributes Reference
 
@@ -75,17 +61,4 @@ VPCs can be imported using the `id`, e.g.
 
 ```
 $ terraform import hcs_vpc.vpc_v1 7117d38e-4c8f-4624-a505-bd96b97d024c
-```
-
-Note that the imported state may not be identical to your resource definition when `secondary_cidr` was set.
-You you can ignore changes as below.
-
-```
-resource "hcs_vpc" "vpc_v1" {
-    ...
-
-  lifecycle {
-    ignore_changes = [ secondary_cidr ]
-  }
-}
 ```

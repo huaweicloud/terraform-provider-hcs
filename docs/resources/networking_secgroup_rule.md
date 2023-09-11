@@ -30,15 +30,6 @@ resource "hcs_networking_secgroup_rule" "test" {
 variable "group_name" {}
 variable "security_group_id" {}
 
-resource "hcs_vpc_address_group" "test" {
-  name = var.group_name
-
-  addresses = [
-    "192.168.10.12",
-    "192.168.11.0-192.168.11.240",
-  ]
-}
-
 resource "hcs_networking_secgroup_rule" "test" {
   security_group_id       = var.security_group_id
   direction               = "ingress"
@@ -47,7 +38,6 @@ resource "hcs_networking_secgroup_rule" "test" {
   ports                   = "80,500,600-800"
   protocol                = "tcp"
   priority                = 5
-  remote_address_group_id = hcs_vpc_address_group.test.id
 }
 ```
 

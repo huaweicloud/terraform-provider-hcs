@@ -44,7 +44,7 @@ func ResourceSubscription() *schema.Resource {
 				Required: true,
 				ForceNew: true,
 				ValidateFunc: validation.StringInSlice([]string{
-					"email", "sms", "http", "https", "functionstage", "functiongraph",
+					"email", "sms",
 				}, false),
 			},
 			"endpoint": {

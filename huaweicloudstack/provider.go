@@ -29,10 +29,6 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpcep"
 )
 
-const (
-	defaultCloud string = "myhuaweicloud.com"
-)
-
 // Provider returns a schema.Provider for HuaweiCloudStack.
 func Provider() *schema.Provider {
 	provider := &schema.Provider{
@@ -324,19 +320,29 @@ func Provider() *schema.Provider {
 
 			"hcs_evs_volumes": evs.DataSourceEvsVolumesV2(),
 
+			"hcs_elb_certificate": elb.DataSourceELBCertificateV3(),
+			"hcs_elb_pools":       elb.DataSourcePools(),
+
 			"hcs_nat_gateway": nat.DataSourcePublicGateway(),
 			"hcs_smn_topics":  smn.DataSourceTopics(),
 
 			"hcs_ims_images": ims.DataSourceImagesImages(),
 
-			"hcs_vpcs":        vpc.DataSourceVpcs(),
-			"hcs_vpc_subnets": vpc.DataSourceVpcSubnets(),
+			"hcs_vpc":                    vpc.DataSourceVpcV1(),
+			"hcs_vpc_subnet":             vpc.DataSourceVpcSubnetV1(),
+			"hcs_vpc_subnet_v1":          vpc.DataSourceVpcSubnetV1(),
+			"hcs_vpc_subnet_ids":         vpc.DataSourceVpcSubnetIdsV1(),
+			"hcs_vpc_subnet_ids_v1":      vpc.DataSourceVpcSubnetIdsV1(),
+			"hcs_vpcs":                   vpc.DataSourceVpcs(),
+			"hcs_vpc_subnets":            vpc.DataSourceVpcSubnets(),
+			"hcs_vpc_peering_connection": vpc.DataSourceVpcPeeringConnectionV2(),
 
+			"hcs_networking_port":      vpc.DataSourceNetworkingPortV2(),
+			"hcs_networking_secgroup":  vpc.DataSourceNetworkingSecGroup(),
 			"hcs_networking_secgroups": vpc.DataSourceNetworkingSecGroups(),
 
-			"hcs_availability_zones": DataSourceAvailabilityZones(),
-			"hcs_as_configurations":  as.DataSourceASConfigurations(),
-			"hcs_as_groups":          as.DataSourceASGroups(),
+			"hcs_as_configurations": as.DataSourceASConfigurations(),
+			"hcs_as_groups":         as.DataSourceASGroups(),
 
 			"hcs_bms_flavors": bms.DataSourceBmsFlavors(),
 
@@ -347,6 +353,7 @@ func Provider() *schema.Provider {
 			"hcs_cce_node":           cce.DataSourceNode(),
 			"hcs_cce_nodes":          cce.DataSourceNodes(),
 
+			"hcs_availability_zones":       ecs.DataSourceAvailabilityZones(),
 			"hcs_ecs_compute_flavors":      ecs.DataSourceEcsFlavors(),
 			"hcs_ecs_compute_instance":     ecs.DataSourceComputeInstance(),
 			"hcs_ecs_compute_instances":    ecs.DataSourceComputeInstances(),
@@ -377,14 +384,16 @@ func Provider() *schema.Provider {
 			"hcs_vpcep_endpoint":     vpcep.ResourceVPCEndpoint(),
 			"hcs_vpcep_service":      vpcep.ResourceVPCEndpointService(),
 
-			"hcs_vpc_bandwidth":     eip.ResourceVpcBandWidthV2(),
-			"hcs_vpc_eip":           eip.ResourceVpcEIPV1(),
-			"hcs_vpc_eip_associate": eip.ResourceEIPAssociate(),
+			"hcs_vpc_bandwidth":           eip.ResourceVpcBandWidthV2(),
+			"hcs_vpc_eip":                 eip.ResourceVpcEIPV1(),
+			"hcs_vpc_eip_associate":       eip.ResourceEIPAssociate(),
+			"hcs_vpc_bandwidth_associate": eip.ResourceBandWidthAssociate(),
 
 			"hcs_vpc_bandwidth_v2": eip.ResourceVpcBandWidthV2(),
 			"hcs_vpc_eip_v1":       eip.ResourceVpcEIPV1(),
 
-			"hcs_evs_volume": evs.ResourceEvsVolume(),
+			"hcs_evs_volume":   evs.ResourceEvsVolume(),
+			"hcs_evs_snapshot": evs.ResourceEvsSnapshotV2(),
 
 			"hcs_elb_certificate":     elb.ResourceCertificateV3(),
 			"hcs_elb_l7policy":        elb.ResourceL7PolicyV3(),
@@ -400,6 +409,8 @@ func Provider() *schema.Provider {
 			"hcs_ecs_compute_server_group":     ecs.ResourceComputeServerGroup(),
 			"hcs_ecs_compute_interface_attach": ecs.ResourceComputeInterfaceAttach(),
 			"hcs_ecs_compute_instance":         ecs.ResourceComputeInstance(),
+			"hcs_ecs_compute_keypair":          ecs.ResourceComputeKeypairV2(),
+			"hcs_ecs_compute_eip_associate":    ecs.ResourceComputeEIPAssociate(),
 
 			// Legacy
 			"hcs_networking_eip_associate": eip.ResourceEIPAssociate(),
@@ -429,16 +440,20 @@ func Provider() *schema.Provider {
 			"hcs_vpc":        vpc.ResourceVirtualPrivateCloudV1(),
 			"hcs_vpc_subnet": vpc.ResourceVpcSubnetV1(),
 
-			"hcs_vpc_route_v2":             vpc.ResourceVPCRouteV2(),
-			"hcs_vpc_v1":                   vpc.ResourceVirtualPrivateCloudV1(),
-			"hcs_vpc_subnet_v1":            vpc.ResourceVpcSubnetV1(),
-			"hcs_networking_vip":           vpc.ResourceNetworkingVip(),
-			"hcs_networking_vip_associate": vpc.ResourceNetworkingVIPAssociateV2(),
+			"hcs_vpc_route": vpc.ResourceVPCRouteV2(),
+
+			"hcs_vpc_route_v2":                    vpc.ResourceVPCRouteV2(),
+			"hcs_vpc_v1":                          vpc.ResourceVirtualPrivateCloudV1(),
+			"hcs_vpc_subnet_v1":                   vpc.ResourceVpcSubnetV1(),
+			"hcs_networking_vip":                  vpc.ResourceNetworkingVip(),
+			"hcs_networking_vip_associate":        vpc.ResourceNetworkingVIPAssociateV2(),
+			"hcs_vpc_peering_connection":          vpc.ResourceVpcPeeringConnectionV2(),
+			"hcs_vpc_peering_connection_accepter": vpc.ResourceVpcPeeringConnectionAccepterV2(),
 
 			"hcs_network_acl":              ResourceNetworkACL(),
 			"hcs_network_acl_rule":         ResourceNetworkACLRule(),
-			"hcs_networking_secgroup":      ResourceNetworkingSecGroup(),
-			"hcs_networking_secgroup_rule": ResourceNetworkingSecGroupRule(),
+			"hcs_networking_secgroup":      vpc.ResourceNetworkingSecGroup(),
+			"hcs_networking_secgroup_rule": vpc.ResourceNetworkingSecGroupRule(),
 
 			"hcs_bms_instance": bms.ResourceBmsInstance(),
 		},
@@ -660,21 +675,4 @@ func flattenProviderEndpoints(d *schema.ResourceData) (map[string]string, error)
 
 	log.Printf("[DEBUG] customer endpoints: %+v", epMap)
 	return epMap, nil
-}
-
-func getCloudDomain(cloud, region string) string {
-	// first, use the specified value
-	if cloud != "" {
-		return cloud
-	}
-
-	return defaultCloud
-}
-
-func isGlobalIamEndpoint(domain, region string, isRegional bool) bool {
-	if !isRegional && domain == defaultCloud && !strings.HasPrefix(region, "eu-west-1") {
-		return true
-	}
-
-	return false
 }

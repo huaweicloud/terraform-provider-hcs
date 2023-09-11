@@ -389,8 +389,6 @@ func getDomainID(client *golangsdk.ServiceClient, name string) (string, error) {
 	old := client.Endpoint
 	defer func() { client.Endpoint = old }()
 
-	client.Endpoint = old + "auth/"
-
 	// the List request does not support query options
 	allPages, err := domains.List(client, nil).AllPages()
 	if err != nil {

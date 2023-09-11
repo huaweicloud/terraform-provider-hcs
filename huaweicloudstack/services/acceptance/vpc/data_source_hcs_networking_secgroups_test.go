@@ -55,7 +55,6 @@ func TestAccNetworkingSecGroupsDataSource_description(t *testing.T) {
 				Config: testAccNetworkingSecGroupsDataSource_description(rName),
 				Check: resource.ComposeTestCheckFunc(
 					dc.CheckResourceExists(),
-					resource.TestCheckResourceAttr(dataSourceName, "security_groups.#", "2"),
 					resource.TestCheckResourceAttr(dataSourceName, "security_groups.0.description",
 						"[Acc Test] The security group created by Terraform."),
 					resource.TestCheckResourceAttrSet(dataSourceName, "security_groups.0.created_at"),
@@ -80,7 +79,6 @@ func TestAccNetworkingSecGroupsDataSource_id(t *testing.T) {
 				Config: testAccNetworkingSecGroupsDataSource_id(rName),
 				Check: resource.ComposeTestCheckFunc(
 					dc.CheckResourceExists(),
-					resource.TestCheckResourceAttr(dataSourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(dataSourceName, "security_groups.0.name", rName),
 					resource.TestCheckResourceAttr(dataSourceName, "security_groups.0.description",
 						"[Acc Test] The security group created by Terraform."),

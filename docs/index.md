@@ -21,10 +21,11 @@ terraform {
 
 # Configure the huaweicloudstack Provider
 provider "huaweicloudstack" {
-  region     = "cn-north-4"
-  cloud      = "mycloud.com"
-  access_key = "my-access-key"
-  secret_key = "my-secret-key"
+  region       = "cn-north-4"
+  project_name = "my-project-name"
+  cloud        = "mycloud.com"
+  access_key   = "my-access-key"
+  secret_key   = "my-secret-key"
 }
 
 # Create a VPC
@@ -39,11 +40,12 @@ Terraform 0.12 and earlier:
 ```hcl
 # Configure the huaweicloudstack Provider
 provider "huaweicloudstack" {
-  version    = "~> 2.3.0"
-  region     = "cn-north-4"
-  cloud      = "mycloud.com"
-  access_key = "my-access-key"
-  secret_key = "my-secret-key"
+  version      = "~> 2.3.0"
+  region       = "cn-north-4"
+  project_name = "my-project-name"
+  cloud        = "mycloud.com"
+  access_key   = "my-access-key"
+  secret_key   = "my-secret-key"
 }
 
 # Create a VPC
@@ -78,10 +80,11 @@ Usage:
 
 ```hcl
 provider "huaweicloudstack" {
-  region     = "cn-north-4"
-  cloud      = "mycloud.com"
-  access_key = "my-access-key"
-  secret_key = "my-secret-key"
+  region       = "cn-north-4"
+  project_name = "my-project-name"
+  cloud        = "mycloud.com"
+  access_key   = "my-access-key"
+  secret_key   = "my-secret-key"
 }
 ```
 
@@ -100,6 +103,7 @@ Usage:
 $ export HCS_ACCESS_KEY="anaccesskey"
 $ export HCS_SECRET_KEY="asecretkey"
 $ export HCS_REGION_NAME="cn-north-4"
+$ export HCS_PROJECT_NAME="my-project-name"
 $ export HCS_CLOUD="mycloud.com"
 $ terraform plan
 ```
@@ -150,10 +154,11 @@ Usage:
 
 ```hcl
 provider "huaweicloudstack" {
-  region     = "cn-north-4"
-  cloud      = "mycloud.com"
-  access_key = "my-access-key"
-  secret_key = "my-secret-key"
+  region       = "cn-north-4"
+  project_name = "my-project-name"
+  cloud        = "mycloud.com"
+  access_key   = "my-access-key"
+  secret_key   = "my-secret-key"
 
   assume_role {
     agency_name = "agency"
@@ -185,8 +190,8 @@ The following arguments are supported:
 
 [//]: # (  block may be in the configuration.)
 
-[//]: # ()
-[//]: # (* `project_name` - &#40;Optional&#41; The Name of the project to login with. If omitted, the `HCS_PROJECT_NAME` environment)
+
+* `project_name` - (Optional) The Name of the project to login with. If omitted, the `HCS_PROJECT_NAME` environment
 
 [//]: # (  variable or `region` is used.)
 

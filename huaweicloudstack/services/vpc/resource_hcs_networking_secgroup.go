@@ -1,8 +1,4 @@
-/*
- * Copyright (c) Huawei Technologies Co., Ltd. 2023-2023. All rights reserved.
- */
-
-package huaweicloudstack
+package vpc
 
 import (
 	"context"
@@ -61,10 +57,6 @@ var securityGroupRuleSchema = &schema.Schema{
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"remote_address_group_id": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"description": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -116,12 +108,6 @@ func ResourceNetworkingSecGroup() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"enterprise_project_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-				Computed: true,
-			},
 			"delete_default_rules": {
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -141,9 +127,9 @@ func ResourceNetworkingSecGroup() *schema.Resource {
 }
 
 func resourceNetworkingSecGroupCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := config.GetHcsConfig(meta)
-	region := common.GetRegion(d, config)
-	v3Client, err := config.NetworkingV3Client(region)
+	cfg := config.GetHcsConfig(meta)
+	region := common.GetRegion(d, cfg)
+	v3Client, err := cfg.NetworkingV3Client(region)
 	if err != nil {
 		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v3 client: %s", err)
 	}
@@ -151,7 +137,7 @@ func resourceNetworkingSecGroupCreate(ctx context.Context, d *schema.ResourceDat
 	// Only name and enterprise project ID are supported.
 	createOpts := v3groups.CreateOpts{
 		Name:                d.Get("name").(string),
-		EnterpriseProjectId: common.GetEnterpriseProjectID(d, config),
+		EnterpriseProjectId: common.GetEnterpriseProjectID(d, cfg),
 	}
 
 	logp.Printf("[DEBUG] Create HuaweiCloudStack Security Group: %#v", createOpts)
@@ -190,10 +176,10 @@ func resourceNetworkingSecGroupCreate(ctx context.Context, d *schema.ResourceDat
 }
 
 func resourceNetworkingSecGroupCreateV1(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := config.GetHcsConfig(meta)
-	region := common.GetRegion(d, config)
+	cfg := config.GetHcsConfig(meta)
+	region := common.GetRegion(d, cfg)
 	// The v3 API does not exist or has not been published in this region, retry creation using v1 client.
-	v1Client, err := config.NetworkingV1Client(region)
+	v1Client, err := cfg.NetworkingV1Client(region)
 	if err != nil {
 		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v1 client: %s", err)
 	}
@@ -201,7 +187,7 @@ func resourceNetworkingSecGroupCreateV1(ctx context.Context, d *schema.ResourceD
 	// Only name and enterprise project ID are supported.
 	createOpts := v1groups.CreateOpts{
 		Name:                d.Get("name").(string),
-		EnterpriseProjectId: common.GetEnterpriseProjectID(d, config),
+		EnterpriseProjectId: common.GetEnterpriseProjectID(d, cfg),
 	}
 	securityGroup, err := v1groups.Create(v1Client, createOpts).Extract()
 	if err != nil {
@@ -211,7 +197,7 @@ func resourceNetworkingSecGroupCreateV1(ctx context.Context, d *schema.ResourceD
 
 	if _, ok := d.GetOk("description"); ok {
 		// The v1 API does not support creating and updating methods for description parameters.
-		err = resourceNetworkingSecGroupUpdateV2(d, config, region)
+		err = resourceNetworkingSecGroupUpdateV2(d, cfg, region)
 		if err != nil {
 			return fmtp.DiagErrorf("Error updating description of Security group (%s): %s", d.Id(), err)
 		}
@@ -229,13 +215,13 @@ func resourceNetworkingSecGroupCreateV1(ctx context.Context, d *schema.ResourceD
 }
 
 func resourceNetworkingSecGroupRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := config.GetHcsConfig(meta)
-	region := common.GetRegion(d, config)
-	v1Client, err := config.NetworkingV1Client(region)
+	cfg := config.GetHcsConfig(meta)
+	region := common.GetRegion(d, cfg)
+	v1Client, err := cfg.NetworkingV1Client(region)
 	if err != nil {
 		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v1 client: %s", err)
 	}
-	v3Client, err := config.NetworkingV3Client(region)
+	v3Client, err := cfg.NetworkingV3Client(region)
 	if err != nil {
 		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v3 client: %s", err)
 	}
@@ -251,7 +237,6 @@ func resourceNetworkingSecGroupRead(_ context.Context, d *schema.ResourceData, m
 		d.Set("region", region),
 		d.Set("name", v1Resp.Name),
 		d.Set("description", v1Resp.Description),
-		d.Set("enterprise_project_id", v1Resp.EnterpriseProjectId),
 		d.Set("rules", flattenSecurityGroupRulesV1(v1Resp)),
 	)
 
@@ -299,16 +284,15 @@ func flattenSecurityGroupRulesV3(rules []v3rules.SecurityGroupRule) ([]map[strin
 	sgRules := make([]map[string]interface{}, len(rules))
 	for i, rule := range rules {
 		ruleInfo := map[string]interface{}{
-			"id":                      rule.ID,
-			"direction":               rule.Direction,
-			"protocol":                rule.Protocol,
-			"ethertype":               rule.Ethertype,
-			"remote_ip_prefix":        rule.RemoteIpPrefix,
-			"remote_group_id":         rule.RemoteGroupId,
-			"remote_address_group_id": rule.RemoteAddressGroupId,
-			"description":             rule.Description,
-			"action":                  rule.Action,
-			"priority":                rule.Priority,
+			"id":               rule.ID,
+			"direction":        rule.Direction,
+			"protocol":         rule.Protocol,
+			"ethertype":        rule.Ethertype,
+			"remote_ip_prefix": rule.RemoteIpPrefix,
+			"remote_group_id":  rule.RemoteGroupId,
+			"description":      rule.Description,
+			"action":           rule.Action,
+			"priority":         rule.Priority,
 		}
 		if rule.MultiPort != "None" && rule.MultiPort != "" {
 			ruleInfo["ports"] = rule.MultiPort
@@ -339,9 +323,9 @@ func flattenSecurityGroupRulesV3(rules []v3rules.SecurityGroupRule) ([]map[strin
 
 func resourceNetworkingSecGroupUpdate(ctx context.Context, d *schema.ResourceData,
 	meta interface{}) diag.Diagnostics {
-	config := config.GetHcsConfig(meta)
-	region := common.GetRegion(d, config)
-	client, err := config.NetworkingV3Client(region)
+	cfg := config.GetHcsConfig(meta)
+	region := common.GetRegion(d, cfg)
+	client, err := cfg.NetworkingV3Client(region)
 	if err != nil {
 		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v3 client: %s", err)
 	}
@@ -358,7 +342,7 @@ func resourceNetworkingSecGroupUpdate(ctx context.Context, d *schema.ResourceDat
 	if err != nil {
 		if _, ok := err.(golangsdk.ErrDefault404); ok {
 			// The v1 API does not support creating and updating description parameters.
-			err = resourceNetworkingSecGroupUpdateV2(d, config, region)
+			err = resourceNetworkingSecGroupUpdateV2(d, cfg, region)
 			if err != nil {
 				return fmtp.DiagErrorf("Error updating description of security group (%s): %s", d.Id(), err)
 			}
@@ -388,8 +372,8 @@ func resourceNetworkingSecGroupUpdateV2(d *schema.ResourceData, config *config.H
 }
 
 func resourceNetworkingSecGroupDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := config.GetHcsConfig(meta)
-	client, err := config.NetworkingV1Client(common.GetRegion(d, config))
+	cfg := config.GetHcsConfig(meta)
+	client, err := cfg.NetworkingV1Client(common.GetRegion(d, cfg))
 	if err != nil {
 		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v1 client: %s", err)
 	}

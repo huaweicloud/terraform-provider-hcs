@@ -9,10 +9,7 @@ import (
 
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/helper/hashcode"
-	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/common/tags"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/networking/v1/vpcs"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
 )
 
 func DataSourceVpcs() *schema.Resource {
@@ -38,18 +35,9 @@ func DataSourceVpcs() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"enterprise_project_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
 			"status": {
 				Type:     schema.TypeString,
 				Optional: true,
-			},
-			"tags": {
-				Type:     schema.TypeMap,
-				Optional: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 			"vpcs": {
 				Type:     schema.TypeList,
@@ -68,10 +56,6 @@ func DataSourceVpcs() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"enterprise_project_id": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
 						"status": {
 							Type:     schema.TypeString,
 							Computed: true,
@@ -79,11 +63,6 @@ func DataSourceVpcs() *schema.Resource {
 						"description": {
 							Type:     schema.TypeString,
 							Computed: true,
-						},
-						"tags": {
-							Type:     schema.TypeMap,
-							Computed: true,
-							Elem:     &schema.Schema{Type: schema.TypeString},
 						},
 					},
 				},
@@ -93,16 +72,11 @@ func DataSourceVpcs() *schema.Resource {
 }
 
 func dataSourceVpcsRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := config.GetHcsConfig(meta)
-	region := config.GetRegion(d)
-	client, err := config.NetworkingV1Client(region)
+	hcsConfig := config.GetHcsConfig(meta)
+	region := hcsConfig.GetRegion(d)
+	client, err := hcsConfig.NetworkingV1Client(region)
 	if err != nil {
 		return diag.Errorf("error creating VPC client: %s", err)
-	}
-
-	vpcV2Client, err := config.NetworkingV2Client(region)
-	if err != nil {
-		return diag.Errorf("error creating VPC V2 client: %s", err)
 	}
 
 	listOpts := vpcs.ListOpts{
@@ -110,7 +84,7 @@ func dataSourceVpcsRead(_ context.Context, d *schema.ResourceData, meta interfac
 		Name:                d.Get("name").(string),
 		Status:              d.Get("status").(string),
 		CIDR:                d.Get("cidr").(string),
-		EnterpriseProjectID: config.DataGetEnterpriseProjectID(d),
+		EnterpriseProjectID: hcsConfig.DataGetEnterpriseProjectID(d),
 	}
 
 	vpcList, err := vpcs.List(client, listOpts)
@@ -121,32 +95,14 @@ func dataSourceVpcsRead(_ context.Context, d *schema.ResourceData, meta interfac
 	log.Printf("[DEBUG] Retrieved Vpc using given filter: %+v", vpcList)
 
 	var vpcs []map[string]interface{}
-	tagFilter := d.Get("tags").(map[string]interface{})
 	var ids []string
 	for _, vpcResource := range vpcList {
 		vpc := map[string]interface{}{
-			"id":                    vpcResource.ID,
-			"name":                  vpcResource.Name,
-			"cidr":                  vpcResource.CIDR,
-			"enterprise_project_id": vpcResource.EnterpriseProjectID,
-			"status":                vpcResource.Status,
-			"description":           vpcResource.Description,
-		}
-
-		if resourceTags, err := tags.Get(vpcV2Client, "vpcs", vpcResource.ID).Extract(); err == nil {
-			tagmap := utils.TagsToMap(resourceTags.Tags)
-
-			if !utils.HasMapContains(tagmap, tagFilter) {
-				continue
-			}
-			vpc["tags"] = tagmap
-		} else {
-			// The tags api does not support eps authorization, so don't return 403 to avoid error
-			if _, ok := err.(golangsdk.ErrDefault403); ok {
-				log.Printf("[WARN] Error query tags of VPC (%s): %s", vpcResource.ID, err)
-			} else {
-				return diag.Errorf("error query tags of VPC (%s): %s", vpcResource.ID, err)
-			}
+			"id":          vpcResource.ID,
+			"name":        vpcResource.Name,
+			"cidr":        vpcResource.CIDR,
+			"status":      vpcResource.Status,
+			"description": vpcResource.Description,
 		}
 
 		vpcs = append(vpcs, vpc)
