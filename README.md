@@ -15,6 +15,13 @@ Requirements
 * [Terraform](https://www.terraform.io/downloads.html) 0.12.x
 * [Go](https://golang.org/doc/install) 1.18 (to build the provider plugin)
 
+Compatibility with HCS
+------------
+
+| Provider Version | HuaweiCloudStack Version |
+|------------------|--------------------------|
+| v2.3.x           | v8.3.0                   |
+
 Building The Provider
 ---------------------
 
