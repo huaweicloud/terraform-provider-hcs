@@ -102,7 +102,7 @@ The following arguments are supported:
   `HCS_CLOUD` environment variable is used. 
 
 * `auth_url` - (Optional, Required before 1.14.0) The Identity authentication URL. If omitted, the
-  `HCS_AUTH_URL` environment variable is used. Defaults to `https://iam-apigateway-proxy.{{region}}.{{cloud}}:31943`.
+  `HCS_AUTH_URL` environment variable is used. Defaults to `https://iam-apigateway-proxy.{{region}}.{{cloud}}:443`.
 
 * `insecure` - (Optional) Trust self-signed SSL certificates. If omitted, the
   `HCS_INSECURE` environment variable is used.
@@ -110,6 +110,9 @@ The following arguments are supported:
 * `max_retries` - (Optional) This is the maximum number of times an API call is retried, in the case where requests are
   being throttled or experiencing transient failures. The delay between the subsequent API calls increases
   exponentially. The default value is `5`. If omitted, the `HCS_MAX_RETRIES` environment variable is used.
+
+* `enterprise_project_id` - (Optional) Default Enterprise Project ID for supported resources. If omitted, the
+  `HCS_ENTERPRISE_PROJECT_ID` environment variable is used.
 
 * `endpoints` - (Optional) Configuration block in key/value pairs for customizing service endpoints. The following
   endpoints support to be customized: autoscaling, ecs, ims, vpc, nat, evs, obs, sfs, cce, rds, dds, iam. An example
