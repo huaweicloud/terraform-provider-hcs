@@ -1,6 +1,6 @@
 <a href="https://www.huaweicloud.com/intl/en-us/product/huaweicloudstack.html"><img width="225px" height="38px" align="right" src="./docs/img/huaweicloudstack_log.png"></a>
 
-Terraform HuaweiCloudStack Provider
+Terraform Huawei Cloud Stack Provider
 ==============================
 
 <!-- markdownlint-disable-next-line MD034 -->
@@ -18,9 +18,9 @@ Requirements
 Compatibility with HCS
 ------------
 
-| Provider Version | HuaweiCloudStack Version |
-|------------------|--------------------------|
-| v2.3.x           | v8.3.0                   |
+| Provider Version | Huawei Cloud Stack Version  |
+|------------------|-----------------------------|
+| v2.3.x           | v8.3.0                      |
 
 Building The Provider
 ---------------------
