@@ -37,9 +37,6 @@ The following arguments are supported:
 * `cidr` - (Required, String) Specifies the range of available subnets in the VPC. The value ranges from 10.0.0.0/8 to
   10.255.255.0/24, 172.16.0.0/12 to 172.31.255.0/24, or 192.168.0.0/16 to 192.168.255.0/24.
 
-* `description` - (Optional, String) Specifies supplementary information about the VPC. The value is a string of
-  no more than 255 characters and cannot contain angle brackets (< or >).
-
 ## Attributes Reference
 
 In addition to all arguments above, the following attributes are exported:

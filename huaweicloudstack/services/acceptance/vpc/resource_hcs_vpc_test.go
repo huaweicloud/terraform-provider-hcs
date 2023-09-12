@@ -32,7 +32,6 @@ func TestAccVpcV1_basic(t *testing.T) {
 					testAccCheckVpcV1Exists(resourceName, &vpc),
 					resource.TestCheckResourceAttr(resourceName, "name", rName),
 					resource.TestCheckResourceAttr(resourceName, "cidr", "193.168.0.0/16"),
-					resource.TestCheckResourceAttr(resourceName, "description", "created by acc test"),
 					resource.TestCheckResourceAttr(resourceName, "status", "OK"),
 				),
 			},
@@ -40,9 +39,8 @@ func TestAccVpcV1_basic(t *testing.T) {
 				Config: testAccVpcV1_update(rNameUpdate),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckVpcV1Exists(resourceName, &vpc),
-					resource.TestCheckResourceAttr(resourceName, "cidr", "193.168.0.0/16"),
+					resource.TestCheckResourceAttr(resourceName, "cidr", "193.169.0.0/16"),
 					resource.TestCheckResourceAttr(resourceName, "name", rNameUpdate),
-					resource.TestCheckResourceAttr(resourceName, "description", "updated by acc test"),
 				),
 			},
 			{
@@ -72,7 +70,6 @@ func TestAccVpcV1_secondaryCIDR(t *testing.T) {
 					testAccCheckVpcV1Exists(resourceName, &vpc),
 					resource.TestCheckResourceAttr(resourceName, "name", rName),
 					resource.TestCheckResourceAttr(resourceName, "cidr", "193.168.0.0/16"),
-					resource.TestCheckResourceAttr(resourceName, "description", "created by acc test"),
 					resource.TestCheckResourceAttr(resourceName, "status", "OK"),
 				),
 			},
@@ -81,8 +78,7 @@ func TestAccVpcV1_secondaryCIDR(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckVpcV1Exists(resourceName, &vpc),
 					resource.TestCheckResourceAttr(resourceName, "name", rNameUpdate),
-					resource.TestCheckResourceAttr(resourceName, "cidr", "193.168.0.0/16"),
-					resource.TestCheckResourceAttr(resourceName, "description", "created by acc test"),
+					resource.TestCheckResourceAttr(resourceName, "cidr", "193.169.0.0/16"),
 					resource.TestCheckResourceAttr(resourceName, "status", "OK"),
 				),
 			},
@@ -244,7 +240,6 @@ func testAccVpcV1_basic(rName string) string {
 resource "hcs_vpc" "test" {
   name        = "%s"
   cidr        = "193.168.0.0/16"
-  description = "created by acc test"
 
 }
 `, rName)
@@ -254,8 +249,7 @@ func testAccVpcV1_update(rName string) string {
 	return fmt.Sprintf(`
 resource "hcs_vpc" "test" {
   name        = "%s"
-  cidr        ="193.168.0.0/16"
-  description = "updated by acc test"
+  cidr        ="193.169.0.0/16"
 
 }
 `, rName)
@@ -266,7 +260,6 @@ func testAccVpcV1_secondaryCIDR(rName string) string {
 resource "hcs_vpc" "test" {
   name           = "%s"
   cidr           = "193.168.0.0/16"
-  description    = "created by acc test"
 }
 `, rName)
 }
@@ -275,8 +268,7 @@ func testAccVpcV1_secondaryCIDR_update(rName string) string {
 	return fmt.Sprintf(`
 resource "hcs_vpc" "test" {
   name           = "%s"
-  cidr           = "193.168.0.0/16"
-  description    = "updated by acc test"
+  cidr           = "193.169.0.0/16"
 }
 `, rName)
 }

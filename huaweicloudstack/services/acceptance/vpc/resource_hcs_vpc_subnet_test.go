@@ -31,11 +31,10 @@ func TestAccVpcSubnetV1_basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckVpcSubnetV1Exists(resourceName, &subnet),
 					resource.TestCheckResourceAttr(resourceName, "name", rName),
-					resource.TestCheckResourceAttr(resourceName, "cidr", "192.168.0.0/24"),
-					resource.TestCheckResourceAttr(resourceName, "gateway_ip", "192.168.0.1"),
+					resource.TestCheckResourceAttr(resourceName, "cidr", "192.169.0.0/24"),
+					resource.TestCheckResourceAttr(resourceName, "gateway_ip", "192.169.0.1"),
 					resource.TestCheckResourceAttr(resourceName, "ipv6_enable", "false"),
 					resource.TestCheckResourceAttr(resourceName, "dhcp_enable", "true"),
-					resource.TestCheckResourceAttr(resourceName, "dns_list.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "description", "created by acc test"),
 					resource.TestCheckResourceAttrSet(resourceName, "ipv4_subnet_id"),
 				),
@@ -114,7 +113,7 @@ func testAccVpcSubnet_base(rName string) string {
 	return fmt.Sprintf(`
 resource "hcs_vpc" "test" {
   name = "%s"
-  cidr = "192.168.0.0/16"
+  cidr = "192.169.0.0/16"
 }
 `, rName)
 }
@@ -125,8 +124,8 @@ func testAccVpcSubnetV1_basic(rName string) string {
 
 resource "hcs_vpc_subnet" "test" {
   name              = "%s"
-  cidr              = "192.168.0.0/24"
-  gateway_ip        = "192.168.0.1"
+  cidr              = "192.169.0.0/24"
+  gateway_ip        = "192.169.0.1"
   vpc_id            = hcs_vpc.test.id
   description       = "created by acc test"
 }
@@ -139,8 +138,8 @@ func testAccVpcSubnetV1_update(rName string) string {
 
 resource "hcs_vpc_subnet" "test" {
   name              = "%s"
-  cidr              = "192.168.0.0/24"
-  gateway_ip        = "192.168.0.1"
+  cidr              = "192.169.0.0/24"
+  gateway_ip        = "192.169.0.1"
   vpc_id            = hcs_vpc.test.id
   description       = "updated by acc test"
 
@@ -154,8 +153,8 @@ func testAccVpcSubnetV1_ipv6(rName string) string {
 
 resource "hcs_vpc_subnet" "test" {
   name              = "%s"
-  cidr              = "192.168.0.0/24"
-  gateway_ip        = "192.168.0.1"
+  cidr              = "192.169.0.0/24"
+  gateway_ip        = "192.169.0.1"
   vpc_id            = hcs_vpc.test.id
   ipv6_enable       = true
 

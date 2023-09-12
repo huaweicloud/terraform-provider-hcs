@@ -56,15 +56,6 @@ func ResourceVirtualPrivateCloudV1() *schema.Resource {
 				Optional:     true,
 				ValidateFunc: utils.ValidateCIDR,
 			},
-			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ValidateFunc: validation.All(
-					validation.StringLenBetween(0, 255),
-					validation.StringMatch(regexp.MustCompile("^[^<>]*$"),
-						"The angle brackets (< and >) are not allowed."),
-				),
-			},
 			"status": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -99,9 +90,8 @@ func resourceVirtualPrivateCloudCreate(ctx context.Context, d *schema.ResourceDa
 	}
 
 	createOpts := vpcs.CreateOpts{
-		Name:        d.Get("name").(string),
-		CIDR:        d.Get("cidr").(string),
-		Description: d.Get("description").(string),
+		Name: d.Get("name").(string),
+		CIDR: d.Get("cidr").(string),
 	}
 
 	epsID := common.GetEnterpriseProjectID(d, config)
@@ -155,7 +145,6 @@ func resourceVirtualPrivateCloudRead(_ context.Context, d *schema.ResourceData, 
 
 	d.Set("name", n.Name)
 	d.Set("cidr", n.CIDR)
-	d.Set("description", n.Description)
 	d.Set("status", n.Status)
 	d.Set("region", config.GetRegion(d))
 
@@ -182,14 +171,10 @@ func resourceVirtualPrivateCloudUpdate(ctx context.Context, d *schema.ResourceDa
 	}
 
 	vpcID := d.Id()
-	if d.HasChanges("name", "cidr", "description") {
+	if d.HasChanges("name", "cidr") {
 		updateOpts := vpcs.UpdateOpts{
 			Name: d.Get("name").(string),
 			CIDR: d.Get("cidr").(string),
-		}
-		if d.HasChange("description") {
-			desc := d.Get("description").(string)
-			updateOpts.Description = &desc
 		}
 
 		_, err = vpcs.Update(vpcClient, vpcID, updateOpts).Extract()
