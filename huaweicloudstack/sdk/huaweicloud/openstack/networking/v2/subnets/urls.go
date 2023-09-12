@@ -3,7 +3,7 @@ package subnets
 import "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 
 func resourceURL(c *golangsdk.ServiceClient, id string) string {
-	return c.ServiceURL("subnets", id)
+	return c.ServiceURL(c.ProjectID, "subnets", id)
 }
 
 func rootURL(c *golangsdk.ServiceClient) string {
