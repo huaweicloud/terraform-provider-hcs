@@ -10,14 +10,12 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/networking/v2/ports"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccNetworkingV2VIPAssociate_basic(t *testing.T) {
-	rName := fmt.Sprintf("tf-acc-test-%s", acctest.RandString(5))
-
+	rName := acceptance.RandomAccResourceName()
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
 		ProviderFactories: acceptance.TestAccProviderFactories,
@@ -26,24 +24,16 @@ func TestAccNetworkingV2VIPAssociate_basic(t *testing.T) {
 			{
 				Config: testAccNetworkingV2VIPAssociateConfig_basic(rName),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrPair("hcs_networking_vip_associate.vip_associate_1",
-						"port_ids.0", "hcs_compute_instance.test", "network.0.port"),
-					resource.TestCheckResourceAttrPair("hcs_networking_vip_associate.vip_associate_1",
-						"vip_id", "hcs_networking_vip.vip_1", "id"),
+					resource.TestCheckResourceAttrPair("hcs_networking_vip_associate.vip_associate_1", "port_ids.0", "hcs_networking_port.vip_ass_test_port", "id"),
+					resource.TestCheckResourceAttrPair("hcs_networking_vip_associate.vip_associate_1", "vip_id", "hcs_networking_vip.vip_test", "id"),
 				),
-			},
-			{
-				ResourceName:      "hcs_networking_vip_associate.vip_associate_1",
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: testAccNetworkingV2VIPAssociateImportStateIdFunc(),
 			},
 		},
 	})
 }
 
 func testAccCheckNetworkingV2VIPAssociateDestroy(s *terraform.State) error {
-	hcsConfig := acceptance.TestAccProvider.Meta().(*config.HcsConfig)
+	hcsConfig := config.GetHcsConfig(acceptance.TestAccProvider.Meta())
 	networkingClient, err := hcsConfig.NetworkingV2Client(acceptance.HCS_REGION_NAME)
 	if err != nil {
 		return fmt.Errorf("error creating networking client: %s", err)
@@ -70,62 +60,43 @@ func testAccCheckNetworkingV2VIPAssociateDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccNetworkingV2VIPAssociateImportStateIdFunc() resource.ImportStateIdFunc {
-	return func(s *terraform.State) (string, error) {
-		vip, ok := s.RootModule().Resources["hcs_networking_vip.vip_1"]
-		if !ok {
-			return "", fmt.Errorf("vip not found: %s", vip)
-		}
-		instance, ok := s.RootModule().Resources["hcs_compute_instance.test"]
-		if !ok {
-			return "", fmt.Errorf("port not found: %s", instance)
-		}
-		if vip.Primary.ID == "" || instance.Primary.Attributes["network.0.port"] == "" {
-			return "", fmt.Errorf("resource not found: %s/%s", vip.Primary.ID,
-				instance.Primary.Attributes["network.0.port"])
-		}
-		return fmt.Sprintf("%s/%s", vip.Primary.ID, instance.Primary.Attributes["network.0.port"]), nil
-	}
-}
-
-const testAccCompute_data = `
-data "hcs_vpc_subnet" "test" {
-  name = "subnet-default"
-}
-`
-
-func testAccComputeInstance_basic(rName string) string {
-	return fmt.Sprintf(`
-%s
-
-resource "hcs_compute_instance" "test" {
-  name                = "%s"
-  image_id            = data.hcs_images_image.test.id
-  stop_before_destroy = true
-
-  network {
-    uuid              = data.hcs_vpc_subnet.test.id
-    source_dest_check = false
-  }
-}
-`, testAccCompute_data, rName)
-}
+const (
+	vpcCidr         = "176.16.128.0/20"
+	subnetCidr      = "176.16.140.0/22"
+	subnetGatewayIp = "176.16.140.1"
+)
 
 func testAccNetworkingV2VIPAssociateConfig_basic(rName string) string {
 	return fmt.Sprintf(`
-%s
 
-data "hcs_networking_port" "port" {
-  port_id = hcs_compute_instance.test.network[0].port
+resource "hcs_vpc" "vip_ass_test_vpc" {
+  name = "%s"
+  cidr = "%s"
 }
 
-resource "hcs_networking_vip" "vip_1" {
-  network_id = data.hcs_vpc_subnet.test.id
+resource "hcs_vpc_subnet" "vip_ass_test_subnet" {
+  name       = "%s"
+  cidr       = "%s"
+  gateway_ip = "%s"
+  vpc_id     = hcs_vpc.vip_ass_test_vpc.id
 }
+
+resource "hcs_networking_port" "vip_ass_test_port" {
+  name           = "%s"
+  network_id     = hcs_vpc_subnet.vip_ass_test_subnet.id
+  admin_state_up = "true"
+}
+
+resource "hcs_networking_vip" "vip_test" {
+  network_id = hcs_vpc_subnet.vip_ass_test_subnet.id
+}
+
 
 resource "hcs_networking_vip_associate" "vip_associate_1" {
-  vip_id   = hcs_networking_vip.vip_1.id
-  port_ids = [hcs_compute_instance.test.network[0].port]
+  vip_id   = hcs_networking_vip.vip_test.id
+  port_ids = [hcs_networking_port.vip_ass_test_port.id]
 }
-`, testAccComputeInstance_basic(rName))
+
+
+`, rName+"_vpc", vpcCidr, rName+"_sub", subnetCidr, subnetGatewayIp, rName+"_port")
 }

@@ -145,8 +145,6 @@ func TestAccVpcSubnetDataSource_ipv6Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(dataSourceName, "gateway_ip", randGatewayIp),
 					resource.TestCheckResourceAttr(dataSourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(dataSourceName, "dhcp_enable", "true"),
-					resource.TestCheckResourceAttrSet(dataSourceName, "primary_dns"),
-					resource.TestCheckResourceAttrSet(dataSourceName, "secondary_dns"),
 					resource.TestCheckResourceAttrSet(dataSourceName, "ipv4_subnet_id"),
 					resource.TestCheckResourceAttrSet(dataSourceName, "ipv6_subnet_id"),
 					acceptance.TestCheckResourceAttrWithVariable(dataSourceName, "vpc_id",

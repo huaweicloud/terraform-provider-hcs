@@ -16,6 +16,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/as"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/bms"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/deprecated"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dns"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ecs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eip"
@@ -441,6 +442,9 @@ func Provider() *schema.Provider {
 			"hcs_vpc_subnet": vpc.ResourceVpcSubnetV1(),
 
 			"hcs_vpc_route": vpc.ResourceVPCRouteV2(),
+
+			"hcs_networking_port":    deprecated.ResourceNetworkingPortV2(),
+			"hcs_networking_port_v2": deprecated.ResourceNetworkingPortV2(),
 
 			"hcs_vpc_route_v2":                    vpc.ResourceVPCRouteV2(),
 			"hcs_vpc_v1":                          vpc.ResourceVirtualPrivateCloudV1(),
