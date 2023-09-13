@@ -22,7 +22,6 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/compute/v2/extensions/schedulerhints"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/compute/v2/extensions/secgroups"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/compute/v2/servers"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/ecs/v1/block_devices"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/ecs/v1/cloudservers"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/ecs/v1/powers"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/evs/v2/cloudvolumes"
@@ -412,38 +411,6 @@ func ResourceComputeInstance() *schema.Resource {
 				ValidateFunc: validation.StringInSlice([]string{
 					"ON", "OFF", "REBOOT", "FORCE-OFF", "FORCE-REBOOT",
 				}, false),
-			},
-			"volume_attached": {
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"volume_id": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"boot_index": {
-							Type:     schema.TypeInt,
-							Computed: true,
-						},
-						"size": {
-							Type:     schema.TypeInt,
-							Computed: true,
-						},
-						"type": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"pci_address": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"kms_key_id": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-					},
-				},
 			},
 			"system_disk_id": {
 				Type:     schema.TypeString,
@@ -855,14 +822,6 @@ func resourceComputeInstanceRead(_ context.Context, d *schema.ResourceData, meta
 	if err != nil {
 		return diag.Errorf("error creating compute V1 client: %s", err)
 	}
-	blockStorageClient, err := cfg.BlockStorageV2Client(region)
-	if err != nil {
-		return diag.Errorf("error creating evs client: %s", err)
-	}
-	imsClient, err := cfg.ImageV2Client(region)
-	if err != nil {
-		return diag.Errorf("error creating image client: %s", err)
-	}
 
 	server, err := cloudservers.Get(ecsClient, d.Id()).Extract()
 	if err != nil {
@@ -888,11 +847,6 @@ func resourceComputeInstanceRead(_ context.Context, d *schema.ResourceData, meta
 	flavorInfo := server.Flavor
 	d.Set("flavor_id", flavorInfo.ID)
 	d.Set("flavor_name", flavorInfo.Name)
-
-	// Set the instance's image information appropriately
-	if err := setImageInformation(d, imsClient, server.Image.ID); err != nil {
-		return diag.FromErr(err)
-	}
 
 	if server.KeyName != "" {
 		d.Set("key_pair", server.KeyName)
@@ -951,42 +905,6 @@ func resourceComputeInstanceRead(_ context.Context, d *schema.ResourceData, meta
 	}
 	d.Set("security_group_ids", secGrpIDs)
 
-	// Set volume attached
-	if len(server.VolumeAttached) > 0 {
-		bds := make([]map[string]interface{}, len(server.VolumeAttached))
-		for i, b := range server.VolumeAttached {
-			// retrieve volume `size` and `type`
-			volumeInfo, err := cloudvolumes.Get(blockStorageClient, b.ID).Extract()
-			if err != nil {
-				return diag.FromErr(err)
-			}
-			log.Printf("[DEBUG] retrieved volume %s: %#v", b.ID, volumeInfo)
-
-			// retrieve volume `pci_address`
-			va, err := block_devices.Get(ecsClient, d.Id(), b.ID).Extract()
-			if err != nil {
-				return diag.FromErr(err)
-			}
-			log.Printf("[DEBUG] retrieved block device %s: %#v", b.ID, va)
-
-			bds[i] = map[string]interface{}{
-				"volume_id":   b.ID,
-				"size":        volumeInfo.Size,
-				"type":        volumeInfo.VolumeType,
-				"boot_index":  va.BootIndex,
-				"pci_address": va.PciAddress,
-				"kms_key_id":  volumeInfo.Metadata.SystemCmkID,
-			}
-
-			if va.BootIndex == 0 {
-				d.Set("system_disk_id", b.ID)
-				d.Set("system_disk_size", volumeInfo.Size)
-				d.Set("system_disk_type", volumeInfo.VolumeType)
-			}
-		}
-		d.Set("volume_attached", bds)
-	}
-
 	// set scheduler_hints
 	osHints := server.OsSchedulerHints
 	if len(osHints.Group) > 0 {
@@ -998,10 +916,6 @@ func resourceComputeInstanceRead(_ context.Context, d *schema.ResourceData, meta
 		}
 		d.Set("scheduler_hints", schedulerHints)
 	}
-
-	// Set instance tags
-	d.Set("tags", flattenTagsToMap(server.Tags))
-
 	return nil
 }
 
@@ -1381,7 +1295,6 @@ func resourceComputeInstanceImportState(_ context.Context, d *schema.ResourceDat
 			"port":              nic.PortID,
 			"fixed_ip_v4":       nic.FixedIPv4,
 			"fixed_ip_v6":       nic.FixedIPv6,
-			"ipv6_enable":       nic.FixedIPv6 != "",
 			"source_dest_check": nic.SourceDestCheck,
 			"mac":               nic.MAC,
 		}

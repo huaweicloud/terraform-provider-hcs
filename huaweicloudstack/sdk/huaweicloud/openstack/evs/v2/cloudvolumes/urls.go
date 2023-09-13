@@ -9,7 +9,7 @@ func createURL(c *golangsdk.ServiceClient) string {
 }
 
 func resourceURL(c *golangsdk.ServiceClient, id string) string {
-	return c.ServiceURL(resourcePath, id)
+	return c.ServiceURL("os-volumes", id)
 }
 
 func actionURL(c *golangsdk.ServiceClient, id string) string {
