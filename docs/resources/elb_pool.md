@@ -15,7 +15,7 @@ resource "hcs_elb_pool" "pool_1" {
   listener_id = "{{ listener_id }}"
 
   persistence {
-    type        = "HTTP_COOKIE"
+    type        = "APP_COOKIE"
     cookie_name = "testCookie"
   }
 }

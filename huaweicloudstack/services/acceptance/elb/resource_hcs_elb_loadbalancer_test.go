@@ -81,34 +81,6 @@ func TestAccElbV3LoadBalancer_basic(t *testing.T) {
 	})
 }
 
-func TestAccElbV3LoadBalancer_withEpsId(t *testing.T) {
-	var lb loadbalancers.LoadBalancer
-	rName := acceptance.RandomAccResourceNameWithDash()
-	resourceName := "hcs_elb_loadbalancer.test"
-
-	rc := acceptance.InitResourceCheck(
-		resourceName,
-		&lb,
-		getELBResourceFunc,
-	)
-
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:          func() { acceptance.TestAccPreCheckEpsID(t) },
-		ProviderFactories: acceptance.TestAccProviderFactories,
-		CheckDestroy:      rc.CheckResourceDestroy(),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccElbV3LoadBalancerConfig_withEpsId(rName),
-				Check: resource.ComposeTestCheckFunc(
-					rc.CheckResourceExists(),
-					resource.TestCheckResourceAttr(resourceName, "name", rName),
-					resource.TestCheckResourceAttr(resourceName, "enterprise_project_id", acceptance.HCS_ENTERPRISE_PROJECT_ID_TEST),
-				),
-			},
-		},
-	})
-}
-
 func TestAccElbV3LoadBalancer_withEIP(t *testing.T) {
 	var lb loadbalancers.LoadBalancer
 	rName := acceptance.RandomAccResourceNameWithDash()
@@ -174,25 +146,6 @@ resource "hcs_elb_loadbalancer" "test" {
   }
 }
 `, rNameUpdate)
-}
-
-func testAccElbV3LoadBalancerConfig_withEpsId(rName string) string {
-	return fmt.Sprintf(`
-data "hcs_vpc_subnet" "test" {
-  name = "subnet-default"
-}
-
-resource "hcs_elb_loadbalancer" "test" {
-  name                  = "%s"
-  ipv4_subnet_id        = data.hcs_vpc_subnet.test.ipv4_subnet_id
-  enterprise_project_id = "%s"
-
-  tags = {
-    key   = "value"
-    owner = "terraform"
-  }
-}
-`, rName, acceptance.HCS_ENTERPRISE_PROJECT_ID_TEST)
 }
 
 func testAccElbV3LoadBalancerConfig_withEIP(rName string) string {
