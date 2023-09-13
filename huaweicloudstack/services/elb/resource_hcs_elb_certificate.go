@@ -71,13 +71,6 @@ func ResourceCertificateV3() *schema.Resource {
 				DiffSuppressFunc: utils.SuppressNewLineDiffs,
 			},
 
-			"enterprise_project_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-				Computed: true,
-			},
-
 			"expire_time": {
 				Type:     schema.TypeString,
 				Computed: true,
