@@ -96,6 +96,10 @@ func ResourceASGroup() *schema.Resource {
 				ConflictsWith: []string{"lb_listener_id"},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"listener_id": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
 						"pool_id": {
 							Type:     schema.TypeString,
 							Required: true,
@@ -325,6 +329,7 @@ func buildLBaaSListenersOpts(listeners []interface{}) []groups.LBaaSListenerOpts
 	for i, v := range listeners {
 		item := v.(map[string]interface{})
 		res[i] = groups.LBaaSListenerOpts{
+			ListenerId:   item["listener_id"].(string),
 			PoolID:       item["pool_id"].(string),
 			ProtocolPort: item["protocol_port"].(int),
 			Weight:       item["weight"].(int),
@@ -486,8 +491,8 @@ func checkASGroupRemoved(ctx context.Context, client *golangsdk.ServiceClient, g
 }
 
 func resourceASGroupCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := config.GetHcsConfig(meta)
-	asClient, err := config.AutoscalingV1Client(config.GetRegion(d))
+	cfg := config.GetHcsConfig(meta)
+	asClient, err := cfg.AutoscalingV1Client(cfg.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating autoscaling client: %s", err)
 	}
@@ -527,7 +532,7 @@ func resourceASGroupCreate(ctx context.Context, d *schema.ResourceData, meta int
 		Description:               d.Get("description").(string),
 		IamAgencyName:             d.Get("agency_name").(string),
 		IsDeletePublicip:          d.Get("delete_publicip").(bool),
-		EnterpriseProjectID:       common.GetEnterpriseProjectID(d, config),
+		EnterpriseProjectID:       common.GetEnterpriseProjectID(d, cfg),
 	}
 
 	log.Printf("[DEBUG] Create Options: %#v", createOpts)

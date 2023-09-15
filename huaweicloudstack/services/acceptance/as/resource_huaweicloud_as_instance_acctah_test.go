@@ -63,7 +63,7 @@ func TestAccASInstanceAttach_basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					rc.CheckResourceExists(),
 					resource.TestCheckResourceAttrPair(rName, "scaling_group_id", "hcs_as_group.acc_as_group", "id"),
-					resource.TestCheckResourceAttrPair(rName, "instance_id", "hcs_compute_instance.test.0", "id"),
+					resource.TestCheckResourceAttrPair(rName, "instance_id", "hcs_ecs_compute_instance.test.0", "id"),
 					resource.TestCheckResourceAttr(rName, "protected", "false"),
 					resource.TestCheckResourceAttr(rName, "standby", "false"),
 					resource.TestCheckResourceAttr(rName, "status", "INSERVICE"),
@@ -99,12 +99,12 @@ func testASInstanceAttach_conf(name, protection, standby string) string {
 	return fmt.Sprintf(`
 %s
 
-resource "hcs_compute_instance" "test" {
+resource "hcs_ecs_compute_instance" "test" {
   count              = 2
   name               = "%s-${count.index}"
   description        = "instance for AS attach"
-  image_id           = data.hcs_images_image.test.id
-  flavor_id          = data.hcs_compute_flavors.test.ids[0]
+  image_id           = data.hcs_ims_images.test.images[0].id
+  flavor_id          = data.hcs_ecs_compute_flavors.test.ids[0]
   security_group_ids = [hcs_networking_secgroup.test.id]
 
   network {
@@ -114,14 +114,14 @@ resource "hcs_compute_instance" "test" {
 
 resource "hcs_as_instance_attach" "test0" {
   scaling_group_id = hcs_as_group.acc_as_group.id
-  instance_id      = hcs_compute_instance.test[0].id
+  instance_id      = hcs_ecs_compute_instance.test[0].id
   protected        = %[3]s
   standby          = %[4]s
 }
 
 resource "hcs_as_instance_attach" "test1" {
   scaling_group_id = hcs_as_group.acc_as_group.id
-  instance_id      = hcs_compute_instance.test[1].id
+  instance_id      = hcs_ecs_compute_instance.test[1].id
   protected        = %[3]s
   standby          = %[4]s
 }

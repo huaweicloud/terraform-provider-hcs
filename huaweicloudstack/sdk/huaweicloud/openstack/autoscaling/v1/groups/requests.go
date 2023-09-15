@@ -57,6 +57,7 @@ type SecurityGroupOpts struct {
 }
 
 type LBaaSListenerOpts struct {
+	ListenerId   string `json:"listener_id" required:"true"`
 	PoolID       string `json:"pool_id" required:"true"`
 	ProtocolPort int    `json:"protocol_port" required:"true"`
 	Weight       int    `json:"weight,omitempty"`

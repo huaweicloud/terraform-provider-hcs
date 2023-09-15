@@ -58,13 +58,13 @@ func testAccComputeInstancesDataSource_basic(rName string) string {
 
 resource "hcs_ecs_compute_instance" "test" {
   name               = "%s"
-  image_id           = data.hcs_ims_images.test.id
+  image_id           = data.hcs_ims_images.test.images[0].id
   flavor_id          = data.hcs_ecs_compute_flavors.test.ids[0]
   security_group_ids = [data.hcs_networking_secgroups.test.id]
   availability_zone  = data.hcs_availability_zones.test.names[0]
 
   network {
-    uuid = data.hcs_vpc_subnets.test.id
+    uuid = data.hcs_vpc_subnets.test.subnets[0].id
   }
 
   tags = {
