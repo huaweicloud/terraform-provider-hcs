@@ -53,7 +53,7 @@ func TestAccComputeVolumeAttach_basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					rc.CheckResourceExists(),
 					resource.TestCheckResourceAttrPair(resourceName, "instance_id",
-						"hcs_compute_instance.instance_1", "id"),
+						"hcs_ecs_compute_instance.instance_1", "id"),
 					resource.TestCheckResourceAttrPair(resourceName, "volume_id", "hcs_evs_volume.test", "id"),
 					resource.TestCheckResourceAttrSet(resourceName, "pci_address"),
 				),
@@ -87,7 +87,7 @@ func TestAccComputeVolumeAttach_device(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					rc.CheckResourceExists(),
 					resource.TestCheckResourceAttrPair(resourceName, "instance_id",
-						"hcs_compute_instance.instance_1", "id"),
+						"hcs_ecs_compute_instance.instance_1", "id"),
 					resource.TestCheckResourceAttrPair(resourceName, "volume_id", "hcs_evs_volume.test", "id"),
 					resource.TestCheckResourceAttr(resourceName, "device", "/dev/vdb"),
 					resource.TestCheckResourceAttrSet(resourceName, "pci_address"),
@@ -116,11 +116,11 @@ func TestAccComputeVolumeAttach_multiple(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					rc.CheckMultiResourcesExists(2),
 					resource.TestCheckResourceAttrPair("hcs_ecs_compute_volume_attach.test.0", "instance_id",
-						"hcs_compute_instance.test.0", "id"),
+						"hcs_ecs_compute_instance.test.0", "id"),
 					resource.TestCheckResourceAttrPair("hcs_ecs_compute_volume_attach.test.0", "volume_id",
 						"hcs_evs_volume.test", "id"),
 					resource.TestCheckResourceAttrPair("hcs_ecs_compute_volume_attach.test.1", "instance_id",
-						"hcs_compute_instance.test.1", "id"),
+						"hcs_ecs_compute_instance.test.1", "id"),
 					resource.TestCheckResourceAttrPair("hcs_ecs_compute_volume_attach.test.1", "volume_id",
 						"hcs_evs_volume.test", "id"),
 				),
@@ -140,7 +140,7 @@ resource "hcs_evs_volume" "test" {
   size              = 10
 }
 
-resource "hcs_compute_instance" "instance_1" {
+resource "hcs_ecs_compute_instance" "instance_1" {
   name               = "%s"
   image_id           = data.hcs_ims_images.test.id
   flavor_id          = data.hcs_ecs_compute_flavors.test.ids[0]
@@ -152,7 +152,7 @@ resource "hcs_compute_instance" "instance_1" {
 }
 
 resource "hcs_ecs_compute_volume_attach" "va_1" {
-  instance_id = hcs_compute_instance.instance_1.id
+  instance_id = hcs_ecs_compute_instance.instance_1.id
   volume_id   = hcs_evs_volume.test.id
 }
 `, testAccCompute_data, rName, rName)
@@ -169,7 +169,7 @@ resource "hcs_evs_volume" "test" {
   size              = 10
 }
 
-resource "hcs_compute_instance" "instance_1" {
+resource "hcs_ecs_compute_instance" "instance_1" {
   name               = "%s"
   image_id           = data.hcs_ims_images.test.id
   flavor_id          = data.hcs_ecs_compute_flavors.test.ids[0]
@@ -181,7 +181,7 @@ resource "hcs_compute_instance" "instance_1" {
 }
 
 resource "hcs_ecs_compute_volume_attach" "va_1" {
-  instance_id = hcs_compute_instance.instance_1.id
+  instance_id = hcs_ecs_compute_instance.instance_1.id
   volume_id   = hcs_evs_volume.test.id
   device      = "/dev/vdb"
 }
@@ -201,7 +201,7 @@ resource "hcs_evs_volume" "test" {
   multiattach = true
 }
 
-resource "hcs_compute_instance" "test" {
+resource "hcs_ecs_compute_instance" "test" {
   count = 2
 
   name               = "%[2]s-${count.index}"
@@ -218,7 +218,7 @@ resource "hcs_compute_instance" "test" {
 resource "hcs_ecs_compute_volume_attach" "test" {
   count = 2
 
-  instance_id = hcs_compute_instance.test[count.index].id
+  instance_id = hcs_ecs_compute_instance.test[count.index].id
   volume_id   = hcs_evs_volume.test.id
 }
 `, testAccCompute_data, rName, rName)

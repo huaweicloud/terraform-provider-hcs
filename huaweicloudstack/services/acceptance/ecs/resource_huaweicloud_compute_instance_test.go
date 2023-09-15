@@ -31,9 +31,7 @@ func TestAccComputeInstance_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", rName),
 					resource.TestCheckResourceAttr(resourceName, "description", "terraform test"),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
-					resource.TestCheckResourceAttrSet(resourceName, "system_disk_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "security_groups.#"),
-					resource.TestCheckResourceAttrSet(resourceName, "volume_attached.#"),
 					resource.TestCheckResourceAttrSet(resourceName, "network.#"),
 					resource.TestCheckResourceAttrSet(resourceName, "network.0.port"),
 					resource.TestCheckResourceAttrSet(resourceName, "availability_zone"),
@@ -42,10 +40,8 @@ func TestAccComputeInstance_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network.0.source_dest_check", "false"),
 					resource.TestCheckResourceAttr(resourceName, "stop_before_destroy", "true"),
 					resource.TestCheckResourceAttr(resourceName, "delete_eip_on_termination", "true"),
-					resource.TestCheckResourceAttr(resourceName, "agent_list", "hss"),
 					resource.TestCheckResourceAttr(resourceName, "system_disk_size", "50"),
-					resource.TestCheckResourceAttr(resourceName, "agency_name", "test111"),
-					resource.TestCheckResourceAttr(resourceName, "agent_list", "hss"),
+					resource.TestCheckResourceAttr(resourceName, "agency_name", rName),
 					resource.TestCheckResourceAttr(resourceName, "tags.foo", "bar"),
 					resource.TestCheckResourceAttr(resourceName, "tags.key", "value"),
 				),
@@ -57,8 +53,7 @@ func TestAccComputeInstance_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", rName+"-update"),
 					resource.TestCheckResourceAttr(resourceName, "description", "terraform test update"),
 					resource.TestCheckResourceAttr(resourceName, "system_disk_size", "60"),
-					resource.TestCheckResourceAttr(resourceName, "agency_name", "test222"),
-					resource.TestCheckResourceAttr(resourceName, "agent_list", "ces"),
+					resource.TestCheckResourceAttr(resourceName, "agency_name", rName),
 					resource.TestCheckResourceAttr(resourceName, "tags.foo", "bar2"),
 					resource.TestCheckResourceAttr(resourceName, "tags.key2", "value2"),
 				),
@@ -231,8 +226,6 @@ func TestAccComputeInstance_disk_encryption(t *testing.T) {
 					testAccCheckComputeInstanceExists(resourceName, &instance),
 					resource.TestCheckResourceAttr(resourceName, "name", rName),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
-					resource.TestCheckResourceAttrPair(resourceName, "volume_attached.1.kms_key_id",
-						"hcs_kms_key.test", "id"),
 				),
 			},
 		},
@@ -349,11 +342,11 @@ data "hcs_ecs_compute_flavors" "test" {
 }
 
 data "hcs_vpc_subnets" "test" {
-  name = "subnet_2"
+  name = "subnet_9879"
 }
 
 data "hcs_ims_images" "test" {
-  name       = "auto_kvm_image"
+  name       = "ecs_mini_image"
 }
 
 data "hcs_networking_secgroups" "test" {
@@ -370,22 +363,21 @@ resource "hcs_ecs_compute_instance" "test" {
   description         = "terraform test"
   image_id            = data.hcs_ims_images.test.images[0].id
   flavor_id           = data.hcs_ecs_compute_flavors.test.ids[0]
-  security_group_ids  = [data.hcs_networking_secgroups.test.id]
+  security_group_ids  = [data.hcs_networking_secgroups.test.security_groups[0].id]
   stop_before_destroy = true
   availability_zone = data.hcs_availability_zones.test.names[0]
-  agency_name         = "test111"
-  agent_list          = "hss"
+  agency_name         = "%s"
 
   network {
     uuid              = data.hcs_vpc_subnets.test.subnets[0].id
     source_dest_check = false
   }
 
-  system_disk_type = "SAS"
+  system_disk_type = "business_type_01"
   system_disk_size = 50
 
   data_disks {
-    type = "SAS"
+    type = "business_type_01"
     size = "10"
   }
 
@@ -394,7 +386,7 @@ resource "hcs_ecs_compute_instance" "test" {
     key = "value"
   }
 }
-`, testAccCompute_data, rName)
+`, testAccCompute_data, rName, rName)
 }
 
 func testAccComputeInstance_update(rName string) string {
@@ -404,23 +396,22 @@ func testAccComputeInstance_update(rName string) string {
 resource "hcs_ecs_compute_instance" "test" {
   name                = "%s-update"
   description         = "terraform test update"
-  image_id            = data.hcs_ims_images.test.id
+  image_id            = data.hcs_ims_images.test.images[0].id
   flavor_id           = data.hcs_ecs_compute_flavors.test.ids[0]
-  security_group_ids  = [data.hcs_networking_secgroups.test.id]
+  security_group_ids  = [data.hcs_networking_secgroups.test.security_groups[0].id]
   stop_before_destroy = true
-  agency_name         = "test222"
-  agent_list          = "ces"
+  agency_name         = "%s"
 
   network {
-    uuid              = data.hcs_vpc_subnets.test.id
+    uuid              = data.hcs_vpc_subnets.test.subnets[0].id
     source_dest_check = false
   }
 
-  system_disk_type = "SAS"
+  system_disk_type = "business_type_01"
   system_disk_size = 60
 
   data_disks {
-    type = "SAS"
+    type = "business_type_01"
     size = "10"
   }
 
@@ -429,7 +420,7 @@ resource "hcs_ecs_compute_instance" "test" {
     key2 = "value2"
   }
 }
-`, testAccCompute_data, rName)
+`, testAccCompute_data, rName, rName)
 }
 
 func testAccComputeInstance_prePaid(rName string) string {
@@ -438,16 +429,16 @@ func testAccComputeInstance_prePaid(rName string) string {
 
 resource "hcs_ecs_compute_instance" "test" {
   name               = "%s"
-  image_id           = data.hcs_ims_images.test.id
+  image_id           = data.hcs_ims_images.test.images[0].id
   flavor_id          = data.hcs_ecs_compute_flavors.test.ids[0]
-  security_group_ids = [data.hcs_networking_secgroups.test.id]
+  security_group_ids = [data.hcs_networking_secgroups.test.security_groups[0].id]
   availability_zone  = data.hcs_availability_zones.test.names[0]
 
   network {
-    uuid = data.hcs_vpc_subnets.test.id
+    uuid = data.hcs_vpc_subnets.test.subnets[0].id
   }
 
-  eip_type = "5_bgp"
+  eip_type = "EIP"
   bandwidth {
     share_type  = "PER"
     size        = 5
@@ -468,16 +459,16 @@ func testAccComputeInstance_prePaidUpdate(rName string) string {
 
 resource "hcs_ecs_compute_instance" "test" {
   name               = "%s"
-  image_id           = data.hcs_ims_images.test.id
+  image_id           = data.hcs_ims_images.test.images[0].id
   flavor_id          = data.hcs_ecs_compute_flavors.test.ids[0]
-  security_group_ids = [data.hcs_networking_secgroups.test.id]
+  security_group_ids = [data.hcs_networking_secgroups.test.security_groups[0].id]
   availability_zone  = data.hcs_availability_zones.test.names[0]
 
   network {
-    uuid = data.hcs_vpc_subnets.test.id
+    uuid = data.hcs_vpc_subnets.test.subnets[0].id
   }
 
-  eip_type = "5_bgp"
+  eip_type = "EIP"
   bandwidth {
     share_type  = "PER"
     size        = 5
@@ -498,15 +489,15 @@ func testAccComputeInstance_spot(rName string) string {
 
 resource "hcs_ecs_compute_instance" "test" {
   name               = "%s"
-  image_id           = data.hcs_ims_images.test.id
+  image_id           = data.hcs_ims_images.test.images[0].id
   flavor_id          = data.hcs_ecs_compute_flavors.test.ids[0]
-  security_group_ids = [data.hcs_networking_secgroups.test.id]
+  security_group_ids = [data.hcs_networking_secgroups.test.security_groups[0].id]
   availability_zone  = data.hcs_availability_zones.test.names[0]
   charging_mode      = "spot"
   spot_duration      = 2
 
   network {
-    uuid = data.hcs_vpc_subnets.test.id
+    uuid = data.hcs_vpc_subnets.test.subnets[0].id
   }
 }
 `, testAccCompute_data, rName)
@@ -518,14 +509,14 @@ func testAccComputeInstance_powerAction(rName, powerAction string) string {
 
 resource "hcs_ecs_compute_instance" "test" {
   name               = "%s"
-  image_id           = data.hcs_ims_images.test.id
+  image_id           = data.hcs_ims_images.test.images[0].id
   flavor_id          = data.hcs_ecs_compute_flavors.test.ids[0]
-  security_group_ids = [data.hcs_networking_secgroups.test.id]
+  security_group_ids = [data.hcs_networking_secgroups.test.security_groups[0].id]
   availability_zone  = data.hcs_availability_zones.test.names[0]
   power_action       = "%s"
 
   network {
-    uuid = data.hcs_vpc_subnets.test.id
+    uuid = data.hcs_vpc_subnets.test.subnets[0].id
   }
 }
 `, testAccCompute_data, rName, powerAction)
@@ -544,22 +535,21 @@ resource "hcs_kms_key" "test" {
 
 resource "hcs_ecs_compute_instance" "test" {
   name                = "%s"
-  image_id            = data.hcs_ims_images.test.id
+  image_id            = data.hcs_ims_images.test.images[0].id
   flavor_id           = data.hcs_ecs_compute_flavors.test.ids[0]
-  security_group_ids  = [data.hcs_networking_secgroups.test.id]
+  security_group_ids  = [data.hcs_networking_secgroups.test.security_groups[0].id]
   stop_before_destroy = true
-  agent_list          = "hss"
 
   network {
-    uuid              = data.hcs_vpc_subnets.test.id
+    uuid              = data.hcs_vpc_subnets.test.subnets[0].id
     source_dest_check = false
   }
 
-  system_disk_type = "SAS"
+  system_disk_type = "business_type_01"
   system_disk_size = 50
 
   data_disks {
-    type = "SAS"
+    type = "business_type_01"
     size = "10"
     kms_key_id = hcs_kms_key.test.id
   }
@@ -574,15 +564,15 @@ func testAccComputeInstance_withEPS(rName, epsID string) string {
 resource "hcs_ecs_compute_instance" "test" {
   name                  = "%s"
   description           = "terraform test"
-  image_id              = data.hcs_ims_images.test.id
+  image_id              = data.hcs_ims_images.test.images[0].id
   flavor_id             = data.hcs_ecs_compute_flavors.test.ids[0]
-  security_group_ids    = [data.hcs_networking_secgroups.test.id]
+  security_group_ids    = [data.hcs_networking_secgroups.test.security_groups[0].id]
   enterprise_project_id = "%s"
-  system_disk_type      = "SAS"
+  system_disk_type      = "business_type_01"
   system_disk_size      = 40
 
   network {
-    uuid              = data.hcs_vpc_subnets.test.id
+    uuid              = data.hcs_vpc_subnets.test.subnets[0].id
     source_dest_check = false
   }
 

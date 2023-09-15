@@ -108,7 +108,7 @@ func TestAccComputeServerGroup_concurrency(t *testing.T) {
 }
 
 func testAccCheckComputeServerGroupDestroy(s *terraform.State) error {
-	cfg := acceptance.TestAccProvider.Meta().(*config.HcsConfig)
+	cfg := config.GetHcsConfig(acceptance.TestAccProvider.Meta())
 	ecsClient, err := cfg.ComputeV1Client(acceptance.HCS_REGION_NAME)
 	if err != nil {
 		return fmt.Errorf("error creating compute client: %s", err)
@@ -139,7 +139,7 @@ func testAccCheckComputeServerGroupExists(n string, kp *servergroups.ServerGroup
 			return fmt.Errorf("no ID is set")
 		}
 
-		cfg := acceptance.TestAccProvider.Meta().(*config.HcsConfig)
+		cfg := config.GetHcsConfig(acceptance.TestAccProvider.Meta())
 		ecsClient, err := cfg.ComputeV1Client(acceptance.HCS_REGION_NAME)
 		if err != nil {
 			return fmt.Errorf("error creating compute client: %s", err)

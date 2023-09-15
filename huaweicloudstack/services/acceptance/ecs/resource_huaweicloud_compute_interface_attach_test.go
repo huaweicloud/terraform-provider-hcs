@@ -17,7 +17,7 @@ import (
 func TestAccComputeInterfaceAttach_Basic(t *testing.T) {
 	var ai attachinterfaces.Interface
 	rName := acceptance.RandomAccResourceNameWithDash()
-	resourceName := "hcs_compute_interface_attach.test"
+	resourceName := "hcs_ecs_compute_interface_attach.test"
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
@@ -63,7 +63,7 @@ func testAccCheckComputeInterfaceAttachDestroy(s *terraform.State) error {
 	}
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "hcs_compute_interface_attach" {
+		if rs.Type != "hcs_ecs_compute_interface_attach" {
 			continue
 		}
 
@@ -138,7 +138,7 @@ resource "hcs_vpc" "test" {
   cidr = "192.168.0.0/16"
 }
 
-resource "hcs_vpc_subnets" "test" {
+resource "hcs_vpc_subnet" "test" {
   vpc_id     = hcs_vpc.test.id
   name       = "%[1]s"
   cidr       = cidrsubnet(hcs_vpc.test.cidr, 4, 0)
@@ -151,16 +151,12 @@ resource "hcs_networking_secgroup" "test" {
 
 data "hcs_ecs_compute_flavors" "test" {
   availability_zone = data.hcs_availability_zones.test.names[0]
-  performance_type  = "normal"
   cpu_core_count    = 2
   memory_size       = 4
 }
 
 data "hcs_ims_images" "test" {
-  flavor_id = data.hcs_ecs_compute_flavors.test.ids[0]
-
-  os         = "Ubuntu"
-  visibility = "public"
+  name       = "ecs_mini_image"
 }
 
 resource "hcs_ecs_compute_instance" "test" {
@@ -172,13 +168,13 @@ resource "hcs_ecs_compute_instance" "test" {
   system_disk_type   = "SSD"
 
   network {
-    uuid = hcs_vpc_subnets.test.id
+    uuid = hcs_vpc_subnet.test.id
   }
 }
 
-resource "hcs_compute_interface_attach" "test" {
+resource "hcs_ecs_compute_interface_attach" "test" {
   instance_id        = hcs_ecs_compute_instance.test.id
-  network_id         = hcs_vpc_subnets.test.id
+  network_id         = hcs_vpc_subnet.test.id
   fixed_ip           = cidrhost(cidrsubnet(hcs_vpc.test.cidr, 4, 0), 199)
   security_group_ids = [hcs_networking_secgroup.test.id]
 }
