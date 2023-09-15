@@ -11,7 +11,7 @@ import (
 
 func TestAccComputeServerGroupsDataSource_basic(t *testing.T) {
 	rName := acceptance.RandomAccResourceNameWithDash()
-	dataSourceName := "data.hcs_ecs_compute_server_groups.test"
+	dataSourceName := "data.hcs_ecs_compute_servergroups.test"
 	dc := acceptance.InitDataSourceCheck(dataSourceName)
 
 	resource.ParallelTest(t, resource.TestCase{
@@ -39,7 +39,7 @@ resource "hcs_ecs_compute_server_group" "test" {
   policies = ["anti-affinity"]
 }
 
-data "hcs_ecs_compute_server_groups" "test" {
+data "hcs_ecs_compute_servergroups" "test" {
   name = hcs_ecs_compute_server_group.test.name
 }
 `, rName)

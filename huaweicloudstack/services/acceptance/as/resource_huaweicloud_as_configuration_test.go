@@ -131,7 +131,7 @@ func testAccASConfiguration_base(rName string) string {
 data "hcs_availability_zones" "test" {}
 
 data "hcs_ims_images" "test" {
-  name       = "nova_ecs"
+  name       = "ecs_mini_image"
   visibility   = "public"
 }
 data "hcs_ecs_compute_flavors" "test" {
