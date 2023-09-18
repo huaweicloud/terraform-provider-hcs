@@ -148,10 +148,7 @@ func ExtendSize(client *golangsdk.ServiceClient, id string, opts ExtendOptsBuild
 	}
 	// the version of extend API is v2.1
 	newClient := *client
-
-	_, r.Err = newClient.Post(actionURL(&newClient, id), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{202},
-	})
+	_, r.Err = newClient.Post(actionURL(&newClient, id), b, &r.Body, &golangsdk.RequestOpts{})
 	return
 }
 

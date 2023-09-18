@@ -56,7 +56,7 @@ func ResourceComputeVolumeAttach() *schema.Resource {
 
 			"device": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 				ForceNew: true,
 			},
 

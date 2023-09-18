@@ -486,7 +486,6 @@ func ResourceComputeInstance() *schema.Resource {
 				Type:          schema.TypeList,
 				Optional:      true,
 				ConflictsWith: []string{"system_disk_type", "system_disk_size", "data_disks"},
-				Deprecated:    "use system_disk_type, system_disk_size, data_disks instead",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"source_type": {
@@ -1208,9 +1207,6 @@ func resourceComputeInstanceUpdate(ctx context.Context, d *schema.ResourceData, 
 		systemDiskID := d.Get("system_disk_id").(string)
 
 		resp, err := cloudvolumes.ExtendSize(evsV2Client, systemDiskID, extendOpts).Extract()
-		if err != nil {
-			return diag.Errorf("error extending EVS volume (%s) size: %s", systemDiskID, err)
-		}
 
 		if strings.EqualFold(d.Get("charging_mode").(string), "prePaid") {
 			bssClient, err := cfg.BssV2Client(region)
