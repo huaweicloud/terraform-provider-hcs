@@ -68,6 +68,10 @@ func (c *HcsConfig) LoadAndValidate() error {
 		return fmt.Errorf("region should be provided")
 	}
 
+	if c.TenantName == "" && c.TenantID == "" {
+		return fmt.Errorf("project_name or project_id should be provided")
+	}
+
 	if c.Cloud == "" && len(c.Endpoints) <= 0 {
 		return fmt.Errorf("cloud or endpoints should be provided")
 	}
@@ -317,8 +321,6 @@ func (c *HcsConfig) getDomainID() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("Error creating IAM client: %s", err)
 	}
-	// ResourceBase: https://iam.{CLOUD}/v3/auth/
-	identityClient.ResourceBase += "auth/"
 
 	// the List request does not support query options
 	allPages, err := domains.List(identityClient, nil).AllPages()
