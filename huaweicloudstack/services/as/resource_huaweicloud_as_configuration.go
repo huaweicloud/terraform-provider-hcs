@@ -275,7 +275,7 @@ func buildDiskOpts(diskMeta []interface{}) ([]configurations.DiskOpts, error) {
 		volumeType := disk["volume_type"].(string)
 		diskType := disk["disk_type"].(string)
 		if err := validateDiskSize(size, diskType); err != nil {
-			return diskOptsList, nil
+			return diskOptsList, err
 		}
 
 		diskOpts := configurations.DiskOpts{
