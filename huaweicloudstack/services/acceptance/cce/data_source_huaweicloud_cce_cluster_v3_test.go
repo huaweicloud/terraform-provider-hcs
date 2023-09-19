@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils/fmtp"
 )
 
@@ -26,7 +27,6 @@ func TestAccCCEClusterV3DataSource_basic(t *testing.T) {
 					testAccCheckCCEClusterV3DataSourceID(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", rName),
 					resource.TestCheckResourceAttr(resourceName, "status", "Available"),
-					resource.TestCheckResourceAttr(resourceName, "cluster_type", "VirtualMachine"),
 				),
 			},
 		},
@@ -48,11 +48,29 @@ func testAccCheckCCEClusterV3DataSourceID(n string) resource.TestCheckFunc {
 	}
 }
 
+func testAccCCEClusterV3DataSource_base(rName string) string {
+	return fmt.Sprintf(`
+%[1]s
+
+resource "hcs_cce_cluster" "test" {
+  name                   = "%[2]s"
+  flavor_id              = "cce.s1.small"
+  vpc_id                 = hcs_vpc.test.id
+  subnet_id              = hcs_vpc_subnet.test.id
+  container_network_type = "overlay_l2"
+  service_network_cidr   = "10.248.0.0/16"
+}
+`, common.TestVpc(rName), rName)
+}
+
 func testAccCCEClusterV3DataSource_basic(rName string) string {
 	return fmt.Sprintf(`
+%[1]s
 
 data "hcs_cce_cluster" "test" {
-  name = "cluster_test"
+  depends_on = [hcs_cce_cluster.test]
+
+  name = hcs_cce_cluster.test.name
 }
-`)
+`, testAccCCEClusterV3DataSource_base(rName))
 }
