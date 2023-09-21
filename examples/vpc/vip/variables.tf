@@ -22,6 +22,6 @@ variable "primary_dns" {
   default = "100.125.1.250"
 }
 
-variable "ecs_name" {
-  default = "ecs-basic"
+variable "port_name" {
+  default = "port-basic"
 }
