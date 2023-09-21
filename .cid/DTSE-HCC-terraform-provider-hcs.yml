@@ -6,7 +6,7 @@ language: go
 #  构建工具
 dependencies:
   base:
-    go: 1.18
+    go: 1.19.6
 
 #  构建机器
 machine:
