@@ -85,7 +85,7 @@ var allServiceCatalog = map[string]ServiceCatalog{
 		Product:          "CDN",
 	},
 	"eps": {
-		Name:             "eps",
+		Name:             "sc",
 		Version:          "v1.0",
 		Scope:            "global",
 		Admin:            true,

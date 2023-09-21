@@ -46,36 +46,18 @@ func ResourceEnterpriseProject() *schema.Resource {
 						"The name cannot include any form of the word 'default'"),
 				),
 			},
+			"project_id": {
+				Type:     schema.TypeString,
+				Required: true,
+				ValidateFunc: validation.All(
+					validation.StringMatch(regexp.MustCompile("^[a-z0-9-]{1,36}$"),
+						"Resource set. The value can contain 1 to 36 characters, "+
+							"including only lowercase letters, digits, and hyphens (-)."),
+				),
+			},
 			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
-			},
-			"type": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Computed:     true,
-				ValidateFunc: validation.StringInSlice([]string{"poc", "prod"}, false),
-			},
-			"enable": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Default:  true,
-			},
-			"skip_disable_on_destroy": {
-				Type:     schema.TypeBool,
-				Optional: true,
-			},
-			"status": {
-				Type:     schema.TypeInt,
-				Computed: true,
-			},
-			"created_at": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"updated_at": {
-				Type:     schema.TypeString,
-				Computed: true,
 			},
 		},
 	}
@@ -91,8 +73,8 @@ func resourceEnterpriseProjectCreate(ctx context.Context, d *schema.ResourceData
 
 	createOpts := enterpriseprojects.CreateOpts{
 		Name:        d.Get("name").(string),
+		ProjectId:   d.Get("project_id").(string),
 		Description: d.Get("description").(string),
-		Type:        d.Get("type").(string),
 	}
 
 	project, err := enterpriseprojects.Create(epsClient, createOpts).Extract()
@@ -119,19 +101,10 @@ func resourceEnterpriseProjectRead(_ context.Context, d *schema.ResourceData, me
 		return common.CheckDeletedDiag(d, err, "Error retrieving HuaweiCloudStack Enterprise Project")
 	}
 
-	var enable bool
-	if project.Status == 1 {
-		enable = true
-	}
-
 	mErr := multierror.Append(nil,
 		d.Set("name", project.Name),
 		d.Set("description", project.Description),
-		d.Set("type", project.Type),
-		d.Set("status", project.Status),
-		d.Set("enable", enable),
-		d.Set("created_at", project.CreatedAt),
-		d.Set("updated_at", project.UpdatedAt),
+		d.Set("project_id", project.ProjectId),
 	)
 
 	if err := mErr.ErrorOrNil(); err != nil {
@@ -149,11 +122,11 @@ func resourceEnterpriseProjectUpdate(ctx context.Context, d *schema.ResourceData
 		return fmtp.DiagErrorf("Unable to create HuaweiCloudStack EPS client : %s", err)
 	}
 
-	if d.HasChanges("name", "description", "type") {
+	if d.HasChanges("name", "description") {
 		updateOpts := enterpriseprojects.CreateOpts{
 			Name:        d.Get("name").(string),
+			ProjectId:   d.Get("project_id").(string),
 			Description: d.Get("description").(string),
-			Type:        d.Get("type").(string),
 		}
 
 		_, err = enterpriseprojects.Update(epsClient, updateOpts, d.Id()).Extract()
