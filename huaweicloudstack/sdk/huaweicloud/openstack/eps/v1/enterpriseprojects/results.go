@@ -6,10 +6,17 @@ type Project struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
+	Type        string `json:"type"`
+	DeleteFlag  bool   `json:"delete_flag"`
 	Status      int    `json:"status"`
 	CreatedAt   string `json:"created_at"`
 	UpdatedAt   string `json:"updated_at"`
-	Type        string `json:"type"`
+	DomainId    string `json:"domain_id"`
+	VdcId       string `json:"vdc_id"`
+	ProjectId   string `json:"project_id"`
+	DomainName  string `json:"domain_name"`
+	VdcName     string `json:"vdc_name"`
+	ProjectName string `json:"project_name"`
 }
 
 type Projects struct {

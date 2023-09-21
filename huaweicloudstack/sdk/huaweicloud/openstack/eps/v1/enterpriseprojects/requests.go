@@ -9,9 +9,22 @@ var RequestOpts = golangsdk.RequestOpts{
 }
 
 type ListOpts struct {
-	Name   string `q:"name"`
-	ID     string `q:"id"`
-	Status int    `q:"status"`
+	Name           string `q:"name"`
+	ID             string `q:"id"`
+	IDs            string `q:"ids"`
+	DomainId       string `q:"domain_id"`
+	VdcId          string `q:"vdc_id"`
+	Inherit        bool   `q:"inherit"`
+	ProjectId      string `q:"project_id"`
+	Type           string `q:"type"`
+	Status         int    `q:"status"`
+	QueryType      string `q:"query_type"`
+	AuthAction     string `q:"auth_action"`
+	ContainDefault bool   `q:"contain_default"`
+	Offset         string `q:"offset"`
+	Limit          string `q:"limit"`
+	SortKey        string `q:"sort_key"`
+	SortDir        string `q:"sort_dir"`
 }
 
 func (opts ListOpts) ToEnterpriseProjectListQuery() (string, error) {
@@ -44,13 +57,11 @@ type CreateOpts struct {
 	// The name must be unique in the domain and cannot include any form of
 	// the word "default" ("deFaulT", for instance).
 	Name string `json:"name" required:"true"`
+	//Resource set. The value can contain 1 to 36 characters,
+	//including only lowercase letters, digits, and hyphens (-).
+	ProjectId string `json:"project_id" required:"true"`
 	// A description can contain a maximum of 512 characters.
 	Description string `json:"description"`
-	// Specifies the enterprise project type.
-	// The options are as follows:
-	// poc: indicates a test project.
-	// prod: indicates a commercial project.
-	Type string `json:"type,omitempty"`
 }
 
 // Create accepts a CreateOpts struct and uses the values to create a new enterprise project.
