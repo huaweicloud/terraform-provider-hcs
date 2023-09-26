@@ -86,12 +86,6 @@ func ResourceDNSZone() *schema.Resource {
 					},
 				},
 			},
-			"enterprise_project_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-				Computed: true,
-			},
 			"masters": {
 				Type:     schema.TypeSet,
 				Computed: true,
@@ -259,7 +253,6 @@ func resourceDNSZoneRead(_ context.Context, d *schema.ResourceData, meta interfa
 		d.Set("masters", zoneInfo.Masters),
 		d.Set("region", region),
 		d.Set("zone_type", zoneInfo.ZoneType),
-		d.Set("enterprise_project_id", zoneInfo.EnterpriseProjectID),
 	)
 
 	if mErr.ErrorOrNil() != nil {

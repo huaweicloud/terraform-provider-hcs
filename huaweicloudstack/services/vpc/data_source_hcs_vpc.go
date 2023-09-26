@@ -30,6 +30,11 @@ func DataSourceVpcV1() *schema.Resource {
 				Optional: true,
 				Computed: true,
 			},
+			"enterprise_project_id": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
 			"cidr": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -98,6 +103,7 @@ func dataSourceVpcV1Read(_ context.Context, d *schema.ResourceData, meta interfa
 
 	d.Set("region", hcsConfig.GetRegion(d))
 	d.Set("name", Vpc.Name)
+	d.Set("enterprise_project_id", Vpc.EnterpriseProjectID)
 	d.Set("cidr", Vpc.CIDR)
 	d.Set("status", Vpc.Status)
 
