@@ -37,6 +37,10 @@ func DataSourceNetworkingSecGroup() *schema.Resource {
 				Optional: true,
 				Computed: true,
 			},
+			"enterprise_project_id": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 			"description": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -190,6 +194,7 @@ func dataSourceNetworkingSecGroupReadV1(_ context.Context, d *schema.ResourceDat
 		d.Set("region", region),
 		d.Set("name", resp.Name),
 		d.Set("description", resp.Description),
+		d.Set("enterprise_project_id", resp.EnterpriseProjectId),
 		d.Set("rules", rules),
 	)
 	return diag.FromErr(mErr.ErrorOrNil())

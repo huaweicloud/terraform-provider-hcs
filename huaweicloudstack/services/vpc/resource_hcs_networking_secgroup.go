@@ -108,6 +108,12 @@ func ResourceNetworkingSecGroup() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			"enterprise_project_id": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+				Computed: true,
+			},
 			"delete_default_rules": {
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -237,6 +243,7 @@ func resourceNetworkingSecGroupRead(_ context.Context, d *schema.ResourceData, m
 		d.Set("region", region),
 		d.Set("name", v1Resp.Name),
 		d.Set("description", v1Resp.Description),
+		d.Set("enterprise_project_id", v1Resp.EnterpriseProjectId),
 		d.Set("rules", flattenSecurityGroupRulesV1(v1Resp)),
 	)
 

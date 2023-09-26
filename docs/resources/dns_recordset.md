@@ -101,8 +101,6 @@ The following arguments are supported:
 * `status` - (Optional, String) Specifies the status of the record set.
   Value options: **ENABLE**, **DISABLE**. The default value is **ENABLE**.
 
-* `tags` - (Optional, Map) Specifies the key/value pairs to associate with the DNS recordset.
-
 * `description` - (Optional, String) Specifies the description of the record set.
 
 ## Attributes Reference
