@@ -52,7 +52,6 @@ data "hcs_ecs_compute_flavors" "flavors" {
 
 resource "hcs_ecs_compute_instance" "instance" {
   name               = "tf_ecs-test2"
-  image_id           = data.hcs_ims_images.centos.images[0].id
   flavor_id = data.hcs_ecs_compute_flavors.flavors.ids[0]
   security_groups = [hcs_networking_secgroup.secgroup.name]
   availability_zone  = data.hcs_availability_zones.test.names[0]
@@ -151,7 +150,6 @@ data "hcs_ecs_compute_flavors" "flavors" {
 
 resource "hcs_ecs_compute_instance" "instance" {
   name               = "tf_ecs-test2"
-  image_id           = data.hcs_ims_images.centos.images[0].id
   flavor_id = data.hcs_ecs_compute_flavors.flavors.ids[0]
   security_groups = [hcs_networking_secgroup.secgroup.name]
   availability_zone  = data.hcs_availability_zones.test.names[0]
@@ -255,7 +253,6 @@ data "hcs_ecs_compute_flavors" "flavors" {
 
 resource "hcs_ecs_compute_instance" "instance" {
   name               = "tf_ecs-test3"
-  image_id           = data.hcs_ims_images.centos.images[0].id
   flavor_id = data.hcs_ecs_compute_flavors.flavors.ids[0]
   security_groups = [hcs_networking_secgroup.secgroup.name]
   availability_zone  = data.hcs_availability_zones.test.names[0]
@@ -322,7 +319,6 @@ data "hcs_ecs_compute_flavors" "flavors" {
 
 resource "hcs_ecs_compute_instance" "instance" {
   name               = "tf_ecs-test3"
-  image_id           = data.hcs_ims_images.centos.images[0].id
   flavor_id = data.hcs_ecs_compute_flavors.flavors.ids[0]
   security_groups = [hcs_networking_secgroup.secgroup.name]
   availability_zone  = data.hcs_availability_zones.test.names[0]
