@@ -38,6 +38,10 @@ func DataSourceNetworkingSecGroups() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			"enterprise_project_id": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -52,6 +56,10 @@ func DataSourceNetworkingSecGroups() *schema.Resource {
 							Computed: true,
 						},
 						"name": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"enterprise_project_id": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
@@ -79,17 +87,19 @@ func flattenSecGroupDetail(secGroup interface{}) map[string]interface{} {
 	switch entity := secGroup.(type) {
 	case v1Group:
 		result = map[string]interface{}{
-			"id":          entity.ID,
-			"name":        entity.Name,
-			"description": entity.Description,
+			"id":                    entity.ID,
+			"name":                  entity.Name,
+			"enterprise_project_id": entity.EnterpriseProjectId,
+			"description":           entity.Description,
 		}
 	case v3Group:
 		result = map[string]interface{}{
-			"id":          entity.ID,
-			"name":        entity.Name,
-			"description": entity.Description,
-			"created_at":  entity.CreatedAt,
-			"updated_at":  entity.UpdatedAt,
+			"id":                    entity.ID,
+			"name":                  entity.Name,
+			"enterprise_project_id": entity.EnterpriseProjectId,
+			"description":           entity.Description,
+			"created_at":            entity.CreatedAt,
+			"updated_at":            entity.UpdatedAt,
 		}
 	}
 	return result

@@ -35,6 +35,10 @@ func DataSourceVpcs() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			"enterprise_project_id": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 			"status": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -57,6 +61,10 @@ func DataSourceVpcs() *schema.Resource {
 							Computed: true,
 						},
 						"status": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"enterprise_project_id": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
@@ -98,11 +106,12 @@ func dataSourceVpcsRead(_ context.Context, d *schema.ResourceData, meta interfac
 	var ids []string
 	for _, vpcResource := range vpcList {
 		vpc := map[string]interface{}{
-			"id":          vpcResource.ID,
-			"name":        vpcResource.Name,
-			"cidr":        vpcResource.CIDR,
-			"status":      vpcResource.Status,
-			"description": vpcResource.Description,
+			"id":                    vpcResource.ID,
+			"name":                  vpcResource.Name,
+			"cidr":                  vpcResource.CIDR,
+			"enterprise_project_id": vpcResource.EnterpriseProjectID,
+			"status":                vpcResource.Status,
+			"description":           vpcResource.Description,
 		}
 
 		vpcs = append(vpcs, vpc)

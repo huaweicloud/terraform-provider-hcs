@@ -56,6 +56,12 @@ func ResourceVirtualPrivateCloudV1() *schema.Resource {
 				Optional:     true,
 				ValidateFunc: utils.ValidateCIDR,
 			},
+			"enterprise_project_id": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+				Computed: true,
+			},
 			"status": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -146,6 +152,7 @@ func resourceVirtualPrivateCloudRead(_ context.Context, d *schema.ResourceData, 
 	d.Set("name", n.Name)
 	d.Set("cidr", n.CIDR)
 	d.Set("status", n.Status)
+	d.Set("enterprise_project_id", n.EnterpriseProjectID)
 	d.Set("region", config.GetRegion(d))
 
 	// save route tables
