@@ -144,17 +144,17 @@ func testAccImsImage_update(rName string) string {
 
 data "hcs_availability_zones" "test" {}
 
-data "hcs_ecs_flavors" "test" {
+data "hcs_ecs_compute_flavors" "test" {
   availability_zone = data.hcs_availability_zones.test.names[0]
   performance_type  = "normal"
   cpu_core_count    = 2
   memory_size       = 4
 }
 
-resource "hcs_ecs_instance" "test" {
+resource "hcs_ecs_compute_instance" "test" {
   name               = "%[2]s"
   image_name         = "Ubuntu 18.04 server 64bit"
-  flavor_id          = data.hcs_ecs_flavors.test.ids[0]
+  flavor_id          = data.hcs_ecs_compute_flavors.test.ids[0]
   security_group_ids = [hcs_networking_secgroup.test.id]
   availability_zone  = data.hcs_availability_zones.test.names[0]
 
