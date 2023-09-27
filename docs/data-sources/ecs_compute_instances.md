@@ -93,8 +93,6 @@ The `instances` block supports:
 * `scheduler_hints` - The scheduler with hints on how the instance should be launched.
   The [scheduler hints](#compute_instances_scheduler_hint_object) structure is documented below.
 
-* `tags` - The key/value pairs to associate with the instance.
-
 <a name="compute_instances_network_object"></a>
 The `network` block supports:
 

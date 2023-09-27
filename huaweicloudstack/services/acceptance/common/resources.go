@@ -53,13 +53,12 @@ data "hcs_availability_zones" "test" {}
 
 data "hcs_ecs_compute_flavors" "test" {
   availability_zone = data.hcs_availability_zones.test.names[0]
-  performance_type  = "dpdk"
   cpu_core_count    = 2
   memory_size       = 4
 }
 
 data "hcs_ims_images" "test" {
-  name        = "ims-xdoc"
+  name        = "ecs_mini_image"
 }
 `, TestBaseNetwork(name))
 }

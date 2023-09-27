@@ -22,8 +22,6 @@ resource "hcs_elb_loadbalancer" "basic" {
 
   l4_flavor_id = "{{ l4_flavor_id }}"
   l7_flavor_id = "{{ l7_flavor_id }}"
-
-  enterprise_project_id = "{{ eps_id }}"
 }
 ```
 
@@ -36,13 +34,10 @@ resource "hcs_elb_loadbalancer" "basic" {
   cross_vpc_backend = true
 
   vpc_id            = "{{ vpc_id }}"
-  ipv6_bandwidth_id = "{{ ipv6_bandwidth_id }}"
   ipv4_subnet_id    = "{{ ipv4_subnet_id }}"
 
   l4_flavor_id = "{{ l4_flavor_id }}"
   l7_flavor_id = "{{ l7_flavor_id }}"
-
-  enterprise_project_id = "{{ eps_id }}"
 
   ipv4_eip_id = "{{ eip_id }}"
 }
@@ -57,13 +52,10 @@ resource "hcs_elb_loadbalancer" "basic" {
   cross_vpc_backend = true
 
   vpc_id            = "{{ vpc_id }}"
-  ipv6_bandwidth_id = "{{ ipv6_bandwidth_id }}"
   ipv4_subnet_id    = "{{ ipv4_subnet_id }}"
 
   l4_flavor_id = "{{ l4_flavor_id }}"
   l7_flavor_id = "{{ l7_flavor_id }}"
-
-  enterprise_project_id = "{{ eps_id }}"
 
   iptype                = "{{ eip_network_name }}"
   bandwidth_charge_mode = "traffic"
@@ -92,8 +84,6 @@ The following arguments are supported:
 * `ipv4_subnet_id` - (Optional, String) The **IPv4 subnet ID** of the subnet on which to allocate the loadbalancer's
   ipv4 address.
 
-* `ipv6_bandwidth_id` - (Optional, String) The ipv6 bandwidth id. Only support shared bandwidth.
-
 * `ipv4_address` - (Optional, String) The ipv4 address of the load balancer.
 
 * `ipv4_eip_id` - (Optional, String, ForceNew) The ID of the EIP. Changing this parameter will create a new resource.
@@ -115,9 +105,6 @@ The following arguments are supported:
 * `l7_flavor_id` - (Optional, String) The L7 flavor id of the load balancer.
 
 * `tags` - (Optional, Map) The key/value pairs to associate with the loadbalancer.
-
-* `enterprise_project_id` - (Optional, String, ForceNew) The enterprise project id of the loadbalancer. Changing this
-  creates a new loadbalancer.
 
 * `charging_mode` - (Optional, String, ForceNew) Specifies the charging mode of the ELB loadbalancer.
   Valid values are **prePaid** and **postPaid**, defaults to **postPaid**.
@@ -167,7 +154,7 @@ $ terraform import hcs_elb_loadbalancer.loadbalancer_1 5c20fdad-7288-11eb-b817-0
 ```
 
 Note that the imported state may not be identical to your resource definition, due to some attributes missing from the
-API response, security or some other reason. The missing attributes include: `ipv6_bandwidth_id`, `iptype`,
+API response, security or some other reason. The missing attributes include: `iptype`,
 `bandwidth_charge_mode`, `sharetype` and `bandwidth_size`.
 It is generally recommended running `terraform plan` after importing a loadbalancer.
 You can then decide if changes should be applied to the loadbalancer, or the resource
@@ -178,7 +165,7 @@ resource "hcs_elb_loadbalancer" "loadbalancer_1" {
     ...
   lifecycle {
     ignore_changes = [
-      ipv6_bandwidth_id, iptype, bandwidth_charge_mode, sharetype, bandwidth_size,
+      iptype, bandwidth_charge_mode, sharetype, bandwidth_size,
     ]
   }
 }

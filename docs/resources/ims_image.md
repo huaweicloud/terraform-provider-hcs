@@ -14,13 +14,13 @@ Manages an Image resource within HuaweiCloudStack IMS.
 variable "instance_name" {}
 variable "image_name" {}
 
-data "hcs_ecs_instance" "test" {
+data "hcs_ecs_compute_instance" "test" {
   name = var.instance_name
 }
 
 resource "hcs_ims_image" "test" {
   name        = var.image_name
-  instance_id = data.hcs_ecs_instance.test.id
+  instance_id = data.hcs_ecs_compute_instance.test.id
   description = "created by Terraform"
 }
 ```

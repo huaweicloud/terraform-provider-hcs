@@ -23,7 +23,7 @@ resource "hcs_ecs_compute_instance" "myinstance" {
   }
 }
 
-resource "hcs_vpc_eip" "dedicated" {
+resource "hcs_vpc_eip" "myeip" {
   publicip {
     type = "external_network_eip"
   }

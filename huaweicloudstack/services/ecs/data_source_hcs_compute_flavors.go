@@ -27,14 +27,6 @@ func DataSourceEcsFlavors() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"performance_type": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"generation": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
 			"cpu_core_count": {
 				Type:     schema.TypeInt,
 				Optional: true,
@@ -76,8 +68,6 @@ func dataSourceEcsFlavorsRead(_ context.Context, d *schema.ResourceData, meta in
 
 	cpu := d.Get("cpu_core_count").(int)
 	mem := int64(d.Get("memory_size").(int)) * 1024
-	pType := d.Get("performance_type").(string)
-	gen := d.Get("generation").(string)
 
 	var ids []string
 	for _, flavor := range allFlavors {
@@ -87,14 +77,6 @@ func dataSourceEcsFlavorsRead(_ context.Context, d *schema.ResourceData, meta in
 		}
 
 		if mem > 0 && flavor.Ram != mem {
-			continue
-		}
-
-		if pType != "" && flavor.OsExtraSpecs.PerformanceType != pType {
-			continue
-		}
-
-		if gen != "" && flavor.OsExtraSpecs.Generation != gen {
 			continue
 		}
 

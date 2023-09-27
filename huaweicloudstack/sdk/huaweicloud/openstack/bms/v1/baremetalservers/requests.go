@@ -17,7 +17,7 @@ type CreateOpts struct {
 
 	UserData []byte `json:"-"`
 
-	AdminPass string `json:"adminPass,omitempty"`
+	AdminPass string `json:"admin_password,omitempty"`
 
 	KeyName string `json:"key_name,omitempty"`
 

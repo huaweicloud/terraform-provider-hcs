@@ -104,7 +104,7 @@ func testAccCheckASLifecycleHookExists(resGroup, resHook string, hook *lifecycle
 			return fmt.Errorf("No ID is set")
 		}
 
-		cfg := acceptance.TestAccProvider.Meta().(*config.HcsConfig)
+		cfg := config.GetHcsConfig(acceptance.TestAccProvider.Meta())
 		asClient, err := cfg.AutoscalingV1Client(acceptance.HCS_REGION_NAME)
 		if err != nil {
 			return fmt.Errorf("error creating autoscaling client: %s", err)

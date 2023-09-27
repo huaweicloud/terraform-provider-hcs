@@ -175,13 +175,6 @@ func ResourceLoadBalancerV3() *schema.Resource {
 			"auto_renew":    common.SchemaAutoRenewUpdatable(nil),
 			"auto_pay":      common.SchemaAutoPay(nil),
 
-			"enterprise_project_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-				Computed: true,
-			},
-
 			"ipv4_eip": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -369,7 +362,6 @@ func resourceLoadBalancerV3Read(_ context.Context, d *schema.ResourceData, meta 
 		d.Set("l4_flavor_id", lb.L4FlavorID),
 		d.Set("l7_flavor_id", lb.L7FlavorID),
 		d.Set("region", cfg.GetRegion(d)),
-		d.Set("enterprise_project_id", lb.EnterpriseProjectID),
 		d.Set("autoscaling_enabled", lb.AutoScaling.Enable),
 		d.Set("min_l7_flavor_id", lb.AutoScaling.MinL7Flavor),
 	)

@@ -69,13 +69,6 @@ func ResourceSecurityPolicy() *schema.Resource {
 				),
 				Description: `Specifies the description of the ELB security policy`,
 			},
-			"enterprise_project_id": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Computed:    true,
-				ForceNew:    true,
-				Description: `Specifies the enterprise project ID to which the Enterprise router belongs.`,
-			},
 			"listeners": {
 				Type:        schema.TypeList,
 				Elem:        SecurityPoliciesV3ListenerRefSchema(),
@@ -150,7 +143,6 @@ func buildCreateSecurityPolicyChildBodyParams(d *schema.ResourceData, cfg *confi
 	return map[string]interface{}{
 		"name":                  utils.ValueIngoreEmpty(d.Get("name")),
 		"description":           utils.ValueIngoreEmpty(d.Get("description")),
-		"enterprise_project_id": utils.ValueIngoreEmpty(common.GetEnterpriseProjectID(d, cfg)),
 		"protocols":             utils.ValueIngoreEmpty(d.Get("protocols")),
 		"ciphers":               utils.ValueIngoreEmpty(d.Get("ciphers")),
 	}

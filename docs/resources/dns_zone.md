@@ -58,11 +58,6 @@ The following arguments are supported:
 
 * `description` - (Optional, String) A description of the zone.
 
-* `tags` - (Optional, Map) The key/value pairs to associate with the zone.
-
-* `enterprise_project_id` - (Optional, String, ForceNew) The enterprise project id of the zone. Changing this creates a
-  new zone.
-
 The `router` block supports:
 
 * `router_id` - (Required, String) ID of the associated VPC.

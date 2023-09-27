@@ -15,7 +15,6 @@ variable "instance_id" {}
 variable "network_id" {}
 
 resource "hcs_ecs_compute_interface_attach" "test" {
-  provider = huaweicloudstack
   instance_id = var.instance_id
   network_id  = var.network_id
 }
@@ -28,7 +27,6 @@ variable "instance_id" {}
 variable "network_id" {}
 
 resource "hcs_ecs_compute_interface_attach" "test" {
-  provider = huaweicloudstack
   instance_id        = var.instance_id
   network_id         = var.network_id
   fixed_ip           = "192.168.10.199"
@@ -43,7 +41,6 @@ variable "instance_id" {}
 variable "port_id" {}
 
 resource "hcs_ecs_compute_interface_attach" "attached" {
-  provider = huaweicloudstack
   instance_id = var.instance_id
   port_id = var.port_id
   

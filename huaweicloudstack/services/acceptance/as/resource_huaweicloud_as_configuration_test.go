@@ -131,8 +131,7 @@ func testAccASConfiguration_base(rName string) string {
 data "hcs_availability_zones" "test" {}
 
 data "hcs_ims_images" "test" {
-  name       = "nova_ecs"
-  visibility   = "public"
+  name       = "cirros-arm"
 }
 data "hcs_ecs_compute_flavors" "test" {
   availability_zone = data.hcs_availability_zones.test.names[0]
@@ -141,7 +140,7 @@ data "hcs_ecs_compute_flavors" "test" {
 }
 
 data "hcs_vpc_subnets" "test" {
-  name = "subnet-3df6"
+  name = "subnet-c7bb"
 }
 
 data "hcs_networking_secgroups" "test" {
@@ -190,12 +189,12 @@ func testAccASConfiguration_instance(rName string) string {
 
 resource "hcs_ecs_compute_instance" "test" {
   name               = "%s"
-  image_id           = data.hcs_ims_images.test.id
+  image_id           = data.hcs_ims_images.test.images[0].id
   flavor_id          = data.hcs_ecs_compute_flavors.test.ids[0]
   security_group_ids = [data.hcs_networking_secgroups.test.id]
-
+  availability_zone = data.hcs_availability_zones.test.names[0]
   network {
-    uuid = data.hcs_vpc_subnets.test.id
+    uuid = data.hcs_vpc_subnets.test.subnets[0].id
   }
 }
 

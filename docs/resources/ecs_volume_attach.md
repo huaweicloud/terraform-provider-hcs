@@ -18,7 +18,6 @@ variable "volume_id" {}
 variable "device" {}
 
 resource "hcs_ecs_compute_volume_attach" "attached" {
-  provider = huaweicloudstack
   instance_id = var.instance_id
   volume_id   = var.volume_id
   device = var.device

@@ -34,10 +34,8 @@ func TestAccASGroup_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "networks.0.source_dest_check", "true"),
 					resource.TestCheckResourceAttr(resourceName, "tags.foo", "bar"),
 					resource.TestCheckResourceAttr(resourceName, "tags.key", "value"),
-					resource.TestCheckResourceAttr(resourceName, "multi_az_scaling_policy", "EQUILIBRIUM_DISTRIBUTE"),
 					resource.TestCheckResourceAttr(resourceName, "cool_down_time", "300"),
 					resource.TestCheckResourceAttr(resourceName, "health_periodic_audit_time", "5"),
-					resource.TestCheckResourceAttr(resourceName, "health_periodic_audit_grace_period", "600"),
 					resource.TestCheckResourceAttr(resourceName, "status", "INSERVICE"),
 					resource.TestCheckResourceAttrSet(resourceName, "availability_zones.#"),
 				),
@@ -61,10 +59,8 @@ func TestAccASGroup_basic(t *testing.T) {
 				Config: testASGroup_basic_enable(rName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckASGroupExists(resourceName, &asGroup),
-					resource.TestCheckResourceAttr(resourceName, "multi_az_scaling_policy", "PICK_FIRST"),
 					resource.TestCheckResourceAttr(resourceName, "cool_down_time", "600"),
 					resource.TestCheckResourceAttr(resourceName, "health_periodic_audit_time", "15"),
-					resource.TestCheckResourceAttr(resourceName, "health_periodic_audit_grace_period", "900"),
 					resource.TestCheckResourceAttr(resourceName, "status", "INSERVICE"),
 				),
 			},
@@ -223,12 +219,12 @@ resource "hcs_elb_pool" "pool_1" {
 resource "hcs_as_configuration" "acc_as_config"{
   scaling_configuration_name = "%[2]s"
   instance_config {
-	image    = data.hcs_ims_images.test.id
+	image    = data.hcs_ims_images.test.images[0].id
 	flavor   = data.hcs_ecs_compute_flavors.test.ids[0]
     key_name = hcs_ecs_compute_keypair.acc_key.id
     disk {
       size        = 40
-      volume_type = "SSD"
+      volume_type = "business_type_01"
       disk_type   = "SYS"
     }
   }
@@ -252,6 +248,7 @@ resource "hcs_as_group" "acc_as_group"{
     id = hcs_networking_secgroup.test.id
   }
   lbaas_listeners {
+	listener_id   = hcs_elb_listener.listener_1.id
     pool_id       = hcs_elb_pool.pool_1.id
     protocol_port = hcs_elb_listener.listener_1.protocol_port
   }
@@ -281,6 +278,7 @@ resource "hcs_as_group" "acc_as_group"{
     id = hcs_networking_secgroup.test.id
   }
   lbaas_listeners {
+	listener_id   = hcs_elb_listener.listener_1.id
     pool_id       = hcs_elb_pool.pool_1.id
     protocol_port = hcs_elb_listener.listener_1.protocol_port
   }
@@ -303,10 +301,8 @@ resource "hcs_as_group" "acc_as_group"{
   max_instance_number      = 5
   enable                   = true
 
-  multi_az_scaling_policy            = "PICK_FIRST"
   cool_down_time                     = 600
   health_periodic_audit_time         = 15
-  health_periodic_audit_grace_period = 900
 
   networks {
     id = hcs_vpc_subnet.test.id
@@ -315,6 +311,7 @@ resource "hcs_as_group" "acc_as_group"{
     id = hcs_networking_secgroup.test.id
   }
   lbaas_listeners {
+	listener_id   = hcs_elb_listener.listener_1.id
     pool_id       = hcs_elb_pool.pool_1.id
     protocol_port = hcs_elb_listener.listener_1.protocol_port
   }
@@ -343,6 +340,7 @@ resource "hcs_as_group" "acc_as_group"{
     id = hcs_networking_secgroup.test.id
   }
   lbaas_listeners {
+	listener_id   = hcs_elb_listener.listener_1.id
     pool_id       = hcs_elb_pool.pool_1.id
     protocol_port = hcs_elb_listener.listener_1.protocol_port
   }

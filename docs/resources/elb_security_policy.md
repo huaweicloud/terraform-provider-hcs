@@ -12,7 +12,7 @@ Manages an ELB security policy resource within HCS.
 resource "hcs_elb_security_policy" "test" {
   name        = "security_policy_test"
   description = "this is a security policy"
-  protocols   = ["TLSv1","TLSv1.1","TLSv1.2","TLSv1.3"]
+  protocols   = ["TLSv1.2"]
   ciphers     = ["ECDHE-RSA-AES256-GCM-SHA384","ECDHE-RSA-AES128-GCM-SHA256"]
 }
 ```
@@ -45,9 +45,6 @@ The following arguments are supported:
 
 * `description` - (Optional, String) Specifies the description of the ELB security policy.
   The value can contain 0 to 255 characters.
-
-* `enterprise_project_id` - (Optional, String, ForceNew) Specifies the enterprise project ID to which the Enterprise
-  router belongs.
 
   Changing this parameter will create a new resource.
 
