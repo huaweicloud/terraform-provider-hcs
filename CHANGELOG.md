@@ -1,8 +1,14 @@
 # CHANGELOG
 
+## 2.3.1 (September 27, 2023)
+
+* Add more unit tests and more examples.
+* Fix some bugs.
+* Refine the docs.
+
 ## 2.3.0 (September 11, 2023)
 
-* **New Resurce:**
+* **New Resources:**
     + `hcs_cce_addon`
     + `hcs_cce_cluster`
     + `hcs_cce_namespace`
@@ -81,7 +87,7 @@
     + `hcs_networking_secgroup_rule`
     + `hcs_bms_instance`
 
-* **New Data Source:**
+* **New Data Sources:**
     + `hcs_enterprise_project`
     + `hcs_vpcep_public_services`
     + `hcs_cfw_firewalls`
