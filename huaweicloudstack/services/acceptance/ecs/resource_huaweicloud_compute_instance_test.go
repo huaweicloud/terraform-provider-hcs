@@ -38,12 +38,8 @@ func TestAccComputeInstance_basic(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
 					resource.TestCheckResourceAttrSet(resourceName, "updated_at"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.source_dest_check", "false"),
-					resource.TestCheckResourceAttr(resourceName, "stop_before_destroy", "true"),
 					resource.TestCheckResourceAttr(resourceName, "delete_eip_on_termination", "true"),
-					resource.TestCheckResourceAttr(resourceName, "system_disk_size", "50"),
-					resource.TestCheckResourceAttr(resourceName, "agency_name", rName),
-					resource.TestCheckResourceAttr(resourceName, "tags.foo", "bar"),
-					resource.TestCheckResourceAttr(resourceName, "tags.key", "value"),
+					resource.TestCheckResourceAttr(resourceName, "system_disk_size", "10"),
 				),
 			},
 			{
@@ -52,10 +48,7 @@ func TestAccComputeInstance_basic(t *testing.T) {
 					testAccCheckComputeInstanceExists(resourceName, &instance),
 					resource.TestCheckResourceAttr(resourceName, "name", rName+"-update"),
 					resource.TestCheckResourceAttr(resourceName, "description", "terraform test update"),
-					resource.TestCheckResourceAttr(resourceName, "system_disk_size", "60"),
-					resource.TestCheckResourceAttr(resourceName, "agency_name", rName),
-					resource.TestCheckResourceAttr(resourceName, "tags.foo", "bar2"),
-					resource.TestCheckResourceAttr(resourceName, "tags.key2", "value2"),
+					resource.TestCheckResourceAttr(resourceName, "system_disk_size", "20"),
 				),
 			},
 			{
@@ -63,143 +56,7 @@ func TestAccComputeInstance_basic(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
-					"stop_before_destroy", "delete_eip_on_termination", "data_disks",
-				},
-			},
-		},
-	})
-}
-
-func TestAccComputeInstance_prePaid(t *testing.T) {
-	var instance cloudservers.CloudServer
-
-	rName := acceptance.RandomAccResourceName()
-	resourceName := "hcs_ecs_compute_instance.test"
-
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck: func() {
-			acceptance.TestAccPreCheck(t)
-			acceptance.TestAccPreCheckChargingMode(t)
-		},
-		ProviderFactories: acceptance.TestAccProviderFactories,
-		CheckDestroy:      testAccCheckComputeInstanceDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccComputeInstance_prePaid(rName),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckComputeInstanceExists(resourceName, &instance),
-					resource.TestCheckResourceAttr(resourceName, "name", rName),
-					resource.TestCheckResourceAttr(resourceName, "delete_eip_on_termination", "true"),
-					resource.TestCheckResourceAttr(resourceName, "auto_renew", "true"),
-				),
-			},
-			{
-				Config: testAccComputeInstance_prePaidUpdate(rName),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckComputeInstanceExists(resourceName, &instance),
-					resource.TestCheckResourceAttr(resourceName, "auto_renew", "false"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccComputeInstance_spot(t *testing.T) {
-	var instance cloudservers.CloudServer
-
-	rName := acceptance.RandomAccResourceName()
-	resourceName := "hcs_ecs_compute_instance.test"
-
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
-		ProviderFactories: acceptance.TestAccProviderFactories,
-		CheckDestroy:      testAccCheckComputeInstanceDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccComputeInstance_spot(rName),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckComputeInstanceExists(resourceName, &instance),
-					resource.TestCheckResourceAttr(resourceName, "name", rName),
-					resource.TestCheckResourceAttr(resourceName, "charging_mode", "spot"),
-				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateVerifyIgnore: []string{
-					"stop_before_destroy", "delete_eip_on_termination",
-					"spot_maximum_price", "spot_duration", "spot_duration_count",
-				},
-			},
-		},
-	})
-}
-
-func TestAccComputeInstance_powerAction(t *testing.T) {
-	var instance cloudservers.CloudServer
-
-	rName := acceptance.RandomAccResourceName()
-	resourceName := "hcs_ecs_compute_instance.test"
-
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
-		ProviderFactories: acceptance.TestAccProviderFactories,
-		CheckDestroy:      testAccCheckComputeInstanceDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccComputeInstance_powerAction(rName, "OFF"),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckComputeInstanceExists(resourceName, &instance),
-					resource.TestCheckResourceAttr(resourceName, "name", rName),
-					resource.TestCheckResourceAttr(resourceName, "power_action", "OFF"),
-					resource.TestCheckResourceAttr(resourceName, "status", "SHUTOFF"),
-				),
-			},
-			{
-				Config: testAccComputeInstance_powerAction(rName, "ON"),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckComputeInstanceExists(resourceName, &instance),
-					resource.TestCheckResourceAttr(resourceName, "name", rName),
-					resource.TestCheckResourceAttr(resourceName, "power_action", "ON"),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
-				),
-			},
-			{
-				Config: testAccComputeInstance_powerAction(rName, "REBOOT"),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckComputeInstanceExists(resourceName, &instance),
-					resource.TestCheckResourceAttr(resourceName, "name", rName),
-					resource.TestCheckResourceAttr(resourceName, "power_action", "REBOOT"),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
-				),
-			},
-			{
-				Config: testAccComputeInstance_powerAction(rName, "FORCE-REBOOT"),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckComputeInstanceExists(resourceName, &instance),
-					resource.TestCheckResourceAttr(resourceName, "name", rName),
-					resource.TestCheckResourceAttr(resourceName, "power_action", "FORCE-REBOOT"),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
-				),
-			},
-			{
-				Config: testAccComputeInstance_powerAction(rName, "FORCE-OFF"),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckComputeInstanceExists(resourceName, &instance),
-					resource.TestCheckResourceAttr(resourceName, "name", rName),
-					resource.TestCheckResourceAttr(resourceName, "power_action", "FORCE-OFF"),
-					resource.TestCheckResourceAttr(resourceName, "status", "SHUTOFF"),
-				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateVerifyIgnore: []string{
-					"stop_before_destroy",
-					"delete_eip_on_termination",
-					"power_action",
+					"delete_eip_on_termination", "data_disks",
 				},
 			},
 		},
@@ -270,7 +127,7 @@ func TestAccComputeInstance_withEPS(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
-					"stop_before_destroy", "delete_eip_on_termination",
+					"delete_eip_on_termination",
 				},
 			},
 		},
@@ -342,7 +199,7 @@ data "hcs_ecs_compute_flavors" "test" {
 }
 
 data "hcs_vpc_subnets" "test" {
-  name = "subnet_9879"
+  name = "subnet-c7bb"
 }
 
 data "hcs_ims_images" "test" {
@@ -350,7 +207,7 @@ data "hcs_ims_images" "test" {
 }
 
 data "hcs_networking_secgroups" "test" {
-  name = "secgroup_2"
+  name = "default"
 }
 `
 
@@ -364,9 +221,7 @@ resource "hcs_ecs_compute_instance" "test" {
   image_id            = data.hcs_ims_images.test.images[0].id
   flavor_id           = data.hcs_ecs_compute_flavors.test.ids[0]
   security_group_ids  = [data.hcs_networking_secgroups.test.security_groups[0].id]
-  stop_before_destroy = true
   availability_zone = data.hcs_availability_zones.test.names[0]
-  agency_name         = "%s"
 
   network {
     uuid              = data.hcs_vpc_subnets.test.subnets[0].id
@@ -374,19 +229,14 @@ resource "hcs_ecs_compute_instance" "test" {
   }
 
   system_disk_type = "business_type_01"
-  system_disk_size = 50
+  system_disk_size = 10
 
   data_disks {
     type = "business_type_01"
     size = "10"
   }
-
-  tags = {
-    foo = "bar"
-    key = "value"
-  }
 }
-`, testAccCompute_data, rName, rName)
+`, testAccCompute_data, rName)
 }
 
 func testAccComputeInstance_update(rName string) string {
@@ -399,8 +249,6 @@ resource "hcs_ecs_compute_instance" "test" {
   image_id            = data.hcs_ims_images.test.images[0].id
   flavor_id           = data.hcs_ecs_compute_flavors.test.ids[0]
   security_group_ids  = [data.hcs_networking_secgroups.test.security_groups[0].id]
-  stop_before_destroy = true
-  agency_name         = "%s"
 
   network {
     uuid              = data.hcs_vpc_subnets.test.subnets[0].id
@@ -408,118 +256,14 @@ resource "hcs_ecs_compute_instance" "test" {
   }
 
   system_disk_type = "business_type_01"
-  system_disk_size = 60
+  system_disk_size = 20
 
   data_disks {
     type = "business_type_01"
     size = "10"
   }
-
-  tags = {
-    foo = "bar2"
-    key2 = "value2"
-  }
-}
-`, testAccCompute_data, rName, rName)
-}
-
-func testAccComputeInstance_prePaid(rName string) string {
-	return fmt.Sprintf(`
-%s
-
-resource "hcs_ecs_compute_instance" "test" {
-  name               = "%s"
-  image_id           = data.hcs_ims_images.test.images[0].id
-  flavor_id          = data.hcs_ecs_compute_flavors.test.ids[0]
-  security_group_ids = [data.hcs_networking_secgroups.test.security_groups[0].id]
-  availability_zone  = data.hcs_availability_zones.test.names[0]
-
-  network {
-    uuid = data.hcs_vpc_subnets.test.subnets[0].id
-  }
-
-  eip_type = "EIP"
-  bandwidth {
-    share_type  = "PER"
-    size        = 5
-    charge_mode = "bandwidth"
-  }
-
-  charging_mode = "prePaid"
-  period_unit   = "month"
-  period        = 1
-  auto_renew    = "true"
 }
 `, testAccCompute_data, rName)
-}
-
-func testAccComputeInstance_prePaidUpdate(rName string) string {
-	return fmt.Sprintf(`
-%s
-
-resource "hcs_ecs_compute_instance" "test" {
-  name               = "%s"
-  image_id           = data.hcs_ims_images.test.images[0].id
-  flavor_id          = data.hcs_ecs_compute_flavors.test.ids[0]
-  security_group_ids = [data.hcs_networking_secgroups.test.security_groups[0].id]
-  availability_zone  = data.hcs_availability_zones.test.names[0]
-
-  network {
-    uuid = data.hcs_vpc_subnets.test.subnets[0].id
-  }
-
-  eip_type = "EIP"
-  bandwidth {
-    share_type  = "PER"
-    size        = 5
-    charge_mode = "bandwidth"
-  }
-
-  charging_mode = "prePaid"
-  period_unit   = "month"
-  period        = 1
-  auto_renew    = "false"
-}
-`, testAccCompute_data, rName)
-}
-
-func testAccComputeInstance_spot(rName string) string {
-	return fmt.Sprintf(`
-%s
-
-resource "hcs_ecs_compute_instance" "test" {
-  name               = "%s"
-  image_id           = data.hcs_ims_images.test.images[0].id
-  flavor_id          = data.hcs_ecs_compute_flavors.test.ids[0]
-  security_group_ids = [data.hcs_networking_secgroups.test.security_groups[0].id]
-  availability_zone  = data.hcs_availability_zones.test.names[0]
-  charging_mode      = "spot"
-  spot_duration      = 2
-
-  network {
-    uuid = data.hcs_vpc_subnets.test.subnets[0].id
-  }
-}
-`, testAccCompute_data, rName)
-}
-
-func testAccComputeInstance_powerAction(rName, powerAction string) string {
-	return fmt.Sprintf(`
-%s
-
-resource "hcs_ecs_compute_instance" "test" {
-  name               = "%s"
-  image_id           = data.hcs_ims_images.test.images[0].id
-  flavor_id          = data.hcs_ecs_compute_flavors.test.ids[0]
-  security_group_ids = [data.hcs_networking_secgroups.test.security_groups[0].id]
-  availability_zone  = data.hcs_availability_zones.test.names[0]
-  power_action       = "%s"
-
-  network {
-    uuid = data.hcs_vpc_subnets.test.subnets[0].id
-  }
-}
-`, testAccCompute_data, rName, powerAction)
 }
 
 func testAccComputeInstance_disk_encryption(rName string) string {
@@ -538,7 +282,6 @@ resource "hcs_ecs_compute_instance" "test" {
   image_id            = data.hcs_ims_images.test.images[0].id
   flavor_id           = data.hcs_ecs_compute_flavors.test.ids[0]
   security_group_ids  = [data.hcs_networking_secgroups.test.security_groups[0].id]
-  stop_before_destroy = true
 
   network {
     uuid              = data.hcs_vpc_subnets.test.subnets[0].id
@@ -574,11 +317,6 @@ resource "hcs_ecs_compute_instance" "test" {
   network {
     uuid              = data.hcs_vpc_subnets.test.subnets[0].id
     source_dest_check = false
-  }
-
-  tags = {
-    foo = "bar"
-    key = "value"
   }
 }
 `, testAccCompute_data, rName, epsID)

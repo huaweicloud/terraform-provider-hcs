@@ -13,6 +13,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/eps/v1/enterpriseprojects"
 	"net/http"
 	"strconv"
 	"strings"
@@ -65,6 +66,30 @@ func GetEnterpriseProjectID(d *schema.ResourceData, config *config.HcsConfig) st
 	}
 
 	return config.EnterpriseProjectID
+}
+
+func MigrateEnterpriseProject(client *golangsdk.ServiceClient, region, targetEPSId, resourceType, resourceID string) error {
+	if targetEPSId == "" {
+		targetEPSId = "0"
+	} else {
+		// check enterprise_project_id existed
+		if result := enterpriseprojects.Get(client, targetEPSId); result.Err != nil {
+			return fmt.Errorf("failed to query the target enterprise project %s: %s", targetEPSId, result.Err)
+		}
+	}
+
+	migrateOpts := enterpriseprojects.MigrateResourceOpts{
+		RegionId:     region,
+		ProjectId:    client.ProjectID,
+		ResourceType: resourceType,
+		ResourceId:   resourceID,
+	}
+	migrateResult := enterpriseprojects.Migrate(client, migrateOpts, targetEPSId)
+	if err := migrateResult.Err; err != nil {
+		return fmt.Errorf("failed to migrate %s to enterprise project %s, err: %s", resourceID, targetEPSId, err)
+	}
+
+	return nil
 }
 
 // GetEipIDbyAddress returns the EIP ID of address when success.
