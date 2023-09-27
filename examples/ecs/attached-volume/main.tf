@@ -1,40 +1,57 @@
-data "hcs_availability_zones" "myaz" {}
+data "hcs_availability_zones" "test" {
+}
 
-data "hcs_ecs_compute_flavors" "myflavor" {
-  availability_zone = data.hcs_availability_zones.myaz.names[0]
-  performance_type  = "normal"
+data "hcs_ecs_compute_flavors" "flavors" {
+  availability_zone = data.hcs_availability_zones.test.names[0]
   cpu_core_count    = 2
   memory_size       = 4
 }
 
-data "hcs_vpc_subnet" "mynet" {
-  name = "subnet-default"
+data "hcs_vpc_subnets" "test" {
+  name = var.subnet_name
 }
 
-data "hcs_ims_images" "myimage" {
-  name        = "Ubuntu 18.04 server 64bit"
+data "hcs_ims_images" "test" {
+  name       = var.image_name
 }
 
-resource "hcs_ecs_compute_instance" "myinstance" {
-  name              = "basic"
-  image_id          = data.hcs_ims_images.myimage.id
-  flavor_id         = data.hcs_ecs_compute_flavors.myflavor.ids[0]
-  security_groups   = ["default"]
-  availability_zone = data.hcs_availability_zones.myaz.names[0]
+data "hcs_networking_secgroups" "test" {
+  name = var.secgroup_name
+}
+
+resource "hcs_ecs_compute_instance" "ecs-volume-attached" {
+  name                = var.ecs_name
+  description         = var.ecs_description
+  image_id            = data.hcs_ims_images.test.images[0].id
+  flavor_id           = data.hcs_ecs_compute_flavors.test.ids[0]
+  security_group_ids  = [data.hcs_networking_secgroups.test.security_groups[0].id]
+  availability_zone = data.hcs_availability_zones.test.names[0]
 
   network {
-    uuid = data.hcs_vpc_subnet.mynet.id
+    uuid              = data.hcs_vpc_subnets.test.subnets[0].id
+    source_dest_check = false
   }
+
+  system_disk_type = var.disk_type
+  system_disk_size = var.system_disk_size
+
+  data_disks {
+    type = var.disk_type
+    size = var.data_disk_size
+  }
+  delete_disks_on_termination = true
+  delete_eip_on_termination = true
 }
 
-resource "hcs_evs_volume" "myvolume" {
-  name              = "myvolume"
-  availability_zone = data.hcs_availability_zones.myaz.names[0]
-  volume_type       = "SAS"
-  size              = 10
+resource "hcs_evs_volume" "test" {
+  availability_zone      = data.hcs_availability_zones.test.names[0]
+  name                   = var.volume_name
+  description            = var.volume_description
+  size                   = var.attach_disk_size
 }
 
 resource "hcs_ecs_compute_volume_attach" "attached" {
-  instance_id = hcs_ecs_compute_instance.myinstance.id
-  volume_id   = hcs_evs_volume.myvolume.id
+  instance_id = hcs_ecs_compute_instance.ecs-volume-attached.id
+  volume_id   = hcs_evs_volume.test.id
+  device = var.volume_device
 }

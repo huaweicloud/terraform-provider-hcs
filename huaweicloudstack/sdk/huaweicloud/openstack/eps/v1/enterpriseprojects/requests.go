@@ -135,3 +135,17 @@ type Match struct {
 
 	Value string `json:"value" required:"true"`
 }
+
+func Migrate(client *golangsdk.ServiceClient, opts MigrateResourceOpts, id string) (r MigrateResult) {
+	b, err := golangsdk.BuildRequestBody(opts, "")
+	if err != nil {
+		r.Err = err
+		return
+	}
+
+	_, r.Err = client.Post(migrateURL(client, id), b, &r.Body, &golangsdk.RequestOpts{
+		MoreHeaders: RequestOpts.MoreHeaders,
+		OkCodes:     []int{204},
+	})
+	return
+}
