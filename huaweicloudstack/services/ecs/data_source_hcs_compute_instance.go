@@ -98,11 +98,6 @@ func DataSourceComputeInstance() *schema.Resource {
 			"network":         computedSchemaNetworks(),
 			"volume_attached": computedSchemaVolumeAttached(),
 			"scheduler_hints": computedSchemaSchedulerHints(),
-			"tags": {
-				Type:     schema.TypeMap,
-				Computed: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-			},
 			"status": {
 				Type:     schema.TypeString,
 				Computed: true,

@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -17,14 +16,9 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/helper/hashcode"
 	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/compute/v2/extensions/bootfromvolume"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/compute/v2/extensions/keypairs"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/compute/v2/extensions/schedulerhints"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/compute/v2/extensions/secgroups"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/compute/v2/servers"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/ecs/v1/block_devices"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/ecs/v1/cloudservers"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/ecs/v1/powers"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/evs/v2/cloudvolumes"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/ims/v2/cloudimages"
 	groups "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/networking/v1/security/securitygroups"
@@ -32,15 +26,6 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/networking/v2/ports"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/evs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
-)
-
-var (
-	novaConflicts  = []string{"block_device_mapping_v2", "metadata"}
-	powerActionMap = map[string]string{
-		"ON":     "os-start",
-		"OFF":    "os-stop",
-		"REBOOT": "reboot",
-	}
 )
 
 func ResourceComputeInstance() *schema.Resource {
@@ -197,24 +182,21 @@ func ResourceComputeInstance() *schema.Resource {
 				},
 			},
 			"system_disk_type": {
-				Type:          schema.TypeString,
-				Optional:      true,
-				ForceNew:      true,
-				Computed:      true,
-				ConflictsWith: novaConflicts,
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+				Computed: true,
 			},
 			"system_disk_size": {
-				Type:          schema.TypeInt,
-				Optional:      true,
-				Computed:      true,
-				ConflictsWith: novaConflicts,
+				Type:     schema.TypeInt,
+				Optional: true,
+				Computed: true,
 			},
 			"data_disks": {
-				Type:          schema.TypeList,
-				Optional:      true,
-				ForceNew:      true,
-				ConflictsWith: novaConflicts,
-				MaxItems:      23,
+				Type:     schema.TypeList,
+				Optional: true,
+				ForceNew: true,
+				MaxItems: 23,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"type": {
@@ -279,21 +261,19 @@ func ResourceComputeInstance() *schema.Resource {
 				// just stash the hash for state & diff comparisons
 				StateFunc: utils.HashAndHexEncode,
 			},
-			"stop_before_destroy": {
-				Type:     schema.TypeBool,
+			"enterprise_project_id": {
+				Type:     schema.TypeString,
 				Optional: true,
-				Default:  false,
+				Computed: true,
 			},
 			"delete_disks_on_termination": {
-				Type:          schema.TypeBool,
-				Optional:      true,
-				ConflictsWith: novaConflicts,
+				Type:     schema.TypeBool,
+				Optional: true,
 			},
 			"delete_eip_on_termination": {
-				Type:          schema.TypeBool,
-				Optional:      true,
-				Default:       true,
-				ConflictsWith: novaConflicts,
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  true,
 			},
 
 			"eip_id": {
@@ -347,71 +327,15 @@ func ResourceComputeInstance() *schema.Resource {
 					},
 				},
 			},
-
-			// charge info: charging_mode, period_unit, period, auto_renew, auto_pay
-			"charging_mode": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-				Computed: true,
-				ValidateFunc: validation.StringInSlice([]string{
-					"prePaid", "postPaid", "spot",
-				}, false),
-				ConflictsWith: novaConflicts,
-			},
-			"period_unit": common.SchemaPeriodUnit(novaConflicts),
-			"period":      common.SchemaPeriod(novaConflicts),
-			"auto_renew":  common.SchemaAutoRenewUpdatable(novaConflicts),
-			"auto_pay":    common.SchemaAutoPay(novaConflicts),
-
-			"spot_maximum_price": {
-				Type:          schema.TypeString,
-				Optional:      true,
-				ForceNew:      true,
-				ConflictsWith: []string{"spot_duration", "spot_duration_count"},
-			},
-			"spot_duration": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.IntBetween(1, 6),
-			},
-			"spot_duration_count": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				Computed:     true,
-				ForceNew:     true,
-				RequiredWith: []string{"spot_duration"},
-			},
-
 			"user_id": { // required if in prePaid charging mode with key_pair.
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
 			},
-			"agency_name": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
-			},
-			"agent_list": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
-			},
 			"tags": {
 				Type:     schema.TypeMap,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
-			},
-			"power_action": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
-				// If you want to support more actions, please update powerActionMap simultaneously.
-				ValidateFunc: validation.StringInSlice([]string{
-					"ON", "OFF", "REBOOT", "FORCE-OFF", "FORCE-REBOOT",
-				}, false),
 			},
 			"volume_attached": {
 				Type:     schema.TypeList,
@@ -473,87 +397,13 @@ func ResourceComputeInstance() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
-			// Deprecated
-			"metadata": {
-				Type:          schema.TypeMap,
-				Optional:      true,
-				ConflictsWith: []string{"system_disk_type", "system_disk_size", "data_disks"},
-				Deprecated:    "use tags instead",
-				Elem:          &schema.Schema{Type: schema.TypeString},
-			},
-			"block_device_mapping_v2": {
-				Type:          schema.TypeList,
-				Optional:      true,
-				ConflictsWith: []string{"system_disk_type", "system_disk_size", "data_disks"},
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"source_type": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"uuid": {
-							Type:     schema.TypeString,
-							Optional: true,
-							ForceNew: true,
-						},
-						"volume_size": {
-							Type:     schema.TypeInt,
-							Optional: true,
-							ForceNew: true,
-						},
-						"volume_type": {
-							Type:     schema.TypeString,
-							Optional: true,
-							ForceNew: true,
-						},
-						"destination_type": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"boot_index": {
-							Type:     schema.TypeInt,
-							Optional: true,
-							ForceNew: true,
-						},
-						"delete_on_termination": {
-							Type:     schema.TypeBool,
-							Optional: true,
-							Default:  false,
-							ForceNew: true,
-						},
-					},
-				},
-			},
 		},
 	}
-}
-
-func hasDeprecatedConfig(d *schema.ResourceData) bool {
-	if _, ok := d.GetOk("metadata"); ok {
-		return true
-	}
-	if _, ok := d.GetOk("block_device_mapping_v2"); ok {
-		return true
-	}
-	return false
-}
-
-func getSpotDurationCount(d *schema.ResourceData) int {
-	var count = 1
-	if c, ok := d.GetOk("spot_duration_count"); ok {
-		count = c.(int)
-	}
-	return count
 }
 
 func resourceComputeInstanceCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
-	computeClient, err := cfg.ComputeV2Client(region)
-	if err != nil {
-		return diag.Errorf("error creating compute V2 client: %s", err)
-	}
 	ecsClient, err := cfg.ComputeV1Client(region)
 	if err != nil {
 		return diag.Errorf("error creating compute V1 client: %s", err)
@@ -567,12 +417,7 @@ func resourceComputeInstanceCreate(ctx context.Context, d *schema.ResourceData, 
 		return diag.Errorf("error creating networking client: %s", err)
 	}
 
-	if err := validateComputeInstanceConfig(d, cfg); err != nil {
-		return diag.FromErr(err)
-	}
-
 	// Determines the Image ID using the following rules:
-	// If a bootable block_device_mapping_v2 was specified, ignore the image altogether.
 	// If an image_id was specified, use it.
 	// If an image_name was specified, look up the image ID, report if error.
 	imageId, err := getImageIDFromConfig(imsClient, d)
@@ -585,226 +430,73 @@ func resourceComputeInstanceCreate(ctx context.Context, d *schema.ResourceData, 
 		return diag.FromErr(err)
 	}
 
-	// determine if block_device_mapping_v2 configuration is correct
-	// this includes valid combinations and required attributes
-	if err := checkBlockDeviceConfig(d); err != nil {
+	ecsV11Client, err := cfg.ComputeV11Client(region)
+	if err != nil {
+		return diag.Errorf("error creating compute V1.1 client: %s", err)
+	}
+	vpcClient, err := cfg.NetworkingV1Client(region)
+	if err != nil {
+		return diag.Errorf("error creating networking V1 client: %s", err)
+	}
+
+	vpcId, err := getVpcID(vpcClient, d)
+	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	// Try to call API of Huawei ECS instead of OpenStack which is deprecated
-	if !hasDeprecatedConfig(d) {
-		ecsV11Client, err := cfg.ComputeV11Client(region)
-		if err != nil {
-			return diag.Errorf("error creating compute V1.1 client: %s", err)
-		}
-		vpcClient, err := cfg.NetworkingV1Client(region)
-		if err != nil {
-			return diag.Errorf("error creating networking V1 client: %s", err)
-		}
-
-		vpcId, err := getVpcID(vpcClient, d)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-
-		secGroups, err := resourceInstanceSecGroupIdsV1(vpcClient, d)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-
-		createOpts := &cloudservers.CreateOpts{
-			Name:             d.Get("name").(string),
-			Description:      d.Get("description").(string),
-			ImageRef:         imageId,
-			FlavorRef:        flavorId,
-			KeyName:          d.Get("key_pair").(string),
-			VpcId:            vpcId,
-			SecurityGroups:   secGroups,
-			AvailabilityZone: d.Get("availability_zone").(string),
-			RootVolume:       resourceInstanceRootVolume(d),
-			DataVolumes:      resourceInstanceDataVolumes(d),
-			Nics:             buildInstanceNicsRequest(d),
-			PublicIp:         buildInstancePublicIPRequest(d),
-			UserData:         []byte(d.Get("user_data").(string)),
-		}
-
-		if tags, ok := d.GetOk("tags"); ok {
-			createOpts.ServerTags = utils.ExpandResourceTags(tags.(map[string]interface{}))
-		}
-
-		var extendParam cloudservers.ServerExtendParam
-		chargingMode := d.Get("charging_mode").(string)
-		if chargingMode == "prePaid" {
-			if err := common.ValidatePrePaidChargeInfo(d); err != nil {
-				return diag.FromErr(err)
-			}
-
-			extendParam.ChargingMode = chargingMode
-			extendParam.PeriodType = d.Get("period_unit").(string)
-			extendParam.PeriodNum = d.Get("period").(int)
-			extendParam.IsAutoRenew = d.Get("auto_renew").(string)
-			extendParam.IsAutoPay = common.GetAutoPay(d)
-		} else if chargingMode == "spot" {
-			extendParam.MarketType = "spot"
-			extendParam.SpotPrice = d.Get("spot_maximum_price").(string)
-			if v, ok := d.GetOk("spot_duration"); ok {
-				extendParam.InterruptionPolicy = "immediate"
-				extendParam.SpotDurationHours = v.(int)
-				extendParam.SpotDurationCount = getSpotDurationCount(d)
-			}
-		}
-
-		if extendParam != (cloudservers.ServerExtendParam{}) {
-			createOpts.ExtendParam = &extendParam
-		}
-
-		var metadata cloudservers.MetaData
-		metadata.OpSvcUserId = getOpSvcUserID(d, cfg)
-
-		if v, ok := d.GetOk("agency_name"); ok {
-			metadata.AgencyName = v.(string)
-		}
-		if v, ok := d.GetOk("agent_list"); ok {
-			metadata.AgentList = v.(string)
-		}
-		if metadata != (cloudservers.MetaData{}) {
-			createOpts.MetaData = &metadata
-		}
-
-		schedulerHintsRaw := d.Get("scheduler_hints").(*schema.Set).List()
-		if len(schedulerHintsRaw) > 0 {
-			log.Printf("[DEBUG] schedulerhints: %+v", schedulerHintsRaw)
-			schedulerHints := resourceInstanceSchedulerHintsV1(schedulerHintsRaw[0].(map[string]interface{}))
-			createOpts.SchedulerHints = &schedulerHints
-		}
-
-		log.Printf("[DEBUG] ECS create options: %#v", createOpts)
-		// Add password here so it wouldn't go in the above log entry
-		createOpts.AdminPass = d.Get("admin_pass").(string)
-
-		if d.Get("charging_mode") == "prePaid" {
-			// prePaid.
-			n, err := cloudservers.CreatePrePaid(ecsV11Client, createOpts).ExtractOrderResponse()
-			if err != nil {
-				return diag.Errorf("error creating server: %s", err)
-			}
-			bssClient, err := cfg.BssV2Client(region)
-			if err != nil {
-				return diag.Errorf("error creating BSS v2 client: %s", err)
-			}
-			err = common.WaitOrderComplete(ctx, bssClient, n.OrderID, d.Timeout(schema.TimeoutCreate))
-			if err != nil {
-				return diag.FromErr(err)
-			}
-			resourceId, err := common.WaitOrderResourceComplete(ctx, bssClient, n.OrderID, d.Timeout(schema.TimeoutCreate))
-			if err != nil {
-				return diag.FromErr(err)
-			}
-			d.SetId(resourceId)
-		} else {
-			// postPaid.
-			n, err := cloudservers.Create(ecsV11Client, createOpts).ExtractJobResponse()
-			if err != nil {
-				return diag.Errorf("error creating server: %s", err)
-			}
-			if err := cloudservers.WaitForJobSuccess(ecsClient, int(d.Timeout(schema.TimeoutCreate)/time.Second), n.JobID); err != nil {
-				return diag.FromErr(err)
-			}
-			serverId, err := cloudservers.GetJobEntity(ecsClient, n.JobID, "server_id")
-			if err != nil {
-				return diag.FromErr(err)
-			}
-			d.SetId(serverId.(string))
-		}
-	} else {
-		// OpenStack API implementation. Clean up this after removing block_device.
-
-		// Build a []servers.Network to pass into the create options.
-		networks, err := expandInstanceNetworks(d)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-
-		var createOpts servers.CreateOptsBuilder
-		createOpts = &servers.CreateOpts{
-			Name:             d.Get("name").(string),
-			ImageRef:         imageId,
-			FlavorRef:        flavorId,
-			SecurityGroups:   resourceInstanceSecGroupsV2(d),
-			AvailabilityZone: d.Get("availability_zone").(string),
-			Networks:         networks,
-			Metadata:         resourceInstanceMetadataV2(d),
-			AdminPass:        d.Get("admin_pass").(string),
-			UserData:         []byte(d.Get("user_data").(string)),
-		}
-
-		if keyName, ok := d.Get("key_pair").(string); ok && keyName != "" {
-			createOpts = &keypairs.CreateOptsExt{
-				CreateOptsBuilder: createOpts,
-				KeyName:           keyName,
-			}
-		}
-
-		if vL, ok := d.GetOk("block_device_mapping_v2"); ok {
-			blockDevices, err := resourceInstanceBlockDevicesV2(vL.([]interface{}))
-			if err != nil {
-				return diag.FromErr(err)
-			}
-
-			createOpts = &bootfromvolume.CreateOptsExt{
-				CreateOptsBuilder: createOpts,
-				BlockDevice:       blockDevices,
-			}
-		}
-
-		schedulerHintsRaw := d.Get("scheduler_hints").(*schema.Set).List()
-		if len(schedulerHintsRaw) > 0 {
-			log.Printf("[DEBUG] schedulerhints: %+v", schedulerHintsRaw)
-			schedulerHints := resourceInstanceSchedulerHintsV2(schedulerHintsRaw[0].(map[string]interface{}))
-			createOpts = &schedulerhints.CreateOptsExt{
-				CreateOptsBuilder: createOpts,
-				SchedulerHints:    schedulerHints,
-			}
-		}
-
-		log.Printf("[DEBUG] compute create options: %#v", createOpts)
-
-		// If a block_device_mapping_v2  is used, use the bootfromvolume.Create function as it allows an empty ImageRef.
-		// Otherwise, use the normal servers.Create function.
-		var server *servers.Server
-		server, err = servers.Create(computeClient, createOpts).Extract()
-
-		if err != nil {
-			return diag.Errorf("error creating server: %s", err)
-		}
-
-		log.Printf("[INFO] instance ID: %s", server.ID)
-
-		// Store the ID now
-		d.SetId(server.ID)
-
-		// Wait for the instance to become running so we can get some attributes
-		// that aren't available until later.
-		log.Printf("[DEBUG] waiting for instance (%s) to become running", server.ID)
-		pending := []string{"BUILD"}
-		target := []string{"ACTIVE"}
-		timeout := d.Timeout(schema.TimeoutCreate)
-		if err := waitForServerTargetState(ctx, ecsClient, d.Id(), pending, target, timeout); err != nil {
-			return diag.Errorf("State waiting timeout: %s", err)
-		}
+	secGroups, err := resourceInstanceSecGroupIdsV1(vpcClient, d)
+	if err != nil {
+		return diag.FromErr(err)
 	}
 
-	// Create an instance in the shutdown state.
-	if action, ok := d.GetOk("power_action"); ok {
-		action := action.(string)
-		if action == "OFF" || action == "FORCE-OFF" {
-			if err = doPowerAction(ecsClient, d, action); err != nil {
-				return diag.Errorf("Doing power action (%s) for instance (%s) failed: %s", action, d.Id(), err)
-			}
-		} else {
-			log.Printf("[WARN] the power action (%s) is invalid after instance created", action)
-		}
+	createOpts := &cloudservers.CreateOpts{
+		Name:             d.Get("name").(string),
+		Description:      d.Get("description").(string),
+		ImageRef:         imageId,
+		FlavorRef:        flavorId,
+		KeyName:          d.Get("key_pair").(string),
+		VpcId:            vpcId,
+		SecurityGroups:   secGroups,
+		AvailabilityZone: d.Get("availability_zone").(string),
+		RootVolume:       resourceInstanceRootVolume(d),
+		DataVolumes:      resourceInstanceDataVolumes(d),
+		Nics:             buildInstanceNicsRequest(d),
+		PublicIp:         buildInstancePublicIPRequest(d),
+		UserData:         []byte(d.Get("user_data").(string)),
 	}
+
+	if tags, ok := d.GetOk("tags"); ok {
+		createOpts.ServerTags = utils.ExpandResourceTags(tags.(map[string]interface{}))
+	}
+
+	var extendParam cloudservers.ServerExtendParam
+	if extendParam != (cloudservers.ServerExtendParam{}) {
+		createOpts.ExtendParam = &extendParam
+	}
+
+	schedulerHintsRaw := d.Get("scheduler_hints").(*schema.Set).List()
+	if len(schedulerHintsRaw) > 0 {
+		log.Printf("[DEBUG] schedulerhints: %+v", schedulerHintsRaw)
+		schedulerHints := resourceInstanceSchedulerHintsV1(schedulerHintsRaw[0].(map[string]interface{}))
+		createOpts.SchedulerHints = &schedulerHints
+	}
+
+	log.Printf("[DEBUG] ECS create options: %#v", createOpts)
+	// Add password here so it wouldn't go in the above log entry
+	createOpts.AdminPass = d.Get("admin_pass").(string)
+
+	n, err := cloudservers.Create(ecsV11Client, createOpts).ExtractJobResponse()
+	if err != nil {
+		return diag.Errorf("error creating server: %s", err)
+	}
+	if err := cloudservers.WaitForJobSuccess(ecsClient, int(d.Timeout(schema.TimeoutCreate)/time.Second), n.JobID); err != nil {
+		return diag.FromErr(err)
+	}
+	serverId, err := cloudservers.GetJobEntity(ecsClient, n.JobID, "server_id")
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	d.SetId(serverId.(string))
 
 	// get the original value of source_dest_check in script
 	originalNetworks := d.Get("network").([]interface{})
@@ -874,13 +566,11 @@ func resourceComputeInstanceRead(_ context.Context, d *schema.ResourceData, meta
 	log.Printf("[DEBUG] retrieved compute instance %s: %+v", d.Id(), server)
 	// Set some attributes
 	d.Set("region", region)
+	d.Set("enterprise_project_id", server.EnterpriseProjectID)
 	d.Set("availability_zone", server.AvailabilityZone)
 	d.Set("name", server.Name)
 	d.Set("description", server.Description)
 	d.Set("status", server.Status)
-	d.Set("agency_name", server.Metadata.AgencyName)
-	d.Set("agent_list", server.Metadata.AgentList)
-	d.Set("charging_mode", normalizeChargingMode(server.Metadata.ChargingMode))
 	d.Set("created_at", server.Created.Format(time.RFC3339))
 	d.Set("updated_at", server.Updated.Format(time.RFC3339))
 
@@ -999,20 +689,6 @@ func resourceComputeInstanceRead(_ context.Context, d *schema.ResourceData, meta
 	return nil
 }
 
-func normalizeChargingMode(mode string) string {
-	var ret string
-	switch mode {
-	case "1":
-		ret = "prePaid"
-	case "2":
-		ret = "spot"
-	default:
-		ret = "postPaid"
-	}
-
-	return ret
-}
-
 func resourceComputeInstanceUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
@@ -1038,58 +714,6 @@ func resourceComputeInstanceUpdate(ctx context.Context, d *schema.ResourceData, 
 		err := cloudservers.Update(ecsClient, d.Id(), updateOpts).ExtractErr()
 		if err != nil {
 			return diag.Errorf("error updating server: %s", err)
-		}
-	}
-
-	if d.HasChange("metadata") {
-		oldMetadata, newMetadata := d.GetChange("metadata")
-		var metadataToDelete []string
-
-		// Determine if any metadata keys were removed from the configuration.
-		// Then request those keys to be deleted.
-		for oldKey := range oldMetadata.(map[string]interface{}) {
-			var found bool
-			for newKey := range newMetadata.(map[string]interface{}) {
-				if oldKey == newKey {
-					found = true
-				}
-			}
-
-			if !found {
-				metadataToDelete = append(metadataToDelete, oldKey)
-			}
-		}
-
-		for _, key := range metadataToDelete {
-			err := servers.DeleteMetadatum(computeClient, d.Id(), key).ExtractErr()
-			if err != nil {
-				return diag.Errorf("error deleting metadata (%s) from server (%s): %s", key, d.Id(), err)
-			}
-		}
-
-		// Update existing metadata and add any new metadata.
-		metadataOpts := make(servers.MetadataOpts)
-		for k, v := range newMetadata.(map[string]interface{}) {
-			metadataOpts[k] = v.(string)
-		}
-
-		_, err := servers.UpdateMetadata(computeClient, d.Id(), metadataOpts).Extract()
-		if err != nil {
-			return diag.Errorf("error updating server (%s) metadata: %s", d.Id(), err)
-		}
-	}
-
-	if d.HasChanges("agency_name", "agent_list ") {
-		metadataOpts := make(servers.MetadataOpts)
-		if d.HasChange("agency_name") {
-			metadataOpts["agency_name"] = d.Get("agency_name").(string)
-		}
-		if d.HasChange("agent_list") {
-			metadataOpts["__support_agent_list"] = d.Get("agent_list").(string)
-		}
-		_, err = servers.UpdateMetadata(computeClient, d.Id(), metadataOpts).Extract()
-		if err != nil {
-			return diag.Errorf("error updating server (%s) metadata(agency_name, agent_list) : %s", d.Id(), err)
 		}
 	}
 
@@ -1186,17 +810,22 @@ func resourceComputeInstanceUpdate(ctx context.Context, d *schema.ResourceData, 
 		}
 	}
 
+	if d.HasChange("enterprise_project_id") {
+		epsClient, err := cfg.EnterpriseProjectClient(region)
+		if err != nil {
+			return diag.Errorf("error creating EPS client: %s", err)
+		}
+
+		if err := migrateEnterpriseProject(ctx, d, ecsClient, epsClient, region); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
 	if d.HasChange("system_disk_size") {
 		extendOpts := cloudvolumes.ExtendOpts{
 			SizeOpts: cloudvolumes.ExtendSizeOpts{
 				NewSize: d.Get("system_disk_size").(int),
 			},
-		}
-
-		if strings.EqualFold(d.Get("charging_mode").(string), "prePaid") {
-			extendOpts.ChargeInfo = &cloudvolumes.ExtendChargeOpts{
-				IsAutoPay: common.GetAutoPay(d),
-			}
 		}
 
 		evsV2Client, err := cfg.BlockStorageV2Client(region)
@@ -1206,19 +835,7 @@ func resourceComputeInstanceUpdate(ctx context.Context, d *schema.ResourceData, 
 
 		systemDiskID := d.Get("system_disk_id").(string)
 
-		resp, err := cloudvolumes.ExtendSize(evsV2Client, systemDiskID, extendOpts).Extract()
-
-		if strings.EqualFold(d.Get("charging_mode").(string), "prePaid") {
-			bssClient, err := cfg.BssV2Client(region)
-			if err != nil {
-				return diag.Errorf("error creating BSS v2 client: %s", err)
-			}
-			err = common.WaitOrderComplete(ctx, bssClient, resp.OrderID, d.Timeout(schema.TimeoutUpdate))
-			if err != nil {
-				return diag.Errorf("The order (%s) is not completed while extending system disk (%s) size: %#v",
-					resp.OrderID, d.Id(), err)
-			}
-		}
+		cloudvolumes.ExtendSize(evsV2Client, systemDiskID, extendOpts)
 
 		stateConf := &resource.StateChangeConf{
 			Pending:    []string{"extending"},
@@ -1257,24 +874,6 @@ func resourceComputeInstanceUpdate(ctx context.Context, d *schema.ResourceData, 
 		}
 	}
 
-	// The instance power status update needs to be done at the end
-	if d.HasChange("power_action") {
-		action := d.Get("power_action").(string)
-		if err = doPowerAction(ecsClient, d, action); err != nil {
-			return diag.Errorf("Doing power action (%s) for instance (%s) failed: %s", action, d.Id(), err)
-		}
-	}
-
-	if d.HasChange("auto_renew") {
-		bssClient, err := cfg.BssV2Client(region)
-		if err != nil {
-			return diag.Errorf("error creating BSS V2 client: %s", err)
-		}
-		if err = common.UpdateAutoRenew(bssClient, d.Get("auto_renew").(string), d.Id()); err != nil {
-			return diag.Errorf("error updating the auto-renew of the instance (%s): %s", d.Id(), err)
-		}
-	}
-
 	return resourceComputeInstanceRead(ctx, d, meta)
 }
 
@@ -1285,50 +884,23 @@ func resourceComputeInstanceDelete(ctx context.Context, d *schema.ResourceData, 
 	if err != nil {
 		return diag.Errorf("error creating compute client: %s", err)
 	}
-
-	if d.Get("stop_before_destroy").(bool) {
-		if err = doPowerAction(ecsClient, d, "FORCE-OFF"); err != nil {
-			log.Printf("[WARN] error stopping instance: %s", err)
-		} else {
-			log.Printf("[DEBUG] waiting for instance (%s) to stop", d.Id())
-			pending := []string{"ACTIVE"}
-			target := []string{"SHUTOFF"}
-			timeout := d.Timeout(schema.TimeoutDelete)
-			if err := waitForServerTargetState(ctx, ecsClient, d.Id(), pending, target, timeout); err != nil {
-				return diag.Errorf("State waiting timeout: %s", err)
-			}
-		}
+	serverRequests := []cloudservers.Server{
+		{Id: d.Id()},
 	}
 
-	if d.Get("charging_mode") == "prePaid" {
-		resources, err := calcUnsubscribeResources(d, cfg)
-		if err != nil {
-			return diag.Errorf("error unsubscribe ECS server: %s", err)
-		}
+	deleteOpts := cloudservers.DeleteOpts{
+		Servers:        serverRequests,
+		DeleteVolume:   d.Get("delete_disks_on_termination").(bool),
+		DeletePublicIP: d.Get("delete_eip_on_termination").(bool),
+	}
 
-		log.Printf("[DEBUG] %v will be unsubscribed", resources)
-		if err := common.UnsubscribePrePaidResource(d, cfg, resources); err != nil {
-			return diag.Errorf("error unsubscribe ECS server: %s", err)
-		}
-	} else {
-		serverRequests := []cloudservers.Server{
-			{Id: d.Id()},
-		}
+	n, err := cloudservers.Delete(ecsClient, deleteOpts).ExtractJobResponse()
+	if err != nil {
+		return diag.Errorf("error deleting server: %s", err)
+	}
 
-		deleteOpts := cloudservers.DeleteOpts{
-			Servers:        serverRequests,
-			DeleteVolume:   d.Get("delete_disks_on_termination").(bool),
-			DeletePublicIP: d.Get("delete_eip_on_termination").(bool),
-		}
-
-		n, err := cloudservers.Delete(ecsClient, deleteOpts).ExtractJobResponse()
-		if err != nil {
-			return diag.Errorf("error deleting server: %s", err)
-		}
-
-		if err := cloudservers.WaitForJobSuccess(ecsClient, int(d.Timeout(schema.TimeoutCreate)/time.Second), n.JobID); err != nil {
-			return diag.FromErr(err)
-		}
+	if err := cloudservers.WaitForJobSuccess(ecsClient, int(d.Timeout(schema.TimeoutCreate)/time.Second), n.JobID); err != nil {
+		return diag.FromErr(err)
 	}
 
 	// Instance may still exist after Order/Job succeed.
@@ -1456,10 +1028,9 @@ func getOpSvcUserID(d *schema.ResourceData, conf *config.HcsConfig) string {
 
 func validateComputeInstanceConfig(d *schema.ResourceData, conf *config.HcsConfig) error {
 	_, hasSSH := d.GetOk("key_pair")
-	if d.Get("charging_mode").(string) == "prePaid" && hasSSH {
+	if hasSSH {
 		if getOpSvcUserID(d, conf) == "" {
-			return fmt.Errorf("user_id must be specified when charging_mode is set to prePaid and " +
-				"the ECS is logged in using an SSH key")
+			return fmt.Errorf("user_id must be specified when the ECS is logged in using an SSH key")
 		}
 	}
 
@@ -1512,77 +1083,10 @@ func buildInstancePublicIPRequest(d *schema.ResourceData) *cloudservers.PublicIp
 	}
 }
 
-func resourceInstanceSecGroupsV2(d *schema.ResourceData) []string {
-	rawSecGroups := d.Get("security_groups").(*schema.Set).List()
-	secGroups := make([]string, len(rawSecGroups))
-	for i, raw := range rawSecGroups {
-		secGroups[i] = raw.(string)
-	}
-	return secGroups
-}
-
-func resourceInstanceMetadataV2(d *schema.ResourceData) map[string]string {
-	m := make(map[string]string)
-	for key, val := range d.Get("metadata").(map[string]interface{}) {
-		m[key] = val.(string)
-	}
-	return m
-}
-
-func resourceInstanceBlockDevicesV2(bds []interface{}) ([]bootfromvolume.BlockDevice, error) {
-	blockDeviceOpts := make([]bootfromvolume.BlockDevice, len(bds))
-	for i, bd := range bds {
-		bdM := bd.(map[string]interface{})
-		blockDeviceOpts[i] = bootfromvolume.BlockDevice{
-			UUID:                bdM["uuid"].(string),
-			VolumeSize:          bdM["volume_size"].(int),
-			BootIndex:           bdM["boot_index"].(int),
-			DeleteOnTermination: bdM["delete_on_termination"].(bool),
-		}
-
-		sourceType := bdM["source_type"].(string)
-		switch sourceType {
-		case "blank":
-			blockDeviceOpts[i].SourceType = bootfromvolume.SourceBlank
-		case "image":
-			blockDeviceOpts[i].SourceType = bootfromvolume.SourceImage
-		case "snapshot":
-			blockDeviceOpts[i].SourceType = bootfromvolume.SourceSnapshot
-		case "volume":
-			blockDeviceOpts[i].SourceType = bootfromvolume.SourceVolume
-		default:
-			return blockDeviceOpts, fmt.Errorf("unknown block device source type %s", sourceType)
-		}
-
-		destinationType := bdM["destination_type"].(string)
-		switch destinationType {
-		case "local":
-			blockDeviceOpts[i].DestinationType = bootfromvolume.DestinationLocal
-		case "volume":
-			blockDeviceOpts[i].DestinationType = bootfromvolume.DestinationVolume
-		default:
-			return blockDeviceOpts, fmt.Errorf("unknown block device destination type %s", destinationType)
-		}
-	}
-
-	log.Printf("[DEBUG] block device options: %+v", blockDeviceOpts)
-	return blockDeviceOpts, nil
-}
-
 func resourceInstanceSchedulerHintsV1(schedulerHintsRaw map[string]interface{}) cloudservers.SchedulerHints {
 	schedulerHints := cloudservers.SchedulerHints{
 		Group:           schedulerHintsRaw["group"].(string),
 		FaultDomain:     schedulerHintsRaw["fault_domain"].(string),
-		Tenancy:         schedulerHintsRaw["tenancy"].(string),
-		DedicatedHostID: schedulerHintsRaw["deh_id"].(string),
-	}
-
-	return schedulerHints
-}
-
-func resourceInstanceSchedulerHintsV2(schedulerHintsRaw map[string]interface{}) schedulerhints.SchedulerHints {
-	schedulerHints := schedulerhints.SchedulerHints{
-		Group:           schedulerHintsRaw["group"].(string),
 		Tenancy:         schedulerHintsRaw["tenancy"].(string),
 		DedicatedHostID: schedulerHintsRaw["deh_id"].(string),
 	}
@@ -1622,21 +1126,6 @@ func getImage(client *golangsdk.ServiceClient, id, name string) (*cloudimages.Im
 }
 
 func getImageIDFromConfig(imsClient *golangsdk.ServiceClient, d *schema.ResourceData) (string, error) {
-	// If block_device_mapping_v2 was used, an Image does not need to be specified, unless an image/local
-	// combination was used. This emulates normal boot behavior. Otherwise, ignore the image altogether.
-	if vL, ok := d.GetOk("block_device_mapping_v2"); ok {
-		needImage := false
-		for _, v := range vL.([]interface{}) {
-			vM := v.(map[string]interface{})
-			if vM["source_type"] == "image" && vM["destination_type"] == "local" {
-				needImage = true
-			}
-		}
-		if !needImage {
-			return "", nil
-		}
-	}
-
 	if imageID := d.Get("image_id").(string); imageID != "" {
 		return imageID, nil
 	}
@@ -1653,22 +1142,6 @@ func getImageIDFromConfig(imsClient *golangsdk.ServiceClient, d *schema.Resource
 }
 
 func setImageInformation(d *schema.ResourceData, imsClient *golangsdk.ServiceClient, imageID string) error {
-	// If block_device_mapping_v2 was used, an Image does not need to be specified, unless an image/local
-	// combination was used. This emulates normal boot behavior. Otherwise, ignore the image altogether.
-	if vL, ok := d.GetOk("block_device_mapping_v2"); ok {
-		needImage := false
-		for _, v := range vL.([]interface{}) {
-			vM := v.(map[string]interface{})
-			if vM["source_type"] == "image" && vM["destination_type"] == "local" {
-				needImage = true
-			}
-		}
-		if !needImage {
-			d.Set("image_id", "Attempt to boot from volume - no image supplied")
-			return nil
-		}
-	}
-
 	if imageID != "" {
 		d.Set("image_id", imageID)
 		image, err := getImage(imsClient, imageID, "")
@@ -1758,32 +1231,6 @@ func resourceComputeSchedulerHintsHash(v interface{}) int {
 	return hashcode.String(buf.String())
 }
 
-func checkBlockDeviceConfig(d *schema.ResourceData) error {
-	if vL, ok := d.GetOk("block_device_mapping_v2"); ok {
-		for _, v := range vL.([]interface{}) {
-			vM := v.(map[string]interface{})
-
-			if vM["source_type"] != "blank" && vM["uuid"] == "" {
-				return fmt.Errorf("you must specify a uuid for %s block device types", vM["source_type"])
-			}
-
-			if vM["source_type"] == "image" && vM["destination_type"] == "volume" {
-				if vM["volume_size"] == 0 {
-					return fmt.Errorf("you must specify a volume_size when creating a volume from an image")
-				}
-			}
-
-			if vM["source_type"] == "blank" && vM["destination_type"] == "local" {
-				if vM["volume_size"] == 0 {
-					return fmt.Errorf("you must specify a volume_size when creating a blank block device")
-				}
-			}
-		}
-	}
-
-	return nil
-}
-
 func waitForServerTargetState(ctx context.Context, client *golangsdk.ServiceClient, instanceID string, pending, target []string,
 	timeout time.Duration) error {
 	stateConf := &resource.StateChangeConf{
@@ -1798,41 +1245,6 @@ func waitForServerTargetState(ctx context.Context, client *golangsdk.ServiceClie
 	_, err := stateConf.WaitForStateContext(ctx)
 	if err != nil {
 		return fmt.Errorf("error waiting for instance (%s) to become target state (%v): %s", instanceID, target, err)
-	}
-	return nil
-}
-
-// doPowerAction is a method for instance power doing shutdown, startup and reboot actions.
-func doPowerAction(client *golangsdk.ServiceClient, d *schema.ResourceData, action string) error {
-	var jobResp *cloudservers.JobResponse
-	powerOpts := powers.PowerOpts{
-		Servers: []powers.ServerInfo{
-			{ID: d.Id()},
-		},
-	}
-	// In the reboot structure, Type is a required option.
-	// Since the type of power off and reboot is 'SOFT' by default, setting this value has solved the power structural
-	// compatibility problem between optional and required.
-	if action != "ON" {
-		powerOpts.Type = "SOFT"
-	}
-	if strings.HasPrefix(action, "FORCE-") {
-		powerOpts.Type = "HARD"
-		action = strings.TrimPrefix(action, "FORCE-")
-	}
-	op, ok := powerActionMap[action]
-	if !ok {
-		return fmt.Errorf("the powerMap does not contain option (%s)", action)
-	}
-	jobResp, err := powers.PowerAction(client, powerOpts, op).ExtractJobResponse()
-	if err != nil {
-		return fmt.Errorf("doing power action (%s) for instance (%s) failed: %s", action, d.Id(), err)
-	}
-
-	// The time of the power on/off and reboot is usually between 15 and 35 seconds.
-	timeout := 3 * time.Minute
-	if err := cloudservers.WaitForJobSuccess(client, int(timeout/time.Second), jobResp.JobID); err != nil {
-		return fmt.Errorf("waiting power action (%s) for instance (%s) failed: %s", action, d.Id(), err)
 	}
 	return nil
 }
@@ -1892,28 +1304,6 @@ func updateSourceDestCheck(d *schema.ResourceData, client *golangsdk.ServiceClie
 	return nil
 }
 
-func calcUnsubscribeResources(d *schema.ResourceData, cfg *config.HcsConfig) ([]string, error) {
-	var mainResources = []string{d.Id()}
-
-	if shouldUnsubscribeEIP(d) {
-		region := cfg.GetRegion(d)
-		eipClient, err := cfg.NetworkingV1Client(region)
-		if err != nil {
-			return nil, fmt.Errorf("error creating networking client: %s", err)
-		}
-
-		eipAddr := d.Get("public_ip").(string)
-		eipID, err := common.GetEipIDbyAddress(eipClient, eipAddr, "all_granted_eps")
-		if err != nil {
-			return nil, fmt.Errorf("error fetching EIP ID of ECS (%s): %s", d.Id(), err)
-		}
-
-		mainResources = append(mainResources, eipID)
-	}
-
-	return mainResources, nil
-}
-
 func shouldUnsubscribeEIP(d *schema.ResourceData) bool {
 	deleteEIP := d.Get("delete_eip_on_termination").(bool)
 	eipAddr := d.Get("public_ip").(string)
@@ -1923,25 +1313,10 @@ func shouldUnsubscribeEIP(d *schema.ResourceData) bool {
 	return deleteEIP && eipAddr != "" && eipType != "" && !sharebw
 }
 
-func flattenTagsToMap(tags []string) map[string]string {
-	result := make(map[string]string)
-
-	for _, tagStr := range tags {
-		tag := strings.SplitN(tagStr, "=", 2)
-		if len(tag) == 1 {
-			result[tag[0]] = ""
-		} else if len(tag) == 2 {
-			result[tag[0]] = tag[1]
-		}
-	}
-
-	return result
-}
-
 func resourceInstanceRootVolume(d *schema.ResourceData) cloudservers.RootVolume {
 	diskType := d.Get("system_disk_type").(string)
 	if diskType == "" {
-		diskType = "GPSSD"
+		diskType = "business_type_01"
 	}
 	volRequest := cloudservers.RootVolume{
 		VolumeType: diskType,
@@ -1978,4 +1353,51 @@ func resourceInstanceDataVolumes(d *schema.ResourceData) []cloudservers.DataVolu
 		volRequests = append(volRequests, volRequest)
 	}
 	return volRequests
+}
+
+func migrateEnterpriseProject(ctx context.Context, d *schema.ResourceData,
+	ecsClient, epsClient *golangsdk.ServiceClient, region string) error {
+	resourceID := d.Id()
+	targetEPSId := d.Get("enterprise_project_id").(string)
+
+	if err := common.MigrateEnterpriseProject(epsClient, region, targetEPSId, "ecs", resourceID); err != nil {
+		return err
+	}
+
+	// wait for the Enterprise Project ID changed
+	stateConf := &resource.StateChangeConf{
+		Pending:      []string{"Pending"},
+		Target:       []string{"Success"},
+		Refresh:      waitForEnterpriseProjectIdChanged(ecsClient, resourceID, targetEPSId),
+		Timeout:      d.Timeout(schema.TimeoutUpdate),
+		Delay:        10 * time.Second,
+		PollInterval: 5 * time.Second,
+	}
+
+	_, err := stateConf.WaitForStateContext(ctx)
+	if err != nil {
+		return fmt.Errorf("error waiting for migrating Enterprise Project ID: %s", err)
+	}
+
+	return nil
+}
+
+func waitForEnterpriseProjectIdChanged(client *golangsdk.ServiceClient, instanceID, epsID string) resource.StateRefreshFunc {
+	return func() (interface{}, string, error) {
+		s, err := cloudservers.Get(client, instanceID).Extract()
+		if err != nil {
+			return nil, "ERROR", err
+		}
+
+		// get fault message when status is ERROR
+		if s.Status == "ERROR" {
+			fault := fmt.Errorf("error code: %d, message: %s", s.Fault.Code, s.Fault.Message)
+			return s, "ERROR", fault
+		}
+
+		if s.EnterpriseProjectID == epsID {
+			return s, "Success", nil
+		}
+		return s, "Pending", nil
+	}
 }
