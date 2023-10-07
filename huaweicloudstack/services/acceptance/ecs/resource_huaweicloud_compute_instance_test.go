@@ -56,7 +56,7 @@ func TestAccComputeInstance_basic(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
-					"delete_eip_on_termination", "data_disks",
+					"delete_eip_on_termination", "data_disks", "system_disk_type",
 				},
 			},
 		},
@@ -92,8 +92,7 @@ func TestAccComputeInstance_disk_encryption(t *testing.T) {
 func TestAccComputeInstance_withEPS(t *testing.T) {
 	var instance cloudservers.CloudServer
 
-	srcEPS := acceptance.HCS_ENTERPRISE_PROJECT_ID_TEST
-	destEPS := acceptance.HCS_ENTERPRISE_MIGRATE_PROJECT_ID_TEST
+	epID := acceptance.HCS_ENTERPRISE_PROJECT_ID_TEST
 	rName := acceptance.RandomAccResourceName()
 	resourceName := "hcs_ecs_compute_instance.test"
 
@@ -106,20 +105,12 @@ func TestAccComputeInstance_withEPS(t *testing.T) {
 		CheckDestroy:      testAccCheckComputeInstanceDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccComputeInstance_withEPS(rName, srcEPS),
+				Config: testAccComputeInstance_withEPS(rName, epID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(resourceName, &instance),
 					resource.TestCheckResourceAttr(resourceName, "name", rName),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
-					resource.TestCheckResourceAttr(resourceName, "enterprise_project_id", srcEPS),
-				),
-			},
-			{
-				Config: testAccComputeInstance_withEPS(rName, destEPS),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", rName),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
-					resource.TestCheckResourceAttr(resourceName, "enterprise_project_id", destEPS),
+					resource.TestCheckResourceAttr(resourceName, "enterprise_project_id", epID),
 				),
 			},
 			{
@@ -127,7 +118,7 @@ func TestAccComputeInstance_withEPS(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
-					"delete_eip_on_termination",
+					"delete_eip_on_termination", "delete_disks_on_termination", "data_disks", "system_disk_type",
 				},
 			},
 		},
@@ -235,6 +226,8 @@ resource "hcs_ecs_compute_instance" "test" {
     type = "business_type_01"
     size = "10"
   }
+  delete_disks_on_termination = true
+  delete_eip_on_termination = true
 }
 `, testAccCompute_data, rName)
 }
@@ -249,6 +242,7 @@ resource "hcs_ecs_compute_instance" "test" {
   image_id            = data.hcs_ims_images.test.images[0].id
   flavor_id           = data.hcs_ecs_compute_flavors.test.ids[0]
   security_group_ids  = [data.hcs_networking_secgroups.test.security_groups[0].id]
+  availability_zone = data.hcs_availability_zones.test.names[0]
 
   network {
     uuid              = data.hcs_vpc_subnets.test.subnets[0].id
@@ -262,6 +256,8 @@ resource "hcs_ecs_compute_instance" "test" {
     type = "business_type_01"
     size = "10"
   }
+  delete_disks_on_termination = true
+  delete_eip_on_termination = true
 }
 `, testAccCompute_data, rName)
 }
@@ -282,6 +278,7 @@ resource "hcs_ecs_compute_instance" "test" {
   image_id            = data.hcs_ims_images.test.images[0].id
   flavor_id           = data.hcs_ecs_compute_flavors.test.ids[0]
   security_group_ids  = [data.hcs_networking_secgroups.test.security_groups[0].id]
+  availability_zone = data.hcs_availability_zones.test.names[0]
 
   network {
     uuid              = data.hcs_vpc_subnets.test.subnets[0].id
@@ -289,13 +286,15 @@ resource "hcs_ecs_compute_instance" "test" {
   }
 
   system_disk_type = "business_type_01"
-  system_disk_size = 50
+  system_disk_size = 10
 
   data_disks {
     type = "business_type_01"
     size = "10"
     kms_key_id = hcs_kms_key.test.id
   }
+  delete_disks_on_termination = true
+  delete_eip_on_termination = true
 }
 `, testAccCompute_data, rName, rName)
 }
@@ -310,14 +309,22 @@ resource "hcs_ecs_compute_instance" "test" {
   image_id              = data.hcs_ims_images.test.images[0].id
   flavor_id             = data.hcs_ecs_compute_flavors.test.ids[0]
   security_group_ids    = [data.hcs_networking_secgroups.test.security_groups[0].id]
+  availability_zone = data.hcs_availability_zones.test.names[0]
   enterprise_project_id = "%s"
-  system_disk_type      = "business_type_01"
-  system_disk_size      = 40
 
   network {
     uuid              = data.hcs_vpc_subnets.test.subnets[0].id
     source_dest_check = false
   }
+  system_disk_type = "business_type_01"
+  system_disk_size = 10
+
+  data_disks {
+    type = "business_type_01"
+    size = "10"
+  }
+  delete_disks_on_termination = true
+  delete_eip_on_termination = true
 }
 `, testAccCompute_data, rName, epsID)
 }

@@ -34,3 +34,5 @@ In addition to all arguments above, the following attributes are exported:
 * `id` - Indicates a data source ID.
 
 * `ids` - A list of flavor IDs.
+
+* `flavors` - List of ECS flavors details. The object structure of each flavor is documented below.
