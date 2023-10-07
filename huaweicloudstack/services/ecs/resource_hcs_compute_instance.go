@@ -470,10 +470,13 @@ func resourceComputeInstanceCreate(ctx context.Context, d *schema.ResourceData, 
 	}
 
 	var extendParam cloudservers.ServerExtendParam
+	epsID := cfg.GetEnterpriseProjectID(d)
+	if epsID != "" {
+		extendParam.EnterpriseProjectId = epsID
+	}
 	if extendParam != (cloudservers.ServerExtendParam{}) {
 		createOpts.ExtendParam = &extendParam
 	}
-
 	schedulerHintsRaw := d.Get("scheduler_hints").(*schema.Set).List()
 	if len(schedulerHintsRaw) > 0 {
 		log.Printf("[DEBUG] schedulerhints: %+v", schedulerHintsRaw)
