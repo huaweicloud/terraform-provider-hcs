@@ -2,11 +2,10 @@ package ecs
 
 import (
 	"context"
-	"strconv"
-
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"strconv"
 
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/helper/hashcode"
@@ -40,6 +39,34 @@ func DataSourceEcsFlavors() *schema.Resource {
 				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
+			"flavors": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Elem:     FlavorsRefSchema(),
+			},
+		},
+	}
+}
+
+func FlavorsRefSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"id": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"name": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"ram": {
+				Type:     schema.TypeInt,
+				Computed: true,
+			},
+			"vcpus": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -70,6 +97,7 @@ func dataSourceEcsFlavorsRead(_ context.Context, d *schema.ResourceData, meta in
 	mem := int64(d.Get("memory_size").(int)) * 1024
 
 	var ids []string
+	var resultFlavors []interface{}
 	for _, flavor := range allFlavors {
 		vCpu, _ := strconv.Atoi(flavor.Vcpus)
 		if cpu > 0 && vCpu != cpu {
@@ -81,6 +109,7 @@ func dataSourceEcsFlavorsRead(_ context.Context, d *schema.ResourceData, meta in
 		}
 
 		ids = append(ids, flavor.ID)
+		resultFlavors = append(resultFlavors, flattenFlavor(&flavor))
 	}
 
 	if len(ids) < 1 {
@@ -92,6 +121,17 @@ func dataSourceEcsFlavorsRead(_ context.Context, d *schema.ResourceData, meta in
 	mErr := multierror.Append(nil,
 		d.Set("region", region),
 		d.Set("ids", ids),
+		d.Set("flavors", resultFlavors),
 	)
 	return diag.FromErr(mErr.ErrorOrNil())
+}
+
+func flattenFlavor(flavor *flavors.Flavor) map[string]interface{} {
+	res := map[string]interface{}{
+		"id":    flavor.ID,
+		"name":  flavor.Name,
+		"ram":   flavor.Ram,
+		"vcpus": flavor.Vcpus,
+	}
+	return res
 }
