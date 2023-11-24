@@ -35,3 +35,7 @@ variable "data_disk_size" {
   type = number
   default = 10
 }
+
+variable "enterprise_project_id" {
+  default = "default"
+}
