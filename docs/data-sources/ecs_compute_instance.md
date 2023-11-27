@@ -53,6 +53,7 @@ In addition to all arguments above, the following attributes are exported:
   The [volume attached object](#compute_instance_volume_object) structure is documented below.
 * `scheduler_hints` - The scheduler with hints on how the instance should be launched.
   The [scheduler hints](#compute_instance_scheduler_hint_object) structure is documented below.
+* `tags` - The key/value pairs to associate with the instance.
 * `status` - The status of the instance.
 
 <a name="compute_instance_network_object"></a>
