@@ -36,7 +36,7 @@ resource "hcs_ecs_compute_instance" "test" {
   name                = "tf_ecs-test1"
   description         = "terraform test"
   image_id            = data.hcs_ims_images.test.images[0].id
-  flavor_id           = data.hcs_ecs_compute_flavors.test.ids[0]
+  flavor_id           = data.hcs_ecs_compute_flavors.flavors.ids[0]
   security_group_ids  = [data.hcs_networking_secgroups.test.security_groups[0].id]
   availability_zone = data.hcs_availability_zones.test.names[0]
 
@@ -85,7 +85,7 @@ resource "hcs_ecs_compute_instance" "test" {
   name                = "tf_ecs-test2"
   description         = "terraform test"
   image_id            = data.hcs_ims_images.test.images[0].id
-  flavor_id           = data.hcs_ecs_compute_flavors.test.ids[0]
+  flavor_id           = data.hcs_ecs_compute_flavors.flavors.ids[0]
   security_group_ids  = [data.hcs_networking_secgroups.test.security_groups[0].id]
   availability_zone = data.hcs_availability_zones.test.names[0]
 
@@ -150,7 +150,7 @@ resource "hcs_ecs_compute_instance" "ecs-volume-attached" {
   name                = "tf_ecs-test3"
   description         = "terraform test"
   image_id            = data.hcs_ims_images.test.images[0].id
-  flavor_id           = data.hcs_ecs_compute_flavors.test.ids[0]
+  flavor_id           = data.hcs_ecs_compute_flavors.flavors.ids[0]
   security_group_ids  = [data.hcs_networking_secgroups.test.security_groups[0].id]
   availability_zone = data.hcs_availability_zones.test.names[0]
 
@@ -219,7 +219,7 @@ resource "hcs_ecs_compute_instance" "multi-disk" {
   name                = "ecs-multi-disk"
   description         = "terraform test"
   image_id            = data.hcs_ims_images.test.images[0].id
-  flavor_id           = data.hcs_ecs_compute_flavors.test.ids[0]
+  flavor_id           = data.hcs_ecs_compute_flavors.flavors.ids[0]
   security_group_ids  = [data.hcs_networking_secgroups.test.security_groups[0].id]
   availability_zone = data.hcs_availability_zones.test.names[0]
 
@@ -320,7 +320,7 @@ resource "hcs_ecs_compute_instance" "ecs-userdata" {
   name                = "ecs-userdata"
   description         = "terraform test"
   image_id            = data.hcs_ims_images.test.images[0].id
-  flavor_id           = data.hcs_ecs_compute_flavors.test.ids[0]
+  flavor_id           = data.hcs_ecs_compute_flavors.flavors.ids[0]
   security_group_ids  = [data.hcs_networking_secgroups.test.security_groups[0].id]
   availability_zone = data.hcs_availability_zones.test.names[0]
   user_data       = "xxxxxxxxxxxxxxxxxxxxxxx"
