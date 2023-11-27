@@ -98,6 +98,11 @@ func DataSourceComputeInstance() *schema.Resource {
 			"network":         computedSchemaNetworks(),
 			"volume_attached": computedSchemaVolumeAttached(),
 			"scheduler_hints": computedSchemaSchedulerHints(),
+			"tags": {
+				Type:     schema.TypeMap,
+				Computed: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+			},
 			"status": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -358,7 +363,7 @@ func flattenEcsInstanceTags(tags []string) map[string]interface{} {
 	result := map[string]interface{}{}
 
 	for _, tag := range tags {
-		kv := strings.SplitN(tag, "=", 2)
+		kv := strings.SplitN(tag, ".", 2)
 		if len(kv) == 2 {
 			result[kv[0]] = kv[1]
 		} else {
