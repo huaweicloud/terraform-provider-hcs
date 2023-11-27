@@ -136,11 +136,14 @@ func DataSourceComputeInstances() *schema.Resource {
 
 func buildListOptsWithoutIP(d *schema.ResourceData, conf *config.HcsConfig) *cloudservers.ListOpts {
 	result := cloudservers.ListOpts{
+		Offset:              1,
 		Limit:               100,
 		EnterpriseProjectID: conf.DataGetEnterpriseProjectID(d),
 		Name:                d.Get("name").(string),
 		Flavor:              d.Get("flavor_id").(string),
 		Status:              d.Get("status").(string),
+		ExpectFields:        "basic,flavor,scheduler_hints,image_meta,flavor_detail,metadata,addresses,tags,capabilities,resize_or_migrate,cdrom,device_limit,vmtools_detail,operation_rights,action_rights,block_device,vcpu_model,advanced_properties,os_hostname,enterprise_project_id",
+		NotTags:             "__type_baremetal",
 	}
 
 	return &result
