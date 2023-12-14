@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/utils"
 )
 
 // MAXFieldLength is the maximum string length of single field when logging
@@ -104,12 +104,17 @@ func (lrt *LogRoundTripper) logRequest(original io.ReadCloser, contentType strin
 		return nil, err
 	}
 
+	isJSONFormat := strings.HasPrefix(contentType, "application/json")
+	isXMLFormat := strings.HasPrefix(bs.String(), "<") && !strings.HasPrefix(bs.String(), "<html>")
 	// Handle request contentType
-	if strings.HasPrefix(contentType, "application/json") {
+	switch {
+	case isJSONFormat:
 		debugInfo := formatJSON(bs.Bytes(), true)
 		log.Printf("[DEBUG] API Request Body: %s", debugInfo)
-	} else {
-		log.Printf("[DEBUG] Not logging because the request body isn't JSON")
+	case isXMLFormat:
+		log.Printf("[DEBUG] API Request Body: %s", bs.String())
+	default:
+		log.Printf("[DEBUG] Not logging because the request body isn't JSON or XML format")
 	}
 
 	return io.NopCloser(strings.NewReader(bs.String())), nil
@@ -118,22 +123,27 @@ func (lrt *LogRoundTripper) logRequest(original io.ReadCloser, contentType strin
 // logResponse will log the HTTP Response details.
 // If the body is JSON, it will attempt to be pretty-formatted.
 func (lrt *LogRoundTripper) logResponse(original io.ReadCloser, contentType string) (io.ReadCloser, error) {
-	if strings.HasPrefix(contentType, "application/json") {
-		var bs bytes.Buffer
-		defer original.Close()
-		_, err := io.Copy(&bs, original)
-		if err != nil {
-			return nil, err
-		}
-		debugInfo := formatJSON(bs.Bytes(), true)
-		if debugInfo != "" {
-			log.Printf("[DEBUG] API Response Body: %s", debugInfo)
-		}
-		return io.NopCloser(strings.NewReader(bs.String())), nil
+	defer original.Close()
+
+	var bs bytes.Buffer
+	_, err := io.Copy(&bs, original)
+	if err != nil {
+		return nil, err
 	}
 
-	log.Printf("[DEBUG] Not logging because the response body isn't JSON")
-	return original, nil
+	isJSONFormat := strings.HasPrefix(contentType, "application/json")
+	isXMLFormat := strings.HasPrefix(contentType, "application/xml")
+	switch {
+	case isJSONFormat:
+		debugInfo := formatJSON(bs.Bytes(), true)
+		log.Printf("[DEBUG] API Response Body: %s", debugInfo)
+	case isXMLFormat:
+		log.Printf("[DEBUG] API Response Body: %s", bs.String())
+	default:
+		log.Printf("[DEBUG] Not logging because the response body isn't JSON or XML format")
+	}
+
+	return io.NopCloser(strings.NewReader(bs.String())), nil
 }
 
 // formatJSON will try to pretty-format a JSON body.
@@ -236,7 +246,10 @@ func isSecurityFields(field string) bool {
 	// 'signature' are used for encryption.
 	// 'user_passwd' is apply to the dms/kafka user request JSON body
 	// 'auth' is apply to kms keypairs associate or disassociate request JSON body
+	// 'cert_content', 'private_key' and 'trusted_root_ca' are both sensitive parameters of the SSL certificate for APIG
+	// 'sk', 'src_sk' and 'dst_sk' are used in oms_task and oms_task_group
+	// request JSON body
 	securityFields := []string{"adminpass", "encrypted_user_data", "nonce", "email", "phone", "sip_number",
-		"signature", "user_passwd", "auth"}
+		"signature", "user_passwd", "auth", "cert_content", "private_key", "trusted_root_ca", "sk", "src_sk", "dst_sk"}
 	return utils.StrSliceContains(securityFields, checkField)
 }
