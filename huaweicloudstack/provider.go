@@ -9,6 +9,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/obs"
 
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cce"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cfw"
@@ -360,6 +361,9 @@ func Provider() *schema.Provider {
 			"hcs_ecs_compute_instance":     ecs.DataSourceComputeInstance(),
 			"hcs_ecs_compute_instances":    ecs.DataSourceComputeInstances(),
 			"hcs_ecs_compute_servergroups": ecs.DataSourceComputeServerGroups(),
+
+			"hcs_obs_buckets":       obs.DataSourceObsBuckets(),
+			"hcs_obs_bucket_object": obs.DataSourceObsBucketObject(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -413,6 +417,12 @@ func Provider() *schema.Provider {
 			"hcs_ecs_compute_instance":         ecs.ResourceComputeInstance(),
 			"hcs_ecs_compute_keypair":          ecs.ResourceComputeKeypairV2(),
 			"hcs_ecs_compute_eip_associate":    ecs.ResourceComputeEIPAssociate(),
+
+			"hcs_obs_bucket":            obs.ResourceObsBucket(),
+			"hcs_obs_bucket_acl":        obs.ResourceOBSBucketAcl(),
+			"hcs_obs_bucket_object":     obs.ResourceObsBucketObject(),
+			"hcs_obs_bucket_object_acl": obs.ResourceOBSBucketObjectAcl(),
+			"hcs_obs_bucket_policy":     obs.ResourceObsBucketPolicy(),
 
 			// Legacy
 			"hcs_networking_eip_associate": eip.ResourceEIPAssociate(),
