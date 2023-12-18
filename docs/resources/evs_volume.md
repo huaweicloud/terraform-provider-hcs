@@ -14,6 +14,10 @@ resource "hcs_evs_volume" "volume_1" {
   name                   = "volume_1"
   description            = "first test volume"
   size                   = 3
+  tags = {
+    key1 = "value1"
+    key2 = "value2"
+  }
 }
 ```
 
@@ -37,6 +41,8 @@ The following arguments are supported:
 * `metadata` - (Optional, Map) Metadata key/value pairs to associate with the disk. Changing this updates the existing
   disk metadata.
 
+* `enterprise_project_id` - (Optional, String) Specifies the enterprise project ID which the desired the disk belongs to.
+
 * `name` - (Optional, String) A unique name for the disk. Changing this updates the disk's name.
 
 * `snapshot_id` - (Optional, String, ForceNew) The snapshot ID from which to create the disk. Changing this creates a
@@ -49,6 +55,8 @@ The following arguments are supported:
 
 * `multiattach` - (Optional, Bool, ForceNew) Specifies whether the disk is shareable. The default value is false. 
   Changing this creates a new disk.
+
+* `tags` - (Optional, Map) The key/value pairs to associate with the disk.
 
 ## Attribute Reference
 
