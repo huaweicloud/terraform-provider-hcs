@@ -31,6 +31,8 @@ type Volume struct {
 	UpdatedAt string `json:"updated_at"`
 	// Instances onto which the volume is attached.
 	Attachments []Attachment `json:"attachments"`
+	// The enterprise project ID to which the volume belongs.
+	EnterpriseProjectID string `json:"enterprise_project_id"`
 	// Human-readable display name for the volume.
 	Name string `json:"name"`
 	// Human-readable description for the volume.
@@ -43,6 +45,8 @@ type Volume struct {
 	SourceVolID string `json:"source_volid"`
 	// Arbitrary key-value pairs defined by the user.
 	Metadata map[string]string `json:"metadata"`
+	// The key/value pairs to associate with the volume interface.
+	Tags map[string]string `json:"tags"`
 	// UserID is the id of the user who created the volume.
 	UserID string `json:"user_id"`
 	// Indicates whether this is a bootable volume.
