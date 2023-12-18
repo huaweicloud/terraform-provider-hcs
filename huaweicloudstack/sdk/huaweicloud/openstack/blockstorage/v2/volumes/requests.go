@@ -21,6 +21,8 @@ type CreateOpts struct {
 	AvailabilityZone string `json:"availability_zone,omitempty"`
 	// ConsistencyGroupID is the ID of a consistency group
 	ConsistencyGroupID string `json:"consistencygroup_id,omitempty"`
+	// The enterprise project ID to which the volume belongs.
+	EnterpriseProjectID string `json:"enterprise_project_id,omitempty"`
 	// The volume description
 	Description string `json:"description,omitempty"`
 	// One or more metadata key and value pairs to associate with the volume
@@ -152,6 +154,9 @@ type ListOpts struct {
 
 	// The ID of the last-seen item.
 	Marker string `q:"marker"`
+
+	// Tags will filter results based on specified tags.
+	Tags map[string]string `q:"tags"`
 }
 
 // ToVolumeListQuery formats a ListOpts into a query string.

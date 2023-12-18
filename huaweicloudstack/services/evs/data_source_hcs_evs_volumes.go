@@ -34,11 +34,20 @@ func DataSourceEvsVolumesV2() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			"enterprise_project_id": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 			"name": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"metadata": {
+				Type:     schema.TypeMap,
+				Optional: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+			},
+			"tags": {
 				Type:     schema.TypeMap,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
@@ -96,6 +105,10 @@ func DataSourceEvsVolumesV2() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
+						"enterprise_project_id": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
 						"name": {
 							Type:     schema.TypeString,
 							Computed: true,
@@ -125,6 +138,11 @@ func DataSourceEvsVolumesV2() *schema.Resource {
 							Computed: true,
 							Elem:     &schema.Schema{Type: schema.TypeString},
 						},
+						"tags": {
+							Type:     schema.TypeMap,
+							Computed: true,
+							Elem:     &schema.Schema{Type: schema.TypeString},
+						},
 						"wwn": {
 							Type:     schema.TypeString,
 							Computed: true,
@@ -143,8 +161,17 @@ func buildQueryOpts(d *schema.ResourceData, cfg *config.HcsConfig) volumes.ListO
 		Status:              d.Get("status").(string),
 		Name:                d.Get("name").(string),
 		MetadataOrigin:      d.Get("metadata").(map[string]interface{}),
+		Tags:                resourceContainerTags(d),
 	}
 	return result
+}
+
+func resourceContainerTags(d *schema.ResourceData) map[string]string {
+	m := make(map[string]string)
+	for key, val := range d.Get("tags").(map[string]interface{}) {
+		m[key] = val.(string)
+	}
+	return m
 }
 
 func sourceEvsAttachment(attachements []volumes.Attachment, metadata map[string]string) []map[string]interface{} {
@@ -167,19 +194,21 @@ func sourceEvsVolumes(vols []volumes.Volume) ([]map[string]interface{}, []string
 
 	for i, volume := range vols {
 		vMap := map[string]interface{}{
-			"id":                volume.ID,
-			"attachments":       sourceEvsAttachment(volume.Attachments, volume.Metadata),
-			"availability_zone": volume.AvailabilityZone,
-			"description":       volume.Description,
-			"volume_type":       volume.VolumeType,
-			"name":              volume.Name,
-			"multiattach":       volume.Multiattach,
-			"size":              volume.Size,
-			"status":            volume.Status,
-			"created_at":        volume.CreatedAt,
-			"updated_at":        volume.UpdatedAt,
-			"wwn":               volume.WWN,
-			"metadata":          volume.Metadata,
+			"id":                    volume.ID,
+			"attachments":           sourceEvsAttachment(volume.Attachments, volume.Metadata),
+			"availability_zone":     volume.AvailabilityZone,
+			"description":           volume.Description,
+			"volume_type":           volume.VolumeType,
+			"enterprise_project_id": volume.EnterpriseProjectID,
+			"name":                  volume.Name,
+			"multiattach":           volume.Multiattach,
+			"size":                  volume.Size,
+			"status":                volume.Status,
+			"created_at":            volume.CreatedAt,
+			"updated_at":            volume.UpdatedAt,
+			"wwn":                   volume.WWN,
+			"metadata":              volume.Metadata,
+			"tags":                  volume.Tags,
 		}
 		bootable, err := strconv.ParseBool(volume.Bootable)
 		if err != nil {

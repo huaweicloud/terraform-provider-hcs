@@ -25,11 +25,15 @@ The following arguments are supported:
 
 * `multiattach` - (Optional, Bool) Specifies whether the disk is shareable.
 
+* `enterprise_project_id` - (Optional, String) Specifies the enterprise project ID.
+
 * `metadata` - (Optional, Map) Metadata key/value pairs to associate with the disk.
 
 * `name` - (Optional, String) The disk name.
 
 * `status` - (Optional, String) Specifies the disk status.
+
+* `tags` - (Optional, Map) The key/value pairs to associate with the disk.
 
 ## Attribute Reference
 
