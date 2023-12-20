@@ -38,7 +38,7 @@ The `volume_types` block supports:
 
 * `name` - The volume type name.
 
-* `is_public` - The availability zone of the volume type.
+* `is_public` - Whether the volume type is publicly visible.
 
 * `description` - The volume type description.
 
