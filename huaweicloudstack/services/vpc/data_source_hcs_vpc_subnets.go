@@ -55,10 +55,6 @@ func DataSourceVpcSubnets() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"availability_zone": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
 			"subnets": {
 				Type:     schema.TypeList,
 				Computed: true,
@@ -93,10 +89,6 @@ func DataSourceVpcSubnets() *schema.Resource {
 							Computed: true,
 						},
 						"secondary_dns": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"availability_zone": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
@@ -159,15 +151,14 @@ func dataSourceVpcSubnetsRead(_ context.Context, d *schema.ResourceData, meta in
 	}
 
 	listOpts := subnets.ListOpts{
-		ID:               d.Get("id").(string),
-		Name:             d.Get("name").(string),
-		CIDR:             d.Get("cidr").(string),
-		Status:           d.Get("status").(string),
-		GatewayIP:        d.Get("gateway_ip").(string),
-		PRIMARY_DNS:      d.Get("primary_dns").(string),
-		SECONDARY_DNS:    d.Get("secondary_dns").(string),
-		AvailabilityZone: d.Get("availability_zone").(string),
-		VPC_ID:           d.Get("vpc_id").(string),
+		ID:            d.Get("id").(string),
+		Name:          d.Get("name").(string),
+		CIDR:          d.Get("cidr").(string),
+		Status:        d.Get("status").(string),
+		GatewayIP:     d.Get("gateway_ip").(string),
+		PRIMARY_DNS:   d.Get("primary_dns").(string),
+		SECONDARY_DNS: d.Get("secondary_dns").(string),
+		VPC_ID:        d.Get("vpc_id").(string),
 	}
 
 	subnetList, err := subnets.List(client, listOpts)
@@ -181,24 +172,23 @@ func dataSourceVpcSubnetsRead(_ context.Context, d *schema.ResourceData, meta in
 	var ids []string
 	for _, item := range subnetList {
 		subnet := map[string]interface{}{
-			"id":                item.ID,
-			"name":              item.Name,
-			"description":       item.Description,
-			"cidr":              item.CIDR,
-			"status":            item.Status,
-			"gateway_ip":        item.GatewayIP,
-			"dns_list":          item.DnsList,
-			"ipv6_enable":       item.EnableIPv6,
-			"dhcp_enable":       item.EnableDHCP,
-			"primary_dns":       item.PRIMARY_DNS,
-			"secondary_dns":     item.SECONDARY_DNS,
-			"availability_zone": item.AvailabilityZone,
-			"vpc_id":            item.VPC_ID,
-			"subnet_id":         item.SubnetId,
-			"ipv4_subnet_id":    item.SubnetId,
-			"ipv6_subnet_id":    item.IPv6SubnetId,
-			"ipv6_cidr":         item.IPv6CIDR,
-			"ipv6_gateway":      item.IPv6Gateway,
+			"id":             item.ID,
+			"name":           item.Name,
+			"description":    item.Description,
+			"cidr":           item.CIDR,
+			"status":         item.Status,
+			"gateway_ip":     item.GatewayIP,
+			"dns_list":       item.DnsList,
+			"ipv6_enable":    item.EnableIPv6,
+			"dhcp_enable":    item.EnableDHCP,
+			"primary_dns":    item.PRIMARY_DNS,
+			"secondary_dns":  item.SECONDARY_DNS,
+			"vpc_id":         item.VPC_ID,
+			"subnet_id":      item.SubnetId,
+			"ipv4_subnet_id": item.SubnetId,
+			"ipv6_subnet_id": item.IPv6SubnetId,
+			"ipv6_cidr":      item.IPv6CIDR,
+			"ipv6_gateway":   item.IPv6Gateway,
 		}
 
 		subnets = append(subnets, subnet)
