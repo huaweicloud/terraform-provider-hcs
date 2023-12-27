@@ -37,6 +37,9 @@ func (opts ListOpts) ToVolumeTypeListQuery() (string, error) {
 
 func handleExtraSpecs(opts *ListOpts) {
 	m := opts.ExtraSpecsOrigin
+	if len(m) == 0 {
+		return
+	}
 	nm := make(map[string]string, len(m))
 	for k, v := range m {
 		nm[k] = v.(string)
