@@ -9,10 +9,11 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/obs"
 
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cce"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cfw"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/obs"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/waf"
 
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/as"
@@ -423,6 +424,12 @@ func Provider() *schema.Provider {
 			"hcs_obs_bucket_object":     obs.ResourceObsBucketObject(),
 			"hcs_obs_bucket_object_acl": obs.ResourceOBSBucketObjectAcl(),
 			"hcs_obs_bucket_policy":     obs.ResourceObsBucketPolicy(),
+
+			"hcs_waf_address_group":      waf.ResourceWafAddressGroup(),
+			"hcs_waf_certificate":        waf.ResourceWafCertificateV1(),
+			"hcs_waf_dedicated_instance": waf.ResourceWafDedicatedInstance(),
+			"hcs_waf_policy":             waf.ResourceWafPolicyV1(),
+			"hcs_waf_reference_table":    waf.ResourceWafReferenceTableV1(),
 
 			// Legacy
 			"hcs_networking_eip_associate": eip.ResourceEIPAssociate(),
