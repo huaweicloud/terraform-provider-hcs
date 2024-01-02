@@ -13,6 +13,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cce"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cfw"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dws"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/mrs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/obs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/waf"
 
@@ -366,6 +367,9 @@ func Provider() *schema.Provider {
 			"hcs_ecs_compute_instances":    ecs.DataSourceComputeInstances(),
 			"hcs_ecs_compute_servergroups": ecs.DataSourceComputeServerGroups(),
 
+			"hcs_mrs_versions": mrs.DataSourceMrsVersions(),
+			"hcs_mrs_clusters": mrs.DataSourceMrsClusters(),
+
 			"hcs_obs_buckets":       obs.DataSourceObsBuckets(),
 			"hcs_obs_bucket_object": obs.DataSourceObsBucketObject(),
 
@@ -433,6 +437,9 @@ func Provider() *schema.Provider {
 			"hcs_ecs_compute_instance":         ecs.ResourceComputeInstance(),
 			"hcs_ecs_compute_keypair":          ecs.ResourceComputeKeypairV2(),
 			"hcs_ecs_compute_eip_associate":    ecs.ResourceComputeEIPAssociate(),
+
+			"hcs_mrs_cluster": mrs.ResourceMRSClusterV2(),
+			"hcs_mrs_job":     mrs.ResourceMRSJobV2(),
 
 			"hcs_obs_bucket":            obs.ResourceObsBucket(),
 			"hcs_obs_bucket_acl":        obs.ResourceOBSBucketAcl(),
