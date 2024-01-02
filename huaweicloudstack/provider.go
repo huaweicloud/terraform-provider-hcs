@@ -365,6 +365,11 @@ func Provider() *schema.Provider {
 
 			"hcs_obs_buckets":       obs.DataSourceObsBuckets(),
 			"hcs_obs_bucket_object": obs.DataSourceObsBucketObject(),
+
+			"hcs_waf_certificate":         waf.DataSourceWafCertificateV1(),
+			"hcs_waf_dedicated_instances": waf.DataSourceWafDedicatedInstancesV1(),
+			"hcs_waf_policies":            waf.DataSourceWafPoliciesV1(),
+			"hcs_waf_reference_tables":    waf.DataSourceWafReferenceTablesV1(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -427,6 +432,7 @@ func Provider() *schema.Provider {
 
 			"hcs_waf_address_group":      waf.ResourceWafAddressGroup(),
 			"hcs_waf_certificate":        waf.ResourceWafCertificateV1(),
+			"hcs_waf_dedicated_domain":   waf.ResourceWafDedicatedDomain(),
 			"hcs_waf_dedicated_instance": waf.ResourceWafDedicatedInstance(),
 			"hcs_waf_policy":             waf.ResourceWafPolicyV1(),
 			"hcs_waf_reference_table":    waf.ResourceWafReferenceTableV1(),
