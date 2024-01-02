@@ -12,6 +12,7 @@ import (
 
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cce"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cfw"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dws"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/obs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/waf"
 
@@ -357,6 +358,8 @@ func Provider() *schema.Provider {
 			"hcs_cce_node":           cce.DataSourceNode(),
 			"hcs_cce_nodes":          cce.DataSourceNodes(),
 
+			"hcs_dws_flavors": dws.DataSourceDwsFlavors(),
+
 			"hcs_availability_zones":       ecs.DataSourceAvailabilityZones(),
 			"hcs_ecs_compute_flavors":      ecs.DataSourceEcsFlavors(),
 			"hcs_ecs_compute_instance":     ecs.DataSourceComputeInstance(),
@@ -388,6 +391,13 @@ func Provider() *schema.Provider {
 			"hcs_cfw_protection_rule":      cfw.ResourceProtectionRule(),
 			"hcs_cfw_service_group_member": cfw.ResourceServiceGroupMember(),
 			"hcs_cfw_service_group":        cfw.ResourceServiceGroup(),
+
+			"hcs_dws_cluster":            dws.ResourceDwsCluster(),
+			"hcs_dws_alarm_subscription": dws.ResourceDwsAlarmSubs(),
+			"hcs_dws_event_subscription": dws.ResourceDwsEventSubs(),
+			"hcs_dws_ext_data_source":    dws.ResourceDwsExtDataSource(),
+			"hcs_dws_snapshot":           dws.ResourceDwsSnapshot(),
+			"hcs_dws_snapshot_policy":    dws.ResourceDwsSnapshotPolicy(),
 
 			"hcs_enterprise_project": eps.ResourceEnterpriseProject(),
 			"hcs_dns_recordset":      dns.ResourceDNSRecordset(),
