@@ -440,12 +440,16 @@ func Provider() *schema.Provider {
 			"hcs_obs_bucket_object_acl": obs.ResourceOBSBucketObjectAcl(),
 			"hcs_obs_bucket_policy":     obs.ResourceObsBucketPolicy(),
 
-			"hcs_waf_address_group":      waf.ResourceWafAddressGroup(),
-			"hcs_waf_certificate":        waf.ResourceWafCertificateV1(),
-			"hcs_waf_dedicated_domain":   waf.ResourceWafDedicatedDomain(),
-			"hcs_waf_dedicated_instance": waf.ResourceWafDedicatedInstance(),
-			"hcs_waf_policy":             waf.ResourceWafPolicyV1(),
-			"hcs_waf_reference_table":    waf.ResourceWafReferenceTableV1(),
+			"hcs_waf_address_group":                       waf.ResourceWafAddressGroup(),
+			"hcs_waf_certificate":                         waf.ResourceWafCertificateV1(),
+			"hcs_waf_dedicated_domain":                    waf.ResourceWafDedicatedDomain(),
+			"hcs_waf_dedicated_instance":                  waf.ResourceWafDedicatedInstance(),
+			"hcs_waf_policy":                              waf.ResourceWafPolicyV1(),
+			"hcs_waf_reference_table":                     waf.ResourceWafReferenceTableV1(),
+			"hcs_waf_rule_global_protection_whitelist":    waf.ResourceRuleGlobalProtectionWhitelist(),
+			"hcs_waf_rule_information_leakage_prevention": waf.ResourceRuleLeakagePrevention(),
+			"hcs_waf_rule_precise_protection":             waf.ResourceRulePreciseProtection(),
+			"hcs_waf_rule_web_tamper_protection":          waf.ResourceWafRuleWebTamperProtectionV1(),
 
 			// Legacy
 			"hcs_networking_eip_associate": eip.ResourceEIPAssociate(),
