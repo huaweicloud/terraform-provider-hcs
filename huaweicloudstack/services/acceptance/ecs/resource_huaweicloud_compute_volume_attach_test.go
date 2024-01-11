@@ -136,19 +136,27 @@ func testAccComputeVolumeAttach_basic(rName string) string {
 resource "hcs_evs_volume" "test" {
   name              = "%s"
   availability_zone = data.hcs_availability_zones.test.names[0]
-  volume_type       = "SAS"
+  volume_type       = "business_type_01"
   size              = 10
 }
 
 resource "hcs_ecs_compute_instance" "instance_1" {
-  name               = "%s"
-  image_id           = data.hcs_ims_images.test.id
-  flavor_id          = data.hcs_ecs_compute_flavors.test.ids[0]
-  security_group_ids = [data.hcs_networking_secgroups.test.id]
-  availability_zone  = data.hcs_availability_zones.test.names[0]
+  name                = "%s"
+  image_id            = data.hcs_ims_images.test.images[0].id
+  flavor_id           = data.hcs_ecs_compute_flavors.test.ids[0]
+  security_group_ids  = [data.hcs_networking_secgroups.test.security_groups[0].id]
+  availability_zone   = data.hcs_availability_zones.test.names[0]
+
   network {
-    uuid = data.hcs_vpc_subnets.test.id
+    uuid              = data.hcs_vpc_subnets.test.subnets[0].id
+    source_dest_check = false
   }
+
+  system_disk_type = "business_type_01"
+  system_disk_size = 10
+
+  delete_disks_on_termination = true
+  delete_eip_on_termination   = true
 }
 
 resource "hcs_ecs_compute_volume_attach" "va_1" {
@@ -165,7 +173,7 @@ func testAccComputeVolumeAttach_device(rName string) string {
 resource "hcs_evs_volume" "test" {
   name              = "%s"
   availability_zone = data.hcs_availability_zones.test.names[0]
-  volume_type       = "SAS"
+  volume_type       = "business_type_01"
   size              = 10
 }
 
@@ -176,7 +184,7 @@ resource "hcs_ecs_compute_instance" "instance_1" {
   security_group_ids = [data.hcs_networking_secgroups.test.id]
   availability_zone  = data.hcs_availability_zones.test.names[0]
   network {
-    uuid = data.hcs_vpc_subnets.test.id
+    uuid = data.hcs_vpc_subnets.test.subnets[0].id
   }
 }
 
@@ -195,7 +203,7 @@ func testAccComputeVolumeAttach_multiple(rName string) string {
 resource "hcs_evs_volume" "test" {
   name              = "%[2]s"
   availability_zone = data.hcs_availability_zones.test.names[0]
-  volume_type       = "SAS"
+  volume_type       = "business_type_01"
   size              = 10
   
   multiattach = true
@@ -211,7 +219,7 @@ resource "hcs_ecs_compute_instance" "test" {
   availability_zone  = data.hcs_availability_zones.test.names[0]
 
   network {
-    uuid = data.hcs_vpc_subnets.test.id
+    uuid = data.hcs_vpc_subnets.test.subnets[0].id
   }
 }
 
