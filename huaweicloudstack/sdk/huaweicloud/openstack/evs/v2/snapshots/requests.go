@@ -102,6 +102,12 @@ type ListOptsBuilder interface {
 // ListOpts hold options for listing Snapshots. It is passed to the
 // snapshots.List function.
 type ListOpts struct {
+	// Specifies the AZ.
+	AvailabilityZone string `q:"availability_zone"`
+
+	// enterprise projects that are within the permission scope will be queried.
+	EnterpriseProjectIDs string `q:"enterprise_project_ids"`
+
 	// Name will filter by the specified snapshot name.
 	Name string `q:"name"`
 
