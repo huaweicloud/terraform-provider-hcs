@@ -326,6 +326,7 @@ func Provider() *schema.Provider {
 
 			"hcs_evs_volumes":      evs.DataSourceEvsVolumesV2(),
 			"hcs_evs_volume_types": evs.DataSourceEvsVolumeTypesV2(),
+			"hcs_evs_snapshots":    evs.DataSourceEvsSnapshots(),
 
 			"hcs_elb_certificate": elb.DataSourceELBCertificateV3(),
 			"hcs_elb_pools":       elb.DataSourcePools(),
