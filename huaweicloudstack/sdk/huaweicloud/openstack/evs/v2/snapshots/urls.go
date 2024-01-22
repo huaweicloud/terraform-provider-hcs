@@ -7,7 +7,7 @@ func createURL(c *golangsdk.ServiceClient) string {
 }
 
 func listURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL("snapshots/detail")
+	return c.ServiceURL("os-vendor-snapshots/detail")
 }
 
 func deleteURL(c *golangsdk.ServiceClient, id string) string {
