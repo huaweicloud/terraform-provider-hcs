@@ -691,8 +691,15 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 	if err != nil {
 		return nil, diag.FromErr(err)
 	}
-	hcsConfig.Endpoints = endpoints
 
+	// set default endpoints
+	if _, ok := endpoints["waf"]; !ok {
+		wafEndpoint := fmt.Sprintf("https://waf-api.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
+		endpoints["waf"] = wafEndpoint
+		endpoints["waf-dedicated"] = wafEndpoint
+	}
+
+	hcsConfig.Endpoints = endpoints
 	if err := hcsConfig.LoadAndValidate(); err != nil {
 		return nil, diag.FromErr(err)
 	}
