@@ -698,6 +698,10 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 		endpoints["waf"] = wafEndpoint
 		endpoints["waf-dedicated"] = wafEndpoint
 	}
+	if _, ok := endpoints["opengauss"]; !ok {
+		openGaussUrl := "https://gaussdb.%s.%s/gaussdb/"
+		endpoints["opengauss"] = fmt.Sprintf(openGaussUrl, hcsConfig.Config.Region, hcsConfig.Config.Cloud)
+	}
 
 	hcsConfig.Endpoints = endpoints
 	if err := hcsConfig.LoadAndValidate(); err != nil {
