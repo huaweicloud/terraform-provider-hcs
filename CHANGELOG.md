@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2.3.4 (January 27, 2024)
+
+* Add more unit tests.
+* Fix some bugs.
+
+* **New Data Sources:**
+  + `hcs_volume_types`
+
 ## 2.3.1 (September 27, 2023)
 
 * Add more unit tests and more examples.
