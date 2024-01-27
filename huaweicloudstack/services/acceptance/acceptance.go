@@ -36,7 +36,6 @@ var (
 	HCS_NETWORK_ID                = os.Getenv("HCS_NETWORK_ID")
 	HCS_SUBNET_ID                 = os.Getenv("HCS_SUBNET_ID")
 	HCS_ENTERPRISE_PROJECT_ID     = os.Getenv("HCS_ENTERPRISE_PROJECT_ID")
-	HCS_MAPREDUCE_CUSTOM          = os.Getenv("HCS_MAPREDUCE_CUSTOM")
 	HCS_ADMIN                     = os.Getenv("HCS_ADMIN")
 	HCS_KEYPAIR_NAME              = os.Getenv("HCS_KEYPAIR_NAME")
 	HCS_SERVER_GROUP_ID           = os.Getenv("HCS_SERVER_GROUP_ID")
@@ -45,6 +44,9 @@ var (
 	HCS_EIP_NAME                  = os.Getenv("HCS_EIP_NAME")
 	HCS_EIP_ADDRESS               = os.Getenv("HCS_EIP_ADDRESS")
 	HCS_EIP_EXTERNAL_NETWORK_NAME = os.Getenv("HCS_EIP_EXTERNAL_NETWORK_NAME")
+
+	HCS_MAPREDUCE_CUSTOM           = os.Getenv("HCS_MAPREDUCE_CUSTOM")
+	HCS_MAPREDUCE_BOOTSTRAP_SCRIPT = os.Getenv("HCS_MAPREDUCE_BOOTSTRAP_SCRIPT")
 
 	HCS_OBS_BUCKET_NAME        = os.Getenv("HCS_OBS_BUCKET_NAME")
 	HCS_OBS_DESTINATION_BUCKET = os.Getenv("HCS_OBS_DESTINATION_BUCKET")
@@ -757,5 +759,12 @@ func TestAccPreCheckCnEast3(t *testing.T) {
 func TestAccPreCheckBms(t *testing.T) {
 	if HCS_USER_ID == "" {
 		t.Skip("HW_USER_ID must be set for BMS acceptance tests")
+	}
+}
+
+// lintignore:AT003
+func TestAccPreCheckMrsBootstrapScript(t *testing.T) {
+	if HCS_MAPREDUCE_BOOTSTRAP_SCRIPT == "" {
+		t.Skip("HCS_MAPREDUCE_BOOTSTRAP_SCRIPT must be set for acceptance tests: cluster of map reduce with bootstrap")
 	}
 }

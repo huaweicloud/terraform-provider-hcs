@@ -12,6 +12,11 @@ import (
 
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cce"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cfw"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dws"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/gaussdb"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/mrs"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/obs"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/waf"
 
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/as"
@@ -319,7 +324,9 @@ func Provider() *schema.Provider {
 			"hcs_vpc_eip":       eip.DataSourceVpcEip(),
 			"hcs_vpc_eips":      eip.DataSourceVpcEips(),
 
-			"hcs_evs_volumes": evs.DataSourceEvsVolumesV2(),
+			"hcs_evs_volumes":      evs.DataSourceEvsVolumesV2(),
+			"hcs_evs_volume_types": evs.DataSourceEvsVolumeTypesV2(),
+			"hcs_evs_snapshots":    evs.DataSourceEvsSnapshots(),
 
 			"hcs_elb_certificate": elb.DataSourceELBCertificateV3(),
 			"hcs_elb_pools":       elb.DataSourcePools(),
@@ -354,11 +361,27 @@ func Provider() *schema.Provider {
 			"hcs_cce_node":           cce.DataSourceNode(),
 			"hcs_cce_nodes":          cce.DataSourceNodes(),
 
+			"hcs_dws_flavors": dws.DataSourceDwsFlavors(),
+
 			"hcs_availability_zones":       ecs.DataSourceAvailabilityZones(),
 			"hcs_ecs_compute_flavors":      ecs.DataSourceEcsFlavors(),
 			"hcs_ecs_compute_instance":     ecs.DataSourceComputeInstance(),
 			"hcs_ecs_compute_instances":    ecs.DataSourceComputeInstances(),
 			"hcs_ecs_compute_servergroups": ecs.DataSourceComputeServerGroups(),
+
+			"hcs_gaussdb_opengauss_instance":  gaussdb.DataSourceOpenGaussInstance(),
+			"hcs_gaussdb_opengauss_instances": gaussdb.DataSourceOpenGaussInstances(),
+
+			"hcs_mrs_versions": mrs.DataSourceMrsVersions(),
+			"hcs_mrs_clusters": mrs.DataSourceMrsClusters(),
+
+			"hcs_obs_buckets":       obs.DataSourceObsBuckets(),
+			"hcs_obs_bucket_object": obs.DataSourceObsBucketObject(),
+
+			"hcs_waf_certificate":         waf.DataSourceWafCertificateV1(),
+			"hcs_waf_dedicated_instances": waf.DataSourceWafDedicatedInstancesV1(),
+			"hcs_waf_policies":            waf.DataSourceWafPoliciesV1(),
+			"hcs_waf_reference_tables":    waf.DataSourceWafReferenceTablesV1(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -377,6 +400,13 @@ func Provider() *schema.Provider {
 			"hcs_cfw_protection_rule":      cfw.ResourceProtectionRule(),
 			"hcs_cfw_service_group_member": cfw.ResourceServiceGroupMember(),
 			"hcs_cfw_service_group":        cfw.ResourceServiceGroup(),
+
+			"hcs_dws_cluster":            dws.ResourceDwsCluster(),
+			"hcs_dws_alarm_subscription": dws.ResourceDwsAlarmSubs(),
+			"hcs_dws_event_subscription": dws.ResourceDwsEventSubs(),
+			"hcs_dws_ext_data_source":    dws.ResourceDwsExtDataSource(),
+			"hcs_dws_snapshot":           dws.ResourceDwsSnapshot(),
+			"hcs_dws_snapshot_policy":    dws.ResourceDwsSnapshotPolicy(),
 
 			"hcs_enterprise_project": eps.ResourceEnterpriseProject(),
 			"hcs_dns_recordset":      dns.ResourceDNSRecordset(),
@@ -412,6 +442,33 @@ func Provider() *schema.Provider {
 			"hcs_ecs_compute_instance":         ecs.ResourceComputeInstance(),
 			"hcs_ecs_compute_keypair":          ecs.ResourceComputeKeypairV2(),
 			"hcs_ecs_compute_eip_associate":    ecs.ResourceComputeEIPAssociate(),
+
+			"hcs_gaussdb_opengauss_instance": gaussdb.ResourceOpenGaussInstance(),
+
+			"hcs_mrs_cluster": mrs.ResourceMRSClusterV2(),
+			"hcs_mrs_job":     mrs.ResourceMRSJobV2(),
+
+			"hcs_obs_bucket":            obs.ResourceObsBucket(),
+			"hcs_obs_bucket_acl":        obs.ResourceOBSBucketAcl(),
+			"hcs_obs_bucket_object":     obs.ResourceObsBucketObject(),
+			"hcs_obs_bucket_object_acl": obs.ResourceOBSBucketObjectAcl(),
+			"hcs_obs_bucket_policy":     obs.ResourceObsBucketPolicy(),
+
+			"hcs_waf_address_group":                       waf.ResourceWafAddressGroup(),
+			"hcs_waf_certificate":                         waf.ResourceWafCertificateV1(),
+			"hcs_waf_dedicated_domain":                    waf.ResourceWafDedicatedDomain(),
+			"hcs_waf_dedicated_instance":                  waf.ResourceWafDedicatedInstance(),
+			"hcs_waf_policy":                              waf.ResourceWafPolicyV1(),
+			"hcs_waf_reference_table":                     waf.ResourceWafReferenceTableV1(),
+			"hcs_waf_rule_blacklist":                      waf.ResourceWafRuleBlackListV1(),
+			"hcs_waf_rule_cc_protection":                  waf.ResourceRuleCCProtection(),
+			"hcs_waf_rule_data_masking":                   waf.ResourceWafRuleDataMaskingV1(),
+			"hcs_waf_rule_geolocation_access_control":     waf.ResourceRuleGeolocation(),
+			"hcs_waf_rule_known_attack_source":            waf.ResourceRuleKnownAttack(),
+			"hcs_waf_rule_global_protection_whitelist":    waf.ResourceRuleGlobalProtectionWhitelist(),
+			"hcs_waf_rule_information_leakage_prevention": waf.ResourceRuleLeakagePrevention(),
+			"hcs_waf_rule_precise_protection":             waf.ResourceRulePreciseProtection(),
+			"hcs_waf_rule_web_tamper_protection":          waf.ResourceWafRuleWebTamperProtectionV1(),
 
 			// Legacy
 			"hcs_networking_eip_associate": eip.ResourceEIPAssociate(),
@@ -634,8 +691,19 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 	if err != nil {
 		return nil, diag.FromErr(err)
 	}
-	hcsConfig.Endpoints = endpoints
 
+	// set default endpoints
+	if _, ok := endpoints["waf"]; !ok {
+		wafEndpoint := fmt.Sprintf("https://waf-api.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
+		endpoints["waf"] = wafEndpoint
+		endpoints["waf-dedicated"] = wafEndpoint
+	}
+	if _, ok := endpoints["opengauss"]; !ok {
+		openGaussUrl := "https://gaussdb.%s.%s/gaussdb/"
+		endpoints["opengauss"] = fmt.Sprintf(openGaussUrl, hcsConfig.Config.Region, hcsConfig.Config.Cloud)
+	}
+
+	hcsConfig.Endpoints = endpoints
 	if err := hcsConfig.LoadAndValidate(); err != nil {
 		return nil, diag.FromErr(err)
 	}

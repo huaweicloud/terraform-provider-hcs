@@ -18,7 +18,9 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/blockstorage/extensions/volumeactions"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/blockstorage/v2/volumes"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/common/tags"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/compute/v2/extensions/volumeattach"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils/fmtp"
 )
 
@@ -100,6 +102,19 @@ func ResourceEvsVolume() *schema.Resource {
 				Optional: true,
 				ForceNew: true,
 			},
+			"tags": {
+				Type:     schema.TypeMap,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Optional: true,
+				ForceNew: false,
+				Computed: true,
+			},
+			"enterprise_project_id": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+				Computed: true,
+			},
 			"bootable": {
 				Type:     schema.TypeBool,
 				Computed: true,
@@ -169,16 +184,17 @@ func resourceEvsVolumeCreate(ctx context.Context, d *schema.ResourceData, meta i
 	}
 
 	createOpts := &volumes.CreateOpts{
-		AvailabilityZone: d.Get("availability_zone").(string),
-		Description:      d.Get("description").(string),
-		ImageID:          d.Get("image_id").(string),
-		Metadata:         resourceContainerMetadataV2(d),
-		Name:             d.Get("name").(string),
-		Size:             d.Get("size").(int),
-		SnapshotID:       d.Get("snapshot_id").(string),
-		SourceVolID:      d.Get("source_vol_id").(string),
-		VolumeType:       d.Get("volume_type").(string),
-		Multiattach:      d.Get("multiattach").(bool),
+		AvailabilityZone:    d.Get("availability_zone").(string),
+		Description:         d.Get("description").(string),
+		ImageID:             d.Get("image_id").(string),
+		Metadata:            resourceContainerMetadataV2(d),
+		Name:                d.Get("name").(string),
+		Size:                d.Get("size").(int),
+		SnapshotID:          d.Get("snapshot_id").(string),
+		SourceVolID:         d.Get("source_vol_id").(string),
+		VolumeType:          d.Get("volume_type").(string),
+		Multiattach:         d.Get("multiattach").(bool),
+		EnterpriseProjectID: cfg.GetEnterpriseProjectID(d),
 	}
 
 	log.Printf("[DEBUG] Create Options: %#v", createOpts)
@@ -212,6 +228,15 @@ func resourceEvsVolumeCreate(ctx context.Context, d *schema.ResourceData, meta i
 	// Store the ID now
 	d.SetId(v.ID)
 
+	// set tags
+	tagRaw := d.Get("tags").(map[string]interface{})
+	if len(tagRaw) > 0 {
+		tagList := utils.ExpandResourceTags(tagRaw)
+		if tagErr := tags.Create(blockStorageClient, "cloudvolumes", v.ID, tagList).ExtractErr(); tagErr != nil {
+			return diag.Errorf("error setting tags of evs %s: %s", v.ID, tagErr)
+		}
+	}
+
 	return resourceEvsVolumeRead(ctx, d, meta)
 }
 
@@ -242,6 +267,8 @@ func resourceEvsVolumeRead(_ context.Context, d *schema.ResourceData, meta inter
 	d.Set("updated_at", v.UpdatedAt)
 	d.Set("metadata", v.Metadata)
 	d.Set("multiattach", v.Multiattach)
+	d.Set("tags", v.Tags)
+	d.Set("enterprise_project_id", v.EnterpriseProjectID)
 	d.Set("region", cfg.GetRegion(d))
 
 	attachments := make([]map[string]interface{}, len(v.Attachments))
@@ -303,6 +330,13 @@ func resourceEvsVolumeUpdate(ctx context.Context, d *schema.ResourceData, meta i
 		if err != nil {
 			return fmtp.DiagErrorf(
 				"Error waiting for huaweicloudstack_blockstorage_volume_v2 %s to become ready: %s", d.Id(), err)
+		}
+	}
+
+	if d.HasChange("tags") {
+		tagErr := utils.UpdateResourceTags(blockStorageClient, d, "cloudvolumes", d.Id())
+		if tagErr != nil {
+			return diag.Errorf("error updating tags of volume:%s, err:%s", d.Id(), tagErr)
 		}
 	}
 

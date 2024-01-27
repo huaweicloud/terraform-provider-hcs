@@ -45,8 +45,6 @@ All subnets that meet the filter criteria will be exported as attributes.
 
 * `secondary_dns` - (Optional, String) Specifies the IP address of DNS server 2 on the desired subnet.
 
-* `availability_zone` - (Optional, String) Specifies the availability zone (AZ) to which the desired subnet belongs to.
-
  -> A maximum of 10 tag keys are allowed for each query operation. Each tag key can have up to 10 tag values.
   The tag key cannot be left blank or set to an empty string. Each tag key must be unique, and each tag value in a
   tag must be unique, use commas(,) to separate the multiple values. An empty for values indicates any value.
@@ -70,7 +68,6 @@ The `subnets` block supports:
 * `gateway_ip` - Indicates the subnet gateway address of the subnet.
 * `primary_dns` - Indicates the IP address of DNS server 1 on the subnet.
 * `secondary_dns` - Indicates the IP address of DNS server 2 on the subnet.
-* `availability_zone` - Indicates the availability zone (AZ) to which the subnet belongs to.
 * `dhcp_enable` - Indicates whether the DHCP is enabled.
 * `dns_list` - Indicates The IP address list of DNS servers on the subnet.
 * `ipv4_subnet_id` - Indicates the ID of the IPv4 subnet (Native OpenStack API).
