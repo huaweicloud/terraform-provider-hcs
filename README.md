@@ -1,6 +1,6 @@
 <!-- markdownlint-disable MD001 MD005 MD033 MD013 MD041 -->
 <a href="https://www.huaweicloud.com/intl/en-us/product/huaweicloudstack.html"><img width="225px" height="38px" align="right" src="./docs/img/huaweicloudstack_log.png"></a>
-<a href="https://www.huaweicloud.com/intl/en-us/product/huaweicloudstack.html"><img width="225px" height="38px" align="left" src="https://private-user-images.githubusercontent.com/1907997/305699212-b44813ff-c0b6-47a0-9281-d3a5f2d18b6b.svg?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDgzMjk5OTIsIm5iZiI6MTcwODMyOTY5MiwicGF0aCI6Ii8xOTA3OTk3LzMwNTY5OTIxMi1iNDQ4MTNmZi1jMGI2LTQ3YTAtOTI4MS1kM2E1ZjJkMThiNmIuc3ZnP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MDIxOSUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDAyMTlUMDgwMTMyWiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9YWQzNjVmMDI2ZWVmYjcwYWQzMjMxMzZjMTM4YjJkYmE2N2JjMjdlMTUyYzJlZTljNGUyYmIwNDFlY2FjZWZjOCZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QmYWN0b3JfaWQ9MCZrZXlfaWQ9MCZyZXBvX2lkPTAifQ.mY56JuCJCIMpyhDbvcKb4KfvoPWW2TOqSOetN2F7fm4"></a>
+<a href="https://www.terraform.io/"><img width="225px" height="38px" align="left" src="./docs/img/terraform_logo.svg"></a>
 <br/><br/>
 <!-- markdownlint-enable MD001 MD005 MD033  MD013 MD041 -->
 
