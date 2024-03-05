@@ -196,6 +196,8 @@ The `nodes` block supports:
   -> This parameter is only valid and mandatory for `custom_nodes`.
 
 * `flavor` - (Required, String, ForceNew) Specifies the instance specifications for each nodes in node group.
+  This field corresponds the `node_size` of the Create Cluster API.
+  You can also use the browser developer tools to fetch the `node_size` value of an existing cluster.
   Changing this will create a new MapReduce cluster resource.
 
 * `node_number` - (Required, Int) Specifies the number of nodes for the node group.
