@@ -5,6 +5,13 @@ configured with the proper credentials before it can be used.
 
 Use the navigation to the left to read about the available resources.
 
+## Compatibility with HCS
+
+Provider Version | Huawei Cloud Stack Version
+---- | --- 
+v2.3.x | v8.3.0
+v2.4.x | v8.3.1
+
 ## Example Usage
 
 Terraform 0.13 and later:
@@ -14,7 +21,7 @@ terraform {
   required_providers {
     hcs = {
       source  = "huaweicloud/hcs"
-      version = "~> 2.3.0"
+      version = "~> 2.4.0"
     }
   }
 }

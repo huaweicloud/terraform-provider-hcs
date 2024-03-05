@@ -1,5 +1,47 @@
 # CHANGELOG
 
+## 2.4.0 (March 5, 2024)
+
+* Release a version for Huawei Cloud Stack v8.3.1.
+  The new resources and data sources added in the new version are as follows.
+
+  * **New Resources:**
+    + `hcs_dws_cluster`
+    + `hcs_dws_alarm_subscription`
+    + `hcs_dws_event_subscription`
+    + `hcs_dws_ext_data_source`
+    + `hcs_dws_snapshot`
+    + `hcs_dws_snapshot_policy`
+    + `hcs_gaussdb_opengauss_instance`
+    + `hcs_mrs_cluster`
+    + `hcs_mrs_job`
+    + `hcs_waf_address_group`
+    + `hcs_waf_certificate`
+    + `hcs_waf_dedicated_domain`
+    + `hcs_waf_dedicated_instance`
+    + `hcs_waf_policy`
+    + `hcs_waf_reference_table`
+    + `hcs_waf_rule_blacklist`
+    + `hcs_waf_rule_cc_protection`
+    + `hcs_waf_rule_data_masking`
+    + `hcs_waf_rule_geolocation_access_control`
+    + `hcs_waf_rule_known_attack_source`
+    + `hcs_waf_rule_global_protection_whitelist`
+    + `hcs_waf_rule_information_leakage_prevention`
+    + `hcs_waf_rule_precise_protection`
+    + `hcs_waf_rule_web_tamper_protection`
+
+  * **New Data Sources:**
+    + `hcs_dws_flavors`
+    + `hcs_gaussdb_opengauss_instance`
+    + `hcs_gaussdb_opengauss_instances`
+    + `hcs_mrs_versions`
+    + `hcs_mrs_clusters`
+    + `hcs_waf_certificate`
+    + `hcs_waf_dedicated_instances`
+    + `hcs_waf_policies`
+    + `hcs_waf_reference_tables`
+
 ## 2.3.4 (January 27, 2024)
 
 * Add more unit tests.
