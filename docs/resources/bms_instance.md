@@ -43,7 +43,6 @@ resource "hcs_bms_instance" "test" {
   name                  = var.instance_name
   image_id              = var.image_id
   flavor_id             = var.flavor_id
-  user_id               = var.user_id
   security_groups       = [data.hcs_networking_secgroup.mysecgroup.id]
   availability_zone     = data.hcs_availability_zones.myaz.names[0]
   vpc_id                = data.hcs_vpc.myvpc.id
@@ -83,7 +82,7 @@ The following arguments are supported:
 * `flavor_id` - (Required, String, ForceNew) Specifies the flavor ID of the desired flavor for the instance. Changing
   this creates a new instance.
 
-* `user_id` - (Required, String, ForceNew) Specifies the user ID. You can obtain the user ID from My Credential on the
+* `user_id` - (Optional, String, ForceNew) Specifies the user ID. You can obtain the user ID from My Credential on the
   management console. Changing this creates a new instance.
 
 * `availability_zone` - (Required, String, ForceNew) Specifies the availability zone in which to create the instance.
