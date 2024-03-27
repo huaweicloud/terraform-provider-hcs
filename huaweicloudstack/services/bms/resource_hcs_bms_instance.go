@@ -56,7 +56,8 @@ func ResourceBmsInstance() *schema.Resource {
 			},
 			"user_id": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
+				Computed: true,
 				ForceNew: true,
 			},
 			"nics": {
