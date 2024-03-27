@@ -13,7 +13,7 @@ type CreateOpts struct {
 
 	Name string `json:"name" required:"true"`
 
-	MetaData MetaData `json:"metadata" required:"true"`
+	MetaData MetaData `json:"metadata"`
 
 	UserData []byte `json:"-"`
 
@@ -21,7 +21,7 @@ type CreateOpts struct {
 
 	KeyName string `json:"key_name,omitempty"`
 
-	SecurityGroups []SecurityGroup `json:"security_groups,omitempty"`
+	SecurityGroups []SecurityGroup `json:"security_groups"`
 
 	Nics []Nic `json:"nics" required:"true"`
 
@@ -41,7 +41,7 @@ type CreateOpts struct {
 }
 
 type MetaData struct {
-	OpSvcUserId string `json:"op_svc_userid" required:"true"`
+	OpSvcUserId string `json:"op_svc_userid,omitempty"`
 	BYOL        string `json:"BYOL,omitempty"`
 	AdminPass   string `json:"admin_pass,omitempty"`
 	AgencyName  string `json:"agency_name,omitempty"`
