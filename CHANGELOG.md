@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.3.5 (March 29, 2024)
+
+* Fix the bug that need create BMS instance without security_groups.
+
 ## 2.3.4 (January 27, 2024)
 
 * Add more unit tests.
