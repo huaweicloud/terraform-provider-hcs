@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.4.1 (March 29, 2024)
+
+* Fix the bug that need create BMS instance without security_groups.
+
 ## 2.4.0 (March 5, 2024)
 
 * Release a version for Huawei Cloud Stack v8.3.1.
