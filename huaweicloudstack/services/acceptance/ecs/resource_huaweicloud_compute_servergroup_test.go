@@ -222,7 +222,7 @@ resource "hcs_ecs_compute_server_group" "sg_1" {
 resource "hcs_ecs_compute_instance" "instance_1" {
   name               = "%s"
   image_id           = data.hcs_ims_images.test.id
-  flavor_id          = data.hcs_compute_flavors.test.ids[0]
+  flavor_id          = data.hcs_ecs_compute_flavors.test.ids[0]
   security_group_ids = [data.hcs_networking_secgroups.test.id]
   availability_zone  = data.hcs_availability_zones.test.names[0]
 
@@ -237,7 +237,7 @@ func testAccComputeServerGroup_concurrency(name string) string {
 	return fmt.Sprintf(`
 data "hcs_availability_zones" "test" {}
 
-data "hcs_compute_flavors" "test" {
+data "hcs_ecs_compute_flavors" "test" {
   availability_zone = data.hcs_availability_zones.test.names[0]
   performance_type  = "normal"
   cpu_core_count    = 2
@@ -245,7 +245,7 @@ data "hcs_compute_flavors" "test" {
 }
 
 data "hcs_ims_images" "test" {
-  flavor_id  = data.hcs_compute_flavors.test.ids[0]
+  flavor_id  = data.hcs_ecs_compute_flavors.test.ids[0]
   os         = "Ubuntu"
   visibility = "public"
 }
@@ -274,7 +274,7 @@ resource "hcs_ecs_compute_instance" "test" {
   count = 2
 
   name               = format("%[1]s_%%d", count.index)
-  flavor_id          = data.hcs_compute_flavors.test.ids[0]
+  flavor_id          = data.hcs_ecs_compute_flavors.test.ids[0]
   image_id           = data.hcs_ims_images.test.images[0].id
   security_groups    = [hcs_networking_secgroup.test.name]
   availability_zone  = data.hcs_availability_zones.test.names[0]
