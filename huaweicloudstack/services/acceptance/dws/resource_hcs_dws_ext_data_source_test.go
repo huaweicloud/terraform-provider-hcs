@@ -143,9 +143,9 @@ resource "huaweicloud_dws_cluster" "test" {
   node_type         = "dwsk2.xlarge"
   number_of_node    = 3
   vpc_id            = huaweicloud_vpc.test.id
-  network_id        = huaweicloud_vpc_subnet.test.id
-  security_group_id = huaweicloud_networking_secgroup.test.id
-  availability_zone = data.huaweicloud_availability_zones.test.names[0]
+  network_id        = hcs_vpc_subnet.test.id
+  security_group_id = hcs_networking_secgroup.test.id
+  availability_zone = data.hcs_availability_zones.test.names[0]
   user_name         = "test_cluster_admin"
   user_pwd          = "%s"
 

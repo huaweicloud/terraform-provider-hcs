@@ -14,6 +14,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cfw"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dws"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/gaussdb"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/lts"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/mrs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/obs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/waf"
@@ -443,6 +444,14 @@ func Provider() *schema.Provider {
 			"hcs_evs_snapshot": evs.ResourceEvsSnapshotV2(),
 
 			"hcs_gaussdb_opengauss_instance": gaussdb.ResourceOpenGaussInstance(),
+
+			"hcs_lts_host_access":               lts.ResourceHostAccessConfig(),
+			"hcs_lts_host_group":                lts.ResourceHostGroup(),
+			"hcs_lts_group":                     lts.ResourceLTSGroup(),
+			"hcs_lts_search_criteria":           lts.ResourceSearchCriteria(),
+			"hcs_lts_stream":                    lts.ResourceLTSStream(),
+			"hcs_lts_structuring_configuration": lts.ResourceStructConfig(),
+			"hcs_lts_transfer":                  lts.ResourceLtsTransfer(),
 
 			"hcs_mrs_cluster": mrs.ResourceMRSClusterV2(),
 			"hcs_mrs_job":     mrs.ResourceMRSJobV2(),

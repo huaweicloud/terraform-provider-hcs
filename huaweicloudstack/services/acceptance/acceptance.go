@@ -168,6 +168,10 @@ var (
 	HCS_POOL_NAME      = os.Getenv("HCS_POOL_NAME")
 
 	HCS_IMAGE_SHARE_SOURCE_IMAGE_ID = os.Getenv("HCS_IMAGE_SHARE_SOURCE_IMAGE_ID")
+
+	HCS_LTS_ENABLE_FLAG                 = os.Getenv("HCS_LTS_ENABLE_FLAG")
+	HCS_LTS_STRUCT_CONFIG_TEMPLATE_ID   = os.Getenv("HCS_LTS_STRUCT_CONFIG_TEMPLATE_ID")
+	HCS_LTS_STRUCT_CONFIG_TEMPLATE_NAME = os.Getenv("HCS_LTS_STRUCT_CONFIG_TEMPLATE_NAME")
 )
 
 // TestAccProviders is a static map containing only the main provider instance.
@@ -766,5 +770,18 @@ func TestAccPreCheckBms(t *testing.T) {
 func TestAccPreCheckMrsBootstrapScript(t *testing.T) {
 	if HCS_MAPREDUCE_BOOTSTRAP_SCRIPT == "" {
 		t.Skip("HCS_MAPREDUCE_BOOTSTRAP_SCRIPT must be set for acceptance tests: cluster of map reduce with bootstrap")
+	}
+}
+
+func TestAccPreCheckLtsEnableFlag(t *testing.T) {
+	if HCS_LTS_ENABLE_FLAG == "" {
+		t.Skip("HCS_LTS_ENABLE_FLAG must be set for acceptance tests. Skip the LTS acceptance tests.")
+	}
+}
+
+func TestAccPreCheckLtsStructConfigCustom(t *testing.T) {
+	if HCS_LTS_STRUCT_CONFIG_TEMPLATE_ID == "" || HCS_LTS_STRUCT_CONFIG_TEMPLATE_NAME == "" {
+		t.Skip("HCS_LTS_STRUCT_CONFIG_TEMPLATE_ID and HCS_LTS_STRUCT_CONFIG_TEMPLATE_NAME must be" +
+			" set for LTS struct config custom acceptance tests")
 	}
 }
