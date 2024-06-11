@@ -12,6 +12,7 @@ import (
 
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cce"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cfw"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dcs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dws"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/gaussdb"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/lts"
@@ -331,6 +332,11 @@ func Provider() *schema.Provider {
 
 			"hcs_cfw_firewalls": cfw.DataSourceFirewalls(),
 
+			"hcs_dcs_flavors":         dcs.DataSourceDcsFlavorsV2(),
+			"hcs_dcs_instances":       dcs.DataSourceDcsInstance(),
+			"hcs_dcs_templates":       dcs.DataSourceTemplates(),
+			"hcs_dcs_template_detail": dcs.DataSourceTemplateDetail(),
+
 			"hcs_dws_flavors": dws.DataSourceDwsFlavors(),
 
 			"hcs_availability_zones":       ecs.DataSourceAvailabilityZones(),
@@ -404,6 +410,9 @@ func Provider() *schema.Provider {
 			"hcs_cfw_protection_rule":      cfw.ResourceProtectionRule(),
 			"hcs_cfw_service_group_member": cfw.ResourceServiceGroupMember(),
 			"hcs_cfw_service_group":        cfw.ResourceServiceGroup(),
+
+			"hcs_dcs_instance": dcs.ResourceDcsInstance(),
+			"hcs_dcs_backup":   dcs.ResourceDcsBackup(),
 
 			"hcs_dns_recordset": dns.ResourceDNSRecordset(),
 			"hcs_dns_zone":      dns.ResourceDNSZone(),
