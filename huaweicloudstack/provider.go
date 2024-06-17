@@ -13,6 +13,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cce"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cfw"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dcs"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dms"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dws"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/gaussdb"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/lts"
@@ -337,6 +338,10 @@ func Provider() *schema.Provider {
 			"hcs_dcs_templates":       dcs.DataSourceTemplates(),
 			"hcs_dcs_template_detail": dcs.DataSourceTemplateDetail(),
 
+			"hcs_dms_kafka_instances": dms.DataSourceDmsKafkaInstances(),
+			"hcs_dms_kafka_flavors":   dms.DataSourceKafkaFlavors(),
+			"hcs_dms_maintainwindow":  dms.DataSourceDmsMaintainWindow(),
+
 			"hcs_dws_flavors": dws.DataSourceDwsFlavors(),
 
 			"hcs_availability_zones":       ecs.DataSourceAvailabilityZones(),
@@ -414,6 +419,12 @@ func Provider() *schema.Provider {
 
 			"hcs_dcs_instance": dcs.ResourceDcsInstance(),
 			"hcs_dcs_backup":   dcs.ResourceDcsBackup(),
+
+			"hcs_dms_kafka_instance":       dms.ResourceDmsKafkaInstance(),
+			"hcs_dms_kafka_consumer_group": dms.ResourceDmsKafkaConsumerGroup(),
+			"hcs_dms_kafka_permissions":    dms.ResourceDmsKafkaPermissions(),
+			"hcs_dms_kafka_topic":          dms.ResourceDmsKafkaTopic(),
+			"hcs_dms_kafka_user":           dms.ResourceDmsKafkaUser(),
 
 			"hcs_dns_recordset": dns.ResourceDNSRecordset(),
 			"hcs_dns_zone":      dns.ResourceDNSZone(),
@@ -733,6 +744,9 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 	}
 	if _, ok := endpoints["swr"]; !ok {
 		endpoints["swr"] = fmt.Sprintf("https://swr-api.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
+	}
+	if _, ok := endpoints["obs"]; !ok {
+		endpoints["obs"] = fmt.Sprintf("https://obsv3.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
 	}
 
 	hcsConfig.Endpoints = endpoints
