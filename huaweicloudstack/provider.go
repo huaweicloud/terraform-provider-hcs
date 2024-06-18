@@ -17,6 +17,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/lts"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/mrs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/obs"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/swr"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/waf"
 
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
@@ -462,6 +463,12 @@ func Provider() *schema.Provider {
 			"hcs_obs_bucket_object_acl": obs.ResourceOBSBucketObjectAcl(),
 			"hcs_obs_bucket_policy":     obs.ResourceObsBucketPolicy(),
 
+			"hcs_swr_organization":           swr.ResourceSWROrganization(),
+			"hcs_swr_repository":             swr.ResourceSWRRepository(),
+			"hcs_swr_repository_sharing":     swr.ResourceSWRRepositorySharing(),
+			"hcs_swr_image_retention_policy": swr.ResourceSwrImageRetentionPolicy(),
+			"hcs_swr_image_trigger":          swr.ResourceSwrImageTrigger(),
+
 			"hcs_vpcep_approval": vpcep.ResourceVPCEndpointApproval(),
 			"hcs_vpcep_endpoint": vpcep.ResourceVPCEndpoint(),
 			"hcs_vpcep_service":  vpcep.ResourceVPCEndpointService(),
@@ -711,6 +718,9 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 	if _, ok := endpoints["opengauss"]; !ok {
 		openGaussUrl := "https://gaussdb.%s.%s/gaussdb/"
 		endpoints["opengauss"] = fmt.Sprintf(openGaussUrl, hcsConfig.Config.Region, hcsConfig.Config.Cloud)
+	}
+	if _, ok := endpoints["swr"]; !ok {
+		endpoints["swr"] = fmt.Sprintf("https://swr-api.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
 	}
 
 	hcsConfig.Endpoints = endpoints
