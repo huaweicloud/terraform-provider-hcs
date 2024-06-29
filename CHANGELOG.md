@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## 2.4.2 (June 29, 2024)
+
+* The new resources and data sources added in the new version are as follows:
+
+* **New Resources:**
+  + `hcs_backup`
+  + `hcs_dcs_instance`
+  + `hcs_swr_image_retention_policy`
+  + `hcs_swr_image_trigger`
+  + `hcs_swr_organization`
+  + `hcs_swr_repository_sharing`
+
+* **New Data Sources:**
+  + `hcs_dcs_flavors`
+  + `hcs_dcs_instances`
+  + `hcs_dcs_template_detail`
+  + `hcs_dcs_templates`
+
 ## 2.4.1 (March 29, 2024)
 
 * Fix the bug that need create BMS instance without security_groups.
