@@ -13,6 +13,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cce"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cfw"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dcs"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dew"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dms"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dws"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/gaussdb"
@@ -338,6 +339,9 @@ func Provider() *schema.Provider {
 			"hcs_dcs_templates":       dcs.DataSourceTemplates(),
 			"hcs_dcs_template_detail": dcs.DataSourceTemplateDetail(),
 
+			"hcs_kms_key":      dew.DataSourceKmsKey(),
+			"hcs_kms_data_key": dew.DataSourceKmsDataKeyV1(),
+
 			"hcs_dms_kafka_instances": dms.DataSourceDmsKafkaInstances(),
 			"hcs_dms_kafka_flavors":   dms.DataSourceKafkaFlavors(),
 			"hcs_dms_maintainwindow":  dms.DataSourceDmsMaintainWindow(),
@@ -419,6 +423,9 @@ func Provider() *schema.Provider {
 
 			"hcs_dcs_instance": dcs.ResourceDcsInstance(),
 			"hcs_dcs_backup":   dcs.ResourceDcsBackup(),
+
+			"hcs_kms_key":   dew.ResourceKmsKey(),
+			"hcs_kms_grant": dew.ResourceKmsGrant(),
 
 			"hcs_dms_kafka_instance":       dms.ResourceDmsKafkaInstance(),
 			"hcs_dms_kafka_consumer_group": dms.ResourceDmsKafkaConsumerGroup(),
@@ -747,6 +754,9 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 	}
 	if _, ok := endpoints["obs"]; !ok {
 		endpoints["obs"] = fmt.Sprintf("https://obsv3.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
+	}
+	if _, ok := endpoints["kms"]; !ok {
+		endpoints["kms"] = fmt.Sprintf("https://kms-scc-apig.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
 	}
 
 	hcsConfig.Endpoints = endpoints
