@@ -5,7 +5,7 @@
 * The new resources and data sources added in the new version are as follows:
 
 * **New Resources:**
-  + `hcs_backup`
+  + `hcs_dcs_backup`
   + `hcs_dcs_instance`
   + `hcs_swr_image_retention_policy`
   + `hcs_swr_image_trigger`
