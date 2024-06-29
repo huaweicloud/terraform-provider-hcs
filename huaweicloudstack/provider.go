@@ -12,10 +12,13 @@ import (
 
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cce"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cfw"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dcs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dws"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/gaussdb"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/lts"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/mrs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/obs"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/swr"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/waf"
 
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
@@ -315,40 +318,6 @@ func Provider() *schema.Provider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"hcs_enterprise_project":    eps.DataSourceEnterpriseProject(),
-			"hcs_vpcep_public_services": vpcep.DataSourceVPCEPPublicServices(),
-
-			"hcs_cfw_firewalls": cfw.DataSourceFirewalls(),
-
-			"hcs_vpc_bandwidth": eip.DataSourceBandWidth(),
-			"hcs_vpc_eip":       eip.DataSourceVpcEip(),
-			"hcs_vpc_eips":      eip.DataSourceVpcEips(),
-
-			"hcs_evs_volumes":      evs.DataSourceEvsVolumesV2(),
-			"hcs_evs_volume_types": evs.DataSourceEvsVolumeTypesV2(),
-			"hcs_evs_snapshots":    evs.DataSourceEvsSnapshots(),
-
-			"hcs_elb_certificate": elb.DataSourceELBCertificateV3(),
-			"hcs_elb_pools":       elb.DataSourcePools(),
-
-			"hcs_nat_gateway": nat.DataSourcePublicGateway(),
-			"hcs_smn_topics":  smn.DataSourceTopics(),
-
-			"hcs_ims_images": ims.DataSourceImagesImages(),
-
-			"hcs_vpc":                    vpc.DataSourceVpcV1(),
-			"hcs_vpc_subnet":             vpc.DataSourceVpcSubnetV1(),
-			"hcs_vpc_subnet_v1":          vpc.DataSourceVpcSubnetV1(),
-			"hcs_vpc_subnet_ids":         vpc.DataSourceVpcSubnetIdsV1(),
-			"hcs_vpc_subnet_ids_v1":      vpc.DataSourceVpcSubnetIdsV1(),
-			"hcs_vpcs":                   vpc.DataSourceVpcs(),
-			"hcs_vpc_subnets":            vpc.DataSourceVpcSubnets(),
-			"hcs_vpc_peering_connection": vpc.DataSourceVpcPeeringConnectionV2(),
-
-			"hcs_networking_port":      vpc.DataSourceNetworkingPortV2(),
-			"hcs_networking_secgroup":  vpc.DataSourceNetworkingSecGroup(),
-			"hcs_networking_secgroups": vpc.DataSourceNetworkingSecGroups(),
-
 			"hcs_as_configurations": as.DataSourceASConfigurations(),
 			"hcs_as_groups":         as.DataSourceASGroups(),
 
@@ -361,6 +330,13 @@ func Provider() *schema.Provider {
 			"hcs_cce_node":           cce.DataSourceNode(),
 			"hcs_cce_nodes":          cce.DataSourceNodes(),
 
+			"hcs_cfw_firewalls": cfw.DataSourceFirewalls(),
+
+			"hcs_dcs_flavors":         dcs.DataSourceDcsFlavorsV2(),
+			"hcs_dcs_instances":       dcs.DataSourceDcsInstance(),
+			"hcs_dcs_templates":       dcs.DataSourceTemplates(),
+			"hcs_dcs_template_detail": dcs.DataSourceTemplateDetail(),
+
 			"hcs_dws_flavors": dws.DataSourceDwsFlavors(),
 
 			"hcs_availability_zones":       ecs.DataSourceAvailabilityZones(),
@@ -369,14 +345,49 @@ func Provider() *schema.Provider {
 			"hcs_ecs_compute_instances":    ecs.DataSourceComputeInstances(),
 			"hcs_ecs_compute_servergroups": ecs.DataSourceComputeServerGroups(),
 
+			"hcs_vpc_bandwidth": eip.DataSourceBandWidth(),
+			"hcs_vpc_eip":       eip.DataSourceVpcEip(),
+			"hcs_vpc_eips":      eip.DataSourceVpcEips(),
+
+			"hcs_elb_certificate": elb.DataSourceELBCertificateV3(),
+			"hcs_elb_pools":       elb.DataSourcePools(),
+
+			"hcs_enterprise_project": eps.DataSourceEnterpriseProject(),
+
+			"hcs_evs_volumes":      evs.DataSourceEvsVolumesV2(),
+			"hcs_evs_volume_types": evs.DataSourceEvsVolumeTypesV2(),
+			"hcs_evs_snapshots":    evs.DataSourceEvsSnapshots(),
+
 			"hcs_gaussdb_opengauss_instance":  gaussdb.DataSourceOpenGaussInstance(),
 			"hcs_gaussdb_opengauss_instances": gaussdb.DataSourceOpenGaussInstances(),
+
+			"hcs_ims_images": ims.DataSourceImagesImages(),
 
 			"hcs_mrs_versions": mrs.DataSourceMrsVersions(),
 			"hcs_mrs_clusters": mrs.DataSourceMrsClusters(),
 
+			"hcs_nat_gateway": nat.DataSourcePublicGateway(),
+
 			"hcs_obs_buckets":       obs.DataSourceObsBuckets(),
 			"hcs_obs_bucket_object": obs.DataSourceObsBucketObject(),
+
+			"hcs_smn_topics": smn.DataSourceTopics(),
+
+			"hcs_vpc":                    vpc.DataSourceVpcV1(),
+			"hcs_vpc_subnet":             vpc.DataSourceVpcSubnetV1(),
+			"hcs_vpc_subnet_v1":          vpc.DataSourceVpcSubnetV1(),
+			"hcs_vpc_subnet_ids":         vpc.DataSourceVpcSubnetIdsV1(),
+			"hcs_vpc_subnet_ids_v1":      vpc.DataSourceVpcSubnetIdsV1(),
+			"hcs_vpcs":                   vpc.DataSourceVpcs(),
+			"hcs_vpc_subnets":            vpc.DataSourceVpcSubnets(),
+			"hcs_vpc_peering_connection": vpc.DataSourceVpcPeeringConnectionV2(),
+			"hcs_vpc_peering":            vpc.DataSourceVpcPeering(),
+
+			"hcs_networking_port":      vpc.DataSourceNetworkingPortV2(),
+			"hcs_networking_secgroup":  vpc.DataSourceNetworkingSecGroup(),
+			"hcs_networking_secgroups": vpc.DataSourceNetworkingSecGroups(),
+
+			"hcs_vpcep_public_services": vpcep.DataSourceVPCEPPublicServices(),
 
 			"hcs_waf_certificate":         waf.DataSourceWafCertificateV1(),
 			"hcs_waf_dedicated_instances": waf.DataSourceWafDedicatedInstancesV1(),
@@ -401,6 +412,12 @@ func Provider() *schema.Provider {
 			"hcs_cfw_service_group_member": cfw.ResourceServiceGroupMember(),
 			"hcs_cfw_service_group":        cfw.ResourceServiceGroup(),
 
+			"hcs_dcs_instance": dcs.ResourceDcsInstance(),
+			"hcs_dcs_backup":   dcs.ResourceDcsBackup(),
+
+			"hcs_dns_recordset": dns.ResourceDNSRecordset(),
+			"hcs_dns_zone":      dns.ResourceDNSZone(),
+
 			"hcs_dws_cluster":            dws.ResourceDwsCluster(),
 			"hcs_dws_alarm_subscription": dws.ResourceDwsAlarmSubs(),
 			"hcs_dws_event_subscription": dws.ResourceDwsEventSubs(),
@@ -408,23 +425,19 @@ func Provider() *schema.Provider {
 			"hcs_dws_snapshot":           dws.ResourceDwsSnapshot(),
 			"hcs_dws_snapshot_policy":    dws.ResourceDwsSnapshotPolicy(),
 
-			"hcs_enterprise_project": eps.ResourceEnterpriseProject(),
-			"hcs_dns_recordset":      dns.ResourceDNSRecordset(),
-			"hcs_dns_zone":           dns.ResourceDNSZone(),
-			"hcs_vpcep_approval":     vpcep.ResourceVPCEndpointApproval(),
-			"hcs_vpcep_endpoint":     vpcep.ResourceVPCEndpoint(),
-			"hcs_vpcep_service":      vpcep.ResourceVPCEndpointService(),
+			"hcs_ecs_compute_volume_attach":    ecs.ResourceComputeVolumeAttach(),
+			"hcs_ecs_compute_server_group":     ecs.ResourceComputeServerGroup(),
+			"hcs_ecs_compute_interface_attach": ecs.ResourceComputeInterfaceAttach(),
+			"hcs_ecs_compute_instance":         ecs.ResourceComputeInstance(),
+			"hcs_ecs_compute_keypair":          ecs.ResourceComputeKeypairV2(),
+			"hcs_ecs_compute_eip_associate":    ecs.ResourceComputeEIPAssociate(),
 
 			"hcs_vpc_bandwidth":           eip.ResourceVpcBandWidthV2(),
 			"hcs_vpc_eip":                 eip.ResourceVpcEIPV1(),
 			"hcs_vpc_eip_associate":       eip.ResourceEIPAssociate(),
 			"hcs_vpc_bandwidth_associate": eip.ResourceBandWidthAssociate(),
-
-			"hcs_vpc_bandwidth_v2": eip.ResourceVpcBandWidthV2(),
-			"hcs_vpc_eip_v1":       eip.ResourceVpcEIPV1(),
-
-			"hcs_evs_volume":   evs.ResourceEvsVolume(),
-			"hcs_evs_snapshot": evs.ResourceEvsSnapshotV2(),
+			"hcs_vpc_bandwidth_v2":        eip.ResourceVpcBandWidthV2(),
+			"hcs_vpc_eip_v1":              eip.ResourceVpcEIPV1(),
 
 			"hcs_elb_certificate":     elb.ResourceCertificateV3(),
 			"hcs_elb_l7policy":        elb.ResourceL7PolicyV3(),
@@ -436,14 +449,20 @@ func Provider() *schema.Provider {
 			"hcs_elb_pool":            elb.ResourcePoolV3(),
 			"hcs_elb_security_policy": elb.ResourceSecurityPolicy(),
 
-			"hcs_ecs_compute_volume_attach":    ecs.ResourceComputeVolumeAttach(),
-			"hcs_ecs_compute_server_group":     ecs.ResourceComputeServerGroup(),
-			"hcs_ecs_compute_interface_attach": ecs.ResourceComputeInterfaceAttach(),
-			"hcs_ecs_compute_instance":         ecs.ResourceComputeInstance(),
-			"hcs_ecs_compute_keypair":          ecs.ResourceComputeKeypairV2(),
-			"hcs_ecs_compute_eip_associate":    ecs.ResourceComputeEIPAssociate(),
+			"hcs_enterprise_project": eps.ResourceEnterpriseProject(),
+
+			"hcs_evs_volume":   evs.ResourceEvsVolume(),
+			"hcs_evs_snapshot": evs.ResourceEvsSnapshotV2(),
 
 			"hcs_gaussdb_opengauss_instance": gaussdb.ResourceOpenGaussInstance(),
+
+			"hcs_lts_host_access":               lts.ResourceHostAccessConfig(),
+			"hcs_lts_host_group":                lts.ResourceHostGroup(),
+			"hcs_lts_group":                     lts.ResourceLTSGroup(),
+			"hcs_lts_search_criteria":           lts.ResourceSearchCriteria(),
+			"hcs_lts_stream":                    lts.ResourceLTSStream(),
+			"hcs_lts_structuring_configuration": lts.ResourceStructConfig(),
+			"hcs_lts_transfer":                  lts.ResourceLtsTransfer(),
 
 			"hcs_mrs_cluster": mrs.ResourceMRSClusterV2(),
 			"hcs_mrs_job":     mrs.ResourceMRSJobV2(),
@@ -453,6 +472,16 @@ func Provider() *schema.Provider {
 			"hcs_obs_bucket_object":     obs.ResourceObsBucketObject(),
 			"hcs_obs_bucket_object_acl": obs.ResourceOBSBucketObjectAcl(),
 			"hcs_obs_bucket_policy":     obs.ResourceObsBucketPolicy(),
+
+			"hcs_swr_organization":           swr.ResourceSWROrganization(),
+			"hcs_swr_repository":             swr.ResourceSWRRepository(),
+			"hcs_swr_repository_sharing":     swr.ResourceSWRRepositorySharing(),
+			"hcs_swr_image_retention_policy": swr.ResourceSwrImageRetentionPolicy(),
+			"hcs_swr_image_trigger":          swr.ResourceSwrImageTrigger(),
+
+			"hcs_vpcep_approval": vpcep.ResourceVPCEndpointApproval(),
+			"hcs_vpcep_endpoint": vpcep.ResourceVPCEndpoint(),
+			"hcs_vpcep_service":  vpcep.ResourceVPCEndpointService(),
 
 			"hcs_waf_address_group":                       waf.ResourceWafAddressGroup(),
 			"hcs_waf_certificate":                         waf.ResourceWafCertificateV1(),
@@ -471,7 +500,21 @@ func Provider() *schema.Provider {
 			"hcs_waf_rule_web_tamper_protection":          waf.ResourceWafRuleWebTamperProtectionV1(),
 
 			// Legacy
+			"hcs_as_bandwidth_policy": as.ResourceASBandWidthPolicy(),
+			"hcs_as_configuration":    as.ResourceASConfiguration(),
+			"hcs_as_group":            as.ResourceASGroup(),
+			"hcs_as_instance_attach":  as.ResourceASInstanceAttach(),
+			"hcs_as_lifecycle_hook":   as.ResourceASLifecycleHook(),
+			"hcs_as_notification":     as.ResourceAsNotification(),
+			"hcs_as_policy":           as.ResourceASPolicy(),
+
+			"hcs_bms_instance": bms.ResourceBmsInstance(),
+
 			"hcs_networking_eip_associate": eip.ResourceEIPAssociate(),
+
+			"hcs_ims_image":                ims.ResourceImsImage(),
+			"hcs_ims_image_share":          ims.ResourceImsImageShare(),
+			"hcs_ims_image_share_accepter": ims.ResourceImsImageShareAccepter(),
 
 			"hcs_nat_gateway":   nat.ResourcePublicGateway(),
 			"hcs_nat_snat_rule": nat.ResourcePublicSnatRule(),
@@ -483,40 +526,26 @@ func Provider() *schema.Provider {
 			"hcs_smn_topic_v2":         smn.ResourceTopic(),
 			"hcs_smn_subscription_v2":  smn.ResourceSubscription(),
 
-			"hcs_as_bandwidth_policy": as.ResourceASBandWidthPolicy(),
-			"hcs_as_configuration":    as.ResourceASConfiguration(),
-			"hcs_as_group":            as.ResourceASGroup(),
-			"hcs_as_instance_attach":  as.ResourceASInstanceAttach(),
-			"hcs_as_lifecycle_hook":   as.ResourceASLifecycleHook(),
-			"hcs_as_notification":     as.ResourceAsNotification(),
-			"hcs_as_policy":           as.ResourceASPolicy(),
-
-			"hcs_ims_image":                ims.ResourceImsImage(),
-			"hcs_ims_image_share":          ims.ResourceImsImageShare(),
-			"hcs_ims_image_share_accepter": ims.ResourceImsImageShareAccepter(),
-
-			"hcs_vpc":        vpc.ResourceVirtualPrivateCloudV1(),
-			"hcs_vpc_subnet": vpc.ResourceVpcSubnetV1(),
-
-			"hcs_vpc_route": vpc.ResourceVPCRouteV2(),
+			"hcs_vpc":                             vpc.ResourceVirtualPrivateCloudV1(),
+			"hcs_vpc_subnet":                      vpc.ResourceVpcSubnetV1(),
+			"hcs_vpc_route":                       vpc.ResourceVPCRouteV2(),
+			"hcs_vpc_route_v2":                    vpc.ResourceVPCRouteV2(),
+			"hcs_vpc_v1":                          vpc.ResourceVirtualPrivateCloudV1(),
+			"hcs_vpc_subnet_v1":                   vpc.ResourceVpcSubnetV1(),
+			"hcs_vpc_peering_connection":          vpc.ResourceVpcPeeringConnectionV2(),
+			"hcs_vpc_peering_connection_accepter": vpc.ResourceVpcPeeringConnectionAccepterV2(),
+			"hcs_networking_secgroup":             vpc.ResourceNetworkingSecGroup(),
+			"hcs_networking_secgroup_rule":        vpc.ResourceNetworkingSecGroupRule(),
+			"hcs_networking_vip":                  vpc.ResourceNetworkingVip(),
+			"hcs_networking_vip_associate":        vpc.ResourceNetworkingVIPAssociateV2(),
+			"hcs_vpc_peering":                     vpc.ResourceVpcPeering(),
+			"hcs_vpc_peering_route":               vpc.ResourceVpcPeeringRoute(),
 
 			"hcs_networking_port":    deprecated.ResourceNetworkingPortV2(),
 			"hcs_networking_port_v2": deprecated.ResourceNetworkingPortV2(),
 
-			"hcs_vpc_route_v2":                    vpc.ResourceVPCRouteV2(),
-			"hcs_vpc_v1":                          vpc.ResourceVirtualPrivateCloudV1(),
-			"hcs_vpc_subnet_v1":                   vpc.ResourceVpcSubnetV1(),
-			"hcs_networking_vip":                  vpc.ResourceNetworkingVip(),
-			"hcs_networking_vip_associate":        vpc.ResourceNetworkingVIPAssociateV2(),
-			"hcs_vpc_peering_connection":          vpc.ResourceVpcPeeringConnectionV2(),
-			"hcs_vpc_peering_connection_accepter": vpc.ResourceVpcPeeringConnectionAccepterV2(),
-
-			"hcs_network_acl":              ResourceNetworkACL(),
-			"hcs_network_acl_rule":         ResourceNetworkACLRule(),
-			"hcs_networking_secgroup":      vpc.ResourceNetworkingSecGroup(),
-			"hcs_networking_secgroup_rule": vpc.ResourceNetworkingSecGroupRule(),
-
-			"hcs_bms_instance": bms.ResourceBmsInstance(),
+			"hcs_network_acl":      ResourceNetworkACL(),
+			"hcs_network_acl_rule": ResourceNetworkACLRule(),
 		},
 	}
 
@@ -701,6 +730,9 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 	if _, ok := endpoints["opengauss"]; !ok {
 		openGaussUrl := "https://gaussdb.%s.%s/gaussdb/"
 		endpoints["opengauss"] = fmt.Sprintf(openGaussUrl, hcsConfig.Config.Region, hcsConfig.Config.Cloud)
+	}
+	if _, ok := endpoints["swr"]; !ok {
+		endpoints["swr"] = fmt.Sprintf("https://swr-api.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
 	}
 
 	hcsConfig.Endpoints = endpoints

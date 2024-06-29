@@ -16,6 +16,7 @@ var (
 	HCS_SKIP_UNSUPPORTED_TEST = os.Getenv("HCS_SKIP_UNSUPPORTED_TEST")
 
 	HCS_REGION_NAME                        = os.Getenv("HCS_REGION_NAME")
+	HCS_CLOUD                              = os.Getenv("HCS_CLOUD")
 	HCS_CUSTOM_REGION_NAME                 = os.Getenv("HCS_CUSTOM_REGION_NAME")
 	HCS_AVAILABILITY_ZONE                  = os.Getenv("HCS_AVAILABILITY_ZONE")
 	HCS_ACCESS_KEY                         = os.Getenv("HCS_ACCESS_KEY")
@@ -168,6 +169,10 @@ var (
 	HCS_POOL_NAME      = os.Getenv("HCS_POOL_NAME")
 
 	HCS_IMAGE_SHARE_SOURCE_IMAGE_ID = os.Getenv("HCS_IMAGE_SHARE_SOURCE_IMAGE_ID")
+
+	HCS_LTS_ENABLE_FLAG                 = os.Getenv("HCS_LTS_ENABLE_FLAG")
+	HCS_LTS_STRUCT_CONFIG_TEMPLATE_ID   = os.Getenv("HCS_LTS_STRUCT_CONFIG_TEMPLATE_ID")
+	HCS_LTS_STRUCT_CONFIG_TEMPLATE_NAME = os.Getenv("HCS_LTS_STRUCT_CONFIG_TEMPLATE_NAME")
 )
 
 // TestAccProviders is a static map containing only the main provider instance.
@@ -201,6 +206,13 @@ func init() {
 func preCheckRequiredEnvVars(t *testing.T) {
 	if HCS_REGION_NAME == "" {
 		t.Fatal("HCS_REGION_NAME must be set for acceptance tests")
+	}
+}
+
+// lintignore:AT003
+func TestAccPreCheckSwrOrganization(t *testing.T) {
+	if HCS_CLOUD == "" {
+		t.Fatal("HCS_CLOUD must be set for acceptance tests")
 	}
 }
 
@@ -766,5 +778,20 @@ func TestAccPreCheckBms(t *testing.T) {
 func TestAccPreCheckMrsBootstrapScript(t *testing.T) {
 	if HCS_MAPREDUCE_BOOTSTRAP_SCRIPT == "" {
 		t.Skip("HCS_MAPREDUCE_BOOTSTRAP_SCRIPT must be set for acceptance tests: cluster of map reduce with bootstrap")
+	}
+}
+
+// lintignore:AT003
+func TestAccPreCheckLtsEnableFlag(t *testing.T) {
+	if HCS_LTS_ENABLE_FLAG == "" {
+		t.Skip("HCS_LTS_ENABLE_FLAG must be set for acceptance tests. Skip the LTS acceptance tests.")
+	}
+}
+
+// lintignore:AT003
+func TestAccPreCheckLtsStructConfigCustom(t *testing.T) {
+	if HCS_LTS_STRUCT_CONFIG_TEMPLATE_ID == "" || HCS_LTS_STRUCT_CONFIG_TEMPLATE_NAME == "" {
+		t.Skip("HCS_LTS_STRUCT_CONFIG_TEMPLATE_ID and HCS_LTS_STRUCT_CONFIG_TEMPLATE_NAME must be" +
+			" set for LTS struct config custom acceptance tests")
 	}
 }
