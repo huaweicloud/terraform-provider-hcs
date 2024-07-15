@@ -35,5 +35,7 @@ filters must match exactly one VPC whose data will be exported as attributes.
 
 * `enterprise_project_id` - (Optional, String) Specifies the enterprise project ID which the desired VPC belongs to.
 
+* `secondary_cidrs` - The secondary CIDR blocks of the VPC.
+
 ## Attributes Reference
 
