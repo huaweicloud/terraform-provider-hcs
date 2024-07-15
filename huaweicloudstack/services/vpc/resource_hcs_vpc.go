@@ -17,6 +17,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/networking/v1/vpcs"
+	v3Vpcs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/networking/v3/vpcs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
 )
 
@@ -55,6 +56,15 @@ func ResourceVirtualPrivateCloudV1() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: utils.ValidateCIDR,
+			},
+			"secondary_cidrs": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Computed: true,
+				Elem: &schema.Schema{
+					Type:         schema.TypeString,
+					ValidateFunc: utils.ValidateCIDR,
+				},
 			},
 			"enterprise_project_id": {
 				Type:     schema.TypeString,
@@ -128,6 +138,25 @@ func resourceVirtualPrivateCloudCreate(ctx context.Context, d *schema.ResourceDa
 			"error waiting for Vpc (%s) to become ACTIVE: %s",
 			n.ID, stateErr)
 	}
+	var extendCidrs []string
+	if v, ok := d.GetOk("secondary_cidrs"); ok {
+		extendCidrs = utils.ExpandToStringList(v.(*schema.Set).List())
+	}
+
+	if len(extendCidrs) > 0 {
+		vpcV3Client, v3Err := config.NetworkingV3Client(region)
+		if v3Err != nil {
+			return diag.Errorf("error creating VPC v3 client: %s", err)
+		}
+		updatOpts := v3Vpcs.UpdateOpts{
+			ExtendCidrs: extendCidrs,
+		}
+		_, newErr := v3Vpcs.AddSecondaryCIDR(vpcV3Client, d.Id(), updatOpts).Extract()
+
+		if newErr != nil {
+			return diag.Errorf("error adding VPC secondary CIDRs: %s", newErr)
+		}
+	}
 
 	return resourceVirtualPrivateCloudRead(ctx, d, meta)
 }
@@ -165,6 +194,15 @@ func resourceVirtualPrivateCloudRead(_ context.Context, d *schema.ResourceData, 
 		routes[i] = route
 	}
 	d.Set("routes", routes)
+	vpcV3Client, v3Err := config.NetworkingV3Client(config.GetRegion(d))
+	if v3Err != nil {
+		return diag.Errorf("error creating VPC v3 client: %s", err)
+	}
+	res, err := v3Vpcs.Get(vpcV3Client, d.Id()).Extract()
+	if err != nil {
+		diag.Errorf("error retrieving VPC (%s) v3 detail: %s", d.Id(), err)
+	}
+	d.Set("secondary_cidrs", res.ExtendCidrs)
 
 	return nil
 }
@@ -187,6 +225,36 @@ func resourceVirtualPrivateCloudUpdate(ctx context.Context, d *schema.ResourceDa
 		_, err = vpcs.Update(vpcClient, vpcID, updateOpts).Extract()
 		if err != nil {
 			return diag.Errorf("error updating VPC: %s", err)
+		}
+	}
+	vpcV3Client, v3Err := config.NetworkingV3Client(region)
+	if v3Err != nil {
+		return diag.Errorf("error creating VPC v3 client: %s", err)
+	}
+
+	if d.HasChanges("secondary_cidrs") {
+		oldRaws, newRaws := d.GetChange("secondary_cidrs")
+		needRemovecidrs := utils.ExpandToStringListBySet(oldRaws.(*schema.Set).Difference(newRaws.(*schema.Set)))
+		newExtendCidrs := utils.ExpandToStringListBySet(newRaws.(*schema.Set).Difference(oldRaws.(*schema.Set)))
+		if len(needRemovecidrs) > 0 {
+			removeOpts := v3Vpcs.UpdateOpts{
+				ExtendCidrs: needRemovecidrs,
+			}
+			_, removeErr := v3Vpcs.RemoveSecondaryCIDR(vpcV3Client, d.Id(), removeOpts).Extract()
+
+			if removeErr != nil {
+				return diag.Errorf("error deleting VPC secondary CIDRs: %s", err)
+			}
+		}
+		if len(newExtendCidrs) > 0 {
+			addOpts := v3Vpcs.UpdateOpts{
+				ExtendCidrs: newExtendCidrs,
+			}
+			_, addErr := v3Vpcs.AddSecondaryCIDR(vpcV3Client, d.Id(), addOpts).Extract()
+
+			if addErr != nil {
+				return diag.Errorf("error adding VPC secondary CIDRs: %s", addErr)
+			}
 		}
 	}
 
