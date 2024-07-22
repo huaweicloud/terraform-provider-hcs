@@ -36,22 +36,24 @@ type ListOptsBuilder interface {
 // sort by a particular firewall rule attribute. SortDir sets the direction, and is
 // either `asc' or `desc'. Marker and Limit are used for pagination.
 type ListOpts struct {
-	TenantID             string `q:"tenant_id"`
-	Name                 string `q:"name"`
-	Description          string `q:"description"`
-	Protocol             string `q:"protocol"`
-	Action               string `q:"action"`
-	IPVersion            int    `q:"ip_version"`
-	SourceIPAddress      string `q:"source_ip_address"`
-	DestinationIPAddress string `q:"destination_ip_address"`
-	SourcePort           string `q:"source_port"`
-	DestinationPort      string `q:"destination_port"`
-	Enabled              bool   `q:"enabled"`
-	ID                   string `q:"id"`
-	Limit                int    `q:"limit"`
-	Marker               string `q:"marker"`
-	SortKey              string `q:"sort_key"`
-	SortDir              string `q:"sort_dir"`
+	TenantID             string   `q:"tenant_id"`
+	Name                 string   `q:"name"`
+	Description          string   `q:"description"`
+	Protocol             string   `q:"protocol"`
+	Action               string   `q:"action"`
+	IPVersion            int      `q:"ip_version"`
+	SourceIPAddress      string   `q:"source_ip_address"`
+	DestinationIPAddress string   `q:"destination_ip_address"`
+	SourcePort           string   `q:"source_port"`
+	DestinationPort      string   `q:"destination_port"`
+	SourcePorts          []string `q:"source_ports"`
+	DestinationPorts     []string `q:"destination_ports"`
+	Enabled              bool     `q:"enabled"`
+	ID                   string   `q:"id"`
+	Limit                int      `q:"limit"`
+	Marker               string   `q:"marker"`
+	SortKey              string   `q:"sort_key"`
+	SortDir              string   `q:"sort_dir"`
 }
 
 // ToRuleListQuery formats a ListOpts into a query string.
@@ -105,6 +107,8 @@ type CreateOpts struct {
 	DestinationIPAddress string              `json:"destination_ip_address,omitempty"`
 	SourcePort           string              `json:"source_port,omitempty"`
 	DestinationPort      string              `json:"destination_port,omitempty"`
+	SourcePorts          []string            `json:"source_ports,omitempty"`
+	DestinationPorts     []string            `json:"destination_ports,omitempty"`
 	Shared               *bool               `json:"shared,omitempty"`
 	Enabled              *bool               `json:"enabled,omitempty"`
 }
@@ -159,6 +163,8 @@ type UpdateOpts struct {
 	DestinationIPAddress *string              `json:"destination_ip_address,omitempty"`
 	SourcePort           *string              `json:"source_port,omitempty"`
 	DestinationPort      *string              `json:"destination_port,omitempty"`
+	SourcePorts          *[]string            `json:"source_ports,omitempty"`
+	DestinationPorts     *[]string            `json:"destination_ports,omitempty"`
 	Shared               *bool                `json:"shared,omitempty"`
 	Enabled              *bool                `json:"enabled,omitempty"`
 }

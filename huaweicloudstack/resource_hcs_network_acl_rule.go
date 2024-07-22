@@ -72,12 +72,24 @@ func ResourceNetworkACLRule() *schema.Resource {
 				Optional: true,
 			},
 			"source_port": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:       schema.TypeString,
+				Optional:   true,
+				Deprecated: "use source_ports instead",
 			},
 			"destination_port": {
-				Type:     schema.TypeString,
+				Type:       schema.TypeString,
+				Optional:   true,
+				Deprecated: "use destination_ports instead",
+			},
+			"source_ports": {
+				Type:     schema.TypeSet,
 				Optional: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+			},
+			"destination_ports": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 			"enabled": {
 				Type:     schema.TypeBool,
@@ -110,6 +122,20 @@ func resourceNetworkACLRuleCreate(d *schema.ResourceData, meta interface{}) erro
 		SourcePort:           d.Get("source_port").(string),
 		DestinationPort:      d.Get("destination_port").(string),
 		Enabled:              &enabled,
+	}
+	sourcePorts := d.Get("source_ports").(*schema.Set).List()
+	if len(sourcePorts) > 0 {
+		ruleConfiguration.SourcePorts = make([]string, len(sourcePorts))
+		for i, r := range sourcePorts {
+			ruleConfiguration.SourcePorts[i] = r.(string)
+		}
+	}
+	destinationPorts := d.Get("destination_ports").(*schema.Set).List()
+	if len(destinationPorts) > 0 {
+		ruleConfiguration.DestinationPorts = make([]string, len(destinationPorts))
+		for i, r := range destinationPorts {
+			ruleConfiguration.DestinationPorts[i] = r.(string)
+		}
 	}
 
 	logp.Printf("[DEBUG] Create Network ACL rule: %#v", ruleConfiguration)
@@ -146,6 +172,8 @@ func resourceNetworkACLRuleRead(d *schema.ResourceData, meta interface{}) error 
 	d.Set("destination_ip_address", rule.DestinationIPAddress)
 	d.Set("source_port", rule.SourcePort)
 	d.Set("destination_port", rule.DestinationPort)
+	d.Set("source_ports", rule.SourcePorts)
+	d.Set("destination_ports", rule.DestinationPorts)
 	d.Set("enabled", rule.Enabled)
 
 	if rule.Protocol == "" {
@@ -193,6 +221,16 @@ func resourceNetworkACLRuleUpdate(d *schema.ResourceData, meta interface{}) erro
 		sourcePort := d.Get("source_port").(string)
 		updateOpts.SourcePort = &sourcePort
 	}
+	if d.HasChange("source_ports") {
+		sourcePorts := d.Get("source_ports").(*schema.Set).List()
+		ports := make([]string, len(sourcePorts))
+		if len(sourcePorts) > 0 {
+			for i, r := range sourcePorts {
+				ports[i] = r.(string)
+			}
+		}
+		updateOpts.SourcePorts = &ports
+	}
 	if d.HasChange("destination_ip_address") {
 		destinationIPAddress := d.Get("destination_ip_address").(string)
 		updateOpts.DestinationIPAddress = &destinationIPAddress
@@ -200,6 +238,16 @@ func resourceNetworkACLRuleUpdate(d *schema.ResourceData, meta interface{}) erro
 	if d.HasChange("destination_port") {
 		destinationPort := d.Get("destination_port").(string)
 		updateOpts.DestinationPort = &destinationPort
+	}
+	if d.HasChange("destination_ports") {
+		destinationPorts := d.Get("destination_ports").(*schema.Set).List()
+		ports := make([]string, len(destinationPorts))
+		if len(destinationPorts) > 0 {
+			for i, r := range destinationPorts {
+				ports[i] = r.(string)
+			}
+		}
+		updateOpts.DestinationPorts = &ports
 	}
 	if d.HasChange("enabled") {
 		enabled := d.Get("enabled").(bool)

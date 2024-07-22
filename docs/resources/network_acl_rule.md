@@ -14,9 +14,9 @@ resource "hcs_network_acl_rule" "rule_1" {
   protocol               = "udp"
   action                 = "deny"
   source_ip_address      = "1.2.3.4"
-  source_port            = "444"
+  source_ports            = ["444"]
   destination_ip_address = "4.3.2.0/24"
-  destination_port       = "555"
+  destination_ports       = ["555"]
 }
 ```
 
@@ -46,10 +46,10 @@ The following arguments are supported:
 * `destination_ip_address` - (Optional, String) Specifies the destination IP address to which the traffic is allowed.
   The default value is *0.0.0.0/0*. For example: xxx.xxx.xxx.xxx (IP address), xxx.xxx.xxx.0/24 (CIDR block).
 
-* `source_port` - (Optional, String) Specifies the source port number or port number range. The value ranges from 1 to
+* `source_ports` - (Optional, List) A list of Specifies the source port number or port number range. The value ranges from 1 to
   65535. For a port number range, enter two port numbers connected by a colon(:). For example, 1:100.
 
-* `destination_port` - (Optional, String) Specifies the destination port number or port number range. The value ranges
+* `destination_ports` - (Optional, List) A list of Specifies the destination port number or port number range. The value ranges
   from 1 to 65535. For a port number range, enter two port numbers connected by a colon(:). For example, 1:100.
 
 * `enabled` - (Optional, Bool) Enabled status for the network ACL rule. Defaults to true.

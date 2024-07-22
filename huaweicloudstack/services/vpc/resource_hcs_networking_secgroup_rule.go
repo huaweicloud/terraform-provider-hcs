@@ -82,12 +82,11 @@ func ResourceNetworkingSecGroupRule() *schema.Resource {
 				RequiredWith: []string{"port_range_min"},
 			},
 			"ports": {
-				Type:          schema.TypeString,
-				Optional:      true,
-				ForceNew:      true,
-				Computed:      true,
-				ConflictsWith: []string{"port_range_min", "port_range_max"},
-				RequiredWith:  []string{"protocol"},
+				Type:       schema.TypeString,
+				Optional:   true,
+				ForceNew:   true,
+				Computed:   true,
+				Deprecated: "use port_range_min and port_range_max instead",
 			},
 			"protocol": {
 				Type:     schema.TypeString,
@@ -145,15 +144,6 @@ func ResourceNetworkingSecGroupRule() *schema.Resource {
 	}
 }
 
-func doesAdvanceddParamUsed(d *schema.ResourceData, params []string) bool {
-	for _, pk := range params {
-		if _, ok := d.GetOk(pk); ok {
-			return true
-		}
-	}
-	return false
-}
-
 func resourceNetworkingSecGroupRuleCreateV1(ctx context.Context, d *schema.ResourceData,
 	meta interface{}) diag.Diagnostics {
 	cfg := config.GetHcsConfig(meta)
@@ -177,41 +167,6 @@ func resourceNetworkingSecGroupRuleCreateV1(ctx context.Context, d *schema.Resou
 	logp.Printf("[DEBUG] The createOpts of the Security Group rule is: %#v", opt)
 	resp, err := v1Rules.Create(v1Client, opt)
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating Security Group rule: %s", err)
-	}
-	d.SetId(resp.ID)
-
-	return resourceNetworkingSecGroupRuleRead(ctx, d, meta)
-}
-
-func resourceNetworkingSecGroupRuleCreateV3(ctx context.Context, d *schema.ResourceData,
-	meta interface{}) diag.Diagnostics {
-	cfg := config.GetHcsConfig(meta)
-	v3Client, err := cfg.NetworkingV3Client(common.GetRegion(d, cfg))
-	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloudStack networking v3 client: %s", err)
-	}
-
-	opt := v3Rules.CreateOpts{
-		Description:     d.Get("description").(string),
-		SecurityGroupId: d.Get("security_group_id").(string),
-		RemoteGroupId:   d.Get("remote_group_id").(string),
-		RemoteIpPrefix:  d.Get("remote_ip_prefix").(string),
-		Protocol:        d.Get("protocol").(string),
-		Ethertype:       d.Get("ethertype").(string),
-		Direction:       d.Get("direction").(string),
-		MultiPort:       d.Get("ports").(string),
-		Action:          d.Get("action").(string),
-		Priority:        d.Get("priority").(int),
-	}
-
-	logp.Printf("[DEBUG] The createOpts of the Security Group rule is: %#v", opt)
-	resp, err := v3Rules.Create(v3Client, opt)
-	if err != nil {
-		if _, ok := err.(golangsdk.ErrDefault404); ok {
-			return fmtp.DiagErrorf("The current region does not support creating security group rules through the "+
-				"ver.3 API: %#v", err)
-		}
 		return fmtp.DiagErrorf("Error creating Security Group rule: %s", err)
 	}
 	d.SetId(resp.ID)
