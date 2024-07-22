@@ -13,5 +13,5 @@ func resourceURL(c *golangsdk.ServiceClient, id string) string {
 }
 
 func resourceListURL(c *golangsdk.ServiceClient, id string) string {
-	return c.ServiceURL(c.ProjectID, resourcePath) + "?id=" + id
+	return c.ServiceURL(c.ProjectID, resourcePath) + "?peering_id=" + id
 }
