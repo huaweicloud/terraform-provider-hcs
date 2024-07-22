@@ -18,7 +18,7 @@ resource "hcs_network_acl_rule" "rule_1" {
   description      = "drop TELNET traffic"
   action           = "deny"
   protocol         = "tcp"
-  destination_port = "23"
+  destination_ports= ["23"]
   enabled          = "true"
 }
 
@@ -27,7 +27,7 @@ resource "hcs_network_acl_rule" "rule_2" {
   description      = "drop NTP traffic"
   action           = "deny"
   protocol         = "udp"
-  destination_port = "123"
+  destination_ports= ["123"]
   enabled          = "false"
 }
 
