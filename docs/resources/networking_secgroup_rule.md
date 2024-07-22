@@ -67,15 +67,9 @@ The following arguments are supported:
 
 * `port_range_min` - (Optional, Int, ForceNew) Specifies the lower part of the allowed port range, valid integer value
   needs to be between `1` and `65,535`. Changing this creates a new security group rule.
-  This parameter and `ports` are alternative.
 
 * `port_range_max` - (Optional, Int, ForceNew) Specifies the higher part of the allowed port range, valid integer value
   needs to be between `1` and `65,535`. Changing this creates a new security group rule.
-  This parameter and `ports` are alternative.
-
-* `ports` - (Optional, String, ForceNew) Specifies the allowed port value range, which supports single port (80),
-  continuous port (1-30) and discontinous port (22, 3389, 80) The valid port values is range form `1` to `65,535`.
-  Changing this creates a new security group rule.
 
 * `remote_ip_prefix` - (Optional, String, ForceNew) Specifies the remote CIDR, the value needs to be a valid CIDR (i.e.
   192.168.0.0/16). Changing this creates a new security group rule.
