@@ -51,6 +51,7 @@ type CreateOpts struct {
 	Name       string `json:"name"`
 	LocalVpcId string `json:"local_vpc_id" required:"true"`
 	PeerVpcId  string `json:"peer_vpc_id" required:"true"`
+	PeerRegion string `json:"peer_region" required:"false"`
 }
 
 // ToPeeringCreateMap builds a create request body from CreateOpts.

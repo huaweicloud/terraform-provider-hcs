@@ -9,10 +9,16 @@ Provides a resource to manage a VPC Peering resource.
 ## Example Usage
 
  ```hcl
+ var peer_conn_name {}
+ var vpc_id {}
+ var accepter_vpc_id {}
+ var peer_region {}
+ 
 resource "hcs_vpc_peering" "peering" {
   name        = var.peer_conn_name
   vpc_id      = var.vpc_id
   peer_vpc_id = var.accepter_vpc_id
+  peer_region = var.peer_region
 }
  ```
 
@@ -31,6 +37,9 @@ The following arguments are supported:
 
 * `peer_vpc_id` - (Required, String, ForceNew) Specifies the VPC ID of the peering. Changing this creates a new
   VPC peering.
+
+* `peer_region` - (Optional, String, ForceNew) Specifies name of the project to which the peer VPC belongs. This parameter is 
+  mandatory when the two VPCs are not in the same project.
 
 ## Attribute Reference
 
