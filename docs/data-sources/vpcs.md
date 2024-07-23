@@ -68,3 +68,4 @@ The `vpcs` block supports:
 * `enterprise_project_id` - Indicates the the enterprise project ID of the VPC.
 * `description` - Indicates the description of the VPC.
 * `tags` - Indicates the key/value pairs which associated with the VPC.
+* `secondary_cidrs` - The secondary CIDR blocks of the VPC.

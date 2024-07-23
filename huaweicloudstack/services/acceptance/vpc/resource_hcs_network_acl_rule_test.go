@@ -155,8 +155,8 @@ resource "hcs_network_acl_rule" "rule_1" {
   action = "deny"
   source_ip_address = "1.2.3.4"
   destination_ip_address = "4.3.2.0/24"
-  source_port = "444"
-  destination_port = "555"
+  source_ports = ["444"]
+  destination_ports = ["555"]
   enabled = true
 }
 `, rName)
@@ -171,8 +171,8 @@ resource "hcs_network_acl_rule" "rule_1" {
   action = "allow"
   source_ip_address = "1.2.3.0/24"
   destination_ip_address = "4.3.2.8"
-  source_port = "666"
-  destination_port = "777"
+  source_ports = ["666"]
+  destination_ports = ["777"]
   enabled = false
 }
 `, rName)
