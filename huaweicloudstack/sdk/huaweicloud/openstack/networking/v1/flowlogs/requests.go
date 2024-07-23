@@ -116,7 +116,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 		return
 	}
 
-	_, r.Err = client.Post(CreateURL(client), b, &r.Body, &golangsdk.RequestOpts{OkCodes: []int{200}})
+	_, r.Err = client.Post(CreateURL(client), b, &r.Body, &golangsdk.RequestOpts{OkCodes: []int{201}})
 	return
 }
 

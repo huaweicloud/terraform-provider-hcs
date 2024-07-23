@@ -391,6 +391,7 @@ func Provider() *schema.Provider {
 			"hcs_vpc_subnets":            vpc.DataSourceVpcSubnets(),
 			"hcs_vpc_peering_connection": vpc.DataSourceVpcPeeringConnectionV2(),
 			"hcs_vpc_peering":            vpc.DataSourceVpcPeering(),
+			"hcs_vpc_flow_log":           vpc.DataSourceVpcFlowLog(),
 
 			"hcs_networking_port":      vpc.DataSourceNetworkingPortV2(),
 			"hcs_networking_secgroup":  vpc.DataSourceNetworkingSecGroup(),
@@ -558,6 +559,7 @@ func Provider() *schema.Provider {
 			"hcs_networking_vip_associate":        vpc.ResourceNetworkingVIPAssociateV2(),
 			"hcs_vpc_peering":                     vpc.ResourceVpcPeering(),
 			"hcs_vpc_peering_route":               vpc.ResourceVpcPeeringRoute(),
+			"hcs_vpc_flow_log":                    vpc.ResourceVpcFlowLog(),
 
 			"hcs_networking_port":    deprecated.ResourceNetworkingPortV2(),
 			"hcs_networking_port_v2": deprecated.ResourceNetworkingPortV2(),
