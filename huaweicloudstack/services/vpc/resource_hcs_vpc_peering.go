@@ -45,6 +45,11 @@ func ResourceVpcPeering() *schema.Resource {
 				Required: true,
 				ForceNew: true,
 			},
+			"peer_region": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+			},
 			"status": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -65,6 +70,7 @@ func resourceVpcPeeringCreate(ctx context.Context, d *schema.ResourceData, meta 
 		Name:       d.Get("name").(string),
 		LocalVpcId: d.Get("vpc_id").(string),
 		PeerVpcId:  d.Get("peer_vpc_id").(string),
+		PeerRegion: d.Get("peer_region").(string),
 	}
 
 	n, err := v1peerings.Create(vpcPeeringClient, createOpts).ExtractCreate()

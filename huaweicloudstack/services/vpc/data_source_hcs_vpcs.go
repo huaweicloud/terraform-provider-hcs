@@ -2,6 +2,7 @@ package vpc
 
 import (
 	"context"
+	v3Vpcs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/networking/v3/vpcs"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -72,6 +73,11 @@ func DataSourceVpcs() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
+						"secondary_cidrs": {
+							Type:     schema.TypeList,
+							Computed: true,
+							Elem:     &schema.Schema{Type: schema.TypeString},
+						},
 					},
 				},
 			},
@@ -113,6 +119,21 @@ func dataSourceVpcsRead(_ context.Context, d *schema.ResourceData, meta interfac
 			"status":                vpcResource.Status,
 			"description":           vpcResource.Description,
 		}
+
+		vpcs = append(vpcs, vpc)
+		ids = append(ids, vpcResource.ID)
+
+		// save VirtualPrivateCloudV3 extend_cidr
+		vpcV3Client, v3Err := hcsConfig.NetworkingV3Client(hcsConfig.GetRegion(d))
+		if v3Err != nil {
+			return diag.Errorf("error creating VPC v3 client: %s", err)
+		}
+
+		res, err := v3Vpcs.Get(vpcV3Client, vpcResource.ID).Extract()
+		if err != nil {
+			diag.Errorf("error retrieving VPC (%s) v3 detail: %s", d.Id(), err)
+		}
+		vpc["secondary_cidrs"] = res.ExtendCidrs
 
 		vpcs = append(vpcs, vpc)
 		ids = append(ids, vpcResource.ID)

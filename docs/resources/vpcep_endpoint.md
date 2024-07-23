@@ -8,10 +8,6 @@ Provides a resource to manage a VPC endpoint resource.
 
 ## Example Usage
 
-```
-
-### Access to the vpcep service
-
 ```hcl
 variable "service_vpc_id" {}
 variable "vm_port" {}

@@ -11,7 +11,6 @@ Manages a DCS instance within HuaweiCloudStack.
 
 !> **WARNING:** DCS for Memcached is about to become unavailable and is no longer sold in some regions.
 You can use DCS for Redis 4.0, 5.0 or 6.0 instead. It is not possible to create Memcached instances through this resource.
-You can use this resource to manage Memcached instances that exist in HuaweiCloud.
 
 ## Example Usage
 

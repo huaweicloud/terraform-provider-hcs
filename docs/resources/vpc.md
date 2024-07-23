@@ -17,9 +17,14 @@ variable "vpc_cidr" {
   default = "192.168.0.0/16"
 }
 
+variable "vpc_secondary_cidrs" {
+  default = ["192.182.0.0/24","192.183.0.0/24","192.184.0.0/24","192.185.0.0/24"]
+}
+
 resource "hcs_vpc" "vpc" {
   name = var.vpc_name
   cidr = var.vpc_cidr
+  secondary_cidrs = var.vpc_secondary_cidrs
 }
 
 ```
@@ -38,6 +43,9 @@ The following arguments are supported:
   10.255.255.0/24, 172.16.0.0/12 to 172.31.255.0/24, or 192.168.0.0/16 to 192.168.255.0/24.
 
 * `enterprise_project_id` - (Optional, String) Specifies the enterprise project ID which the desired VPC belongs to.
+
+* `secondary_cidrs` - (Optional, Set) Specifies the secondary CIDR blocks of the VPC.
+  Each VPC can have 4 secondary CIDR blocks.
 
 ## Attributes Reference
 
