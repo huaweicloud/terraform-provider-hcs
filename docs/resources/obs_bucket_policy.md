@@ -77,7 +77,7 @@ The following arguments are supported:
 
 * `policy` - (Required, String) Specifies the text of the bucket policy in JSON format. For more information about obs
   format bucket policy,
-  see the [Developer Guide](https://support.huaweicloud.com/intl/en-us/perms-cfg-obs/obs_40_0004.html).
+  see the [Developer Guide](https://support.huawei.com/enterprise/zh/doc/EDOC1100375100?section=k008).
 
 * `policy_format` - (Optional, String) Specifies the policy format, the supported values are *obs* and *s3*. Defaults
   to *obs* .
