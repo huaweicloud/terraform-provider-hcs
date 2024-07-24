@@ -226,7 +226,7 @@ The following arguments are supported:
 * `security_groups` - (Optional, List, ForceNew) Specifies the list of custom security group IDs for the node pool.
   If specified, the nodes will be put in these security groups. When specifying a security group, do not modify
   the rules of the port on which CCE running depends. For details, see
-  [documentation](https://support.huaweicloud.com/intl/en-us/cce_faq/cce_faq_00265.html).
+  [documentation](https://support.huawei.com/enterprise/zh/doc/EDOC1100386449?idPath=22658044%7C22662728%7C22666212%7C22276752).
 
 * `pod_security_groups` - (Optional, List, ForceNew) Specifies the list of security group IDs for the pod.
   Only supported in CCE Turbo clusters of v1.19 and above. Changing this parameter will create a new resource.
