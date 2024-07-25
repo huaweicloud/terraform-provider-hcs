@@ -2,7 +2,7 @@
 subcategory: "Elastic Cloud Server (ECS)"
 ---
 
-# hcs_compute_keypair
+# hcs_ecs_compute_keypair
 
 Manages a keypair resource within HuaweiCloudStack.
 
@@ -11,7 +11,7 @@ Manages a keypair resource within HuaweiCloudStack.
 ### Create a new keypair and export private key to current folder
 
 ```hcl
-resource "hcs_compute_keypair" "test-keypair" {
+resource "hcs_ecs_compute_keypair" "test-keypair" {
   name     = "my-keypair"
   key_file = "private_key.pem"
 }
@@ -20,7 +20,7 @@ resource "hcs_compute_keypair" "test-keypair" {
 ### Import an exist keypair
 
 ```hcl
-resource "hcs_compute_keypair" "test-keypair" {
+resource "hcs_ecs_compute_keypair" "test-keypair" {
   name       = "my-keypair"
   public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAlJq5Pu+eizhou7nFFDxXofr2ySF8k/yuA9OnJdVF9Fbf85Z59CWNZBvcAT... root@terra-dev"
 }
@@ -58,5 +58,5 @@ In addition to all arguments above, the following attributes are exported:
 Keypairs can be imported using the `name`, e.g.
 
 ```
-$ terraform import hcs_compute_keypair.my-keypair test-keypair
+$ terraform import hcs_ecs_compute_keypair.my-keypair test-keypair
 ```
