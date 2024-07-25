@@ -23,7 +23,6 @@ resource "hcs_as_configuration" "my_as_config" {
     flavor             = var.flavor_id
     image              = var.image_id
     key_name           = var.ssh_key
-    security_group_ids = [var.security_group_id]
 
     disk {
       size        = 40
@@ -50,7 +49,6 @@ resource "hcs_as_configuration" "my_as_config" {
     flavor             = var.flavor_id
     image              = var.image_id
     key_name           = var.ssh_key
-    security_group_ids = [var.security_group_id]
 
     disk {
       size        = 40
@@ -83,7 +81,6 @@ resource "hcs_as_configuration" "my_as_config" {
     flavor             = var.flavor_id
     image              = var.image_id
     key_name           = var.ssh_key
-    security_group_ids = [var.security_group_id]
     user_data          = file("userdata.txt")
 
     disk {
@@ -112,7 +109,6 @@ resource "hcs_as_configuration" "my_as_config" {
   instance_config {
     instance_id        = var.instance_id
     key_name           = var.ssh_key
-    security_group_ids = [var.security_group_id]
   }
 }
 ```
@@ -147,10 +143,7 @@ The `instance_config` block supports:
   data disks are optional. The [object](#instance_config_disk_object) structure is documented below.
   Changing this will create a new resource.
 
-* `key_name` - (Required, String, ForceNew) Specifies the name of the SSH key pair used to log in to the instance.
-  Changing this will create a new resource.
-
-* `security_group_ids` - (Required, List, ForceNew) Specifies an array of one or more security group IDs.
+* `key_name` - (Optional, String, ForceNew) Specifies the name of the SSH key pair used to log in to the instance.
   Changing this will create a new resource.
 
 * `charging_mode` - (Optional, String, ForceNew) Specifies a billing mode for an ECS.
