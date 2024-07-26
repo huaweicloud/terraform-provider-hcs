@@ -20,6 +20,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/lts"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/mrs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/obs"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/sfs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/swr"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/waf"
 
@@ -380,6 +381,8 @@ func Provider() *schema.Provider {
 			"hcs_obs_buckets":       obs.DataSourceObsBuckets(),
 			"hcs_obs_bucket_object": obs.DataSourceObsBucketObject(),
 
+			"hcs_sfs_file_system": sfs.DataSourceSFSFileSystemV2(),
+
 			"hcs_smn_topics": smn.DataSourceTopics(),
 
 			"hcs_vpc":                    vpc.DataSourceVpcV1(),
@@ -491,6 +494,9 @@ func Provider() *schema.Provider {
 			"hcs_obs_bucket_object":     obs.ResourceObsBucketObject(),
 			"hcs_obs_bucket_object_acl": obs.ResourceOBSBucketObjectAcl(),
 			"hcs_obs_bucket_policy":     obs.ResourceObsBucketPolicy(),
+
+			"hcs_sfs_access_rule": sfs.ResourceSFSAccessRuleV2(),
+			"hcs_sfs_file_system": sfs.ResourceSFSFileSystemV2(),
 
 			"hcs_swr_organization":           swr.ResourceSWROrganization(),
 			"hcs_swr_repository":             swr.ResourceSWRRepository(),
