@@ -16,7 +16,7 @@ data "hcs_vpc_flow_log" "basic" {
 }
 ```
 
-## Argument Referenceawei
+## Argument Reference
 
 The following arguments are supported:
 
