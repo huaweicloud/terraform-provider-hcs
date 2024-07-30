@@ -2,7 +2,7 @@
 
 ## 2.3.6 (July 30, 2024)
 
-1. Enhance: VPC ACL supports batch setting of source ports and destination ports.
+1. Enhancement: VPC ACL supports the simultaneous configuration of multiple source and destination ports.
 2. Fix docs format.
 
 ## 2.3.5 (March 29, 2024)
