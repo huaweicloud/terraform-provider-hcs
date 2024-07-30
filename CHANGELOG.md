@@ -1,5 +1,36 @@
 # CHANGELOG
 
+## 2.4.3 (July 30, 2024)
+
+1. Add resources and data sources support for KMS service.
+2. Add resources and data sources support for SFS service.
+3. Add resource and data source support for VPC Flow.
+4. Enhance: VPC ACL supports batch setting of source ports and destination ports.
+5. Enhance: VPC supports secondary CIDR.
+
+The new resources and data sources added in the new version are as follows:
+
+* **New Resources:**
+  + `hcs_kms_key`
+  + `hcs_kms_grant`
+  + `hcs_dms_kafka_instance`
+  + `hcs_dms_kafka_consumer_group`
+  + `hcs_dms_kafka_permissions`
+  + `hcs_dms_kafka_topic`
+  + `hcs_dms_kafka_user`
+  + `hcs_sfs_access_rule`
+  + `hcs_sfs_file_system`
+  + `hcs_vpc_flow_log`
+
+* **New Data Sources:**
+  + `hcs_kms_key`
+  + `hcs_kms_data_key`
+  + `hcs_dms_kafka_instances`
+  + `hcs_dms_kafka_flavors`
+  + `hcs_dms_maintainwindow`
+  + `hcs_sfs_file_system`
+  + `hcs_vpc_flow_log`
+
 ## 2.4.2 (June 29, 2024)
 
 * The new resources and data sources added in the new version are as follows:
