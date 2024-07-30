@@ -160,7 +160,7 @@ The following arguments are supported:
 * `security_group_id` - (Optional, String) Specifies the default worker node security group ID of the cluster.
   If left empty, the system will automatically create a default worker node security group for you.
   The default worker node security group needs to allow access from certain ports to ensure normal communications.
-  For details, see [documentation](https://support.huaweicloud.com/intl/en-us/cce_faq/cce_faq_00265.html).
+  For details, see [documentation](https://support.huawei.com/enterprise/zh/doc/EDOC1100386449?idPath=22658044%7C22662728%7C22666212%7C22276752).
   If updated, the modified security group will only be applied to nodes newly created or accepted.
   For existing nodes, you need to manually modify the security group rules for them.
 

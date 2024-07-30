@@ -84,7 +84,8 @@ func ResourceASConfiguration() *schema.Resource {
 						},
 						"key_name": {
 							Type:     schema.TypeString,
-							Required: true,
+							Optional: true,
+							Computed: true,
 							ForceNew: true,
 						},
 						"security_group_ids": {
@@ -94,6 +95,7 @@ func ResourceASConfiguration() *schema.Resource {
 							ForceNew:    true,
 							Description: "schema: Required",
 							Elem:        &schema.Schema{Type: schema.TypeString},
+							Deprecated:  "Deprecated",
 						},
 						"charging_mode": {
 							Type:     schema.TypeString,
@@ -334,20 +336,6 @@ func buildPublicIpOpts(publicIpMeta map[string]interface{}) configurations.Publi
 	return publicIpOpts
 }
 
-func buildSecurityGroupIDsOpts(secGroups []interface{}) []configurations.SecurityGroupOpts {
-	if len(secGroups) == 0 {
-		return nil
-	}
-
-	res := make([]configurations.SecurityGroupOpts, len(secGroups))
-	for i, v := range secGroups {
-		res[i] = configurations.SecurityGroupOpts{
-			ID: v.(string),
-		}
-	}
-	return res
-}
-
 func buildInstanceConfig(configDataMap map[string]interface{}) (configurations.InstanceConfigOpts, error) {
 	disksData := configDataMap["disk"].([]interface{})
 	disks, err := buildDiskOpts(disksData)
@@ -364,7 +352,6 @@ func buildInstanceConfig(configDataMap map[string]interface{}) (configurations.I
 		ServerGroupID:        configDataMap["ecs_group_id"].(string),
 		UserData:             []byte(configDataMap["user_data"].(string)),
 		Metadata:             configDataMap["metadata"].(map[string]interface{}),
-		SecurityGroups:       buildSecurityGroupIDsOpts(configDataMap["security_group_ids"].([]interface{})),
 		Personality:          buildPersonalityOpts(configDataMap["personality"].([]interface{})),
 		Disk:                 disks,
 	}
@@ -506,7 +493,6 @@ func flattenInstanceConfig(instanceConfig configurations.InstanceConfig) []map[s
 		"metadata":               instanceConfig.Metadata,
 		"disk":                   flattenInstanceDisks(instanceConfig.Disk),
 		"public_ip":              flattenInstancePublicIP(instanceConfig.PublicIp.Eip),
-		"security_group_ids":     flattenSecurityGroupIDs(instanceConfig.SecurityGroups),
 		"personality":            flattenInstancePersonality(instanceConfig.Personality),
 	}
 	return []map[string]interface{}{config}
@@ -568,18 +554,6 @@ func flattenInstancePersonality(personalities []configurations.Personality) []ma
 			"path":    item.Path,
 			"content": item.Content,
 		}
-	}
-	return res
-}
-
-func flattenSecurityGroupIDs(sgs []configurations.SecurityGroup) []string {
-	if len(sgs) == 0 {
-		return nil
-	}
-
-	res := make([]string, len(sgs))
-	for i, item := range sgs {
-		res[i] = item.ID
 	}
 	return res
 }

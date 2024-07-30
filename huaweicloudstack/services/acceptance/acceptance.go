@@ -118,8 +118,9 @@ var (
 
 	HCS_FGS_TRIGGER_LTS_AGENCY = os.Getenv("HCS_FGS_TRIGGER_LTS_AGENCY")
 
-	HCS_KMS_ENVIRONMENT = os.Getenv("HCS_KMS_ENVIRONMENT")
-	HCS_KMS_KEY_ID      = os.Getenv("HCS_KMS_KEY_ID")
+	HCS_KMS_ENVIRONMENT    = os.Getenv("HCS_KMS_ENVIRONMENT")
+	HCS_KMS_KEY_ID         = os.Getenv("HCS_KMS_KEY_ID")
+	HCS_KMS_HSM_CLUSTER_ID = os.Getenv("HCS_KMS_HSM_CLUSTER_ID")
 
 	HCS_ORGANIZATIONS_ENVIRONMENT            = os.Getenv("HCS_ORGANIZATIONS_ENVIRONMENT")
 	HCS_ORGANIZATIONS_INVITE_ACCOUNT_ID      = os.Getenv("HCS_ORGANIZATIONS_INVITE_ACCOUNT_ID")
@@ -793,5 +794,12 @@ func TestAccPreCheckLtsStructConfigCustom(t *testing.T) {
 	if HCS_LTS_STRUCT_CONFIG_TEMPLATE_ID == "" || HCS_LTS_STRUCT_CONFIG_TEMPLATE_NAME == "" {
 		t.Skip("HCS_LTS_STRUCT_CONFIG_TEMPLATE_ID and HCS_LTS_STRUCT_CONFIG_TEMPLATE_NAME must be" +
 			" set for LTS struct config custom acceptance tests")
+	}
+}
+
+// lintignore:AT003
+func TestAccPreCheckKmsHsmClusterId(t *testing.T) {
+	if HCS_KMS_HSM_CLUSTER_ID == "" {
+		t.Skip("HCS_KMS_HSM_CLUSTER_ID must be set for KMS dedicated keystore acceptance tests.")
 	}
 }
