@@ -13,11 +13,14 @@ import (
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cce"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cfw"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dcs"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dew"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dms"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dws"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/gaussdb"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/lts"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/mrs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/obs"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/sfs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/swr"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/waf"
 
@@ -337,6 +340,13 @@ func Provider() *schema.Provider {
 			"hcs_dcs_templates":       dcs.DataSourceTemplates(),
 			"hcs_dcs_template_detail": dcs.DataSourceTemplateDetail(),
 
+			"hcs_kms_key":      dew.DataSourceKmsKey(),
+			"hcs_kms_data_key": dew.DataSourceKmsDataKeyV1(),
+
+			"hcs_dms_kafka_instances": dms.DataSourceDmsKafkaInstances(),
+			"hcs_dms_kafka_flavors":   dms.DataSourceKafkaFlavors(),
+			"hcs_dms_maintainwindow":  dms.DataSourceDmsMaintainWindow(),
+
 			"hcs_dws_flavors": dws.DataSourceDwsFlavors(),
 
 			"hcs_availability_zones":       ecs.DataSourceAvailabilityZones(),
@@ -371,6 +381,8 @@ func Provider() *schema.Provider {
 			"hcs_obs_buckets":       obs.DataSourceObsBuckets(),
 			"hcs_obs_bucket_object": obs.DataSourceObsBucketObject(),
 
+			"hcs_sfs_file_system": sfs.DataSourceSFSFileSystemV2(),
+
 			"hcs_smn_topics": smn.DataSourceTopics(),
 
 			"hcs_vpc":                    vpc.DataSourceVpcV1(),
@@ -382,6 +394,7 @@ func Provider() *schema.Provider {
 			"hcs_vpc_subnets":            vpc.DataSourceVpcSubnets(),
 			"hcs_vpc_peering_connection": vpc.DataSourceVpcPeeringConnectionV2(),
 			"hcs_vpc_peering":            vpc.DataSourceVpcPeering(),
+			"hcs_vpc_flow_log":           vpc.DataSourceVpcFlowLog(),
 
 			"hcs_networking_port":      vpc.DataSourceNetworkingPortV2(),
 			"hcs_networking_secgroup":  vpc.DataSourceNetworkingSecGroup(),
@@ -414,6 +427,15 @@ func Provider() *schema.Provider {
 
 			"hcs_dcs_instance": dcs.ResourceDcsInstance(),
 			"hcs_dcs_backup":   dcs.ResourceDcsBackup(),
+
+			"hcs_kms_key":   dew.ResourceKmsKey(),
+			"hcs_kms_grant": dew.ResourceKmsGrant(),
+
+			"hcs_dms_kafka_instance":       dms.ResourceDmsKafkaInstance(),
+			"hcs_dms_kafka_consumer_group": dms.ResourceDmsKafkaConsumerGroup(),
+			"hcs_dms_kafka_permissions":    dms.ResourceDmsKafkaPermissions(),
+			"hcs_dms_kafka_topic":          dms.ResourceDmsKafkaTopic(),
+			"hcs_dms_kafka_user":           dms.ResourceDmsKafkaUser(),
 
 			"hcs_dns_recordset": dns.ResourceDNSRecordset(),
 			"hcs_dns_zone":      dns.ResourceDNSZone(),
@@ -472,6 +494,9 @@ func Provider() *schema.Provider {
 			"hcs_obs_bucket_object":     obs.ResourceObsBucketObject(),
 			"hcs_obs_bucket_object_acl": obs.ResourceOBSBucketObjectAcl(),
 			"hcs_obs_bucket_policy":     obs.ResourceObsBucketPolicy(),
+
+			"hcs_sfs_access_rule": sfs.ResourceSFSAccessRuleV2(),
+			"hcs_sfs_file_system": sfs.ResourceSFSFileSystemV2(),
 
 			"hcs_swr_organization":           swr.ResourceSWROrganization(),
 			"hcs_swr_repository":             swr.ResourceSWRRepository(),
@@ -540,6 +565,7 @@ func Provider() *schema.Provider {
 			"hcs_networking_vip_associate":        vpc.ResourceNetworkingVIPAssociateV2(),
 			"hcs_vpc_peering":                     vpc.ResourceVpcPeering(),
 			"hcs_vpc_peering_route":               vpc.ResourceVpcPeeringRoute(),
+			"hcs_vpc_flow_log":                    vpc.ResourceVpcFlowLog(),
 
 			"hcs_networking_port":    deprecated.ResourceNetworkingPortV2(),
 			"hcs_networking_port_v2": deprecated.ResourceNetworkingPortV2(),
@@ -733,6 +759,12 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 	}
 	if _, ok := endpoints["swr"]; !ok {
 		endpoints["swr"] = fmt.Sprintf("https://swr-api.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
+	}
+	if _, ok := endpoints["obs"]; !ok {
+		endpoints["obs"] = fmt.Sprintf("https://obsv3.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
+	}
+	if _, ok := endpoints["kms"]; !ok {
+		endpoints["kms"] = fmt.Sprintf("https://kms-scc-apig.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
 	}
 
 	hcsConfig.Endpoints = endpoints

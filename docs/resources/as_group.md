@@ -15,6 +15,11 @@ variable "configuration_id" {}
 variable "vpc_id" {}
 variable "subnet_id" {}
 
+resource "hcs_networking_secgroup" "test" {
+  name                 = "secgroup_3196"
+  delete_default_rules = true
+}
+
 resource "hcs_as_group" "my_as_group" {
   scaling_group_name       = "my_as_group"
   scaling_configuration_id = var.configuration_id
@@ -27,6 +32,9 @@ resource "hcs_as_group" "my_as_group" {
 
   networks {
     id = var.subnet_id
+  }
+  security_groups {
+    id = hcs_networking_secgroup.test.id
   }
 }
 ```
