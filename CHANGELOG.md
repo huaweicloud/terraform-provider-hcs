@@ -4,9 +4,9 @@
 
 1. Add resources and data sources support for KMS service.
 2. Add resources and data sources support for SFS service.
-3. Add resource and data source support for VPC Flow.
-4. Enhance: VPC ACL supports batch setting of source ports and destination ports.
-5. Enhance: VPC supports secondary CIDR.
+3. Add support for the resource and data source of VPC Flow.
+4. Enhancement: Batch configuration of source and destination ports is now supported in ACL.
+5. Enhancement: VPC support secondary CIDR, allowing for more flexible network design and addressing schemes.
 
 The new resources and data sources added in the new version are as follows:
 
