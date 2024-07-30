@@ -13,11 +13,6 @@ The new resources and data sources added in the new version are as follows:
 * **New Resources:**
   + `hcs_kms_key`
   + `hcs_kms_grant`
-  + `hcs_dms_kafka_instance`
-  + `hcs_dms_kafka_consumer_group`
-  + `hcs_dms_kafka_permissions`
-  + `hcs_dms_kafka_topic`
-  + `hcs_dms_kafka_user`
   + `hcs_sfs_access_rule`
   + `hcs_sfs_file_system`
   + `hcs_vpc_flow_log`
@@ -25,9 +20,6 @@ The new resources and data sources added in the new version are as follows:
 * **New Data Sources:**
   + `hcs_kms_key`
   + `hcs_kms_data_key`
-  + `hcs_dms_kafka_instances`
-  + `hcs_dms_kafka_flavors`
-  + `hcs_dms_maintainwindow`
   + `hcs_sfs_file_system`
   + `hcs_vpc_flow_log`
 
