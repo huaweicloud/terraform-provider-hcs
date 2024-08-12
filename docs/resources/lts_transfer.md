@@ -16,7 +16,7 @@ Manages an LTS transfer task resource within HuaweiCloudStack.
 ```hcl
 variable "lts_group_id" {}
 variable "lts_stream_id" {}
-variable "obs_buket" {}
+variable "obs_bucket" {}
 
 resource "hcs_lts_transfer" "test" {
   log_group_id = var.lts_group_id
@@ -34,7 +34,7 @@ resource "hcs_lts_transfer" "test" {
     log_transfer_detail {
       obs_period          = 3
       obs_period_unit     = "hour"
-      obs_bucket_name     = var.obs_buket
+      obs_bucket_name     = var.obs_bucket
       obs_dir_prefix_name = "dir_prefix_"
       obs_prefix_name     = "prefix_"
       obs_time_zone       = "UTC"
@@ -107,7 +107,7 @@ resource "hcs_lts_transfer" "test" {
 ```hcl
 variable "lts_group_id" {}
 variable "lts_stream_id" {}
-variable "obs_buket" {}
+variable "obs_bucket" {}
 variable "agency_domain_id" {}
 variable "agency_domain_name" {}
 variable "agency_name" {}
@@ -129,7 +129,7 @@ resource "hcs_lts_transfer" "obs_agency" {
     log_transfer_detail {
       obs_period          = 3
       obs_period_unit     = "hour"
-      obs_bucket_name     = var.obs_buket
+      obs_bucket_name     = var.obs_bucket
       obs_dir_prefix_name = "dir_prefix_"
       obs_prefix_name     = "prefix_"
       obs_time_zone       = "UTC"
