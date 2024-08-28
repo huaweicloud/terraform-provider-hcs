@@ -67,6 +67,10 @@ func FlavorsRefSchema() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"ext_boot_type": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -128,10 +132,11 @@ func dataSourceEcsFlavorsRead(_ context.Context, d *schema.ResourceData, meta in
 
 func flattenFlavor(flavor *flavors.Flavor) map[string]interface{} {
 	res := map[string]interface{}{
-		"id":    flavor.ID,
-		"name":  flavor.Name,
-		"ram":   flavor.Ram,
-		"vcpus": flavor.Vcpus,
+		"id":            flavor.ID,
+		"name":          flavor.Name,
+		"ram":           flavor.Ram,
+		"vcpus":         flavor.Vcpus,
+		"ext_boot_type": flavor.OsExtraSpecs.ExtBootType,
 	}
 	return res
 }

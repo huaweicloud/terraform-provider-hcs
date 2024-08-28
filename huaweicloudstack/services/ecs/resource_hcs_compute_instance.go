@@ -88,6 +88,14 @@ func ResourceComputeInstance() *schema.Resource {
 				DefaultFunc: schema.EnvDefaultFunc("HW_FLAVOR_ID", nil),
 				Description: "schema: Required",
 			},
+			"ext_boot_type": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+				ValidateFunc: validation.StringInSlice([]string{
+					"LocalDisk", "Volume",
+				}, false),
+			},
 			"flavor_name": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -215,6 +223,11 @@ func ResourceComputeInstance() *schema.Resource {
 							ForceNew: true,
 						},
 						"kms_key_id": {
+							Type:     schema.TypeString,
+							Optional: true,
+							ForceNew: true,
+						},
+						"encrypt_cipher": {
 							Type:     schema.TypeString,
 							Optional: true,
 							ForceNew: true,
@@ -366,6 +379,10 @@ func ResourceComputeInstance() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
+						"encrypt_cipher": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
 					},
 				},
 			},
@@ -473,6 +490,11 @@ func resourceComputeInstanceCreate(ctx context.Context, d *schema.ResourceData, 
 	epsID := cfg.GetEnterpriseProjectID(d)
 	if epsID != "" {
 		extendParam.EnterpriseProjectId = epsID
+	}
+
+	extBootType := d.Get("ext_boot_type").(string)
+	if extBootType == "LocalDisk" {
+		extendParam.Image_Boot = true
 	}
 	if extendParam != (cloudservers.ServerExtendParam{}) {
 		createOpts.ExtendParam = &extendParam
@@ -1346,11 +1368,11 @@ func resourceInstanceDataVolumes(d *schema.ResourceData) []cloudservers.DataVolu
 		}
 
 		if vol["kms_key_id"] != "" {
-			matadata := cloudservers.VolumeMetadata{
-				SystemEncrypted: "1",
-				SystemCmkid:     vol["kms_key_id"].(string),
+			encryptioninfo := cloudservers.VolumeEncryptInfo{
+				CmkId:  vol["kms_key_id"].(string),
+				Cipher: vol["encrypt_cipher"].(string),
 			}
-			volRequest.Metadata = &matadata
+			volRequest.EncryptionInfo = &encryptioninfo
 		}
 
 		volRequests = append(volRequests, volRequest)
