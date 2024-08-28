@@ -341,6 +341,57 @@ resource "hcs_ecs_compute_instance" "ecs-userdata" {
   delete_eip_on_termination = true
 }
 ```
+### Instance with Encrypt Data Volumes
+```
+data "hcs_availability_zones" "test" {
+}
+
+data "hcs_ecs_compute_flavors" "flavors" {
+  availability_zone = data.hcs_availability_zones.test.names[0]
+  cpu_core_count    = 2
+  memory_size       = 4
+}
+
+data "hcs_vpc_subnets" "test" {
+  name = "subnet-32a8"
+}
+
+data "hcs_ims_images" "test" {
+  name       = "mini_image"
+}
+
+data "hcs_networking_secgroups" "test" {
+  name = "default"
+}
+
+resource "hcs_ecs_compute_instance" "ecs-userdata" {
+  name                = "ecs-userdata"
+  description         = "terraform test"
+  image_id            = data.hcs_ims_images.test.images[0].id
+  flavor_id           = data.hcs_ecs_compute_flavors.flavors.ids[0]
+  ext_boot_type       = data.hcs_ecs_compute_flavors.test.flavors[0].ext_boot_type
+  security_group_ids  = [data.hcs_networking_secgroups.test.security_groups[0].id]
+  availability_zone = data.hcs_availability_zones.test.names[0]
+  user_data       = "xxxxxxxxxxxxxxxxxxxxxxx"
+  
+  network {
+    uuid              = data.hcs_vpc_subnets.test.subnets[0].id
+    source_dest_check = false
+  }
+
+  system_disk_type = "business_type_01"
+  system_disk_size = 10
+
+  data_disks {
+    kms_key_id = "ce488d6a-6090-4f7f-a95b-4faf3ce0bad0"
+    encrypt_cipher = "AES256-XTS"
+    type = "business_type_01"
+    size = "10"
+  }
+  delete_disks_on_termination = true
+  delete_eip_on_termination = true
+}
+```
 
 ## Argument Reference
 
@@ -353,6 +404,9 @@ The following arguments are supported:
   including letters, digits, underscores (_), hyphens (-), and periods (.).
 
 * `flavor_id` - (Required, String) Specifies the flavor ID of the instance to be created.
+
+* `ext_boot_type` - (Required, String) Specifies the image type in flavor. which must be one of available image types,
+  contains of *LocalDisk*, *Volume*
 
 * `image_id` - (Optional, String, ForceNew) Required if `image_name` is empty. Specifies the image ID of the desired
   image for the instance. Changing this creates a new instance.
@@ -450,7 +504,9 @@ The `data_disks` block supports:
 * `snapshot_id` - (Optional, String, ForceNew) Specifies the snapshot id. Changing this creates a new instance.
 
 * `kms_key_id` - (Optional, String, ForceNew) Specifies the ID of a KMS key. This is used to encrypt the disk.
-  Changing this creates a new instance.
+
+* `encrypt_cipher` - (Optional, String, ForceNew) Specifies the encrypt cipher of KMS. This value must be set to AES256-XTS or SM4-XTS when SM series cryptographic algorithms are used. When other cryptographic algorithms are used, this value must be AES256-XTS.
+  This param must exist if *kms_key_id* exists
 
 The `bandwidth` block supports:
 
