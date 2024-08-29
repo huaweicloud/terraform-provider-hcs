@@ -33,7 +33,7 @@ type CreateOpts struct {
 
 	IsAutoRename *bool `json:"isAutoRename,omitempty"`
 
-	RootVolume RootVolume `json:"root_volume" required:"true"`
+	RootVolume RootVolume `json:"root_volume,omitempty"`
 
 	DataVolumes []DataVolume `json:"data_volumes,omitempty"`
 
@@ -133,6 +133,8 @@ type RootVolume struct {
 	ExtendParam *VolumeExtendParam `json:"extendparam,omitempty"`
 
 	Metadata *VolumeMetadata `json:"metadata,omitempty"`
+
+	EncryptionInfo *VolumeEncryptInfo `json:"encryption_info,omitempty"`
 }
 
 type DataVolume struct {
