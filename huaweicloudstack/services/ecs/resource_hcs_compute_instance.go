@@ -200,6 +200,19 @@ func ResourceComputeInstance() *schema.Resource {
 				Optional: true,
 				Computed: true,
 			},
+			"kms_key_id": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"encrypt_cipher": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+				ValidateFunc: validation.StringInSlice([]string{
+					"AES256-XTS", "SM4-XTS",
+				}, false),
+			},
 			"data_disks": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -225,12 +238,15 @@ func ResourceComputeInstance() *schema.Resource {
 						"kms_key_id": {
 							Type:     schema.TypeString,
 							Optional: true,
-							ForceNew: true,
+							Computed: true,
 						},
 						"encrypt_cipher": {
 							Type:     schema.TypeString,
 							Optional: true,
-							ForceNew: true,
+							Computed: true,
+							ValidateFunc: validation.StringInSlice([]string{
+								"AES256-XTS", "SM4-XTS",
+							}, false),
 						},
 					},
 				},
@@ -1339,6 +1355,11 @@ func shouldUnsubscribeEIP(d *schema.ResourceData) bool {
 }
 
 func resourceInstanceRootVolume(d *schema.ResourceData) cloudservers.RootVolume {
+	extBootType := d.Get("ext_boot_type").(string)
+	if extBootType != "Volume" {
+		log.Printf("[INFO] extBootType is: %s, no need config root valume param.", extBootType)
+		return cloudservers.RootVolume{}
+	}
 	diskType := d.Get("system_disk_type").(string)
 	if diskType == "" {
 		diskType = "business_type_01"
@@ -1346,6 +1367,13 @@ func resourceInstanceRootVolume(d *schema.ResourceData) cloudservers.RootVolume 
 	volRequest := cloudservers.RootVolume{
 		VolumeType: diskType,
 		Size:       d.Get("system_disk_size").(int),
+	}
+	if d.Get("kms_key_id") != "" {
+		encryptioninfo := cloudservers.VolumeEncryptInfo{
+			CmkId:  d.Get("kms_key_id").(string),
+			Cipher: d.Get("encrypt_cipher").(string),
+		}
+		volRequest.EncryptionInfo = &encryptioninfo
 	}
 	return volRequest
 }
