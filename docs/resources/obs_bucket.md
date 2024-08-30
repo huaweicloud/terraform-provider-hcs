@@ -112,6 +112,20 @@ resource "hcs_obs_bucket" "bucket" {
 }
 ```
 
+### Create Fusion Bucket
+
+```hcl
+resource "hcs_obs_bucket" "bucket" {
+  bucket        = "my-bucket"
+  acl           = "private"
+  storage_class = "STANDARD"
+
+  bucket_redundancy        = "FUSION"
+  fusion_allow_upgrade     = true
+  fusion_allow_alternative = true
+}
+```
+
 ## Argument Reference
 
 The following arguments are supported:
@@ -192,6 +206,36 @@ The following arguments are supported:
   + The bound user domain names only support access over HTTP now.
 
   -> When creating or updating the OBS bucket user domain names, the original user domain names will be overwritten.
+
+* `bucket_redundancy` - (Optional, String) Specify the type of OBS bucket. It is **Required** when create fusion bucket.
+  If change a **CLASSIC** bucket to **FUSION** bucket, `fusion_allow_upgrade` must be **true**.
+  Valid value are as follows.
+  + **CLASSIC**. Create a CLASSIC bucket.
+  + **FUSION**. Create a FUSION bucket.
+
+  The API only support change a **CLASSIC** bucket to **FUSION** bucket. On the contrary, if change a **FUSION** bucket
+  to **CLASSIC** bucket, it's not supported and will not return any error message. Default to **CLASSIC**.
+
+* `fusion_allow_upgrade` - (Optional, Bool) Specify when the bucket already existing, whether upgrade it to
+  fusion bucket. Valid value are as follows.
+  + **true**. Allow upgrade existing bucket to fusion bucket.
+  + **false**. Deny upgrade existing bucket to fusion bucket.
+
+  Default to **false**.
+
+-> **NOTE:** The constraint of **fusion_allow_upgrade** are as follows:
++ It is valid only when `bucket_redundancy` is **FUSION**.
++ When the bucket has already exists, but the requester and the bucket owner are not the same user (that is,
+  they have different domain_id values), the API returns error code `409 BucketAlreadyExists`.
++ A bucket with cross-region replication configured cannot be upgraded to a converged bucket.
+
+* `fusion_allow_alternative` - (Optional, Bool) If the environment does not support fusion bucket, but you send a
+  request for creating a fusion bucket, whether allow the system automatically create a bucket of the classic bucket.
+  Valid value are as follows.
+  + **true**. Allow system to create CLASSIC bucket.
+  + **false**. Deny system to create CLASSIC bucket.
+
+  Default to **false**.
 
 <a name="bucket_logging_args"></a>
 The `logging` object supports the following:

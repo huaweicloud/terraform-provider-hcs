@@ -64,56 +64,6 @@ resource "hcs_as_group" "my_as_group" {
   }
 }
 
-resource "hcs_ces_alarmrule" "scaling_up_rule" {
-  alarm_name = "scaling_up_rule"
-
-  metric {
-    namespace   = "SYS.AS"
-    metric_name = "cpu_util"
-    dimensions {
-      name  = "AutoScalingGroup"
-      value = hcs_as_group.my_as_group.id
-    }
-  }
-  condition {
-    period              = 300
-    filter              = "average"
-    comparison_operator = ">="
-    value               = 80
-    unit                = "%"
-    count               = 1
-  }
-  alarm_actions {
-    type              = "autoscaling"
-    notification_list = []
-  }
-}
-
-resource "hcs_ces_alarmrule" "scaling_down_rule" {
-  alarm_name = "scaling_down_rule"
-
-  metric {
-    namespace   = "SYS.AS"
-    metric_name = "cpu_util"
-    dimensions {
-      name  = "AutoScalingGroup"
-      value = hcs_as_group.my_as_group.id
-    }
-  }
-  condition {
-    period              = 300
-    filter              = "average"
-    comparison_operator = "<="
-    value               = 20
-    unit                = "%"
-    count               = 1
-  }
-  alarm_actions {
-    type              = "autoscaling"
-    notification_list = []
-  }
-}
-
 resource "hcs_as_policy" "scaling_up_policy" {
   scaling_policy_name = "scaling_up_policy"
   scaling_policy_type = "ALARM"

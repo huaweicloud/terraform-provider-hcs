@@ -21,25 +21,6 @@ resource "hcs_vpc_route" "vpc_route" {
   nexthop     = var.nexthop
 }
 ```
-
-### Add route to a custom route table
-
-```hcl
-variable "vpc_id" {}
-variable "nexthop" {}
-
-data "hcs_vpc_route_table" "rtb" {
-  vpc_id = var.vpc_id
-  name   = "demo"
-}
-
-resource "hcs_vpc_route" "vpc_route" {
-  vpc_id         = var.vpc_id
-  route_table_id = data.hcs_vpc_route_table.rtb.id
-  destination    = "172.16.8.0/24"
-  type           = "ecs"
-  nexthop        = var.nexthop
-}
 ```
 
 ## Argument Reference
@@ -72,16 +53,11 @@ The following arguments are supported:
 * `description` - (Optional, String) Specifies the supplementary information about the route.
   The value is a string of no more than 255 characters and cannot contain angle brackets (< or >).
 
-* `route_table_id` - (Optional, String, ForceNew) Specifies the route table ID for which a route is to be added.
-  If the value is not set, the route will be added to the *default* route table.
-
 ## Attributes Reference
 
 In addition to all arguments above, the following attributes are exported:
 
 * `id` - The route ID, the format is `<route_table_id>/<destination>`
-
-* `route_table_name` - The name of route table.
 
 ## Timeouts
 
@@ -92,8 +68,8 @@ This resource provides the following timeouts configuration options:
 
 ## Import
 
-VPC routes can be imported using the route table ID and their `destination` separated by a slash, e.g.
+VPC routes can be imported using their `destination` separated by a slash, e.g.
 
 ```
-$ terraform import hcs_vpc_route.test <route_table_id>/<destination>
+$ terraform import hcs_vpc_route.test <destination>
 ```

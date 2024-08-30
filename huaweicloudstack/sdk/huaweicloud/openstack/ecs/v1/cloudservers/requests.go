@@ -33,7 +33,7 @@ type CreateOpts struct {
 
 	IsAutoRename *bool `json:"isAutoRename,omitempty"`
 
-	RootVolume RootVolume `json:"root_volume" required:"true"`
+	RootVolume RootVolume `json:"root_volume,omitempty"`
 
 	DataVolumes []DataVolume `json:"data_volumes,omitempty"`
 
@@ -133,6 +133,8 @@ type RootVolume struct {
 	ExtendParam *VolumeExtendParam `json:"extendparam,omitempty"`
 
 	Metadata *VolumeMetadata `json:"metadata,omitempty"`
+
+	EncryptionInfo *VolumeEncryptInfo `json:"encryption_info,omitempty"`
 }
 
 type DataVolume struct {
@@ -147,6 +149,8 @@ type DataVolume struct {
 	Extendparam *VolumeExtendParam `json:"extendparam,omitempty"`
 
 	Metadata *VolumeMetadata `json:"metadata,omitempty"`
+
+	EncryptionInfo *VolumeEncryptInfo `json:"encryption_info,omitempty"`
 }
 
 type VolumeExtendParam struct {
@@ -154,8 +158,12 @@ type VolumeExtendParam struct {
 }
 
 type VolumeMetadata struct {
-	SystemEncrypted string `json:"__system__encrypted,omitempty"`
-	SystemCmkid     string `json:"__system__cmkid,omitempty"`
+	SystemCmkid string `json:"__system__cmkid,omitempty"`
+}
+
+type VolumeEncryptInfo struct {
+	CmkId  string `json:"cmk_id,omitempty"`
+	Cipher string `json:"cipher,omitempty"`
 }
 
 type ServerExtendParam struct {
@@ -181,6 +189,8 @@ type ServerExtendParam struct {
 	SpotDurationCount int `json:"spot_duration_count,omitempty"`
 	// Specifies the spot ECS interruption policy, which can only be set to "immediate" currently
 	InterruptionPolicy string `json:"interruption_policy,omitempty"`
+
+	Image_Boot bool `json:"image_boot,omitempty"`
 }
 
 type MetaData struct {
