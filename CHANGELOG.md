@@ -4,8 +4,9 @@
 
 1. Add resources and data sources support for DMS service.
 2. ECS supports encryption for both system and data disks.
-3. OBS supports the creation of fusion buckets.
-4. Fix some bugs.
+3. OBS supports the creation of fusion buckets to support high availability.
+4. CCE supports custom AZ to improve high availability.
+5. Fix some bugs.
 
 The new resources and data sources added in the new version are as follows:
 
