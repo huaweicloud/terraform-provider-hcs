@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## 2.4.3 (August 30, 2024)
+
+1. Add resources and data sources support for DMS service.
+2. ECS supports encryption for both system and data disks.
+3. OBS supports the creation of fusion buckets.
+4. Fix some bugs.
+
+The new resources and data sources added in the new version are as follows:
+
+* **New Resources:**
+  + `hcs_dms_kafka_instance`
+  + `hcs_dms_kafka_topic`
+  + `hcs_dms_kafka_user`
+  + `hcs_dms_kafka_consumer_group`
+
+* **New Data Sources:**
+  + `hcs_dms_kafka_flavors`
+  + `hcs_dms_kafka_instances`
+  + `hcs_dms_maintainwindow`
+
 ## 2.4.3 (July 30, 2024)
 
 1. Add resources and data sources support for KMS service.
