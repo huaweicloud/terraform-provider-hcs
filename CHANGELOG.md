@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.3.7 (August 30, 2024)
+
+1. Fix some bugs.
+
 ## 2.3.6 (July 30, 2024)
 
 1. Enhancement: VPC ACL supports the simultaneous configuration of multiple source and destination ports.
