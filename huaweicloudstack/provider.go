@@ -36,6 +36,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/evs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ims"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/nat"
+	hcsObs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/obs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/smn"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpc"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpcep"
@@ -489,7 +490,7 @@ func Provider() *schema.Provider {
 			"hcs_mrs_cluster": mrs.ResourceMRSClusterV2(),
 			"hcs_mrs_job":     mrs.ResourceMRSJobV2(),
 
-			"hcs_obs_bucket":            obs.ResourceObsBucket(),
+			"hcs_obs_bucket":            hcsObs.ResourceObsBucket(),
 			"hcs_obs_bucket_acl":        obs.ResourceOBSBucketAcl(),
 			"hcs_obs_bucket_object":     obs.ResourceObsBucketObject(),
 			"hcs_obs_bucket_object_acl": obs.ResourceOBSBucketObjectAcl(),

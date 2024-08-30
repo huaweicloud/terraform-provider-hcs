@@ -46,18 +46,23 @@ export AWS_SECRET_ACCESS_KEY="your secretkey"
 ```
 
 The backend configuration as follows:
+Assuming region is **myregion**, cloud is **mycloud.com**
 
 ```hcl
 terraform {
   backend "s3" {
-    bucket   = "terraformbucket"
-    key      = "terraform.tfstate"
-    region   = "cn-north-1"
-    endpoint = "https://obs.cn-north-1.myhuaweicloud.com"
+    bucket = "terraformbucket"
+    key    = "terraform.tfstate"
+    region = "myregion"
+
+    endpoints = {
+      s3 = "https://obsv3.myregion.mycloud.com"
+    }
 
     skip_region_validation      = true
     skip_credentials_validation = true
     skip_metadata_api_check     = true
+    skip_requesting_account_id  = true
   }
 }
 ```
@@ -81,9 +86,10 @@ The following arguments are supported:
 * `region` - (Required) Specifies the region where the bucket is located. This can also be sourced from the
   *AWS_DEFAULT_REGION* and *AWS_REGION* environment variables.
 
-* `endpoint` - (Required) Specifies the endpoint for HuaweiCloudStack OBS.
-  The value is `https://obs.{{region}}.myhuaweicloud.com`.
-  This can also be sourced from the *AWS_S3_ENDPOINT* environment variable.
+* `endpoints.s3` - (Required) Specifies the endpoint for HuaweiCloudStack OBS.
+  The value is `https://obsv3.{{region}}.{{cloud}}`.
+  This can also be sourced from the environment variable *AWS_ENDPOINT_URL_S3* or the deprecated environment variable
+  *AWS_S3_ENDPOINT*.
 
 * `skip_credentials_validation` - (Required) Skip credentials validation via the STS API.
   It's mandatory for HuaweiCloudStack.
@@ -91,6 +97,8 @@ The following arguments are supported:
 * `skip_region_validation` - (Required) Skip validation of provided region name. It's mandatory for HuaweiCloudStack.
 
 * `skip_metadata_api_check` - (Required) Skip usage of EC2 Metadata API. It's mandatory for HuaweiCloudStack.
+
+* `skip_requesting_account_id` - (Required) Skip requesting the account ID. It's mandatory for HuaweiCloudStack.
 
 * `workspace_key_prefix` - (Optional) Specifies the prefix applied to the state path inside the bucket. This parameter
   is only valid when using a non-default [workspace](https://www.terraform.io/docs/language/state/workspaces.html).

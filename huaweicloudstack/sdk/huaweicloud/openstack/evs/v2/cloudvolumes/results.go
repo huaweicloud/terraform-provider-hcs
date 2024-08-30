@@ -59,6 +59,12 @@ type VolumeMetadata struct {
 	AttachedMode string `json:"attached_mode"`
 }
 
+type EncryptInfo struct {
+	CmkId string `json:"cmk_id"`
+
+	Cipher string `json:"cipher"`
+}
+
 // Link is an object that represents a link to which the disk belongs.
 type Link struct {
 	// Specifies the corresponding shortcut link.

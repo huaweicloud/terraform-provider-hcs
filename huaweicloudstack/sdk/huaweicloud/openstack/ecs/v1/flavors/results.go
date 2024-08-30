@@ -88,6 +88,8 @@ type OsExtraSpecs struct {
 
 	// Indicates the status of the flavor in az level.
 	OperationAz string `json:"cond:operation:az"`
+
+	ExtBootType string `json:"huawei:extBootType"`
 }
 
 // FlavorsPage is the page returned by a pager when traversing over a

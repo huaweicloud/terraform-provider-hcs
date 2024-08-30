@@ -203,7 +203,11 @@ func resourceNetworkACLRuleUpdate(d *schema.ResourceData, meta interface{}) erro
 	}
 	if d.HasChange("protocol") {
 		protocol := d.Get("protocol").(string)
-		updateOpts.Protocol = &protocol
+		if protocol == "any" {
+			updateOpts.Protocol = nil
+		} else {
+			updateOpts.Protocol = &protocol
+		}
 	}
 	if d.HasChange("action") {
 		action := d.Get("action").(string)
