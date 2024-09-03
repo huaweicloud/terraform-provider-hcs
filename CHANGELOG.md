@@ -1,6 +1,10 @@
 # CHANGELOG
 
-## 2.4.3 (August 30, 2024)
+## 2.4.6 (September 3, 2024)
+
+Fix some documentation issues.
+
+## 2.4.5 (August 30, 2024)
 
 1. Add resources and data sources support for DMS service.
 2. ECS supports encryption for both system and data disks.
