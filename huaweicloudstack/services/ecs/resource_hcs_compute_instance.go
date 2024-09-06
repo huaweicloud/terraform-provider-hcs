@@ -1356,7 +1356,7 @@ func shouldUnsubscribeEIP(d *schema.ResourceData) bool {
 
 func resourceInstanceRootVolume(d *schema.ResourceData) cloudservers.RootVolume {
 	extBootType := d.Get("ext_boot_type").(string)
-	if extBootType != "Volume" {
+	if extBootType == "LocalDisk" {
 		log.Printf("[INFO] extBootType is: %s, no need config root valume param.", extBootType)
 		return cloudservers.RootVolume{}
 	}
