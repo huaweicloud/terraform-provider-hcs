@@ -369,7 +369,6 @@ resource "hcs_ecs_compute_instance" "ecs-userdata" {
   description         = "terraform test"
   image_id            = data.hcs_ims_images.test.images[0].id
   flavor_id           = data.hcs_ecs_compute_flavors.flavors.ids[0]
-  ext_boot_type       = data.hcs_ecs_compute_flavors.test.flavors[0].ext_boot_type
   security_group_ids  = [data.hcs_networking_secgroups.test.security_groups[0].id]
   availability_zone = data.hcs_availability_zones.test.names[0]
   user_data       = "xxxxxxxxxxxxxxxxxxxxxxx"
@@ -421,7 +420,6 @@ resource "hcs_ecs_compute_instance" "ecs-userdata" {
   description         = "terraform test"
   image_id            = data.hcs_ims_images.test.images[0].id
   flavor_id           = data.hcs_ecs_compute_flavors.flavors.ids[0]
-  ext_boot_type       = data.hcs_ecs_compute_flavors.test.flavors[0].ext_boot_type
   security_group_ids  = [data.hcs_networking_secgroups.test.security_groups[0].id]
   availability_zone = data.hcs_availability_zones.test.names[0]
   user_data       = "xxxxxxxxxxxxxxxxxxxxxxx"
@@ -458,9 +456,6 @@ The following arguments are supported:
   including letters, digits, underscores (_), hyphens (-), and periods (.).
 
 * `flavor_id` - (Required, String) Specifies the flavor ID of the instance to be created.
-
-* `ext_boot_type` - (Required, String) Specifies the image type in flavor. which must be one of available image types,
-  contains of *LocalDisk*, *Volume*
 
 * `image_id` - (Optional, String, ForceNew) Required if `image_name` is empty. Specifies the image ID of the desired
   image for the instance. Changing this creates a new instance.
