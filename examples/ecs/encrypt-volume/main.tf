@@ -25,7 +25,6 @@ resource "hcs_ecs_compute_instance" "ecs-test" {
   description           = var.ecs_description
   image_id              = data.hcs_ims_images.test.images[0].id
   flavor_id             = data.hcs_ecs_compute_flavors.test.ids[0]
-  ext_boot_type         = data.hcs_ecs_compute_flavors.test.flavors[0].ext_boot_type
   security_group_ids    = [data.hcs_networking_secgroups.test.security_groups[0].id]
   availability_zone = data.hcs_availability_zones.test.names[0]
   enterprise_project_id = var.enterprise_project_id
@@ -53,7 +52,6 @@ resource "hcs_ecs_compute_instance" "ecs-test" {
   description           = var.ecs_description
   image_id              = data.hcs_ims_images.test.images[0].id
   flavor_id             = data.hcs_ecs_compute_flavors.test.ids[0]
-  ext_boot_type         = data.hcs_ecs_compute_flavors.test.flavors[0].ext_boot_type
   security_group_ids    = [data.hcs_networking_secgroups.test.security_groups[0].id]
   availability_zone = data.hcs_availability_zones.test.names[0]
   enterprise_project_id = var.enterprise_project_id

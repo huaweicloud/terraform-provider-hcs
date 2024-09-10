@@ -19,6 +19,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/compute/v2/extensions/secgroups"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/ecs/v1/block_devices"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/ecs/v1/cloudservers"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/ecs/v1/flavors"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/evs/v2/cloudvolumes"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/ims/v2/cloudimages"
 	groups "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/networking/v1/security/securitygroups"
@@ -89,9 +90,10 @@ func ResourceComputeInstance() *schema.Resource {
 				Description: "schema: Required",
 			},
 			"ext_boot_type": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
+				Type:       schema.TypeString,
+				Optional:   true,
+				Computed:   true,
+				Deprecated: "Deprecated",
 				ValidateFunc: validation.StringInSlice([]string{
 					"LocalDisk", "Volume",
 				}, false),
@@ -458,7 +460,7 @@ func resourceComputeInstanceCreate(ctx context.Context, d *schema.ResourceData, 
 		return diag.FromErr(err)
 	}
 
-	flavorId, err := getFlavorID(d)
+	flavor, err := getFlavor(ecsClient, d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -486,12 +488,12 @@ func resourceComputeInstanceCreate(ctx context.Context, d *schema.ResourceData, 
 		Name:             d.Get("name").(string),
 		Description:      d.Get("description").(string),
 		ImageRef:         imageId,
-		FlavorRef:        flavorId,
+		FlavorRef:        flavor["id"].(string),
 		KeyName:          d.Get("key_pair").(string),
 		VpcId:            vpcId,
 		SecurityGroups:   secGroups,
 		AvailabilityZone: d.Get("availability_zone").(string),
-		RootVolume:       resourceInstanceRootVolume(d),
+		RootVolume:       resourceInstanceRootVolume(d, flavor["ext_boot_type"].(string)),
 		DataVolumes:      resourceInstanceDataVolumes(d),
 		Nics:             buildInstanceNicsRequest(d),
 		PublicIp:         buildInstancePublicIPRequest(d),
@@ -508,7 +510,7 @@ func resourceComputeInstanceCreate(ctx context.Context, d *schema.ResourceData, 
 		extendParam.EnterpriseProjectId = epsID
 	}
 
-	extBootType := d.Get("ext_boot_type").(string)
+	extBootType := flavor["ext_boot_type"].(string)
 	if extBootType == "LocalDisk" {
 		extendParam.Image_Boot = true
 	}
@@ -1231,6 +1233,37 @@ func getFlavorID(d *schema.ResourceData) (string, error) {
 	return flavorID, nil
 }
 
+func getFlavor(client *golangsdk.ServiceClient, d *schema.ResourceData) (map[string]interface{}, error) {
+	var flavorID string
+
+	// both flavor_id and flavor_name are the same value
+	if v1, ok := d.GetOk("flavor_id"); ok {
+		flavorID = v1.(string)
+	} else if v2, ok := d.GetOk("flavor_name"); ok {
+		flavorID = v2.(string)
+	}
+	var resultFlavor map[string]interface{}
+	if flavorID == "" {
+		return resultFlavor, fmt.Errorf("missing required argument: the `flavor_id` must be specified")
+	}
+	listOpts := &flavors.ListOpts{
+		AvailabilityZone: d.Get("availability_zone").(string),
+	}
+
+	pages, err := flavors.List(client, listOpts).AllPages()
+	if err != nil {
+		return resultFlavor, fmt.Errorf("flavor result is empty")
+	}
+	allFlavors, err := flavors.ExtractFlavors(pages)
+	for _, flavor := range allFlavors {
+		if flavorID != flavor.ID {
+			continue
+		}
+		resultFlavor = flattenFlavor(&flavor)
+	}
+	return resultFlavor, nil
+}
+
 func getVpcID(client *golangsdk.ServiceClient, d *schema.ResourceData) (string, error) {
 	var networkID string
 
@@ -1354,10 +1387,9 @@ func shouldUnsubscribeEIP(d *schema.ResourceData) bool {
 	return deleteEIP && eipAddr != "" && eipType != "" && !sharebw
 }
 
-func resourceInstanceRootVolume(d *schema.ResourceData) cloudservers.RootVolume {
-	extBootType := d.Get("ext_boot_type").(string)
-	if extBootType != "Volume" {
-		log.Printf("[INFO] extBootType is: %s, no need config root valume param.", extBootType)
+func resourceInstanceRootVolume(d *schema.ResourceData, bootType string) cloudservers.RootVolume {
+	if bootType == "LocalDisk" {
+		log.Printf("[INFO] extBootType is: %s, no need config root valume param.", bootType)
 		return cloudservers.RootVolume{}
 	}
 	diskType := d.Get("system_disk_type").(string)

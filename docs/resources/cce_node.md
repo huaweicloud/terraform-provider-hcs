@@ -85,7 +85,6 @@ resource "hcs_cce_node" "test" {
   data_volumes {
     size       = 100
     volumetype = "SSD"
-    kms_key_id = var.kms_key_id
   }
 
   // Storage configuration
@@ -118,8 +117,8 @@ resource "hcs_cce_node" "test" {
       }
 
       virtual_spaces {
-        name        = "runtime"
-        size        = "90%"
+        name = "runtime"
+        size = "90%"
       }
     }
 
@@ -181,8 +180,6 @@ The following arguments are supported:
     Changing this parameter will create a new resource.
   + `extend_params` - (Optional, Map, ForceNew) Specifies the disk expansion parameters.
     Changing this parameter will create a new resource.
-  + `kms_key_id` - (Optional, String, ForceNew) Specifies the ID of a KMS key. This is used to encrypt the volume.
-    Changing this parameter will create a new resource.
 
 * `data_volumes` - (Required, List, ForceNew) Specifies the configurations of the data disk.
   Changing this parameter will create a new resource.
@@ -192,8 +189,6 @@ The following arguments are supported:
   + `volumetype` - (Required, String, ForceNew) Specifies the disk type.
     Changing this parameter will create a new resource.
   + `extend_params` - (Optional, Map, ForceNew) Specifies the disk expansion parameters.
-    Changing this parameter will create a new resource.
-  + `kms_key_id` - (Optional, String, ForceNew) Specifies the ID of a KMS key. This is used to encrypt the volume.
     Changing this parameter will create a new resource.
 
     -> You need to create an agency (EVSAccessKMS) when disk encryption is used in the current project for the first
