@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.4.7 (September 10, 2024)
+
+Fix some documentation issues.
+
 ## 2.4.6 (September 3, 2024)
 
 Fix some documentation issues.
