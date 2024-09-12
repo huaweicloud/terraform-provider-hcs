@@ -154,7 +154,7 @@ type UpdateOptsBuilder interface {
 
 // UpdateOpts contains the values used when updating a firewall rule.
 type UpdateOpts struct {
-	Protocol             *string              `json:"protocol,omitempty"`
+	Protocol             *string              `json:"protocol"`
 	Action               *string              `json:"action,omitempty"`
 	Name                 *string              `json:"name,omitempty"`
 	Description          *string              `json:"description,omitempty"`
