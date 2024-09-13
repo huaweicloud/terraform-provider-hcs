@@ -27,6 +27,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/as"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/bms"
+	hcsCfw "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/cfw"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/deprecated"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dns"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ecs"
@@ -419,7 +420,7 @@ func Provider() *schema.Provider {
 			"hcs_cce_pvc":         cce.ResourceCcePersistentVolumeClaimsV1(),
 
 			"hcs_cfw_address_group":        cfw.ResourceAddressGroup(),
-			"hcs_cfw_address_group_member": cfw.ResourceAddressGroupMember(),
+			"hcs_cfw_address_group_member": hcsCfw.ResourceAddressGroupMember(),
 			"hcs_cfw_black_white_list":     cfw.ResourceBlackWhiteList(),
 			"hcs_cfw_eip_protection":       cfw.ResourceEipProtection(),
 			"hcs_cfw_protection_rule":      cfw.ResourceProtectionRule(),
