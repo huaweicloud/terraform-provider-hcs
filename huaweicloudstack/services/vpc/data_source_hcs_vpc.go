@@ -54,7 +54,7 @@ func DataSourceVpcV1() *schema.Resource {
 			"routes": {
 				Type:       schema.TypeList,
 				Computed:   true,
-				Deprecated: "use huaweicloud_vpc_route_table data source to get all routes",
+				Deprecated: "use hcs_vpc_route_table data source to get all routes",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"destination": {
