@@ -122,14 +122,14 @@ func resourceVpcPeeringRouteRead(_ context.Context, d *schema.ResourceData, meta
 	mErr := multierror.Append(nil,
 		d.Set("peering_id", id[0]),
 		d.Set("vpc_id", id[1]),
-		d.Set("route", expandVpcRTRoutes(n)),
+		d.Set("route", expandVpcPeeringRoutes(n)),
 		d.Set("region", hcsConfig.GetRegion(d)),
 	)
 
 	return diag.FromErr(mErr.ErrorOrNil())
 }
 
-func expandVpcRTRoutes(routes []v1peeringroute.Route) []map[string]interface{} {
+func expandVpcPeeringRoutes(routes []v1peeringroute.Route) []map[string]interface{} {
 	rtRules := make([]map[string]interface{}, 0, len(routes))
 
 	for _, item := range routes {
