@@ -31,16 +31,17 @@ resource "hcs_vpc_route_table" "demo" {
 
 ```hcl
 variable "vpc_id" {}
+variable "subnet_id" {}
 variable "peer_vpc_id" {}
 
-data "hcs_vpc_subnet_ids" "subnet_ids" {
-  vpc_id = var.vpc_id
+data "hcs_vpc_subnet" "subnet" {
+  id = var.subnet_id
 }
 
 resource "hcs_vpc_route_table" "demo" {
   name    = "demo"
   vpc_id  = var.vpc_id
-  subnets = data.hcs_vpc_subnet_ids.subnet_ids.ids
+  subnets = data.hcs_vpc_subnet.subnet.ipv4_subnet_id
 
   route {
     destination = "172.16.0.0/16"
@@ -71,7 +72,7 @@ The following arguments are supported:
 * `description` - (Optional, String) Specifies the supplementary information about the route table.
   The value is a string of no more than `255` characters and cannot contain angle brackets (< or >).
 
-* `subnets` - (Optional, List) Specifies an array of one or more subnets associating with the route table.
+* `subnets` - (Optional, List) Specifies an array of one or more neutron subnets associating with the route table.
 
   -> **NOTE:** The custom route table associated with a subnet affects only the outbound traffic.
   The default route table determines the inbound traffic.
