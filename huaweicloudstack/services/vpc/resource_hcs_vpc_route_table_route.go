@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/pagination"
 	"log"
-	"regexp"
 	"strings"
 	"time"
 
@@ -13,14 +13,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
-	"github.com/chnsz/golangsdk"
-	"github.com/chnsz/golangsdk/openstack/networking/v1/routetables"
-	"github.com/chnsz/golangsdk/openstack/networking/v2/routes"
-	"github.com/chnsz/golangsdk/pagination"
+	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/networking/v1/routetables"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/networking/v2/routes"
 
-	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/common"
-	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/config"
-	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/utils"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
 )
 
 // @API VPC GET /v2.0/vpc/routes/{id}
@@ -85,19 +84,15 @@ func ResourceVPCRouteTableRoute() *schema.Resource {
 			"route_table_name": {
 				Type:     schema.TypeString,
 				Computed: true,
-				ValidateFunc: validation.All(
-					validation.StringLenBetween(0, 64),
-					validation.StringMatch(regexp.MustCompile("^[\u4e00-\u9fa50-9a-zA-Z-_\\.]*$"),
-						"only letters, digits, underscores (_), hyphens (-), and dot (.) are allowed"),
-				),
 			},
 		},
 	}
 }
 
 func resourceVpcRTBRouteCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
-	vpcClient, err := cfg.NetworkingV1Client(cfg.GetRegion(d))
+	hcsConfig := config.GetHcsConfig(meta)
+	region := hcsConfig.GetRegion(d)
+	vpcClient, err := hcsConfig.NetworkingV1Client(region)
 	if err != nil {
 		return diag.Errorf("error creating VPC client: %s", err)
 	}
@@ -141,9 +136,9 @@ func resourceVpcRTBRouteCreate(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceVpcRTBRouteRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
-	region := cfg.GetRegion(d)
-	vpcClient, err := cfg.NetworkingV1Client(region)
+	hcsConfig := config.GetHcsConfig(meta)
+	region := hcsConfig.GetRegion(d)
+	vpcClient, err := hcsConfig.NetworkingV1Client(region)
 	if err != nil {
 		return diag.Errorf("error creating VPC client: %s", err)
 	}
@@ -156,7 +151,7 @@ func resourceVpcRTBRouteRead(_ context.Context, d *schema.ResourceData, meta int
 		oldID := d.Id()
 		log.Printf("[WARN] The resource ID %s is in the old format, try to upgrade it to the new format", oldID)
 
-		newID, subDiags := convertRouteIDtoNewFormat(d, cfg, oldID)
+		newID, subDiags := convertRouteIDtoNewFormat(d, hcsConfig, oldID)
 		if subDiags.HasError() {
 			return subDiags
 		}
@@ -206,8 +201,9 @@ func resourceVpcRTBRouteRead(_ context.Context, d *schema.ResourceData, meta int
 }
 
 func resourceVpcRTBRouteUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
-	vpcClient, err := cfg.NetworkingV1Client(cfg.GetRegion(d))
+	hcsConfig := config.GetHcsConfig(meta)
+	region := hcsConfig.GetRegion(d)
+	vpcClient, err := hcsConfig.NetworkingV1Client(region)
 	if err != nil {
 		return diag.Errorf("error creating VPC client: %s", err)
 	}
@@ -236,8 +232,9 @@ func resourceVpcRTBRouteUpdate(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceVpcRTBRouteDelete(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	cfg := meta.(*config.Config)
-	vpcClient, err := cfg.NetworkingV1Client(cfg.GetRegion(d))
+	hcsConfig := config.GetHcsConfig(meta)
+	region := hcsConfig.GetRegion(d)
+	vpcClient, err := hcsConfig.NetworkingV1Client(region)
 	if err != nil {
 		return diag.Errorf("error creating VPC client: %s", err)
 	}
@@ -311,7 +308,7 @@ func resourceVpcRTBRouteImportState(_ context.Context, d *schema.ResourceData, _
 	return []*schema.ResourceData{d}, nil
 }
 
-func convertRouteIDtoNewFormat(d *schema.ResourceData, conf *config.Config, oldID string) (string, diag.Diagnostics) {
+func convertRouteIDtoNewFormat(d *schema.ResourceData, conf *config.HcsConfig, oldID string) (string, diag.Diagnostics) {
 	var diags = diag.Diagnostics{
 		diag.Diagnostic{
 			Severity: diag.Warning,
