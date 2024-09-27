@@ -44,7 +44,7 @@ In addition to all arguments above, the following attributes are exported:
 
 * `description` - The supplementary information about the route table.
 
-* `subnets` - An array of one or more subnets associating with the route table.
+* `subnets` - An array of one or more neutron subnets associating with the route table.
 
 * `route` - The route object list. The [route object](#route_object) is documented below.
 
