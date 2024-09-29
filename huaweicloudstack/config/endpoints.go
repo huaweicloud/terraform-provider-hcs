@@ -45,6 +45,7 @@ var multiCatalogKeys = map[string][]string{
 	"smn":                  {"smn-tag"},
 	"ces":                  {"cesv2"},
 	"ims":                  {"imsv1"},
+	"roma":                 {"romav2"},
 }
 
 // GetServiceDerivedCatalogKeys returns the derived catalog keys of a service.
@@ -660,6 +661,16 @@ var allServiceCatalog = map[string]ServiceCatalog{
 		Name:    "servicestage",
 		Version: "v2",
 		Product: "ServiceStage",
+	},
+	"roma": {
+		Name:    "roma",
+		Version: "v1",
+		Product: "ROMA Connect",
+	},
+	"romav2": {
+		Name:    "roma",
+		Version: "v2",
+		Product: "ROMA Connect",
 	},
 
 	// catalog for IEC which is a global service
