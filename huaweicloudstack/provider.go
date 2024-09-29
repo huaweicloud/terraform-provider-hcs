@@ -38,6 +38,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ims"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/nat"
 	hcsObs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/obs"
+	hcsRomaConnect "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/romaconnect"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/smn"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpc"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpcep"
@@ -497,6 +498,8 @@ func Provider() *schema.Provider {
 			"hcs_obs_bucket_object":     obs.ResourceObsBucketObject(),
 			"hcs_obs_bucket_object_acl": obs.ResourceOBSBucketObjectAcl(),
 			"hcs_obs_bucket_policy":     obs.ResourceObsBucketPolicy(),
+
+			"hcs_roma_connect_instance": hcsRomaConnect.ResourceRomaConnectInstance(),
 
 			"hcs_sfs_access_rule": sfs.ResourceSFSAccessRuleV2(),
 			"hcs_sfs_file_system": sfs.ResourceSFSFileSystemV2(),
