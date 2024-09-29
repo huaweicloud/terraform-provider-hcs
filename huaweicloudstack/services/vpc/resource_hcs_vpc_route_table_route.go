@@ -64,7 +64,7 @@ func ResourceVPCRouteTableRoute() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 				ValidateFunc: validation.StringInSlice([]string{
-					"eni", "subeni", "vip", "nat", "peering", "vpn", "dc", "cc", "egw", "externalip",
+					"eni", "subeni", "vip", "nat", "peering", "vpn", "dc", "cc", "externalip",
 				}, false),
 			},
 			"nexthop": {

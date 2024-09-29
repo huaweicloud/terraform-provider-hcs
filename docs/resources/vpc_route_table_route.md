@@ -12,13 +12,24 @@ Manages a VPC route resource within hcs.
 
 ```hcl
 variable "vpc_id" {}
-variable "nexthop" {}
+variable "peer_vpc_id" {}
 
-resource "vpc_route_table_route" "vpc_route" {
+data "hcs_ecs_compute_instance" "instance_demo" {
+  name = "ecs-servergroup-demo"
+}
+
+resource "hcs_vpc_route_table_route" "vpc_route_peering" {
   vpc_id      = var.vpc_id
   destination = "192.168.0.0/16"
   type        = "peering"
-  nexthop     = var.nexthop
+  nexthop     = var.peer_vpc_id
+}
+
+resource "hcs_vpc_route_table_route" "vpc_route_eni" {
+  vpc_id      = var.vpc_id
+  destination = "172.16.10.0/24"
+  type        = "eni"
+  nexthop     = data.hcs_ecs_compute_instance.instance_demo.network[0].port
 }
 ```
 
@@ -57,7 +68,7 @@ The following arguments are supported:
   subnet in the VPC. Changing this creates a new resource.
 
 * `type` - (Required, String) Specifies the route type. Currently, the value can be:
-  **eni**, **subeni**, **vip**, **nat**, **peering**, **vpn**, **dc**, **cc**, **egw** and **externalip**.
+  **eni**, **subeni**, **vip**, **nat**, **peering**, **vpn**, **dc**, **cc** and **externalip**.
 
 * `nexthop` - (Required, String) Specifies the next hop.
   + If the route type is **eni**, the value is the NIC or extension NIC of an ECS in the VPC.
@@ -68,7 +79,6 @@ The following arguments are supported:
   + If the route type is **vpn**, the value is a VPN gateway ID.
   + If the route type is **dc**, the value is a Direct Connect gateway ID.
   + If the route type is **cc**, the value is a Cloud Connection ID.
-  + If the route type is **egw**, the value is a VPCEP endpoint ID.
   + If the route type is **externalip**, the value is an external IP address.
 
 * `description` - (Optional, String) Specifies the supplementary information about the route.
