@@ -41,7 +41,7 @@ data "hcs_vpc_subnet" "subnet" {
 resource "hcs_vpc_route_table" "demo" {
   name    = "demo"
   vpc_id  = var.vpc_id
-  subnets = data.hcs_vpc_subnet.subnet.ipv4_subnet_id
+  subnets = [data.hcs_vpc_subnet.subnet.ipv4_subnet_id]
 
   route {
     destination = "172.16.0.0/16"
@@ -88,7 +88,7 @@ The `route` block supports:
   with any subnet in the VPC.
 
 * `type` - (Required, String) Specifies the route type. Currently, the value can be:
-  **eni**, **subeni**, **vip**, **nat**, **peering**, **vpn**, **dc**, **cc**, **egw** and **externalip**.
+  **eni**, **subeni**, **vip**, **nat**, **peering**, **vpn**, **dc**, **cc** and **externalip**.
 
 * `nexthop` - (Required, String) Specifies the next hop.
   + If the route type is **eni**, the value is the NIC or extension NIC of an ECS in the VPC. 
@@ -99,7 +99,6 @@ The `route` block supports:
   + If the route type is **vpn**, the value is a VPN gateway ID.
   + If the route type is **dc**, the value is a Direct Connect gateway ID.
   + If the route type is **cc**, the value is a Cloud Connection ID.
-  + If the route type is **egw**, the value is a VPCEP endpoint ID.
   + If the route type is **externalip**, the value is an external IP address.
 
 * `description` - (Optional, String) Specifies the supplementary information about the route.
