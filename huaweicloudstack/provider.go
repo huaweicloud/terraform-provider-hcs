@@ -27,6 +27,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/as"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/bms"
+	hcsCfw "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/cfw"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/deprecated"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dns"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ecs"
@@ -37,6 +38,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ims"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/nat"
 	hcsObs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/obs"
+	hcsRomaConnect "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/romaconnect"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/smn"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpc"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpcep"
@@ -395,6 +397,7 @@ func Provider() *schema.Provider {
 			"hcs_vpc_subnets":            vpc.DataSourceVpcSubnets(),
 			"hcs_vpc_peering_connection": vpc.DataSourceVpcPeeringConnectionV2(),
 			"hcs_vpc_peering":            vpc.DataSourceVpcPeering(),
+			"hcs_vpc_route_table":        vpc.DataSourceVPCRouteTable(),
 			"hcs_vpc_flow_log":           vpc.DataSourceVpcFlowLog(),
 
 			"hcs_networking_port":      vpc.DataSourceNetworkingPortV2(),
@@ -419,7 +422,7 @@ func Provider() *schema.Provider {
 			"hcs_cce_pvc":         cce.ResourceCcePersistentVolumeClaimsV1(),
 
 			"hcs_cfw_address_group":        cfw.ResourceAddressGroup(),
-			"hcs_cfw_address_group_member": cfw.ResourceAddressGroupMember(),
+			"hcs_cfw_address_group_member": hcsCfw.ResourceAddressGroupMember(),
 			"hcs_cfw_black_white_list":     cfw.ResourceBlackWhiteList(),
 			"hcs_cfw_eip_protection":       cfw.ResourceEipProtection(),
 			"hcs_cfw_protection_rule":      cfw.ResourceProtectionRule(),
@@ -496,6 +499,8 @@ func Provider() *schema.Provider {
 			"hcs_obs_bucket_object_acl": obs.ResourceOBSBucketObjectAcl(),
 			"hcs_obs_bucket_policy":     obs.ResourceObsBucketPolicy(),
 
+			"hcs_roma_connect_instance": hcsRomaConnect.ResourceRomaConnectInstance(),
+
 			"hcs_sfs_access_rule": sfs.ResourceSFSAccessRuleV2(),
 			"hcs_sfs_file_system": sfs.ResourceSFSFileSystemV2(),
 
@@ -554,25 +559,27 @@ func Provider() *schema.Provider {
 
 			"hcs_vpc":                             vpc.ResourceVirtualPrivateCloudV1(),
 			"hcs_vpc_subnet":                      vpc.ResourceVpcSubnetV1(),
-			"hcs_vpc_route":                       vpc.ResourceVPCRouteV2(),
-			"hcs_vpc_route_v2":                    vpc.ResourceVPCRouteV2(),
+			"hcs_vpc_route_table":                 vpc.ResourceVPCRouteTable(),
+			"hcs_vpc_route_table_route":           vpc.ResourceVPCRouteTableRoute(),
 			"hcs_vpc_v1":                          vpc.ResourceVirtualPrivateCloudV1(),
 			"hcs_vpc_subnet_v1":                   vpc.ResourceVpcSubnetV1(),
 			"hcs_vpc_peering_connection":          vpc.ResourceVpcPeeringConnectionV2(),
 			"hcs_vpc_peering_connection_accepter": vpc.ResourceVpcPeeringConnectionAccepterV2(),
-			"hcs_networking_secgroup":             vpc.ResourceNetworkingSecGroup(),
-			"hcs_networking_secgroup_rule":        vpc.ResourceNetworkingSecGroupRule(),
-			"hcs_networking_vip":                  vpc.ResourceNetworkingVip(),
-			"hcs_networking_vip_associate":        vpc.ResourceNetworkingVIPAssociateV2(),
-			"hcs_vpc_peering":                     vpc.ResourceVpcPeering(),
-			"hcs_vpc_peering_route":               vpc.ResourceVpcPeeringRoute(),
-			"hcs_vpc_flow_log":                    vpc.ResourceVpcFlowLog(),
 
+			"hcs_networking_secgroup":      vpc.ResourceNetworkingSecGroup(),
+			"hcs_networking_secgroup_rule": vpc.ResourceNetworkingSecGroupRule(),
+			"hcs_networking_vip":           vpc.ResourceNetworkingVip(),
+			"hcs_networking_vip_associate": vpc.ResourceNetworkingVIPAssociateV2(),
+			"hcs_vpc_peering":              vpc.ResourceVpcPeering(),
+			"hcs_vpc_peering_route":        vpc.ResourceVpcPeeringRoute(),
+			"hcs_vpc_flow_log":             vpc.ResourceVpcFlowLog(),
+			"hcs_network_acl":              ResourceNetworkACL(),
+			"hcs_network_acl_rule":         ResourceNetworkACLRule(),
+
+			// Deprecated
 			"hcs_networking_port":    deprecated.ResourceNetworkingPortV2(),
 			"hcs_networking_port_v2": deprecated.ResourceNetworkingPortV2(),
-
-			"hcs_network_acl":      ResourceNetworkACL(),
-			"hcs_network_acl_rule": ResourceNetworkACLRule(),
+			"hcs_vpc_route":          deprecated.ResourceVPCRouteV2(),
 		},
 	}
 

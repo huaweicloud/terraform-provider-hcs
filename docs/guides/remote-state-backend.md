@@ -100,6 +100,8 @@ The following arguments are supported:
 
 * `skip_requesting_account_id` - (Required) Skip requesting the account ID. It's mandatory for HuaweiCloudStack.
 
+* `skip_s3_checksum` - (Optional) Do not include checksum when uploading S3 Objects.
+
 * `workspace_key_prefix` - (Optional) Specifies the prefix applied to the state path inside the bucket. This parameter
   is only valid when using a non-default [workspace](https://www.terraform.io/docs/language/state/workspaces.html).
   When using a non-default workspace, the state path will be `/workspace_key_prefix/workspace_name/key_name`.

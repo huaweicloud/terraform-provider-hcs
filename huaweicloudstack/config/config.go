@@ -883,6 +883,14 @@ func (c *HcsConfig) ScmV3Client(region string) (*golangsdk.ServiceClient, error)
 	return c.NewServiceClient("scm", region)
 }
 
+func (c *HcsConfig) RomaConnectV1Client(region string) (*golangsdk.ServiceClient, error) {
+	return c.NewServiceClient("roma", region)
+}
+
+func (c *HcsConfig) RomaConnectV2Client(region string) (*golangsdk.ServiceClient, error) {
+	return c.NewServiceClient("romav2", region)
+}
+
 // the following clients are used for Joint-Operation Cloud only
 
 // MlsV1Client has the endpoint: https://mls.{{region}}/{{cloud}}/v1.0/{{project_id}}
