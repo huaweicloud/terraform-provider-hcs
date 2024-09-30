@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2.4.8 (September 30, 2024)
+ - [BETA] Add new resources support Roma.
+ - Add argument skip_s3_checksum for S3.
+ - Fix and optimized some bugs.
+
 ## 2.4.7 (September 10, 2024)
 
 Fix some documentation issues.
