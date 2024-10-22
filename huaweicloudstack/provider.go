@@ -575,6 +575,7 @@ func Provider() *schema.Provider {
 			"hcs_networking_vip":           vpc.ResourceNetworkingVip(),
 			"hcs_networking_vip_associate": vpc.ResourceNetworkingVIPAssociateV2(),
 			"hcs_vpc_peering":              vpc.ResourceVpcPeering(),
+			"hcs_vpc_peering_accepter":     vpc.ResourceVpcPeeringAccepter(),
 			"hcs_vpc_peering_route":        vpc.ResourceVpcPeeringRoute(),
 			"hcs_vpc_flow_log":             vpc.ResourceVpcFlowLog(),
 			"hcs_network_acl":              ResourceNetworkACL(),
