@@ -2,6 +2,7 @@ package v1peering
 
 import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
+	"net/http"
 )
 
 type VpcInfo struct {
@@ -75,5 +76,36 @@ type UpdateResult struct {
 // DeleteResult represents the result of a delete operation. Call its ExtractErr
 // method to determine if the request succeeded or failed.
 type DeleteResult struct {
+	golangsdk.ErrResult
+}
+
+type AcceptResult struct {
+	golangsdk.ErrResult
+}
+
+type Result struct {
+	// Body is the payload of the HTTP response from the server. In most cases,
+	// this will be the deserialized JSON structure.
+	Body interface{}
+
+	// Header contains the HTTP header structure from the original response.
+	Header http.Header
+
+	// Err is an error that occurred during the operation. It's deferred until
+	// extraction to make it easier to chain the Extract call.
+	Err error
+}
+
+type ErrResult struct {
+	Result
+}
+
+func (r ErrResult) ExtractErr() error {
+	return r.Err
+}
+
+// RejectResult represents the result of a get operation. Call its Extract
+// method to interpret it as a Vpc Peering Connection.
+type RejectResult struct {
 	golangsdk.ErrResult
 }
