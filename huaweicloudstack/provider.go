@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/aom"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cce"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/cfw"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dcs"
@@ -413,6 +414,9 @@ func Provider() *schema.Provider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
+			"hcs_aom_alarm_rule":             aom.ResourceAlarmRule(),
+			"hcs_aom_service_discovery_rule": aom.ResourceServiceDiscoveryRule(),
+
 			"hcs_cce_addon":       cce.ResourceAddon(),
 			"hcs_cce_cluster":     cce.ResourceCluster(),
 			"hcs_cce_namespace":   cce.ResourceCCENamespaceV1(),
