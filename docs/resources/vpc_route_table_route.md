@@ -44,7 +44,7 @@ data "hcs_vpc_route_table" "rtb" {
   name   = "demo"
 }
 
-resource "vpc_route_table_route" "vpc_route" {
+resource "hcs_vpc_route_table_route" "vpc_route" {
   vpc_id         = var.vpc_id
   route_table_id = data.hcs_vpc_route_table.rtb.id
   destination    = "172.16.8.0/24"
