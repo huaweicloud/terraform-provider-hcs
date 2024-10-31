@@ -103,14 +103,14 @@ func resourcePeeringAccepterCreate(ctx context.Context, d *schema.ResourceData, 
 	var expectedStatus string
 
 	if _, ok := d.GetOk("accept"); ok {
-		expectedStatus = "ACTIVE"
+		expectedStatus = "active"
 
 		err := v1peerings.Accept(peeringClient, id).ExtractErr()
 		if err != nil {
 			return diag.Errorf("unable to accept VPC Peering Connection: %s", err)
 		}
 	} else {
-		expectedStatus = "REJECTED"
+		expectedStatus = "rejected"
 
 		err := v1peerings.Reject(peeringClient, id).ExtractErr()
 		if err != nil {
@@ -119,7 +119,7 @@ func resourcePeeringAccepterCreate(ctx context.Context, d *schema.ResourceData, 
 	}
 
 	stateConf := &resource.StateChangeConf{
-		Pending:    []string{"PENDING"},
+		Pending:    []string{"accepting"},
 		Target:     []string{expectedStatus},
 		Refresh:    waitForPeeringConnStatus(peeringClient, n[0].ID, expectedStatus),
 		Timeout:    d.Timeout(schema.TimeoutCreate),
@@ -139,7 +139,7 @@ func resourcePeeringAccepterCreate(ctx context.Context, d *schema.ResourceData, 
 func resourcePeeringAccepterRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
-	peeringClient, err := cfg.NetworkingV2Client(region)
+	peeringClient, err := cfg.NetworkingV1Client(region)
 	if err != nil {
 		return diag.Errorf("error creating VPC Peering Connection client: %s", err)
 	}
@@ -213,6 +213,6 @@ func waitForPeeringConnStatus(peeringClient *golangsdk.ServiceClient, peeringId,
 			return n[0], expectedStatus, nil
 		}
 
-		return n, "PENDING", nil
+		return n, "accepting", nil
 	}
 }
