@@ -1,14 +1,18 @@
 # CHANGELOG
 
 ## 2.4.9 (November 1, 2024)
-
-## 2.4.8 (September 30, 2024)
  - Add some new resources.
  - Fix and optimized some bugs.
 
 * **New Resources:**
   + `hcs_connect_instance`
   + `hcs_vpc_peering_accepter`
+
+## 2.4.8 (September 30, 2024)
+ - [BETA] Add new resources support Roma.
+ - Add argument skip_s3_checksum for S3.
+ - Enhanced VPC Route resources.
+ - Fix and optimized some bugs.
   
 ## 2.4.7 (September 10, 2024)
 
