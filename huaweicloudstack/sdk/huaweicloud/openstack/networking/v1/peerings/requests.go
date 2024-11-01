@@ -23,7 +23,7 @@ type ListOpts struct {
 }
 
 // List returns collection of vpc_peering_connection resources. It accepts
-//a ListOpts struct, which allows you to filter the returned collection for greater efficiency.
+// a ListOpts struct, which allows you to filter the returned collection for greater efficiency.
 func List(c *golangsdk.ServiceClient, opts ListOpts) (r GetResult) {
 	q, err := golangsdk.BuildQueryString(&opts)
 	if err != nil {
@@ -41,6 +41,17 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 	return
 }
 
+func Accept(c *golangsdk.ServiceClient, id string) (r AcceptResult) {
+	_, r.Err = c.Put(acceptURL(c, id), nil, &r.Body, nil)
+	return
+}
+
+// Reject is used by a tenant to reject a VPC peering connection request initiated by another tenant.
+func Reject(c *golangsdk.ServiceClient, id string) (r RejectResult) {
+	_, r.Err = c.Put(rejectURL(c, id), nil, &r.Body, nil)
+	return
+}
+
 // CreateOptsBuilder is an interface by which can build the request body of vpc peering connection.
 type CreateOptsBuilder interface {
 	ToPeeringCreateMap() (map[string]interface{}, error)
@@ -48,10 +59,11 @@ type CreateOptsBuilder interface {
 
 // CreateOpts is a struct which is used to create vpc peering connection.
 type CreateOpts struct {
-	Name       string `json:"name"`
-	LocalVpcId string `json:"local_vpc_id" required:"true"`
-	PeerVpcId  string `json:"peer_vpc_id" required:"true"`
-	PeerRegion string `json:"peer_region" required:"false"`
+	Name          string `json:"name"`
+	LocalVpcId    string `json:"local_vpc_id" required:"true"`
+	PeerVpcId     string `json:"peer_vpc_id" required:"true"`
+	PeerRegion    string `json:"peer_region" required:"false"`
+	PeerProjectId string `json:"peer_project_id" required:"false"`
 }
 
 // ToPeeringCreateMap builds a create request body from CreateOpts.

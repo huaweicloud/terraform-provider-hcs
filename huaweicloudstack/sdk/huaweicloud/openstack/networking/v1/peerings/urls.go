@@ -15,3 +15,11 @@ func resourceURL(c *golangsdk.ServiceClient, id string) string {
 func resourceListURL(c *golangsdk.ServiceClient, id string) string {
 	return c.ServiceURL(c.ProjectID, resourcePath) + "?peering_id=" + id
 }
+
+func acceptURL(c *golangsdk.ServiceClient, id string) string {
+	return c.ServiceURL(c.ProjectID, resourcePath, id, "accept")
+}
+
+func rejectURL(c *golangsdk.ServiceClient, id string) string {
+	return c.ServiceURL(c.ProjectID, resourcePath, id, "reject")
+}
