@@ -38,6 +38,9 @@ The following arguments are supported:
 * `peer_vpc_id` - (Required, String, ForceNew) Specifies the VPC ID of the peering. Changing this creates a new
   VPC peering.
 
+* `peer_project_id` - (Optional, String, ForceNew) Specifies the project ID of the accepter project. Changing this creates
+  a new VPC peering connection.
+
 * `peer_region` - (Optional, String, ForceNew) Specifies name of the project to which the peer VPC belongs. This parameter is 
   mandatory when the two VPCs are not in the same project.
 

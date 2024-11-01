@@ -45,6 +45,12 @@ func ResourceVpcPeering() *schema.Resource {
 				Required: true,
 				ForceNew: true,
 			},
+			"peer_project_id": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+				Computed: true,
+			},
 			"peer_region": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -67,10 +73,11 @@ func resourceVpcPeeringCreate(ctx context.Context, d *schema.ResourceData, meta 
 	}
 
 	createOpts := v1peerings.CreateOpts{
-		Name:       d.Get("name").(string),
-		LocalVpcId: d.Get("vpc_id").(string),
-		PeerVpcId:  d.Get("peer_vpc_id").(string),
-		PeerRegion: d.Get("peer_region").(string),
+		Name:          d.Get("name").(string),
+		LocalVpcId:    d.Get("vpc_id").(string),
+		PeerVpcId:     d.Get("peer_vpc_id").(string),
+		PeerRegion:    d.Get("peer_region").(string),
+		PeerProjectId: d.Get("peer_project_id").(string),
 	}
 
 	n, err := v1peerings.Create(vpcPeeringClient, createOpts).ExtractCreate()
@@ -110,6 +117,7 @@ func resourceVpcPeeringRead(_ context.Context, d *schema.ResourceData, meta inte
 		d.Set("name", n[0].Name),
 		d.Set("vpc_id", n[0].RequesterVpcInfo.VpcId),
 		d.Set("peer_vpc_id", n[0].AccepterVpcInfo.VpcId),
+		d.Set("peer_project_id", n[0].AccepterVpcInfo.TenantId),
 		d.Set("status", n[0].Status),
 		d.Set("region", hcsConfig.GetRegion(d)),
 	)
