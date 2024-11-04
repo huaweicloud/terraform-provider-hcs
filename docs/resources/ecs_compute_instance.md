@@ -445,6 +445,54 @@ resource "hcs_ecs_compute_instance" "ecs-userdata" {
 }
 ```
 
+### Instance with power off
+```
+data "hcs_availability_zones" "test" {
+}
+
+data "hcs_ecs_compute_flavors" "flavors" {
+  availability_zone = data.hcs_availability_zones.test.names[0]
+  cpu_core_count    = 2
+  memory_size       = 4
+}
+
+data "hcs_vpc_subnets" "test" {
+  name = "subnet-32a8"
+}
+
+data "hcs_ims_images" "test" {
+  name       = "mini_image"
+}
+
+data "hcs_networking_secgroups" "test" {
+  name = "default"
+}
+
+resource "hcs_ecs_compute_instance" "ecs-power-off" {
+  name                = "ecs-poweroff"
+  description         = "poweroff test"
+  image_id            = data.hcs_ims_images.test.images[0].id
+  flavor_id           = data.hcs_ecs_compute_flavors.flavors.ids[0]
+  security_group_ids  = [data.hcs_networking_secgroups.test.security_groups[0].id]
+  availability_zone = data.hcs_availability_zones.test.names[0]
+  
+  network {
+    uuid              = data.hcs_vpc_subnets.test.subnets[0].id
+    source_dest_check = false
+  }
+
+  system_disk_type = "business_type_01"
+  system_disk_size = 10
+  
+  data_disks {
+    type = "business_type_01"
+    size = "10"
+  }
+  
+  power_action = "OFF"
+}
+```
+
 ## Argument Reference
 
 The following arguments are supported:
@@ -513,6 +561,8 @@ The following arguments are supported:
 
 * `delete_eip_on_termination` - (Optional, Bool) Specifies whether the EIP is released when the instance is terminated.
   Defaults to *true*.
+
+* `power_action` - (Optional, String) Specifies the power status of the instance. The value must be one of the following: *ON*, *OFF*, *REBOOT*, *FORCE-OFF* and *FORCE-REBOOT*.
 
 * `enterprise_project_id` - (Optional, String) Specifies a unique id in UUID format of enterprise project.
 
