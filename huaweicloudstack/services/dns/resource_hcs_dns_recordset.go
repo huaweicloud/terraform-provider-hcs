@@ -202,12 +202,12 @@ func waitForDNSRecordsetCreateOrUpdate(ctx context.Context, recordsetClient *gol
 
 func buildCreateDNSRecordsetBodyParams(d *schema.ResourceData) map[string]interface{} {
 	bodyParams := map[string]interface{}{
-		"name":        utils.ValueIngoreEmpty(d.Get("name")),
-		"description": utils.ValueIngoreEmpty(d.Get("description")),
-		"type":        utils.ValueIngoreEmpty(d.Get("type")),
-		"status":      utils.ValueIngoreEmpty(d.Get("status")),
-		"ttl":         utils.ValueIngoreEmpty(d.Get("ttl")),
-		"records":     utils.ValueIngoreEmpty(d.Get("records")),
+		"name":        utils.ValueIgnoreEmpty(d.Get("name")),
+		"description": utils.ValueIgnoreEmpty(d.Get("description")),
+		"type":        utils.ValueIgnoreEmpty(d.Get("type")),
+		"status":      utils.ValueIgnoreEmpty(d.Get("status")),
+		"ttl":         utils.ValueIgnoreEmpty(d.Get("ttl")),
+		"records":     utils.ValueIgnoreEmpty(d.Get("records")),
 		"tags":        utils.ExpandResourceTagsMap(d.Get("tags").(map[string]interface{})),
 	}
 	return bodyParams
@@ -409,18 +409,18 @@ func updateDNSRecordsetStatus(recordsetClient *golangsdk.ServiceClient, d *schem
 
 func buildUpdateDNSRecordsetBodyParams(d *schema.ResourceData) map[string]interface{} {
 	bodyParams := map[string]interface{}{
-		"name":        utils.ValueIngoreEmpty(d.Get("name")),
-		"description": utils.ValueIngoreEmpty(d.Get("description")),
-		"type":        utils.ValueIngoreEmpty(d.Get("type")),
-		"ttl":         utils.ValueIngoreEmpty(d.Get("ttl")),
-		"records":     utils.ValueIngoreEmpty(d.Get("records")),
+		"name":        utils.ValueIgnoreEmpty(d.Get("name")),
+		"description": utils.ValueIgnoreEmpty(d.Get("description")),
+		"type":        utils.ValueIgnoreEmpty(d.Get("type")),
+		"ttl":         utils.ValueIgnoreEmpty(d.Get("ttl")),
+		"records":     utils.ValueIgnoreEmpty(d.Get("records")),
 	}
 	return bodyParams
 }
 
 func buildUpdateDNSRecordsetStatusBodyParams(d *schema.ResourceData) map[string]interface{} {
 	bodyParams := map[string]interface{}{
-		"status": utils.ValueIngoreEmpty(d.Get("status")),
+		"status": utils.ValueIgnoreEmpty(d.Get("status")),
 	}
 	return bodyParams
 }
