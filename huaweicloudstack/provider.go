@@ -38,6 +38,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eps"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/evs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ims"
+	hcsLts "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/lts"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/nat"
 	hcsObs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/obs"
 	hcsRomaConnect "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/romaconnect"
@@ -494,7 +495,7 @@ func Provider() *schema.Provider {
 
 			"hcs_lts_host_access":               lts.ResourceHostAccessConfig(),
 			"hcs_lts_host_group":                lts.ResourceHostGroup(),
-			"hcs_lts_group":                     lts.ResourceLTSGroup(),
+			"hcs_lts_group":                     hcsLts.ResourceLTSGroup(),
 			"hcs_lts_search_criteria":           lts.ResourceSearchCriteria(),
 			"hcs_lts_stream":                    lts.ResourceLTSStream(),
 			"hcs_lts_structuring_configuration": lts.ResourceStructConfig(),
