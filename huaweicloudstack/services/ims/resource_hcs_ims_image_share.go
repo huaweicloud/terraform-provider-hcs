@@ -160,7 +160,7 @@ func dealImageMembers(ctx context.Context, d *schema.ResourceData, cfg *config.H
 
 func buildImageMemberBodyParams(d *schema.ResourceData, imageId interface{}, projectIds []interface{}) map[string]interface{} {
 	imagesParams := []interface{}{
-		utils.ValueIngoreEmpty(d.Id()),
+		utils.ValueIgnoreEmpty(d.Id()),
 	}
 	if len(imagesParams) == 0 || imagesParams[0] == nil {
 		imageSlice := make([]interface{}, 0)
