@@ -522,7 +522,7 @@ The following arguments are supported:
 * `description` - (Optional, String) Specifies the description of the instance. The description consists of 0 to 85
   characters, and can't contain '<' or '>'.
 
-* `admin_pass` - (Optional, String) Specifies the administrative password to assign to the instance.
+* `admin_pass` - (Optional, String) Specifies the administrative password to assign to the instance, conflict with `key_pair`.
 
 * `key_pair` - (Optional, String) Specifies the SSH keypair name used for logging in to the instance.
 
@@ -573,6 +573,8 @@ The following arguments are supported:
 
 * `user_id` - (Optional, String, ForceNew) Specifies a user ID, required when using key_pair in prePaid charging mode.
   Changing this creates a new instance.
+
+* `tags` - (Optional, Map) Tags key/value pairs to associate with the instance.
 
 The `network` block supports:
 

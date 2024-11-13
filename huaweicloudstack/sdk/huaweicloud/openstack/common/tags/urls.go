@@ -30,6 +30,10 @@ func deleteURL(c *golangsdk.ServiceClient, resourceType, id, key string) string 
 	return c.ServiceURL(c.ProjectID, resourceType, id, "tags", key)
 }
 
+func updateURL(c *golangsdk.ServiceClient, resourceType, id, key string) string {
+	return deleteURL(c, resourceType, id, key)
+}
+
 func listURL(c *golangsdk.ServiceClient, resourceType string) string {
 	if hasProjectID(c) {
 		return c.ServiceURL(resourceType, "tags")
