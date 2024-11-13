@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"regexp"
 	"strings"
 	"time"
 
@@ -116,9 +117,10 @@ func ResourceComputeInstance() *schema.Resource {
 				Description: "schema: Computed",
 			},
 			"admin_pass": {
-				Type:      schema.TypeString,
-				Sensitive: true,
-				Optional:  true,
+				Type:          schema.TypeString,
+				Sensitive:     true,
+				Optional:      true,
+				ConflictsWith: []string{"key_pair"},
 			},
 			"key_pair": {
 				Type:     schema.TypeString,
@@ -520,7 +522,13 @@ func resourceComputeInstanceCreate(ctx context.Context, d *schema.ResourceData, 
 	}
 
 	if tags, ok := d.GetOk("tags"); ok {
-		createOpts.ServerTags = utils.ExpandResourceTags(tags.(map[string]interface{}))
+		if !checkTags(tags.(map[string]interface{})) {
+			return diag.Errorf("tags check failed")
+		}
+		tagList := utils.ExpandResourceTagsString(tags.(map[string]interface{}))
+		for _, tag := range tagList {
+			createOpts.Tags = append(createOpts.Tags, tag.(string))
+		}
 	}
 
 	var extendParam cloudservers.ServerExtendParam
@@ -763,6 +771,7 @@ func resourceComputeInstanceRead(_ context.Context, d *schema.ResourceData, meta
 		}
 		d.Set("scheduler_hints", schedulerHints)
 	}
+	d.Set("tags", flattenTagsToMap(server.Tags))
 	return nil
 }
 
@@ -876,14 +885,10 @@ func resourceComputeInstanceUpdate(ctx context.Context, d *schema.ResourceData, 
 	}
 
 	if d.HasChange("tags") {
-		ecsClient, err := cfg.ComputeV1Client(region)
-		if err != nil {
-			return diag.Errorf("error creating compute v1 client: %s", err)
-		}
 
-		tagErr := utils.UpdateResourceTags(ecsClient, d, "cloudservers", d.Id())
+		tagErr := UpdateResourceTags(computeClient, d, "servers", d.Id())
 		if tagErr != nil {
-			return diag.Errorf("error updating tags of instance:%s, err:%s", d.Id(), err)
+			return diag.Errorf("error updating tags of instance:%s, err:%s", d.Id(), tagErr)
 		}
 	}
 
@@ -1562,4 +1567,70 @@ func waitForEnterpriseProjectIdChanged(client *golangsdk.ServiceClient, instance
 		}
 		return s, "Pending", nil
 	}
+}
+
+func checkTags(tagMap map[string]interface{}) bool {
+	if len(tagMap) > 10 {
+		return false
+	}
+	for k, v := range tagMap {
+		if len(k) > 36 || len(v.(string)) > 43 {
+			return false
+		}
+		keyReg, _ := regexp.Compile("[a-zA-Z0-9\u4e00-\u9fa5_-]*")
+		if !keyReg.MatchString(k) {
+			return false
+		}
+		valueReg, _ := regexp.Compile("[a-zA-Z0-9\u4e00-\u9fa5_.-]*")
+		if !valueReg.MatchString(v.(string)) {
+			return false
+		}
+	}
+	return true
+}
+
+func UpdateResourceTags(conn *golangsdk.ServiceClient, d *schema.ResourceData, resourceType, id string) error {
+	oRaw, nRaw := d.GetChange("tags")
+	oMap := oRaw.(map[string]interface{})
+	nMap := nRaw.(map[string]interface{})
+	if !checkTags(nMap) {
+		return fmt.Errorf("tags check failed")
+	}
+	var oTags []string
+	for k, v := range oMap {
+		oTags = append(oTags, fmt.Sprintf("%s.%s", k, v))
+	}
+	var nTags []string
+	for k, v := range nMap {
+		nTags = append(nTags, fmt.Sprintf("%s.%s", k, v))
+	}
+	// remove old tags
+	if len(oTags) > 0 {
+		oTags = utils.RemoveDuplicateElem(oTags)
+		err := utils.DeleteResourceTagsWithKeys(conn, oTags, resourceType, id)
+		if err != nil {
+			return err
+		}
+	}
+
+	// set new tags
+	if len(nTags) > 0 {
+		nTags = utils.RemoveDuplicateElem(nTags)
+		err := utils.CreateResourceTagsWithKeys(conn, nTags, resourceType, id)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func flattenTagsToMap(tags []string) map[string]string {
+	result := make(map[string]string)
+	for _, tagStr := range tags {
+		tag := strings.SplitN(tagStr, ".", 2)
+		if len(tag) == 2 {
+			result[tag[0]] = tag[1]
+		}
+	}
+	return result
 }
