@@ -149,6 +149,10 @@ func ImagesImageRefSchema() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"os_type": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 			"os_version": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -179,6 +183,10 @@ func ImagesImageRefSchema() *schema.Resource {
 			},
 			"size_bytes": {
 				Type:     schema.TypeInt,
+				Computed: true,
+			},
+			"cloudinit": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
 		},
@@ -262,9 +270,11 @@ func flattenImage(image *cloudimages.Image) map[string]interface{} {
 		"protected":        image.Protected,
 		"image_type":       image.VirtualEnvType,
 		"os":               image.Platform,
+		"os_type":          image.OsType,
 		"os_version":       image.OsVersion,
 		"checksum":         image.Checksum,
 		"status":           image.Status,
+		"cloudinit":        image.CloudInit,
 		"created_at":       image.CreatedAt.Format(time.RFC3339),
 		"updated_at":       image.UpdatedAt.Format(time.RFC3339),
 	}

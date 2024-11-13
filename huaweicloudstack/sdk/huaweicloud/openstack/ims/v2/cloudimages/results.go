@@ -88,6 +88,7 @@ type Image struct {
 	SystemCmkid            string `json:"__system__cmkid"`
 	AccountCode            string `json:"__account_code"`
 	SupportAmd             string `json:"__support_amd"`
+	CloudInit              string `json:"cloudinit"`
 }
 
 func (r *Image) UnmarshalJSON(b []byte) error {
