@@ -557,7 +557,7 @@ func resourceComputeInstanceCreate(ctx context.Context, d *schema.ResourceData, 
 		var PowerOn bool
 		if action == "ON" {
 			PowerOn = true
-		} else if action == "OFF" {
+		} else if action == "OFF" || action == "FORCE-OFF" {
 			PowerOn = false
 		} else {
 			log.Printf("[ERROR] the power action (%s) is invalid after instance created, the value of power_action must be ON or OFF.", action)
