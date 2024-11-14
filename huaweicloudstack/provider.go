@@ -461,6 +461,7 @@ func Provider() *schema.Provider {
 			"hcs_ecs_compute_instance":         ecs.ResourceComputeInstance(),
 			"hcs_ecs_compute_keypair":          ecs.ResourceComputeKeypairV2(),
 			"hcs_ecs_compute_eip_associate":    ecs.ResourceComputeEIPAssociate(),
+			"hcs_ecs_compute_instance_clone":   ecs.ResourceComputeInstanceClone(),
 
 			"hcs_vpc_bandwidth":           eip.ResourceVpcBandWidthV2(),
 			"hcs_vpc_eip":                 eip.ResourceVpcEIPV1(),
