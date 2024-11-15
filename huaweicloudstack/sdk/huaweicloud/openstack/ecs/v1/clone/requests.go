@@ -17,7 +17,7 @@ type OsCloneOpts struct {
 	Postfix      string            `json:"postfix,omitempty"`
 	Nics         []NicsOpts        `json:"nics,omitempty"`
 	VpcId        string            `json:"vpc_id,omitempty"`
-	AdminPass    string            `json:"admin_pass,omitempty"`
+	AdminPass    string            `json:"admin_password,omitempty"`
 }
 
 type NicsOpts struct {
