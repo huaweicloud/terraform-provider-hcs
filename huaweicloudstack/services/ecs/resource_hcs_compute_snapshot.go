@@ -2,11 +2,15 @@ package ecs
 
 import (
 	"context"
+	"fmt"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/ecs/v1/cloudservers"
+	"log"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/ecs/v1/snapshots"
@@ -19,7 +23,7 @@ func ResourceComputeSnapshot() *schema.Resource {
 		ReadContext:   resourceComputeSnapshotRead,
 		DeleteContext: resourceComputeSnapshotDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: resourceComputeSnapshotImportState,
 		},
 
 		Timeouts: &schema.ResourceTimeout{
@@ -28,13 +32,6 @@ func ResourceComputeSnapshot() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"region": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
-				ForceNew: true,
-			},
-
 			"instance_id": {
 				Type:     schema.TypeString,
 				Required: true,
@@ -93,13 +90,84 @@ func resourceComputeSnapshotCreate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceComputeSnapshotRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	err := d.Set("name", "")
+	cfg := config.GetHcsConfig(meta)
+	region := cfg.GetRegion(d)
+	imageV2Client, err := cfg.ImageV2Client(region)
 	if err != nil {
-		return diag.Errorf("failed to set snapshot name for instance (%s): %s", d.Get("instance_id").(string), err)
+		return diag.Errorf("error creating compute V2 client: %s", err)
 	}
+	var instanceId string
+	var snapshotId string
+	if strings.Contains(d.Id(), "/") {
+		parts := strings.SplitN(d.Id(), "/", 2)
+		instanceId = parts[0]
+		snapshotId = parts[1]
+	} else {
+		instanceId = d.Get("instance_id").(string)
+		snapshotId = d.Id()
+	}
+	snapshot, err := snapshots.Get(imageV2Client, instanceId, snapshotId)
+	if err != nil {
+		return common.CheckDeletedDiag(d, err, "error retrieving snapshot")
+	}
+	log.Printf("[DEBUG] Retrieved Snapshot %s: %#v", d.Id(), snapshot)
+	d.Set("instance_id", d.Get("instance_id").(string))
+	d.Set("name", snapshot.Name)
 	return nil
 }
 
 func resourceComputeSnapshotDelete(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	cfg := config.GetHcsConfig(meta)
+	region := cfg.GetRegion(d)
+	ecsClient, err := cfg.ComputeV1Client(region)
+	if err != nil {
+		return diag.Errorf("error creating compute client: %s", err)
+	}
+	server, err := cloudservers.Get(ecsClient, d.Get("instance_id").(string)).Extract()
+	var images []string
+	images = append(images, d.Id())
+	deleteOpts := snapshots.DeleteOpts{
+		Images:          images,
+		AvailableZone:   server.AvailabilityZone,
+		Region:          region,
+		IsSnapShotImage: "true",
+	}
+	imageV2Client, err := cfg.ImageV2Client(region)
+	if err != nil {
+		return diag.Errorf("error creating image V2 client: %s", err)
+	}
+	n, err := snapshots.Delete(imageV2Client, deleteOpts).ExtractJobResponse()
+	if err != nil {
+		return diag.Errorf("error deleting snapshot: %s", err)
+	}
+	ecsV1Client, err := cfg.ComputeV1Client(region)
+	if err != nil {
+		return diag.Errorf("error creating compute V1 client: %s", err)
+	}
+	if err := snapshots.WaitForJobSuccess(ecsV1Client, int(d.Timeout(schema.TimeoutCreate)/time.Second), n.JobID); err != nil {
+		return diag.FromErr(err)
+	}
+	d.SetId("")
 	return nil
+}
+
+func resourceComputeSnapshotImportState(_ context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	parts := strings.SplitN(d.Id(), "/", 2)
+	if len(parts) != 2 {
+		return nil, fmt.Errorf("invalid format specified for compute snapshot, must be <instance_id>/<snapshot_id>")
+	}
+	cfg := config.GetHcsConfig(meta)
+	region := cfg.GetRegion(d)
+	imageV2Client, err := cfg.ImageV2Client(region)
+	if err != nil {
+		return nil, fmt.Errorf("error creating compute client: %s", err)
+	}
+	queryImage, err := snapshots.Get(imageV2Client, parts[0], parts[1])
+	if err != nil || queryImage.Id == "" {
+		return nil, common.CheckDeleted(d, err, "compute snapshot")
+	}
+	d.Set("instance_id", queryImage.SnapshotFromInstance)
+	d.Set("snapshot_id", queryImage.Id)
+	d.Set("name", queryImage.Name)
+	return []*schema.ResourceData{d}, nil
 }

@@ -19,6 +19,17 @@ type RollBackInstanceSnapshotOpts struct {
 	ImageRef string `json:"imageRef" required:"true"`
 }
 
+type DeleteOpts struct {
+	Images          []string `json:"images" required:"true"`
+	AvailableZone   string   `json:"available_zone" required:"true"`
+	Region          string   `json:"region"  required:"true"`
+	IsSnapShotImage string   `json:"is_snapshot_image,omitempty"`
+}
+
+func (opts DeleteOpts) ToServerDeleteMap() (map[string]interface{}, error) {
+	return golangsdk.BuildRequestBody(opts, "")
+}
+
 func Create(c *golangsdk.ServiceClient, opts CreateInstanceSnapshotOpts) (r JobResult) {
 	b, err := golangsdk.BuildRequestBody(opts, "createImage")
 	if err != nil {
@@ -55,6 +66,20 @@ func Get(client *golangsdk.ServiceClient, serverId string, imageId string) (imag
 	}
 
 	return image, fmt.Errorf("snpashot %s not found", imageId)
+}
+
+func Delete(client *golangsdk.ServiceClient, deleteOpts DeleteOpts) (r JobResult) {
+	reqBody, err := deleteOpts.ToServerDeleteMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+	reqOpt := &golangsdk.RequestOpts{
+		OkCodes:  []int{200, 204},
+		JSONBody: reqBody,
+	}
+	_, r.Err = client.DeleteWithResponse(deleteURL(client), &r.Body, reqOpt)
+	return
 }
 
 func Rollback(c *golangsdk.ServiceClient, serverId string, opts RollBackInstanceSnapshotOpts) (r JobResult) {
