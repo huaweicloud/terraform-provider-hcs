@@ -1039,7 +1039,7 @@ func resourceComputeInstanceImportState(_ context.Context, d *schema.ResourceDat
 
 	log.Printf("[DEBUG] flatten Instance Networks: %#v", networks)
 	d.Set("network", networks)
-
+	d.Set("tags", flattenTagsToMap(server.Tags))
 	return []*schema.ResourceData{d}, nil
 }
 
