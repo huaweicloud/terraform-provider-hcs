@@ -15,3 +15,7 @@ func getURL(client *golangsdk.ServiceClient, serverId string) string {
 func jobURL(client *golangsdk.ServiceClient, jobId string) string {
 	return client.ServiceURL("jobs", jobId)
 }
+
+func deleteURL(client *golangsdk.ServiceClient) string {
+	return client.ServiceURL("cloudimages")
+}

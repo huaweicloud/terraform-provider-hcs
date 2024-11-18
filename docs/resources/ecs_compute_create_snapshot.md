@@ -27,7 +27,7 @@ The following arguments are supported:
 
 ## Note
 
-ECS snapshots can only be created, but cannot be updated or deleted locally.
+ECS snapshots can only be created.
 
 ## Timeouts
 
