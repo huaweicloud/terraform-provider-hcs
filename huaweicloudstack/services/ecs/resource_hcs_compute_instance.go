@@ -663,6 +663,12 @@ func resourceComputeInstanceRead(_ context.Context, d *schema.ResourceData, meta
 	d.Set("flavor_id", flavorInfo.ID)
 	d.Set("flavor_name", flavorInfo.Name)
 
+	if server.Status == "ACTIVE" {
+		d.Set("power_action", "ON")
+	} else if server.Status == "SHUTOFF" {
+		d.Set("power_action", "OFF")
+	}
+
 	// Set the instance's image information appropriately
 	if err := setImageInformation(d, imsClient, server.Image.ID); err != nil {
 		return diag.FromErr(err)
