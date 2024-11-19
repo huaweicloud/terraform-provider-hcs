@@ -28,13 +28,6 @@ func ResourceComputeSnapshotRollback() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"region": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
-				ForceNew: true,
-			},
-
 			"snapshot_id": {
 				Type:     schema.TypeString,
 				Required: true,
@@ -74,7 +67,7 @@ func resourceComputeSnapshotRollbackCreate(ctx context.Context, d *schema.Resour
 
 	// snapshot is existed ?
 	queryImage, err := snapshots.Get(imsClient, serverId, snapshotId)
-	if err != nil || queryImage.Id == "" {
+	if queryImage.Id == "" {
 		return diag.Errorf("failed to query snapshot: %s", err)
 	}
 

@@ -23,7 +23,7 @@ The following arguments are supported:
 
 * `instance_id` - (Required, String, ForceNew) The ID of the Instance to rollback ECS snapshot.
 
-* `name` - (Required, String, ForceNew) The ID of the ECS snapshot.
+* `snapshot_id` - (Required, String, ForceNew) The ID of the ECS snapshot.
 
 ## Note
 
