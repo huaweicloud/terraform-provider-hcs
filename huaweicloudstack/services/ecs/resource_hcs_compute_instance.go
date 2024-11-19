@@ -557,7 +557,7 @@ func resourceComputeInstanceCreate(ctx context.Context, d *schema.ResourceData, 
 		var PowerOn bool
 		if action == "ON" {
 			PowerOn = true
-		} else if action == "OFF" || action == "FORCE-OFF" {
+		} else if action == "OFF" {
 			PowerOn = false
 		} else {
 			log.Printf("[ERROR] the power action (%s) is invalid after instance created, the value of power_action must be ON or OFF.", action)
@@ -666,7 +666,10 @@ func resourceComputeInstanceRead(_ context.Context, d *schema.ResourceData, meta
 	if server.Status == "ACTIVE" {
 		d.Set("power_action", "ON")
 	} else if server.Status == "SHUTOFF" {
-		d.Set("power_action", "OFF")
+		// The server instance is in the shutdown state. The local setting can be OFF or FORCE-OFF.
+		if d.Get("power_action") != "OFF" && d.Get("power_action") != "FORCE-OFF" {
+			d.Set("power_action", "OFF")
+		}
 	}
 
 	// Set the instance's image information appropriately
@@ -964,7 +967,21 @@ func resourceComputeInstanceUpdate(ctx context.Context, d *schema.ResourceData, 
 
 	// The instance power status update needs to be done at the end
 	if d.HasChange("power_action") {
+		server, err := cloudservers.Get(ecsClient, d.Id()).Extract()
+		if err != nil {
+			return diag.Errorf("Failed to get instance (%s) status: %s", d.Id(), err)
+		}
 		action := d.Get("power_action").(string)
+
+		// Stopped instances can only be started.
+		if server.Status == "SHUTOFF" && action != "ON" {
+			return diag.Errorf("The instance (%s) is shutoff and does not support the [%s] operation.", d.Id(), action)
+		}
+
+		if server.Status == "ACTIVE" && action == "ON" {
+			return diag.Errorf("The instance (%s) is power on and does not support the [%s] operation.", d.Id(), action)
+		}
+
 		if err = doPowerAction(ecsClient, d, action); err != nil {
 			return diag.Errorf("Doing power action (%s) for instance (%s) failed: %s", action, d.Id(), err)
 		}
