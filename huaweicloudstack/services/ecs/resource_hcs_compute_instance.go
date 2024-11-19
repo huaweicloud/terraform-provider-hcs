@@ -1583,11 +1583,11 @@ func checkTags(tagMap map[string]interface{}) bool {
 		if len(k) > 36 || len(v.(string)) > 43 {
 			return false
 		}
-		keyReg, _ := regexp.Compile("[a-zA-Z0-9\u4e00-\u9fa5_-]*")
+		keyReg, _ := regexp.Compile("^[a-zA-Z0-9\u4e00-\u9fa5_-]+$")
 		if !keyReg.MatchString(k) {
 			return false
 		}
-		valueReg, _ := regexp.Compile("[a-zA-Z0-9\u4e00-\u9fa5_.-]*")
+		valueReg, _ := regexp.Compile("^[a-zA-Z0-9\u4e00-\u9fa5._-]+$")
 		if !valueReg.MatchString(v.(string)) {
 			return false
 		}
