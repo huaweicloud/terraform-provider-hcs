@@ -108,7 +108,10 @@ func resourceComputeSnapshotRead(_ context.Context, d *schema.ResourceData, meta
 	}
 	snapshot, err := snapshots.Get(imageV2Client, instanceId, snapshotId)
 	if err != nil {
-		return common.CheckDeletedDiag(d, err, "error retrieving snapshot")
+		return diag.Errorf("error query snapshot: %s", err)
+	} else if snapshot.Id == "" {
+		d.SetId("")
+		return nil
 	}
 	log.Printf("[DEBUG] Retrieved Snapshot %s: %#v", d.Id(), snapshot)
 	d.Set("instance_id", d.Get("instance_id").(string))
@@ -163,7 +166,7 @@ func resourceComputeSnapshotImportState(_ context.Context, d *schema.ResourceDat
 		return nil, fmt.Errorf("error creating compute client: %s", err)
 	}
 	queryImage, err := snapshots.Get(imageV2Client, parts[0], parts[1])
-	if err != nil || queryImage.Id == "" {
+	if queryImage.Id == "" {
 		return nil, common.CheckDeleted(d, err, "compute snapshot")
 	}
 	d.Set("instance_id", queryImage.SnapshotFromInstance)
