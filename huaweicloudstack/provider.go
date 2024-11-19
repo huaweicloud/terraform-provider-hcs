@@ -346,6 +346,8 @@ func Provider() *schema.Provider {
 			"hcs_dcs_templates":       dcs.DataSourceTemplates(),
 			"hcs_dcs_template_detail": dcs.DataSourceTemplateDetail(),
 
+			"hcs_csms_secret_version": dew.DataSourceDewCsmsSecret(),
+
 			"hcs_kms_key":      dew.DataSourceKmsKey(),
 			"hcs_kms_data_key": dew.DataSourceKmsDataKeyV1(),
 
@@ -439,6 +441,8 @@ func Provider() *schema.Provider {
 
 			"hcs_dcs_instance": dcs.ResourceDcsInstance(),
 			"hcs_dcs_backup":   dcs.ResourceDcsBackup(),
+
+			"hcs_csms_secret": dew.ResourceCsmsSecret(),
 
 			"hcs_kms_key":   dew.ResourceKmsKey(),
 			"hcs_kms_grant": dew.ResourceKmsGrant(),
@@ -773,10 +777,15 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 	}
 
 	// set default endpoints
-	if _, ok := endpoints["waf"]; !ok {
-		wafEndpoint := fmt.Sprintf("https://waf-api.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
-		endpoints["waf"] = wafEndpoint
-		endpoints["waf-dedicated"] = wafEndpoint
+	if _, ok := endpoints["csms"]; !ok {
+		endpoints["csms"] = fmt.Sprintf("https://csms-scc-apig.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
+	}
+	if _, ok := endpoints["kms"]; !ok {
+		endpoints["kms"] = fmt.Sprintf("https://kms-scc-apig.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
+	}
+
+	if _, ok := endpoints["obs"]; !ok {
+		endpoints["obs"] = fmt.Sprintf("https://obsv3.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
 	}
 	if _, ok := endpoints["opengauss"]; !ok {
 		openGaussUrl := "https://gaussdb.%s.%s/gaussdb/"
@@ -785,11 +794,10 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 	if _, ok := endpoints["swr"]; !ok {
 		endpoints["swr"] = fmt.Sprintf("https://swr-api.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
 	}
-	if _, ok := endpoints["obs"]; !ok {
-		endpoints["obs"] = fmt.Sprintf("https://obsv3.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
-	}
-	if _, ok := endpoints["kms"]; !ok {
-		endpoints["kms"] = fmt.Sprintf("https://kms-scc-apig.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
+	if _, ok := endpoints["waf"]; !ok {
+		wafEndpoint := fmt.Sprintf("https://waf-api.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
+		endpoints["waf"] = wafEndpoint
+		endpoints["waf-dedicated"] = wafEndpoint
 	}
 
 	hcsConfig.Endpoints = endpoints
