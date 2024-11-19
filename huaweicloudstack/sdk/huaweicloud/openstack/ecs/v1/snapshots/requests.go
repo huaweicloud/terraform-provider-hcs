@@ -1,7 +1,6 @@
 package snapshots
 
 import (
-	"fmt"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/pagination"
 )
@@ -65,7 +64,7 @@ func Get(client *golangsdk.ServiceClient, serverId string, imageId string) (imag
 		}
 	}
 
-	return image, fmt.Errorf("snpashot %s not found", imageId)
+	return image, nil
 }
 
 func Delete(client *golangsdk.ServiceClient, deleteOpts DeleteOpts) (r JobResult) {

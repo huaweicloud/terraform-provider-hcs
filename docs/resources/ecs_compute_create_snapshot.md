@@ -25,9 +25,12 @@ The following arguments are supported:
 
 * `name` - (Required, String, ForceNew) The snapshot name.
 
-## Note
+## Import
 
-ECS snapshots can only be created.
+Snapshot can be imported using the Instance ID and Snapshot ID separated by a slash, e.g.
+```
+$ terraform import hcs_ecs_compute_snapshot.test 1bc30ee9-9d5b-4c30-bdd5-7f1e663f5edf/aa4a8f8d-160d-4643-9ab4-087657b307ba
+```
 
 ## Timeouts
 
