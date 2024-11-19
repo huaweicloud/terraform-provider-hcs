@@ -612,6 +612,10 @@ The following arguments are supported:
   Defaults to *true*.
 
 * `power_action` - (Optional, String) Specifies the power status of the instance. The value must be one of the following: *ON*, *OFF*, *REBOOT*, *FORCE-OFF* and *FORCE-REBOOT*.
+  
+  -> **NOTE:** When creating an instance, can only set this parameter to [*ON*, *OFF*].The default value is *ON*.
+  If the instance is power on, the value can be changed to [*OFF*, *REBOOT*, *FORCE-OFF* and *FORCE-REBOOT*]. 
+  If the instance is power off, the value can be changed to [*ON*].
 
 * `enterprise_project_id` - (Optional, String) Specifies a unique id in UUID format of enterprise project.
 
