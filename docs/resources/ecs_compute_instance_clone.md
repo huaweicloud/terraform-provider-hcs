@@ -77,7 +77,17 @@ resource "hcs_ecs_compute_instance_clone" "clone_modify_passwd" {
   retain_passwd = false
   power_on    = true
   admin_pass = "test_password"
-  key_pair = "key_pair_name"
+}
+```
+
+### Instance With Modify Keypair
+
+```hcl
+resource "hcs_ecs_compute_instance_clone" "clone_modify_keypair" {
+  instance_id = "c9a6edf4-ba26-48cb-857f-9aff9ffa25dd"
+  retain_passwd = false
+  power_on    = true
+  key_pair = "keypair_name"
 }
 ```
 
