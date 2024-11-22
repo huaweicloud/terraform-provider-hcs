@@ -967,21 +967,7 @@ func resourceComputeInstanceUpdate(ctx context.Context, d *schema.ResourceData, 
 
 	// The instance power status update needs to be done at the end
 	if d.HasChange("power_action") {
-		server, err := cloudservers.Get(ecsClient, d.Id()).Extract()
-		if err != nil {
-			return diag.Errorf("Failed to get instance (%s) status: %s", d.Id(), err)
-		}
 		action := d.Get("power_action").(string)
-
-		// Stopped instances can only be started.
-		if server.Status == "SHUTOFF" && action != "ON" {
-			return diag.Errorf("The instance (%s) is shutoff and does not support the [%s] operation.", d.Id(), action)
-		}
-
-		if server.Status == "ACTIVE" && action == "ON" {
-			return diag.Errorf("The instance (%s) is power on and does not support the [%s] operation.", d.Id(), action)
-		}
-
 		if err = doPowerAction(ecsClient, d, action); err != nil {
 			return diag.Errorf("Doing power action (%s) for instance (%s) failed: %s", action, d.Id(), err)
 		}
