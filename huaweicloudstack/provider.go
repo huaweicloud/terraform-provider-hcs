@@ -21,6 +21,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/lts"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/mrs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/obs"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/rds"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/sfs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/swr"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/waf"
@@ -385,6 +386,8 @@ func Provider() *schema.Provider {
 			"hcs_obs_buckets":       obs.DataSourceObsBuckets(),
 			"hcs_obs_bucket_object": obs.DataSourceObsBucketObject(),
 
+			"hcs_rds_pg_plugins": rds.DataSourcePgPlugins(),
+
 			"hcs_sfs_file_system": sfs.DataSourceSFSFileSystemV2(),
 
 			"hcs_smn_topics": smn.DataSourceTopics(),
@@ -505,6 +508,11 @@ func Provider() *schema.Provider {
 			"hcs_obs_bucket_object":     obs.ResourceObsBucketObject(),
 			"hcs_obs_bucket_object_acl": obs.ResourceOBSBucketObjectAcl(),
 			"hcs_obs_bucket_policy":     obs.ResourceObsBucketPolicy(),
+
+			"hcs_rds_instance":    rds.ResourceRdsInstance(),
+			"hcs_rds_pg_account":  rds.ResourcePgAccount(),
+			"hcs_rds_pg_database": rds.ResourcePgDatabase(),
+			"hcs_rds_pg_plugin":   rds.ResourceRdsPgPlugin(),
 
 			"hcs_roma_connect_instance": hcsRomaConnect.ResourceRomaConnectInstance(),
 

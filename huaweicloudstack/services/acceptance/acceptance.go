@@ -174,6 +174,9 @@ var (
 	HCS_LTS_ENABLE_FLAG                 = os.Getenv("HCS_LTS_ENABLE_FLAG")
 	HCS_LTS_STRUCT_CONFIG_TEMPLATE_ID   = os.Getenv("HCS_LTS_STRUCT_CONFIG_TEMPLATE_ID")
 	HCS_LTS_STRUCT_CONFIG_TEMPLATE_NAME = os.Getenv("HCS_LTS_STRUCT_CONFIG_TEMPLATE_NAME")
+
+	HCS_RDS_INSTANCE_ID = os.Getenv("HCS_RDS_INSTANCE_ID")
+	HCS_RDS_BACKUP_ID   = os.Getenv("HCS_RDS_BACKUP_ID")
 )
 
 // TestAccProviders is a static map containing only the main provider instance.
@@ -801,5 +804,12 @@ func TestAccPreCheckLtsStructConfigCustom(t *testing.T) {
 func TestAccPreCheckKmsHsmClusterId(t *testing.T) {
 	if HCS_KMS_HSM_CLUSTER_ID == "" {
 		t.Skip("HCS_KMS_HSM_CLUSTER_ID must be set for KMS dedicated keystore acceptance tests.")
+	}
+}
+
+// lintignore:AT003
+func TestAccPreCheckRdsInstance(t *testing.T) {
+	if HCS_RDS_INSTANCE_ID == "" || HCS_RDS_BACKUP_ID == "" {
+		t.Skip("HCS_RDS_INSTANCE_ID and HCS_RDS_BACKUP_ID must be set for RDS PostgreSql Restore acceptance tests.")
 	}
 }
