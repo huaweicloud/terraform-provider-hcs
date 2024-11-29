@@ -445,6 +445,103 @@ resource "hcs_ecs_compute_instance" "ecs-userdata" {
 }
 ```
 
+### Instance with power off
+```
+data "hcs_availability_zones" "test" {
+}
+
+data "hcs_ecs_compute_flavors" "flavors" {
+  availability_zone = data.hcs_availability_zones.test.names[0]
+  cpu_core_count    = 2
+  memory_size       = 4
+}
+
+data "hcs_vpc_subnets" "test" {
+  name = "subnet-32a8"
+}
+
+data "hcs_ims_images" "test" {
+  name       = "mini_image"
+}
+
+data "hcs_networking_secgroups" "test" {
+  name = "default"
+}
+
+resource "hcs_ecs_compute_instance" "ecs-power-off" {
+  name                = "ecs-poweroff"
+  description         = "poweroff test"
+  image_id            = data.hcs_ims_images.test.images[0].id
+  flavor_id           = data.hcs_ecs_compute_flavors.flavors.ids[0]
+  security_group_ids  = [data.hcs_networking_secgroups.test.security_groups[0].id]
+  availability_zone = data.hcs_availability_zones.test.names[0]
+  
+  network {
+    uuid              = data.hcs_vpc_subnets.test.subnets[0].id
+    source_dest_check = false
+  }
+
+  system_disk_type = "business_type_01"
+  system_disk_size = 10
+  
+  data_disks {
+    type = "business_type_01"
+    size = "10"
+  }
+  
+  power_action = "OFF"
+}
+```
+
+### Instance with tags
+```
+data "hcs_availability_zones" "test" {
+}
+
+data "hcs_ecs_compute_flavors" "test" {
+  availability_zone = data.hcs_availability_zones.test.names[0]
+  cpu_core_count    = 2
+  memory_size       = 4
+}
+
+data "hcs_vpc_subnets" "test" {
+  name = var.subnet_name
+}
+
+data "hcs_ims_images" "test" {
+  name       = var.image_name
+}
+
+data "hcs_networking_secgroups" "test" {
+  name = var.secgroup_name
+}
+
+resource "hcs_ecs_compute_instance" "test_with_tags" {
+  name                = var.ecs_name
+  description         = var.ecs_description
+  image_id            = data.hcs_ims_images.test.images[0].id
+  flavor_id           = data.hcs_ecs_compute_flavors.test.ids[0]
+  security_group_ids  = [data.hcs_networking_secgroups.test.security_groups[0].id]
+  availability_zone = data.hcs_availability_zones.test.names[0]
+  network {
+    uuid              = data.hcs_vpc_subnets.test.subnets[0].id
+    source_dest_check = false
+  }
+  system_disk_type = var.disk_type
+  system_disk_size = var.system_disk_size
+
+  data_disks {
+    type = var.disk_type
+    size = var.data_disk_size
+  }
+  delete_disks_on_termination = true
+  delete_eip_on_termination = true
+  tags = {
+    tag_key = "tag_value"
+    ecs_tag_key = "ecs_tag_value"
+  }
+}
+```
 ## Argument Reference
 
 The following arguments are supported:
@@ -474,7 +571,7 @@ The following arguments are supported:
 * `description` - (Optional, String) Specifies the description of the instance. The description consists of 0 to 85
   characters, and can't contain '<' or '>'.
 
-* `admin_pass` - (Optional, String) Specifies the administrative password to assign to the instance.
+* `admin_pass` - (Optional, String) Specifies the administrative password to assign to the instance, conflict with `key_pair`.
 
 * `key_pair` - (Optional, String) Specifies the SSH keypair name used for logging in to the instance.
 
@@ -514,6 +611,8 @@ The following arguments are supported:
 * `delete_eip_on_termination` - (Optional, Bool) Specifies whether the EIP is released when the instance is terminated.
   Defaults to *true*.
 
+* `power_action` - (Optional, String) Specifies the power status of the instance. The value must be one of the following: *ON*, *OFF*, *REBOOT*, *FORCE-OFF* and *FORCE-REBOOT*.
+
 * `enterprise_project_id` - (Optional, String) Specifies a unique id in UUID format of enterprise project.
 
   -> **NOTE:** Spot price ECSs are suitable for stateless, fault-tolerant instances that are not sensitive to
@@ -523,6 +622,8 @@ The following arguments are supported:
 
 * `user_id` - (Optional, String, ForceNew) Specifies a user ID, required when using key_pair in prePaid charging mode.
   Changing this creates a new instance.
+
+* `tags` - (Optional, Map) Tags key/value pairs to associate with the instance.
 
 The `network` block supports:
 

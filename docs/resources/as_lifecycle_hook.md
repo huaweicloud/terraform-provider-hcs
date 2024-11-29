@@ -1,5 +1,5 @@
 ---
-subcategory: "Auto Scaling"
+subcategory: "Deprecated"
 ---
 
 # hcs_as_lifecycle_hook

@@ -1,5 +1,5 @@
 ---
-subcategory: "Auto Scaling"
+subcategory: "Auto Scaling (AS)"
 ---
 
 # hcs_as_group

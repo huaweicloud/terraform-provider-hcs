@@ -52,6 +52,20 @@ func UpdateResourceTags(conn *golangsdk.ServiceClient, d *schema.ResourceData, r
 	return nil
 }
 
+// CreateResourceTagsWithKeys is a helper to create the tags with tagKeys for a resource.
+func CreateResourceTagsWithKeys(client *golangsdk.ServiceClient, tagKeys []string, resourceType, id string) error {
+	for _, key := range tagKeys {
+		if err := tags.CreateWithKey(client, resourceType, id, key).ExtractErr(); err != nil {
+			if _, ok := err.(golangsdk.ErrDefault404); ok {
+				log.Printf("[WARN] The tag key (%s) of resource (%s) not exist.", key, id)
+				continue
+			}
+			return err
+		}
+	}
+	return nil
+}
+
 // DeleteResourceTagsWithKeys is a helper to delete the tags with tagKeys for a resource.
 func DeleteResourceTagsWithKeys(client *golangsdk.ServiceClient, tagKeys []string, resourceType, id string) error {
 	for _, key := range tagKeys {
