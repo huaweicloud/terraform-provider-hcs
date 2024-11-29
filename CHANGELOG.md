@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## 2.4.10 (November 29, 2024)
+
+- Add new resources and data source of RDS PostgreSQL.
+- Add new resources and data source of CSMS.
+- Add support start/stop/reboot and tags ECS instance.
+- Add support snapshot and rollback ECS instance.
+- Fix bug of parameter tags in LTS.
+- Fix special scenarios of the AS marked deprecated.
+
+* **New Resources:**
+  + `hcs_ecs_compute_snapshot_rollback`
+  + `hcs_ecs_compute_snapshot`
+  + `hcs_rds_instance`
+  + `hcs_rds_pg_account`
+  + `hcs_rds_pg_database`
+  + `hcs_rds_pg_plugin`
+  + `hcs_csms_secret`
+
+* **New Data Sources:**
+  + `hcs_rds_pg_plugins`
+  + `hcs_csms_secret_version`
+
 ## 2.4.9 (November 1, 2024)
  - Add some new resources.
  - Fix and optimized some bugs.
