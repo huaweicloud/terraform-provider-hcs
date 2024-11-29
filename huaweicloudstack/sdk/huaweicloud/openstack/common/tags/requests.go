@@ -41,6 +41,11 @@ func Create(client *golangsdk.ServiceClient, srvType, id string, tags []Resource
 	return doAction(client, srvType, id, opts)
 }
 
+func CreateWithKey(client *golangsdk.ServiceClient, srvType, id, key string) (r ActionResult) {
+	_, r.Err = client.Put(updateURL(client, srvType, id, key), nil, nil, nil)
+	return
+}
+
 //Delete is a method of deleting tags by id
 func Delete(client *golangsdk.ServiceClient, srvType, id string, tags []ResourceTag) (r ActionResult) {
 	opts := ActionOpts{

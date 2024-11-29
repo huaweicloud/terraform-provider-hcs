@@ -104,7 +104,7 @@ func resourceImsImageShareAccepterCreate(ctx context.Context, d *schema.Resource
 
 func buildCreateImageShareAccepterBodyParams(d *schema.ResourceData, projectId string) map[string]interface{} {
 	imagesParams := []interface{}{
-		utils.ValueIngoreEmpty(d.Get("image_id")),
+		utils.ValueIgnoreEmpty(d.Get("image_id")),
 	}
 	bodyParams := map[string]interface{}{
 		"images":     imagesParams,
@@ -168,7 +168,7 @@ func resourceImsImageShareAccepterDelete(ctx context.Context, d *schema.Resource
 
 func buildDeleteImageShareAccepterBodyParams(d *schema.ResourceData, projectId string) map[string]interface{} {
 	imagesParams := []interface{}{
-		utils.ValueIngoreEmpty(d.Get("image_id")),
+		utils.ValueIgnoreEmpty(d.Get("image_id")),
 	}
 	bodyParams := map[string]interface{}{
 		"images":     imagesParams,

@@ -141,10 +141,10 @@ func buildCreateSecurityPolicyBodyParams(d *schema.ResourceData, cfg *config.Hcs
 
 func buildCreateSecurityPolicyChildBodyParams(d *schema.ResourceData, cfg *config.HcsConfig) map[string]interface{} {
 	return map[string]interface{}{
-		"name":                  utils.ValueIngoreEmpty(d.Get("name")),
-		"description":           utils.ValueIngoreEmpty(d.Get("description")),
-		"protocols":             utils.ValueIngoreEmpty(d.Get("protocols")),
-		"ciphers":               utils.ValueIngoreEmpty(d.Get("ciphers")),
+		"name":        utils.ValueIgnoreEmpty(d.Get("name")),
+		"description": utils.ValueIgnoreEmpty(d.Get("description")),
+		"protocols":   utils.ValueIgnoreEmpty(d.Get("protocols")),
+		"ciphers":     utils.ValueIgnoreEmpty(d.Get("ciphers")),
 	}
 }
 
@@ -294,9 +294,9 @@ func buildUpdateSecurityPolicyBodyParams(d *schema.ResourceData, cfg *config.Hcs
 
 func buildUpdateSecurityPolicyChildBodyParams(d *schema.ResourceData, _ *config.HcsConfig) map[string]interface{} {
 	return map[string]interface{}{
-		"name":        utils.ValueIngoreEmpty(d.Get("name")),
-		"description": utils.ValueIngoreEmpty(d.Get("description")),
-		"protocols":   utils.ValueIngoreEmpty(d.Get("protocols")),
-		"ciphers":     utils.ValueIngoreEmpty(d.Get("ciphers")),
+		"name":        utils.ValueIgnoreEmpty(d.Get("name")),
+		"description": utils.ValueIgnoreEmpty(d.Get("description")),
+		"protocols":   utils.ValueIgnoreEmpty(d.Get("protocols")),
+		"ciphers":     utils.ValueIgnoreEmpty(d.Get("ciphers")),
 	}
 }

@@ -21,6 +21,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/lts"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/mrs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/obs"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/rds"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/sfs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/swr"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/waf"
@@ -37,6 +38,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eps"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/evs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ims"
+	hcsLts "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/lts"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/nat"
 	hcsObs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/obs"
 	hcsRomaConnect "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/romaconnect"
@@ -344,6 +346,8 @@ func Provider() *schema.Provider {
 			"hcs_dcs_templates":       dcs.DataSourceTemplates(),
 			"hcs_dcs_template_detail": dcs.DataSourceTemplateDetail(),
 
+			"hcs_csms_secret_version": dew.DataSourceDewCsmsSecret(),
+
 			"hcs_kms_key":      dew.DataSourceKmsKey(),
 			"hcs_kms_data_key": dew.DataSourceKmsDataKeyV1(),
 
@@ -384,6 +388,8 @@ func Provider() *schema.Provider {
 
 			"hcs_obs_buckets":       obs.DataSourceObsBuckets(),
 			"hcs_obs_bucket_object": obs.DataSourceObsBucketObject(),
+
+			"hcs_rds_pg_plugins": rds.DataSourcePgPlugins(),
 
 			"hcs_sfs_file_system": sfs.DataSourceSFSFileSystemV2(),
 
@@ -436,6 +442,8 @@ func Provider() *schema.Provider {
 			"hcs_dcs_instance": dcs.ResourceDcsInstance(),
 			"hcs_dcs_backup":   dcs.ResourceDcsBackup(),
 
+			"hcs_csms_secret": dew.ResourceCsmsSecret(),
+
 			"hcs_kms_key":   dew.ResourceKmsKey(),
 			"hcs_kms_grant": dew.ResourceKmsGrant(),
 
@@ -455,12 +463,15 @@ func Provider() *schema.Provider {
 			"hcs_dws_snapshot":           dws.ResourceDwsSnapshot(),
 			"hcs_dws_snapshot_policy":    dws.ResourceDwsSnapshotPolicy(),
 
-			"hcs_ecs_compute_volume_attach":    ecs.ResourceComputeVolumeAttach(),
-			"hcs_ecs_compute_server_group":     ecs.ResourceComputeServerGroup(),
-			"hcs_ecs_compute_interface_attach": ecs.ResourceComputeInterfaceAttach(),
-			"hcs_ecs_compute_instance":         ecs.ResourceComputeInstance(),
-			"hcs_ecs_compute_keypair":          ecs.ResourceComputeKeypairV2(),
-			"hcs_ecs_compute_eip_associate":    ecs.ResourceComputeEIPAssociate(),
+			"hcs_ecs_compute_volume_attach":     ecs.ResourceComputeVolumeAttach(),
+			"hcs_ecs_compute_server_group":      ecs.ResourceComputeServerGroup(),
+			"hcs_ecs_compute_interface_attach":  ecs.ResourceComputeInterfaceAttach(),
+			"hcs_ecs_compute_instance":          ecs.ResourceComputeInstance(),
+			"hcs_ecs_compute_snapshot":          ecs.ResourceComputeSnapshot(),
+			"hcs_ecs_compute_snapshot_rollback": ecs.ResourceComputeSnapshotRollback(),
+			"hcs_ecs_compute_keypair":           ecs.ResourceComputeKeypairV2(),
+			"hcs_ecs_compute_eip_associate":     ecs.ResourceComputeEIPAssociate(),
+			"hcs_ecs_compute_instance_clone":    ecs.ResourceComputeInstanceClone(),
 
 			"hcs_vpc_bandwidth":           eip.ResourceVpcBandWidthV2(),
 			"hcs_vpc_eip":                 eip.ResourceVpcEIPV1(),
@@ -488,7 +499,7 @@ func Provider() *schema.Provider {
 
 			"hcs_lts_host_access":               lts.ResourceHostAccessConfig(),
 			"hcs_lts_host_group":                lts.ResourceHostGroup(),
-			"hcs_lts_group":                     lts.ResourceLTSGroup(),
+			"hcs_lts_group":                     hcsLts.ResourceLTSGroup(),
 			"hcs_lts_search_criteria":           lts.ResourceSearchCriteria(),
 			"hcs_lts_stream":                    lts.ResourceLTSStream(),
 			"hcs_lts_structuring_configuration": lts.ResourceStructConfig(),
@@ -502,6 +513,11 @@ func Provider() *schema.Provider {
 			"hcs_obs_bucket_object":     obs.ResourceObsBucketObject(),
 			"hcs_obs_bucket_object_acl": obs.ResourceOBSBucketObjectAcl(),
 			"hcs_obs_bucket_policy":     obs.ResourceObsBucketPolicy(),
+
+			"hcs_rds_instance":    rds.ResourceRdsInstance(),
+			"hcs_rds_pg_account":  rds.ResourcePgAccount(),
+			"hcs_rds_pg_database": rds.ResourcePgDatabase(),
+			"hcs_rds_pg_plugin":   rds.ResourceRdsPgPlugin(),
 
 			"hcs_roma_connect_instance": hcsRomaConnect.ResourceRomaConnectInstance(),
 
@@ -761,10 +777,15 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 	}
 
 	// set default endpoints
-	if _, ok := endpoints["waf"]; !ok {
-		wafEndpoint := fmt.Sprintf("https://waf-api.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
-		endpoints["waf"] = wafEndpoint
-		endpoints["waf-dedicated"] = wafEndpoint
+	if _, ok := endpoints["csms"]; !ok {
+		endpoints["csms"] = fmt.Sprintf("https://csms-scc-apig.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
+	}
+	if _, ok := endpoints["kms"]; !ok {
+		endpoints["kms"] = fmt.Sprintf("https://kms-scc-apig.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
+	}
+
+	if _, ok := endpoints["obs"]; !ok {
+		endpoints["obs"] = fmt.Sprintf("https://obsv3.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
 	}
 	if _, ok := endpoints["opengauss"]; !ok {
 		openGaussUrl := "https://gaussdb.%s.%s/gaussdb/"
@@ -773,11 +794,10 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 	if _, ok := endpoints["swr"]; !ok {
 		endpoints["swr"] = fmt.Sprintf("https://swr-api.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
 	}
-	if _, ok := endpoints["obs"]; !ok {
-		endpoints["obs"] = fmt.Sprintf("https://obsv3.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
-	}
-	if _, ok := endpoints["kms"]; !ok {
-		endpoints["kms"] = fmt.Sprintf("https://kms-scc-apig.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
+	if _, ok := endpoints["waf"]; !ok {
+		wafEndpoint := fmt.Sprintf("https://waf-api.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
+		endpoints["waf"] = wafEndpoint
+		endpoints["waf-dedicated"] = wafEndpoint
 	}
 
 	hcsConfig.Endpoints = endpoints

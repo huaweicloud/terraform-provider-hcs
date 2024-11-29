@@ -39,3 +39,7 @@ variable "data_disk_size" {
 variable "enterprise_project_id" {
   default = "default"
 }
+
+variable "power_action" {
+  default = "ON"
+}

@@ -5,6 +5,8 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"regexp"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -20,6 +22,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/ecs/v1/block_devices"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/ecs/v1/cloudservers"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/ecs/v1/flavors"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/ecs/v1/powers"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/evs/v2/cloudvolumes"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/ims/v2/cloudimages"
 	groups "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/networking/v1/security/securitygroups"
@@ -27,6 +30,14 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/networking/v2/ports"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/evs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
+)
+
+var (
+	powerActionMap = map[string]string{
+		"ON":     "os-start",
+		"OFF":    "os-stop",
+		"REBOOT": "reboot",
+	}
 )
 
 func ResourceComputeInstance() *schema.Resource {
@@ -106,9 +117,10 @@ func ResourceComputeInstance() *schema.Resource {
 				Description: "schema: Computed",
 			},
 			"admin_pass": {
-				Type:      schema.TypeString,
-				Sensitive: true,
-				Optional:  true,
+				Type:          schema.TypeString,
+				Sensitive:     true,
+				Optional:      true,
+				ConflictsWith: []string{"key_pair"},
 			},
 			"key_pair": {
 				Type:     schema.TypeString,
@@ -368,6 +380,15 @@ func ResourceComputeInstance() *schema.Resource {
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
+			"power_action": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+				// If you want to support more actions, please update powerActionMap simultaneously.
+				ValidateFunc: validation.StringInSlice([]string{
+					"ON", "OFF", "REBOOT", "FORCE-OFF", "FORCE-REBOOT",
+				}, false),
+			},
 			"volume_attached": {
 				Type:     schema.TypeList,
 				Computed: true,
@@ -501,7 +522,13 @@ func resourceComputeInstanceCreate(ctx context.Context, d *schema.ResourceData, 
 	}
 
 	if tags, ok := d.GetOk("tags"); ok {
-		createOpts.ServerTags = utils.ExpandResourceTags(tags.(map[string]interface{}))
+		if !checkTags(tags.(map[string]interface{})) {
+			return diag.Errorf("tags check failed")
+		}
+		tagList := utils.ExpandResourceTagsString(tags.(map[string]interface{}))
+		for _, tag := range tagList {
+			createOpts.Tags = append(createOpts.Tags, tag.(string))
+		}
 	}
 
 	var extendParam cloudservers.ServerExtendParam
@@ -522,6 +549,21 @@ func resourceComputeInstanceCreate(ctx context.Context, d *schema.ResourceData, 
 		log.Printf("[DEBUG] schedulerhints: %+v", schedulerHintsRaw)
 		schedulerHints := resourceInstanceSchedulerHintsV1(schedulerHintsRaw[0].(map[string]interface{}))
 		createOpts.SchedulerHints = &schedulerHints
+	}
+
+	// Create an instance in the shutdown state.
+	if action, ok := d.GetOk("power_action"); ok {
+		action := action.(string)
+		var PowerOn bool
+		if action == "ON" {
+			PowerOn = true
+		} else if action == "OFF" {
+			PowerOn = false
+		} else {
+			log.Printf("[ERROR] the power action (%s) is invalid after instance created, the value of power_action must be ON or OFF.", action)
+			return diag.Errorf("the power action (%s) is invalid after instance created, the value of power_action must be ON or OFF.", action)
+		}
+		createOpts.PowerOn = &PowerOn
 	}
 
 	log.Printf("[DEBUG] ECS create options: %#v", createOpts)
@@ -620,6 +662,15 @@ func resourceComputeInstanceRead(_ context.Context, d *schema.ResourceData, meta
 	flavorInfo := server.Flavor
 	d.Set("flavor_id", flavorInfo.ID)
 	d.Set("flavor_name", flavorInfo.Name)
+
+	if server.Status == "ACTIVE" {
+		d.Set("power_action", "ON")
+	} else if server.Status == "SHUTOFF" {
+		// The server instance is in the shutdown state. The local setting can be OFF or FORCE-OFF.
+		if d.Get("power_action") != "OFF" && d.Get("power_action") != "FORCE-OFF" {
+			d.Set("power_action", "OFF")
+		}
+	}
 
 	// Set the instance's image information appropriately
 	if err := setImageInformation(d, imsClient, server.Image.ID); err != nil {
@@ -729,6 +780,7 @@ func resourceComputeInstanceRead(_ context.Context, d *schema.ResourceData, meta
 		}
 		d.Set("scheduler_hints", schedulerHints)
 	}
+	d.Set("tags", flattenTagsToMap(server.Tags))
 	return nil
 }
 
@@ -842,14 +894,10 @@ func resourceComputeInstanceUpdate(ctx context.Context, d *schema.ResourceData, 
 	}
 
 	if d.HasChange("tags") {
-		ecsClient, err := cfg.ComputeV1Client(region)
-		if err != nil {
-			return diag.Errorf("error creating compute v1 client: %s", err)
-		}
 
-		tagErr := utils.UpdateResourceTags(ecsClient, d, "cloudservers", d.Id())
+		tagErr := UpdateResourceTags(computeClient, d, "servers", d.Id())
 		if tagErr != nil {
-			return diag.Errorf("error updating tags of instance:%s, err:%s", d.Id(), err)
+			return diag.Errorf("error updating tags of instance:%s, err:%s", d.Id(), tagErr)
 		}
 	}
 
@@ -914,6 +962,14 @@ func resourceComputeInstanceUpdate(ctx context.Context, d *schema.ResourceData, 
 		}
 		if err := common.UpdateEcsInstanceKeyPair(ctx, ecsClient, kmsClient, keyPairOpts); err != nil {
 			return diag.FromErr(err)
+		}
+	}
+
+	// The instance power status update needs to be done at the end
+	if d.HasChange("power_action") {
+		action := d.Get("power_action").(string)
+		if err = doPowerAction(ecsClient, d, action); err != nil {
+			return diag.Errorf("Doing power action (%s) for instance (%s) failed: %s", action, d.Id(), err)
 		}
 	}
 
@@ -992,7 +1048,7 @@ func resourceComputeInstanceImportState(_ context.Context, d *schema.ResourceDat
 
 	log.Printf("[DEBUG] flatten Instance Networks: %#v", networks)
 	d.Set("network", networks)
-
+	d.Set("tags", flattenTagsToMap(server.Tags))
 	return []*schema.ResourceData{d}, nil
 }
 
@@ -1323,6 +1379,41 @@ func waitForServerTargetState(ctx context.Context, client *golangsdk.ServiceClie
 	return nil
 }
 
+// doPowerAction is a method for instance power doing shutdown, startup and reboot actions.
+func doPowerAction(client *golangsdk.ServiceClient, d *schema.ResourceData, action string) error {
+	var jobResp *cloudservers.JobResponse
+	powerOpts := powers.PowerOpts{
+		Servers: []powers.ServerInfo{
+			{ID: d.Id()},
+		},
+	}
+	// In the reboot structure, Type is a required option.
+	// Since the type of power off and reboot is 'SOFT' by default, setting this value has solved the power structural
+	// compatibility problem between optional and required.
+	if action != "ON" {
+		powerOpts.Type = "SOFT"
+	}
+	if strings.HasPrefix(action, "FORCE-") {
+		powerOpts.Type = "HARD"
+		action = strings.TrimPrefix(action, "FORCE-")
+	}
+	op, ok := powerActionMap[action]
+	if !ok {
+		return fmt.Errorf("the powerMap does not contain option (%s)", action)
+	}
+	jobResp, err := powers.PowerAction(client, powerOpts, op).ExtractJobResponse()
+	if err != nil {
+		return fmt.Errorf("doing power action (%s) for instance (%s) failed: %s", action, d.Id(), err)
+	}
+
+	// The time of the power on/off and reboot is usually between 15 and 35 seconds.
+	timeout := 3 * time.Minute
+	if err := cloudservers.WaitForJobSuccess(client, int(timeout/time.Second), jobResp.JobID); err != nil {
+		return fmt.Errorf("waiting power action (%s) for instance (%s) failed: %s", action, d.Id(), err)
+	}
+	return nil
+}
+
 func disableSourceDestCheck(networkClient *golangsdk.ServiceClient, portID string) error {
 	// Update the allowed-address-pairs of the port to 1.1.1.1/0
 	// to disable the source/destination check
@@ -1485,4 +1576,70 @@ func waitForEnterpriseProjectIdChanged(client *golangsdk.ServiceClient, instance
 		}
 		return s, "Pending", nil
 	}
+}
+
+func checkTags(tagMap map[string]interface{}) bool {
+	if len(tagMap) > 10 {
+		return false
+	}
+	for k, v := range tagMap {
+		if len(k) > 36 || len(v.(string)) > 43 {
+			return false
+		}
+		keyReg, _ := regexp.Compile("^[a-zA-Z0-9\u4e00-\u9fa5_-]+$")
+		if !keyReg.MatchString(k) {
+			return false
+		}
+		valueReg, _ := regexp.Compile("^[a-zA-Z0-9\u4e00-\u9fa5._-]+$")
+		if !valueReg.MatchString(v.(string)) {
+			return false
+		}
+	}
+	return true
+}
+
+func UpdateResourceTags(conn *golangsdk.ServiceClient, d *schema.ResourceData, resourceType, id string) error {
+	oRaw, nRaw := d.GetChange("tags")
+	oMap := oRaw.(map[string]interface{})
+	nMap := nRaw.(map[string]interface{})
+	if !checkTags(nMap) {
+		return fmt.Errorf("tags check failed")
+	}
+	var oTags []string
+	for k, v := range oMap {
+		oTags = append(oTags, fmt.Sprintf("%s.%s", k, v))
+	}
+	var nTags []string
+	for k, v := range nMap {
+		nTags = append(nTags, fmt.Sprintf("%s.%s", k, v))
+	}
+	// remove old tags
+	if len(oTags) > 0 {
+		oTags = utils.RemoveDuplicateElem(oTags)
+		err := utils.DeleteResourceTagsWithKeys(conn, oTags, resourceType, id)
+		if err != nil {
+			return err
+		}
+	}
+
+	// set new tags
+	if len(nTags) > 0 {
+		nTags = utils.RemoveDuplicateElem(nTags)
+		err := utils.CreateResourceTagsWithKeys(conn, nTags, resourceType, id)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func flattenTagsToMap(tags []string) map[string]string {
+	result := make(map[string]string)
+	for _, tagStr := range tags {
+		tag := strings.SplitN(tagStr, ".", 2)
+		if len(tag) == 2 {
+			result[tag[0]] = tag[1]
+		}
+	}
+	return result
 }

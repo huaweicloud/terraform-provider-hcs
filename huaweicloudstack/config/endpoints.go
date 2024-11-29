@@ -493,6 +493,11 @@ var allServiceCatalog = map[string]ServiceCatalog{
 		Version: "v3",
 		Product: "DEW",
 	},
+	"csms": {
+		Name:    "csms",
+		Version: "v1",
+		Product: "DEW",
+	},
 	"waf": {
 		Name:         "waf",
 		Version:      "v1",
