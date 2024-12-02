@@ -8,16 +8,13 @@ import (
 	"log"
 	"net/url"
 	"strings"
-	"time"
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	"github.com/chnsz/golangsdk"
-	"github.com/chnsz/golangsdk/openstack/eps/v1/enterpriseprojects"
 	"github.com/chnsz/golangsdk/openstack/obs"
 
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
@@ -321,6 +318,7 @@ func ResourceObsBucket() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 				Computed: true,
+				ForceNew: true,
 			},
 			"user_domain_names": {
 				Type:     schema.TypeSet,
@@ -479,14 +477,6 @@ func resourceObsBucketUpdate(ctx context.Context, d *schema.ResourceData, meta i
 		if err := resourceObsBucketCorsUpdate(obsClient, d); err != nil {
 			return diag.FromErr(err)
 		}
-	}
-
-	if d.HasChange("enterprise_project_id") && !d.IsNewResource() {
-		// API Limitations: still requires `project_id` field when migrating the EPS of OBS bucket
-		if err := resourceObsBucketEnterpriseProjectIdUpdate(ctx, d, conf, obsClient, region); err != nil {
-			return diag.FromErr(err)
-		}
-
 	}
 
 	if d.HasChange("user_domain_names") {
@@ -1053,59 +1043,6 @@ func deleteObsBucketUserDomainNames(obsClient *obs.ObsClient, bucket string, dom
 		}
 	}
 	return nil
-}
-
-func resourceObsBucketEnterpriseProjectIdUpdate(ctx context.Context, d *schema.ResourceData, conf *config.Config,
-	obsClient *obs.ObsClient, region string) error {
-	var (
-		projectId   = conf.GetProjectID(region)
-		bucket      = d.Get("bucket").(string)
-		migrateOpts = enterpriseprojects.MigrateResourceOpts{
-			ResourceId:   bucket,
-			ResourceType: "bucket",
-			RegionId:     region,
-			ProjectId:    projectId,
-		}
-	)
-	err := common.MigrateEnterpriseProjectWithoutWait(conf, d, migrateOpts)
-	if err != nil {
-		return err
-	}
-
-	// After the EPS service side updates enterprise project ID, it will take a few time to wait the OBS service
-	// read the data back into the database.
-	stateConf := &resource.StateChangeConf{
-		Pending:      []string{"Pending"},
-		Target:       []string{"Success"},
-		Refresh:      waitForOBSEnterpriseProjectIdChanged(obsClient, bucket, d.Get("enterprise_project_id").(string)),
-		Timeout:      d.Timeout(schema.TimeoutUpdate),
-		Delay:        10 * time.Second,
-		PollInterval: 5 * time.Second,
-	}
-	_, err = stateConf.WaitForStateContext(ctx)
-	if err != nil {
-		return getObsError("error waiting for obs enterprise project ID changed", bucket, err)
-	}
-	return nil
-}
-
-func waitForOBSEnterpriseProjectIdChanged(obsClient *obs.ObsClient, bucket string, enterpriseProjectId string) resource.StateRefreshFunc {
-	return func() (result interface{}, state string, err error) {
-		input := &obs.GetBucketMetadataInput{
-			Bucket: bucket,
-		}
-		output, err := obsClient.GetBucketMetadata(input)
-		if err != nil {
-			return nil, "Error", err
-		}
-
-		if output.Epid == enterpriseProjectId {
-			log.Printf("[DEBUG] the Enterprise Project ID of bucket %s is migrated to %s", bucket, enterpriseProjectId)
-			return output, "Success", nil
-		}
-
-		return output, "Pending", nil
-	}
 }
 
 func resourceObsBucketRedundancyUpdate(obsClient *obs.ObsClient, d *schema.ResourceData) error {
