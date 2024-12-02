@@ -183,7 +183,8 @@ The following arguments are supported:
 * `time_zone` - (Optional, String, ForceNew) Specifies the UTC time zone. For PostgreSQL Chinese mainland site
   and international site use UTC by default. The value ranges from UTC-12:00 to UTC+12:00 at the full hour.
 
-* `enterprise_project_id` - (Optional, String) Specifies the enterprise project id of the RDS instance.
+* `enterprise_project_id` - (Optional, String, ForceNew) Specifies the enterprise project id of the RDS instance.
+  Changing this parameter will create a new resource.
 
 * `description` - (Optional, String) Specifies the description of the instance. The value consists of 0 to 64
   characters, including letters, digits, periods (.), underscores (_), and hyphens (-).
