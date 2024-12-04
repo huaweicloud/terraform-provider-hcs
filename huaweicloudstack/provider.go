@@ -432,12 +432,12 @@ func Provider() *schema.Provider {
 			"hcs_cce_pvc":         cce.ResourceCcePersistentVolumeClaimsV1(),
 
 			"hcs_cfw_address_group":        cfw.ResourceAddressGroup(),
-			"hcs_cfw_address_group_member": hcsCfw.ResourceAddressGroupMember(),
 			"hcs_cfw_black_white_list":     cfw.ResourceBlackWhiteList(),
 			"hcs_cfw_eip_protection":       cfw.ResourceEipProtection(),
-			"hcs_cfw_protection_rule":      cfw.ResourceProtectionRule(),
 			"hcs_cfw_service_group_member": cfw.ResourceServiceGroupMember(),
 			"hcs_cfw_service_group":        cfw.ResourceServiceGroup(),
+			"hcs_cfw_address_group_member": hcsCfw.ResourceAddressGroupMember(),
+			"hcs_cfw_protection_rule":      hcsCfw.ResourceProtectionRule(),
 
 			"hcs_dcs_instance": dcs.ResourceDcsInstance(),
 			"hcs_dcs_backup":   dcs.ResourceDcsBackup(),
