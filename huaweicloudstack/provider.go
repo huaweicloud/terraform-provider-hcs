@@ -42,6 +42,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/nat"
 	hcsObs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/obs"
 	hcsRomaConnect "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/romaconnect"
+	hcsSfsturbo "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/sfsturbo"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/smn"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpc"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpcep"
@@ -393,6 +394,8 @@ func Provider() *schema.Provider {
 
 			"hcs_sfs_file_system": sfs.DataSourceSFSFileSystemV2(),
 
+			"hcs_sfs_turbos": sfs.DataSourceTurbos(),
+
 			"hcs_smn_topics": smn.DataSourceTopics(),
 
 			"hcs_vpc":                    vpc.DataSourceVpcV1(),
@@ -523,6 +526,10 @@ func Provider() *schema.Provider {
 
 			"hcs_sfs_access_rule": sfs.ResourceSFSAccessRuleV2(),
 			"hcs_sfs_file_system": sfs.ResourceSFSFileSystemV2(),
+
+			"hcs_sfs_turbo":           hcsSfsturbo.ResourceSFSTurbo(),
+			"hcs_sfs_turbo_dir":       sfs.ResourceSfsTurboDir(),
+			"hcs_sfs_turbo_dir_quota": sfs.ResourceSfsTurboDirQuota(),
 
 			"hcs_swr_organization":           swr.ResourceSWROrganization(),
 			"hcs_swr_repository":             swr.ResourceSWRRepository(),

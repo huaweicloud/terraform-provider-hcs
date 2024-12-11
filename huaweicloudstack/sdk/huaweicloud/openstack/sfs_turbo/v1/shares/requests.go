@@ -32,8 +32,10 @@ type Share struct {
 	ShareProto string `json:"share_proto,omitempty"`
 	// ShareType defines the file system type. the vaild values are STANDARD and PERFORMANCE.
 	ShareType string `json:"share_type" required:"true"`
-	// Size in GB, range from 500 to 32768.
+	// Size in GB, range from 50 to 1,048,576.
 	Size int `json:"size" required:"true"`
+	// Bandwidth in MB/s, range from 150 to 8192.
+	Bandwidth int `json:"bandwidth" required:"true"`
 	// The availability zone of the SFS Turbo file system
 	AvailabilityZone string `json:"availability_zone" required:"true"`
 	// The VPC ID
@@ -181,11 +183,27 @@ type ExpandOptsBuilder interface {
 	ToShareExpandMap() (map[string]interface{}, error)
 }
 
+type UpdateNameOptsBuilder interface {
+	ToShareUpdateNameMap() (map[string]interface{}, error)
+}
+
+type UpdateSecurityGroupIdOptsBuilder interface {
+	ToShareUpdateSecurityGroupIdMap() (map[string]interface{}, error)
+}
+
 // ExpandOpts contains the options for expanding a SFS Turbo. This object is
 // passed to shares.Expand().
 type ExpandOpts struct {
 	// Specifies the extend object.
 	Extend ExtendOpts `json:"extend" required:"true"`
+}
+
+type UpdateNameOpts struct {
+	Name string `json:"name" required:"true"`
+}
+
+type UpdateSecurityGroupIdOpts struct {
+	SecurityGroupId string `json:"security_group_id" required:"true"`
 }
 
 // BssParamExtend is an object that represents the payment detail.
@@ -198,7 +216,9 @@ type BssParamExtend struct {
 
 type ExtendOpts struct {
 	// Specifies the post-expansion capacity (GB) of the shared file system.
-	NewSize int `json:"new_size" required:"true"`
+	NewSize int `json:"new_size" required:"false"`
+	// Specifies the post-expansion capacity (GB) of the shared file system.
+	NewBandwidth int `json:"new_bandwidth" required:"false"`
 	// The configuration of pre-paid billing mode.
 	BssParam *BssParamExtend `json:"bss_param,omitempty"`
 }
@@ -219,5 +239,35 @@ func Expand(client *golangsdk.ServiceClient, shareId string, opts ExpandOptsBuil
 	_, r.Err = client.Post(actionURL(client, shareId), b, &r.Body, &golangsdk.RequestOpts{
 		OkCodes: []int{202},
 	})
+	return
+}
+
+func (opts UpdateNameOpts) ToShareUpdateNameMap() (map[string]interface{}, error) {
+	return golangsdk.BuildRequestBody(opts, "change_name")
+}
+
+func UpdateName(client *golangsdk.ServiceClient, shareId string, opts UpdateNameOptsBuilder) (r UpdateNameResult) {
+	b, err := opts.ToShareUpdateNameMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+	_, r.Err = client.Post(actionURL(client, shareId), b, &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{204},
+	})
+	return
+}
+
+func (opts UpdateSecurityGroupIdOpts) ToShareUpdateSecurityGroupIdMap() (map[string]interface{}, error) {
+	return golangsdk.BuildRequestBody(opts, "change_security_group")
+}
+
+func UpdateSecurityGroupId(client *golangsdk.ServiceClient, shareId string, opts UpdateSecurityGroupIdOptsBuilder) (r UpdateSecurityGroupIdResult) {
+	b, err := opts.ToShareUpdateSecurityGroupIdMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+	_, r.Err = client.Post(actionURL(client, shareId), b, &r.Body, &golangsdk.RequestOpts{})
 	return
 }
