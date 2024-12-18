@@ -30,6 +30,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/as"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/bms"
 	hcsCfw "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/cfw"
+	hcsCsms "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/csms"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/deprecated"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dns"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ecs"
@@ -347,7 +348,7 @@ func Provider() *schema.Provider {
 			"hcs_dcs_templates":       dcs.DataSourceTemplates(),
 			"hcs_dcs_template_detail": dcs.DataSourceTemplateDetail(),
 
-			"hcs_csms_secret_version": dew.DataSourceDewCsmsSecret(),
+			"hcs_csms_secret_version": hcsCsms.DataSourceDewCsmsSecret(),
 
 			"hcs_kms_key":      dew.DataSourceKmsKey(),
 			"hcs_kms_data_key": dew.DataSourceKmsDataKeyV1(),
@@ -445,7 +446,7 @@ func Provider() *schema.Provider {
 			"hcs_dcs_instance": dcs.ResourceDcsInstance(),
 			"hcs_dcs_backup":   dcs.ResourceDcsBackup(),
 
-			"hcs_csms_secret": dew.ResourceCsmsSecret(),
+			"hcs_csms_secret": hcsCsms.ResourceCsmsSecret(),
 
 			"hcs_kms_key":   dew.ResourceKmsKey(),
 			"hcs_kms_grant": dew.ResourceKmsGrant(),
