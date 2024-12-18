@@ -691,6 +691,10 @@ func (c *HcsConfig) AadV1Client(region string) (*golangsdk.ServiceClient, error)
 	return c.NewServiceClient("aad", region)
 }
 
+func (c *HcsConfig) CsmsV1Client(region string) (*golangsdk.ServiceClient, error) {
+	return c.NewServiceClient("csms", region)
+}
+
 func (c *HcsConfig) KmsKeyV1Client(region string) (*golangsdk.ServiceClient, error) {
 	return c.NewServiceClient("kms", region)
 }

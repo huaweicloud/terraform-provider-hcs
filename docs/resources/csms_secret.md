@@ -44,25 +44,6 @@ resource "hcs_csms_secret" "test3" {
 }
 ```
 
-### The secret associated event
-
-```hcl
-variable "name" {}
-variable "secret_type" {}
-variable "secret_text" {}
-
-resource "huaweicloud_csms_event" "test" {
-  ...
-}
-
-resource "hcs_csms_secret" "test" {
-  name                = var.name
-  secret_type         = var.secret_type
-  secret_text         = var.secret_text
-  event_subscriptions = [huaweicloud_csms_event.test.name]
-}
-```
-
 ## Argument Reference
 
 The following arguments are supported:
@@ -78,13 +59,14 @@ The following arguments are supported:
 * `secret_text` - (Optional, String) Specifies the plaintext of a text secret. CSMS encrypts the plaintext and stores
   it in the initial version of the secret. The maximum size is 32 KB.
 
-  Changing this parameter will create a new secret version.
+* `secret_binary` - (Optional, String) Specifies the plaintext of a binary secret encoded using Base64. CSMS encrypts
+  the plaintext and stores it in the initial version of the secret. The maximum size is 32 KB.
 
 * `kms_key_id` - (Optional, String) Specifies the ID of the KMS key used to encrypt secrets.
   If this parameter is not specified when creating the secret, the default master key **csms/default** will be used.
   The default key is automatically created by the CSMS.
   Use this data source
-  [hcs_kms_key](https://registry.terraform.io/providers/huaweicloud/hcs/latest/docs/resources/kms_key)
+  [hcs_kms_key](https://registry.terraform.io/providers/huaweicloud/hcs/latest/docs/data-sources/kms_key)
   to get the KMS key.
 
 * `description` - (Optional, String) Specifies the description of a secret.
