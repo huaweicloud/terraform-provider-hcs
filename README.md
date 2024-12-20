@@ -22,10 +22,10 @@ Requirements
 Compatibility with HCS
 ------------
 
-| Provider Version | Huawei Cloud Stack Version  |
-|------------------|-----------------------------|
-| v2.3.x           | v8.3.0                      |
-| v2.4.x           | v8.3.1                      |
+| Provider Version | Huawei Cloud Stack Version |
+|------------------|----------------------------|
+| v2.3.x           | v8.3.0                     |
+| v2.4.x           | v8.3.1 and v8.5.*         |
 
 Building The Provider
 ---------------------

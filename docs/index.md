@@ -10,7 +10,7 @@ Use the navigation to the left to read about the available resources.
 Provider Version | Huawei Cloud Stack Version
 ---- | --- 
 v2.3.x | v8.3.0
-v2.4.x | v8.3.1
+v2.4.x | v8.3.1 and v8.5.*
 
 ## Example Usage
 
