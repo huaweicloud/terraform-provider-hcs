@@ -24,6 +24,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/rds"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/sfs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/swr"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/ucs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/waf"
 
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
@@ -538,6 +539,10 @@ func Provider() *schema.Provider {
 			"hcs_swr_repository_sharing":     swr.ResourceSWRRepositorySharing(),
 			"hcs_swr_image_retention_policy": swr.ResourceSwrImageRetentionPolicy(),
 			"hcs_swr_image_trigger":          swr.ResourceSwrImageTrigger(),
+
+			"hcs_ucs_cluster": ucs.ResourceCluster(),
+			"hcs_ucs_fleet":   ucs.ResourceFleet(),
+			"hcs_ucs_policy":  ucs.ResourcePolicy(),
 
 			"hcs_vpcep_approval": vpcep.ResourceVPCEndpointApproval(),
 			"hcs_vpcep_endpoint": vpcep.ResourceVPCEndpoint(),
