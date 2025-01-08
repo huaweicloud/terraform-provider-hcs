@@ -522,6 +522,7 @@ func Provider() *schema.Provider {
 			"hcs_rds_pg_account":  rds.ResourcePgAccount(),
 			"hcs_rds_pg_database": rds.ResourcePgDatabase(),
 			"hcs_rds_pg_plugin":   rds.ResourceRdsPgPlugin(),
+			"hcs_rds_sql_audit":   rds.ResourceSQLAudit(),
 
 			"hcs_roma_connect_instance": hcsRomaConnect.ResourceRomaConnectInstance(),
 
