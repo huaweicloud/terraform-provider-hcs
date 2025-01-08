@@ -182,6 +182,11 @@ The `volume` block supports:
   Changing this parameter will create a new resource.
 
 * `size` - (Required, Int) Specifies the volume size (in gigabytes). The valid value is range form `40` to `4,000`.
+  - **ECS deployment scheme**: The value ranges from (Number of shards x 40 GB) to (Number of shards x 24 TB). The size
+    must be an integer multiple of (Number of shards x 40). The upper limit of disk usage varies according to the CPU
+    size.
+  - **BMS Deployment Scheme**: This parameter is automatically calculated based on the selected flavor and cannot be
+    specified. Even if this parameter is set, it does not take effect.
 
 <a name="opengauss_datastore"></a>
 The `datastore` block supports:
