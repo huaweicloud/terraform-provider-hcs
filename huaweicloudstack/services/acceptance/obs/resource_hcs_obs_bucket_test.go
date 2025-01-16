@@ -408,6 +408,44 @@ func TestAccObsBucket_userDomainNames(t *testing.T) {
 	})
 }
 
+func TestAccObsBucket_clusterGroup(t *testing.T) {
+	rInt := acctest.RandInt()
+	resourceName := "hcs_obs_bucket.bucket"
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck: func() {
+			acceptance.TestAccPreCheck(t)
+			acceptance.TestAccPreCheckOBS(t)
+			acceptance.TestAccPreCheckObsClusterGroupId(t)
+		},
+		ProviderFactories: acceptance.TestAccProviderFactories,
+		CheckDestroy:      testAccCheckObsBucketDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccObsBucket_cluster_group(rInt),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckObsBucketExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "bucket", testAccObsBucketName(rInt)),
+					resource.TestCheckResourceAttr(resourceName, "storage_class", "STANDARD"),
+					resource.TestCheckResourceAttr(resourceName, "cluster_group_id", acceptance.HCS_OBS_CLUSTER_GROUP1_ID),
+					resource.TestCheckResourceAttr(resourceName, "tags.foo1", "bar1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.key1", "value1"),
+				),
+			},
+			{
+				Config: testAccObsBucket_cluster_group_update(rInt),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckObsBucketExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "storage_class", "WARM"),
+					resource.TestCheckResourceAttr(resourceName, "cluster_group_id", acceptance.HCS_OBS_CLUSTER_GROUP2_ID),
+					resource.TestCheckResourceAttr(resourceName, "tags.foo2", "bar2"),
+					resource.TestCheckResourceAttr(resourceName, "tags.key2", "value2"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckObsBucketDestroy(s *terraform.State) error {
 	conf := acceptance.TestAccProvider.Meta().(*config.Config)
 	obsClient, err := conf.ObjectStorageClient(acceptance.HCS_REGION_NAME)
@@ -771,4 +809,38 @@ resource "hcs_obs_bucket" "bucket" {
   user_domain_names = []
 }
 `, randInt)
+}
+
+func testAccObsBucket_cluster_group(randInt int) string {
+	return fmt.Sprintf(`
+resource "hcs_obs_bucket" "bucket" {
+  bucket        = "tf-test-bucket-%d"
+  storage_class = "STANDARD"
+  acl           = "private"
+
+  cluster_group_id = "%s"
+
+  tags = {
+    foo1 = "bar1"
+    key1 = "value1"
+  }
+}
+`, randInt, acceptance.HCS_OBS_CLUSTER_GROUP1_ID)
+}
+
+func testAccObsBucket_cluster_group_update(randInt int) string {
+	return fmt.Sprintf(`
+resource "hcs_obs_bucket" "bucket" {
+  bucket        = "tf-test-bucket-%d"
+  storage_class = "WARM"
+  acl           = "public-read"
+
+  cluster_group_id = "%s"
+
+  tags = {
+    foo2 = "bar2"
+    key2 = "value2"
+  }
+}
+`, randInt, acceptance.HCS_OBS_CLUSTER_GROUP2_ID)
 }

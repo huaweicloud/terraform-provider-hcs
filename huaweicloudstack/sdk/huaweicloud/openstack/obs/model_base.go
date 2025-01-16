@@ -264,15 +264,22 @@ type NoncurrentVersionExpiration struct {
 	NoncurrentDays int      `xml:"NoncurrentDays"`
 }
 
+// AbortIncompleteMultipartUpload defines abortIncomplete expiration property in LifecycleRule
+type AbortIncompleteMultipartUpload struct {
+	XMLName             xml.Name `xml:"AbortIncompleteMultipartUpload"`
+	DaysAfterInitiation int      `xml:"DaysAfterInitiation"`
+}
+
 // LifecycleRule defines lifecycle rule
 type LifecycleRule struct {
-	ID                           string                        `xml:"ID,omitempty"`
-	Prefix                       string                        `xml:"Prefix"`
-	Status                       RuleStatusType                `xml:"Status"`
-	Transitions                  []Transition                  `xml:"Transition,omitempty"`
-	Expiration                   Expiration                    `xml:"Expiration,omitempty"`
-	NoncurrentVersionTransitions []NoncurrentVersionTransition `xml:"NoncurrentVersionTransition,omitempty"`
-	NoncurrentVersionExpiration  NoncurrentVersionExpiration   `xml:"NoncurrentVersionExpiration,omitempty"`
+	ID                             string                         `xml:"ID,omitempty"`
+	Prefix                         string                         `xml:"Prefix"`
+	Status                         RuleStatusType                 `xml:"Status"`
+	Transitions                    []Transition                   `xml:"Transition,omitempty"`
+	Expiration                     Expiration                     `xml:"Expiration,omitempty"`
+	NoncurrentVersionTransitions   []NoncurrentVersionTransition  `xml:"NoncurrentVersionTransition,omitempty"`
+	NoncurrentVersionExpiration    NoncurrentVersionExpiration    `xml:"NoncurrentVersionExpiration,omitempty"`
+	AbortIncompleteMultipartUpload AbortIncompleteMultipartUpload `xml:"AbortIncompleteMultipartUpload,omitempty"`
 }
 
 // BucketEncryptionConfiguration defines the bucket encryption configuration

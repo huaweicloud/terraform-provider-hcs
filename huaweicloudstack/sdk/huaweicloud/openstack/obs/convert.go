@@ -793,6 +793,12 @@ func ParseGetBucketMetadataOutput(output *GetBucketMetadataOutput) {
 	if ret, ok := output.ResponseHeaders[HEADER_AZ_REDUNDANCY]; ok {
 		output.AZRedundancy = ret[0]
 	}
+	if ret, ok := output.ResponseHeaders[HEADER_CLUSTER_GROUP_ID]; ok {
+		output.ClusterGroupId = ret[0]
+	}
+	if ret, ok := output.ResponseHeaders[HEADER_BUCKET_REDUNDANCY]; ok {
+		output.BucketRedundancy = parseStringToBucketRedundancy(ret[0])
+	}
 	if ret, ok := output.ResponseHeaders[headerFSFileInterface]; ok {
 		output.FSStatus = parseStringToFSStatusType(ret[0])
 	} else {
@@ -1008,6 +1014,18 @@ func parseStringToFSStatusType(value string) (ret FSStatusType) {
 		ret = FSStatusEnabled
 	case "Disabled":
 		ret = FSStatusDisabled
+	default:
+		ret = ""
+	}
+	return
+}
+
+func parseStringToBucketRedundancy(value string) (ret BucketRedundancyType) {
+	switch value {
+	case "FUSION":
+		ret = BucketRedundancyFusion
+	case "CLASSIC":
+		ret = BucketRedundancyClassic
 	default:
 		ret = ""
 	}

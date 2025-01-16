@@ -32,19 +32,23 @@ type ListBucketsOutput struct {
 // CreateBucketInput is the input parameter of CreateBucket function
 type CreateBucketInput struct {
 	BucketLocation
-	Bucket                      string           `xml:"-"`
-	ACL                         AclType          `xml:"-"`
-	StorageClass                StorageClassType `xml:"-"`
-	GrantReadId                 string           `xml:"-"`
-	GrantWriteId                string           `xml:"-"`
-	GrantReadAcpId              string           `xml:"-"`
-	GrantWriteAcpId             string           `xml:"-"`
-	GrantFullControlId          string           `xml:"-"`
-	GrantReadDeliveredId        string           `xml:"-"`
-	GrantFullControlDeliveredId string           `xml:"-"`
-	Epid                        string           `xml:"-"`
-	AvailableZone               string           `xml:"-"`
-	IsFSFileInterface           bool             `xml:"-"`
+	Bucket                      string               `xml:"-"`
+	ACL                         AclType              `xml:"-"`
+	StorageClass                StorageClassType     `xml:"-"`
+	GrantReadId                 string               `xml:"-"`
+	GrantWriteId                string               `xml:"-"`
+	GrantReadAcpId              string               `xml:"-"`
+	GrantWriteAcpId             string               `xml:"-"`
+	GrantFullControlId          string               `xml:"-"`
+	GrantReadDeliveredId        string               `xml:"-"`
+	GrantFullControlDeliveredId string               `xml:"-"`
+	Epid                        string               `xml:"-"`
+	AvailableZone               string               `xml:"-"`
+	IsFSFileInterface           bool                 `xml:"-"`
+	BucketRedundancy            BucketRedundancyType `xml:"-"`
+	IsFusionAllowUpgrade        bool                 `xml:"-"`
+	IsRedundancyAllowALT        bool                 `xml:"-"`
+	ClusterGroupId              string               `xml:"-"`
 }
 
 // SetBucketStoragePolicyInput is the input parameter of SetBucketStoragePolicy function
@@ -96,6 +100,30 @@ type getBucketLocationOutputS3 struct {
 type getBucketLocationOutputObs struct {
 	BaseModel
 	bucketLocationObs
+}
+
+// DeleteBucketCustomDomainInput is the input parameter of DeleteBucketCustomDomain function
+type DeleteBucketCustomDomainInput struct {
+	Bucket       string
+	CustomDomain string
+}
+
+// GetBucketCustomDomainOuput is the result of GetBucketCustomdomain function
+type GetBucketCustomDomainOuput struct {
+	BaseModel
+	Domains []Domain `xml:"Domains"`
+}
+
+// Content defines the object content properties
+type Domain struct {
+	DomainName string `xml:"DomainName"`
+	CreateTime string `xml:"CreateTime"`
+}
+
+// SetBucketCustomDomainInput is the input parameter of SetBucketCustomDomain function
+type SetBucketCustomDomainInput struct {
+	Bucket       string
+	CustomDomain string
 }
 
 // GetBucketLocationOutput is the result of GetBucketLocation function
@@ -194,7 +222,7 @@ type SetObjectMetadataInput struct {
 	Metadata                map[string]string
 }
 
-//SetObjectMetadataOutput is the result of SetObjectMetadata function
+// SetObjectMetadataOutput is the result of SetObjectMetadata function
 type SetObjectMetadataOutput struct {
 	BaseModel
 	MetadataDirective       MetadataDirectiveType
@@ -212,17 +240,19 @@ type SetObjectMetadataOutput struct {
 // GetBucketMetadataOutput is the result of GetBucketMetadata function
 type GetBucketMetadataOutput struct {
 	BaseModel
-	StorageClass  StorageClassType
-	Location      string
-	Version       string
-	AllowOrigin   string
-	AllowMethod   string
-	AllowHeader   string
-	MaxAgeSeconds int
-	ExposeHeader  string
-	Epid          string
-	AZRedundancy  string
-	FSStatus      FSStatusType
+	StorageClass     StorageClassType
+	Location         string
+	Version          string
+	AllowOrigin      string
+	AllowMethod      string
+	AllowHeader      string
+	MaxAgeSeconds    int
+	ExposeHeader     string
+	Epid             string
+	AZRedundancy     string
+	FSStatus         FSStatusType
+	BucketRedundancy BucketRedundancyType
+	ClusterGroupId   string
 }
 
 // SetBucketLoggingConfigurationInput is the input parameter of SetBucketLoggingConfiguration function
