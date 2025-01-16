@@ -157,6 +157,10 @@ The following arguments are supported:
 * `versioning` - (Optional, Bool) Whether enable versioning. Once you version-enable a bucket, it can never return to an
   versionless state. You can, however, suspend versioning on that bucket.
 
+* `cluster_group_id` - (Optional, String, ForceNew) Specifies which cluster group is used to create the bucket.
+
+  Changing this parameter will create a new bucket.
+
 * `logging` - (Optional, List) A settings of bucket logging.
   The [logging](#bucket_logging_args) structure is documented below.
 
