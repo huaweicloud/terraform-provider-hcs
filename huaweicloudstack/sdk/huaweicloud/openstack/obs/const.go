@@ -77,6 +77,10 @@ const (
 	HEADER_AZ_REDUNDANCY                    = "az-redundancy"
 	HEADER_BUCKET_TYPE                      = "bucket-type"
 	headerOefMarker                         = "oef-marker"
+	HEADER_CLUSTER_GROUP_ID                 = "location-clustergroup-id"
+	HEADER_BUCKET_REDUNDANCY                = "bucket-redundancy"
+	HEADER_FUSION_ALLOW_UPGRADE             = "fusion-allow-upgrade"
+	HEADER_FUSION_ALLOW_ALT                 = "fusion-allow-alternative"
 
 	HEADER_ETAG         = "etag"
 	HEADER_LASTMODIFIED = "last-modified"
