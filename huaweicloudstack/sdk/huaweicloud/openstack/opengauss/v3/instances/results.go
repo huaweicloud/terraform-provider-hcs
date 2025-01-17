@@ -61,6 +61,11 @@ type Nodes struct {
 	Status           string `json:"status"`
 	Role             string `json:"role"`
 	AvailabilityZone string `json:"availability_zone"`
+	PrivateIp        string `json:"private_ip"`
+	PublicIp         string `json:"public_ip"`
+	DataIp           string `json:"data_ip"`
+	ManagementIp     string `json:"management_ip"`
+	BmsHsIp          string `json:"bms_hs_ip"`
 }
 
 type commonResult struct {

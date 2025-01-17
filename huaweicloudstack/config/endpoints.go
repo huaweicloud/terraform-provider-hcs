@@ -383,6 +383,11 @@ var allServiceCatalog = map[string]ServiceCatalog{
 		Version: "v3",
 		Product: "GaussDBforopenGauss",
 	},
+	"opengaussv31": {
+		Name:    "gaussdb",
+		Version: "v3.1",
+		Product: "GaussDBforopenGauss",
+	},
 	"drs": {
 		Name:    "drs",
 		Version: "v3",
