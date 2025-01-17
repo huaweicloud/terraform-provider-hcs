@@ -17,7 +17,6 @@ import (
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dew"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dms"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dws"
-	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/gaussdb"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/lts"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/mrs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/obs"
@@ -39,6 +38,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/elb"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eps"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/evs"
+	hcsGaussdb "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/gaussdb"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ims"
 	hcsLts "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/lts"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/nat"
@@ -379,8 +379,8 @@ func Provider() *schema.Provider {
 			"hcs_evs_volume_types": evs.DataSourceEvsVolumeTypesV2(),
 			"hcs_evs_snapshots":    evs.DataSourceEvsSnapshots(),
 
-			"hcs_gaussdb_opengauss_instance":  gaussdb.DataSourceOpenGaussInstance(),
-			"hcs_gaussdb_opengauss_instances": gaussdb.DataSourceOpenGaussInstances(),
+			"hcs_gaussdb_opengauss_instance":  hcsGaussdb.DataSourceOpenGaussInstance(),
+			"hcs_gaussdb_opengauss_instances": hcsGaussdb.DataSourceOpenGaussInstances(),
 
 			"hcs_ims_images": ims.DataSourceImagesImages(),
 
@@ -500,7 +500,7 @@ func Provider() *schema.Provider {
 			"hcs_evs_volume":   evs.ResourceEvsVolume(),
 			"hcs_evs_snapshot": evs.ResourceEvsSnapshotV2(),
 
-			"hcs_gaussdb_opengauss_instance": gaussdb.ResourceOpenGaussInstance(),
+			"hcs_gaussdb_opengauss_instance": hcsGaussdb.ResourceOpenGaussInstance(),
 
 			"hcs_lts_host_access":               lts.ResourceHostAccessConfig(),
 			"hcs_lts_host_group":                lts.ResourceHostGroup(),

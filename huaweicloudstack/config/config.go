@@ -851,6 +851,10 @@ func (c *HcsConfig) OpenGaussV3Client(region string) (*golangsdk.ServiceClient, 
 	return c.NewServiceClient("opengauss", region)
 }
 
+func (c *HcsConfig) OpenGaussV31Client(region string) (*golangsdk.ServiceClient, error) {
+	return c.NewServiceClient("opengaussv31", region)
+}
+
 func (c *HcsConfig) GaussdbV3Client(region string) (*golangsdk.ServiceClient, error) {
 	return c.NewServiceClient("gaussdb", region)
 }
