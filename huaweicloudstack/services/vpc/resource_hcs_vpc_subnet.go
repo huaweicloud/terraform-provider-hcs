@@ -146,10 +146,9 @@ func ResourceVpcSubnetV1() *schema.Resource {
 				Computed: true,
 			},
 			"availability_zone": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-				Computed: true,
+				Type:       schema.TypeString,
+				Optional:   true,
+				Deprecated: "use availability_zone instead",
 			},
 			"subnet_id": {
 				Type:        schema.TypeString,
@@ -272,7 +271,6 @@ func resourceVpcSubnetRead(_ context.Context, d *schema.ResourceData, meta inter
 		d.Set("dhcp_enable", n.EnableDHCP),
 		d.Set("primary_dns", n.PRIMARY_DNS),
 		d.Set("secondary_dns", n.SECONDARY_DNS),
-		d.Set("availability_zone", n.AvailabilityZone),
 		d.Set("vpc_id", n.VPC_ID),
 		d.Set("subnet_id", n.SubnetId),
 		d.Set("ipv4_subnet_id", n.SubnetId),

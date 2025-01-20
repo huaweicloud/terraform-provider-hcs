@@ -6,6 +6,8 @@ subcategory: "GaussDB"
 
 Use this data source to get available HuaweiCloudStack gaussdb opengauss instances.
 
+-> **NOTE:** If the endpoint is manually configured, **opengaussv31** should be configured.
+
 ## Example Usage
 
 ```hcl
@@ -96,28 +98,50 @@ The `instances` block supports:
 The `volume` block supports:
 
 * `type` - Indicates the volume type.
+
 * `size` - Indicates the volume size.
 
 <a name="opengauss_datastore"></a>
 The `datastore` block supports:
 
 * `engine` - Indicates the database engine.
+
 * `version` - Indicates the database version.
 
 <a name="opengauss_backup_strategy"></a>
 The `backup_strategy` block supports:
 
 * `start_time` - Indicates the backup time window.
+
 * `keep_days` - Indicates the number of days to retain the generated
 
 <a name="opengauss_nodes"></a>
 The `nodes` block contains:
 
 * `id` - Indicates the node ID.
+
 * `name` - Indicates the node name.
+
 * `status` - Indicates the node status.
+
 * `role` - Indicates whether the node support reduce.
+
 * `availability_zone` - Indicates the availability zone where the node resides.
+
+* `private_ip` - Indicates the internal IP address of the node. This parameter is valid only for CN nodes in the
+  distributed edition. This parameter is valid for all nodes in the centralized edition.
+  The parameter value exists after the ECS is created.
+
+* `public_ip` - Indicates the bound external IP address of the node. This parameter is valid only for CN nodes in the
+  distributed edition. This parameter is valid for all nodes in the centralized edition.
+  The parameter value exists after the ECS is created and bound to an EIP.
+
+* `data_ip` - Indicates the data ip of the node.
+
+* `bms_hs_ip` - IP address of the high-speed NIC, which is a dedicated IP field of the BMS instance and is used for
+  data synchronization.
+
+* `management_ip` - Indicates the management ip of the node.
 
 <a name="opengauss_ha"></a>
 The `ha` block supports:

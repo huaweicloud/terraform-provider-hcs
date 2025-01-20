@@ -8,17 +8,14 @@ import (
 	"log"
 	"net/url"
 	"strings"
-	"time"
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
-	"github.com/chnsz/golangsdk"
-	"github.com/chnsz/golangsdk/openstack/eps/v1/enterpriseprojects"
-	"github.com/chnsz/golangsdk/openstack/obs"
+	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/obs"
 
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
@@ -73,6 +70,11 @@ func ResourceObsBucket() *schema.Resource {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  false,
+			},
+			"cluster_group_id": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
 			},
 
 			"logging": {
@@ -321,6 +323,7 @@ func ResourceObsBucket() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 				Computed: true,
+				ForceNew: true,
 			},
 			"user_domain_names": {
 				Type:     schema.TypeSet,
@@ -358,7 +361,7 @@ func ResourceObsBucket() *schema.Resource {
 }
 
 func resourceObsBucketCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conf := meta.(*config.Config)
+	conf := config.GetHcsConfig(meta)
 	region := conf.GetRegion(d)
 	obsClient, err := conf.ObjectStorageClient(region)
 	if err != nil {
@@ -371,11 +374,13 @@ func resourceObsBucketCreate(ctx context.Context, d *schema.ResourceData, meta i
 	bucketRedundancy := d.Get("bucket_redundancy").(string)
 	fusionAllowUpgrade := d.Get("fusion_allow_upgrade").(bool)
 	fusionAllowAlternative := d.Get("fusion_allow_alternative").(bool)
+
 	opts := &obs.CreateBucketInput{
 		Bucket:               bucket,
 		ACL:                  obs.AclType(acl),
 		StorageClass:         obs.StorageClassType(class),
 		IsFSFileInterface:    d.Get("parallel_fs").(bool),
+		ClusterGroupId:       d.Get("cluster_group_id").(string),
 		Epid:                 conf.GetEnterpriseProjectID(d),
 		BucketRedundancy:     obs.BucketRedundancyType(bucketRedundancy),
 		IsFusionAllowUpgrade: fusionAllowUpgrade,
@@ -398,7 +403,7 @@ func resourceObsBucketCreate(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func resourceObsBucketUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conf := meta.(*config.Config)
+	conf := config.GetHcsConfig(meta)
 	region := conf.GetRegion(d)
 	obsClient, err := conf.ObjectStorageClient(region)
 	if err != nil {
@@ -481,14 +486,6 @@ func resourceObsBucketUpdate(ctx context.Context, d *schema.ResourceData, meta i
 		}
 	}
 
-	if d.HasChange("enterprise_project_id") && !d.IsNewResource() {
-		// API Limitations: still requires `project_id` field when migrating the EPS of OBS bucket
-		if err := resourceObsBucketEnterpriseProjectIdUpdate(ctx, d, conf, obsClient, region); err != nil {
-			return diag.FromErr(err)
-		}
-
-	}
-
 	if d.HasChange("user_domain_names") {
 		if err := resourceObsBucketUserDomainNamesUpdate(obsClient, d); err != nil {
 			return diag.FromErr(err)
@@ -505,7 +502,7 @@ func resourceObsBucketUpdate(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func resourceObsBucketRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conf := meta.(*config.Config)
+	conf := config.GetHcsConfig(meta)
 	region := conf.GetRegion(d)
 	obsClient, err := conf.ObjectStorageClient(region)
 	if err != nil {
@@ -619,7 +616,7 @@ func resourceObsBucketRead(_ context.Context, d *schema.ResourceData, meta inter
 }
 
 func resourceObsBucketDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conf := meta.(*config.Config)
+	conf := config.GetHcsConfig(meta)
 	obsClient, err := conf.ObjectStorageClient(conf.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("Error creating OBS client: %s", err)
@@ -760,7 +757,7 @@ func resourceObsBucketVersioningUpdate(obsClient *obs.ObsClient, d *schema.Resou
 	return nil
 }
 
-func resourceObsBucketEncryptionUpdate(config *config.Config, obsClient *obs.ObsClient, d *schema.ResourceData) error {
+func resourceObsBucketEncryptionUpdate(config *config.HcsConfig, obsClient *obs.ObsClient, d *schema.ResourceData) error {
 	bucket := d.Get("bucket").(string)
 
 	if d.Get("encryption").(bool) {
@@ -1055,59 +1052,6 @@ func deleteObsBucketUserDomainNames(obsClient *obs.ObsClient, bucket string, dom
 	return nil
 }
 
-func resourceObsBucketEnterpriseProjectIdUpdate(ctx context.Context, d *schema.ResourceData, conf *config.Config,
-	obsClient *obs.ObsClient, region string) error {
-	var (
-		projectId   = conf.GetProjectID(region)
-		bucket      = d.Get("bucket").(string)
-		migrateOpts = enterpriseprojects.MigrateResourceOpts{
-			ResourceId:   bucket,
-			ResourceType: "bucket",
-			RegionId:     region,
-			ProjectId:    projectId,
-		}
-	)
-	err := common.MigrateEnterpriseProjectWithoutWait(conf, d, migrateOpts)
-	if err != nil {
-		return err
-	}
-
-	// After the EPS service side updates enterprise project ID, it will take a few time to wait the OBS service
-	// read the data back into the database.
-	stateConf := &resource.StateChangeConf{
-		Pending:      []string{"Pending"},
-		Target:       []string{"Success"},
-		Refresh:      waitForOBSEnterpriseProjectIdChanged(obsClient, bucket, d.Get("enterprise_project_id").(string)),
-		Timeout:      d.Timeout(schema.TimeoutUpdate),
-		Delay:        10 * time.Second,
-		PollInterval: 5 * time.Second,
-	}
-	_, err = stateConf.WaitForStateContext(ctx)
-	if err != nil {
-		return getObsError("error waiting for obs enterprise project ID changed", bucket, err)
-	}
-	return nil
-}
-
-func waitForOBSEnterpriseProjectIdChanged(obsClient *obs.ObsClient, bucket string, enterpriseProjectId string) resource.StateRefreshFunc {
-	return func() (result interface{}, state string, err error) {
-		input := &obs.GetBucketMetadataInput{
-			Bucket: bucket,
-		}
-		output, err := obsClient.GetBucketMetadata(input)
-		if err != nil {
-			return nil, "Error", err
-		}
-
-		if output.Epid == enterpriseProjectId {
-			log.Printf("[DEBUG] the Enterprise Project ID of bucket %s is migrated to %s", bucket, enterpriseProjectId)
-			return output, "Success", nil
-		}
-
-		return output, "Pending", nil
-	}
-}
-
 func resourceObsBucketRedundancyUpdate(obsClient *obs.ObsClient, d *schema.ResourceData) error {
 	bucket := d.Get("bucket").(string)
 	bucketRedundancy := d.Get("bucket_redundancy").(string)
@@ -1254,6 +1198,14 @@ func setObsBucketMetadata(obsClient *obs.ObsClient, d *schema.ResourceData) erro
 			d.Set("parallel_fs", false),
 			d.Set("bucket_version", output.Version),
 		)
+	}
+
+	if output.BucketRedundancy != "" {
+		mErr = multierror.Append(mErr, d.Set("bucket_redundancy", output.BucketRedundancy))
+	}
+
+	if output.ClusterGroupId != "" {
+		mErr = multierror.Append(mErr, d.Set("cluster_group_id", output.ClusterGroupId))
 	}
 
 	if mErr.ErrorOrNil() != nil {

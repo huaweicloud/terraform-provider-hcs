@@ -17,19 +17,20 @@ import (
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dew"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dms"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/dws"
-	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/gaussdb"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/lts"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/mrs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/obs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/rds"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/sfs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/swr"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/ucs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/waf"
 
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/as"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/bms"
 	hcsCfw "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/cfw"
+	hcsCsms "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/csms"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/deprecated"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dns"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ecs"
@@ -37,11 +38,13 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/elb"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eps"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/evs"
+	hcsGaussdb "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/gaussdb"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ims"
 	hcsLts "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/lts"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/nat"
 	hcsObs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/obs"
 	hcsRomaConnect "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/romaconnect"
+	hcsSfsturbo "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/sfsturbo"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/smn"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpc"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpcep"
@@ -346,7 +349,7 @@ func Provider() *schema.Provider {
 			"hcs_dcs_templates":       dcs.DataSourceTemplates(),
 			"hcs_dcs_template_detail": dcs.DataSourceTemplateDetail(),
 
-			"hcs_csms_secret_version": dew.DataSourceDewCsmsSecret(),
+			"hcs_csms_secret_version": hcsCsms.DataSourceDewCsmsSecret(),
 
 			"hcs_kms_key":      dew.DataSourceKmsKey(),
 			"hcs_kms_data_key": dew.DataSourceKmsDataKeyV1(),
@@ -376,8 +379,8 @@ func Provider() *schema.Provider {
 			"hcs_evs_volume_types": evs.DataSourceEvsVolumeTypesV2(),
 			"hcs_evs_snapshots":    evs.DataSourceEvsSnapshots(),
 
-			"hcs_gaussdb_opengauss_instance":  gaussdb.DataSourceOpenGaussInstance(),
-			"hcs_gaussdb_opengauss_instances": gaussdb.DataSourceOpenGaussInstances(),
+			"hcs_gaussdb_opengauss_instance":  hcsGaussdb.DataSourceOpenGaussInstance(),
+			"hcs_gaussdb_opengauss_instances": hcsGaussdb.DataSourceOpenGaussInstances(),
 
 			"hcs_ims_images": ims.DataSourceImagesImages(),
 
@@ -392,6 +395,8 @@ func Provider() *schema.Provider {
 			"hcs_rds_pg_plugins": rds.DataSourcePgPlugins(),
 
 			"hcs_sfs_file_system": sfs.DataSourceSFSFileSystemV2(),
+
+			"hcs_sfs_turbos": sfs.DataSourceTurbos(),
 
 			"hcs_smn_topics": smn.DataSourceTopics(),
 
@@ -432,17 +437,17 @@ func Provider() *schema.Provider {
 			"hcs_cce_pvc":         cce.ResourceCcePersistentVolumeClaimsV1(),
 
 			"hcs_cfw_address_group":        cfw.ResourceAddressGroup(),
-			"hcs_cfw_address_group_member": hcsCfw.ResourceAddressGroupMember(),
 			"hcs_cfw_black_white_list":     cfw.ResourceBlackWhiteList(),
 			"hcs_cfw_eip_protection":       cfw.ResourceEipProtection(),
-			"hcs_cfw_protection_rule":      cfw.ResourceProtectionRule(),
 			"hcs_cfw_service_group_member": cfw.ResourceServiceGroupMember(),
 			"hcs_cfw_service_group":        cfw.ResourceServiceGroup(),
+			"hcs_cfw_address_group_member": hcsCfw.ResourceAddressGroupMember(),
+			"hcs_cfw_protection_rule":      hcsCfw.ResourceProtectionRule(),
 
 			"hcs_dcs_instance": dcs.ResourceDcsInstance(),
 			"hcs_dcs_backup":   dcs.ResourceDcsBackup(),
 
-			"hcs_csms_secret": dew.ResourceCsmsSecret(),
+			"hcs_csms_secret": hcsCsms.ResourceCsmsSecret(),
 
 			"hcs_kms_key":   dew.ResourceKmsKey(),
 			"hcs_kms_grant": dew.ResourceKmsGrant(),
@@ -495,7 +500,7 @@ func Provider() *schema.Provider {
 			"hcs_evs_volume":   evs.ResourceEvsVolume(),
 			"hcs_evs_snapshot": evs.ResourceEvsSnapshotV2(),
 
-			"hcs_gaussdb_opengauss_instance": gaussdb.ResourceOpenGaussInstance(),
+			"hcs_gaussdb_opengauss_instance": hcsGaussdb.ResourceOpenGaussInstance(),
 
 			"hcs_lts_host_access":               lts.ResourceHostAccessConfig(),
 			"hcs_lts_host_group":                lts.ResourceHostGroup(),
@@ -518,17 +523,26 @@ func Provider() *schema.Provider {
 			"hcs_rds_pg_account":  rds.ResourcePgAccount(),
 			"hcs_rds_pg_database": rds.ResourcePgDatabase(),
 			"hcs_rds_pg_plugin":   rds.ResourceRdsPgPlugin(),
+			"hcs_rds_sql_audit":   rds.ResourceSQLAudit(),
 
 			"hcs_roma_connect_instance": hcsRomaConnect.ResourceRomaConnectInstance(),
 
 			"hcs_sfs_access_rule": sfs.ResourceSFSAccessRuleV2(),
 			"hcs_sfs_file_system": sfs.ResourceSFSFileSystemV2(),
 
+			"hcs_sfs_turbo":           hcsSfsturbo.ResourceSFSTurbo(),
+			"hcs_sfs_turbo_dir":       sfs.ResourceSfsTurboDir(),
+			"hcs_sfs_turbo_dir_quota": sfs.ResourceSfsTurboDirQuota(),
+
 			"hcs_swr_organization":           swr.ResourceSWROrganization(),
 			"hcs_swr_repository":             swr.ResourceSWRRepository(),
 			"hcs_swr_repository_sharing":     swr.ResourceSWRRepositorySharing(),
 			"hcs_swr_image_retention_policy": swr.ResourceSwrImageRetentionPolicy(),
 			"hcs_swr_image_trigger":          swr.ResourceSwrImageTrigger(),
+
+			"hcs_ucs_cluster": ucs.ResourceCluster(),
+			"hcs_ucs_fleet":   ucs.ResourceFleet(),
+			"hcs_ucs_policy":  ucs.ResourcePolicy(),
 
 			"hcs_vpcep_approval": vpcep.ResourceVPCEndpointApproval(),
 			"hcs_vpcep_endpoint": vpcep.ResourceVPCEndpoint(),

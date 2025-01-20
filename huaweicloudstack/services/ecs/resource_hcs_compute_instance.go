@@ -764,6 +764,7 @@ func resourceComputeInstanceRead(_ context.Context, d *schema.ResourceData, meta
 			if va.BootIndex == 0 {
 				d.Set("system_disk_id", b.ID)
 				d.Set("system_disk_size", volumeInfo.Size)
+				d.Set("system_disk_type", volumeInfo.VolumeType)
 			}
 		}
 		d.Set("volume_attached", bds)

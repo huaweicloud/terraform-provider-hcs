@@ -1,5 +1,8 @@
 ---
 subcategory: "Cloud Firewall (CFW)"
+layout: "huaweicloudstack"
+page_title: "HuaweiCloudStack: hcs_cfw_protection_rule"
+description: ""
 ---
 
 # hcs_cfw_protection_rule
@@ -7,6 +10,8 @@ subcategory: "Cloud Firewall (CFW)"
 Manages a CFW protection rule resource within HuaweiCloudStack.
 
 ## Example Usage
+
+### Create a basic rule
 
 ```hcl
 variable "name" {}
@@ -46,6 +51,108 @@ resource "hcs_cfw_protection_rule" "test" {
 }
 ```
 
+### Create a rule with the source address using the region list
+
+```hcl
+variable "name" {}
+variable "description" {}
+variable "object_id" {}
+
+resource "hcs_cfw_protection_rule" "test" {
+  name                = var.name
+  object_id           = var.object_id
+  description         = var.description
+  type                = 0
+  address_type        = 0
+  action_type         = 0
+  long_connect_enable = 0
+  status              = 1
+
+  source {
+    type = 3
+
+    region_list {
+      region_id      = "GR"
+      description_cn = "希腊"
+      description_en = "Greece"
+      region_type    = 0
+    }
+
+    region_list {
+      region_id      = "ZJ"
+      description_cn = "浙江"
+      description_en = "ZHEJIANG"
+      region_type    = 1
+    }
+  }
+
+  destination {
+    type    = 0
+    address = "192.168.0.2"
+  }
+
+  service {
+    type        = 0
+    protocol    = 6
+    source_port = 8001
+    dest_port   = 8002
+  }
+
+  sequence {
+    top = 1
+  }
+}
+```
+
+### Create a rule with the custom service
+
+```hcl
+variable "name" {}
+variable "description" {}
+variable "object_id" {}
+
+resource "hcs_cfw_protection_rule" "test" {
+  name                = var.name
+  object_id           = var.object_id
+  description         = var.description
+  type                = 0
+  address_type        = 0
+  action_type         = 0
+  long_connect_enable = 0
+  status              = 1
+
+  source {
+    type    = 0
+    address = "1.1.1.1"
+  }
+
+  destination {
+    type    = 0
+    address = "1.1.1.2"
+  }
+
+  service {
+    type = 2
+
+    custom_service {
+      protocol    = 6
+      source_port = 80
+      dest_port   = 80
+    }
+
+    custom_service {
+      protocol    = 6
+      source_port = 8080
+      dest_port   = 8080
+    }
+  }
+
+  sequence {
+    top = 1
+  }
+}
+```
+
 The following arguments are supported:
 
 * `region` - (Optional, String, ForceNew) Specifies the region in which to create the resource.
@@ -53,7 +160,7 @@ The following arguments are supported:
 
 * `name` - (Required, String) The rule name.
 
-* `object_id` - (Required, String, ForceNew) The protected object ID
+* `object_id` - (Required, String, ForceNew) The protected object ID.
 
   Changing this parameter will create a new resource.
 
@@ -79,13 +186,13 @@ The following arguments are supported:
   The [Rule Destination Address](#ProtectionRule_RuleDestinationAddress) structure is documented below.
 
 * `status` - (Required, Int) The rule status. The options are as follows:
-    + **0**: disabled;
-    + **1**: enabled;
+  + **0**: disabled;
+  + **1**: enabled;
 
 * `long_connect_enable` - (Required, Int) Whether to support persistent connections.
   The options are as follows:
-    + **0**: supported;
-    + **1**: not supported;
+  + **0**: supported;
+  + **1**: not supported;
 
 * `long_connect_time_hour` - (Optional, Int) The persistent connection duration (hour).
 
@@ -96,8 +203,14 @@ The following arguments are supported:
 * `description` - (Optional, String) The description.
 
 * `direction` - (Optional, Int) The direction. The options are as follows:
-    + **0**: inbound;
-    + **1**: outbound;
+  + **0**: inbound;
+  + **1**: outbound;
+
+* `rule_hit_count` - (Optional, String) The number of times the protection rule is hit.
+  Setting the value to **0** will clear the hit count. Value options: **0**.
+
+* `tags` - (Optional, Map) Specifies the key/value pairs to associate with the protection rule.
+  Tags should have only one key/value pair.
 
 <a name="ProtectionRule_OrderRuleAcl"></a>
 The `sequence` block supports:
@@ -107,23 +220,25 @@ The `sequence` block supports:
 
 * `top` - (Optional, Int) Whether to pin on top.
   The options are as follows:
-    + **0**: no;
-    + **1**: yes;
+  + **0**: no;
+  + **1**: yes;
 
 <a name="ProtectionRule_RuleService"></a>
 The `service` block supports:
 
 * `type` - (Required, Int) The service input type.
-  The value **0** indicates manual input, and the value **1** indicates automatic input.
+  The options are as follows:
+  + **0**: manual input;
+  + **1**: automatic input;
 
 * `dest_port` - (Optional, String) The destination port.
 
 * `protocol` - (Optional, Int) The protocol type. The options are as follows:
-    + **6**: TCP;
-    + **17**: UDP;
-    + **1**: ICMP;
-    + **58**: ICMPv6;
-    + **-1**: any protocol;
+  + **6**: TCP;
+  + **17**: UDP;
+  + **1**: ICMP;
+  + **58**: ICMPv6;
+  + **-1**: any protocol;
 
   Regarding the addition type, a null value indicates it is automatically added.
 
@@ -134,13 +249,22 @@ The `service` block supports:
 
 * `source_port` - (Optional, String) The source port.
 
+* `custom_service` - (Optional, List) The custom service list.
+  The [custom_service](#ProtectionRule_RuleCustomService) structure is documented below.
+
+* `service_group` - (Optional, List) The service group list.
+
 <a name="ProtectionRule_RuleSourceAddress"></a>
 The `source` block supports:
 
-* `type` - (Required, Int) The Source type. The options are as follows:
-    + **0**: manual input;
-    + **1**: associated IP address group;
-    + **2**: domain name;
+* `type` - (Required, Int) The source type. The options are as follows:
+  + **0**: manual input;
+  + **1**: associated IP address group;
+  + **2**: domain name;
+  + **3**: region;
+  + **4**: domain name group using URL filtering;
+  + **5**: multiple objects;
+  + **6**: domain name group using DNS resolution;
 
 * `address` - (Optional, String) The IP address.
   The value cannot be empty for the manual type, and cannot be empty for the automatic or domain type.
@@ -151,19 +275,30 @@ The `source` block supports:
 * `address_set_name` - (Optional, String) The IP address group name.
 
 * `address_type` - (Optional, Int) The address type. The options are as follows:
-    + **0**: IPv4;
-    + **1**: IPv6;
+  + **0**: IPv4;
+  + **1**: IPv6;
 
 * `domain_address_name` - (Optional, String) The name of the domain name address.
   This parameter cannot be left empty for the domain name type, and is empty for the manual or automatic type.
+
+* `region_list` - (Optional, List) The region list.
+  The [region_list](#ProtectionRule_RuleRegionList) structure is documented below.
+
+* `ip_address` - (Optional, List) The IP address list.
+
+* `address_group` - (Optional, List) The address group list.
 
 <a name="ProtectionRule_RuleDestinationAddress"></a>
 The `destination` block supports:
 
-* `type` - (Required, Int) The Source type. The options are as follows:
-    + **0**: manual input;
-    + **1**: associated IP address group;
-    + **2**: domain name;
+* `type` - (Required, Int) The destination type. The options are as follows:
+  + **0**: manual input;
+  + **1**: associated IP address group;
+  + **2**: domain name;
+  + **3**: region;
+  + **4**: domain name group using URL filtering;
+  + **5**: multiple objects;
+  + **6**: domain name group using DNS resolution;
 
 * `address` - (Optional, String) The IP address.
   The value cannot be empty for the manual type, and cannot be empty for the automatic or domain type.
@@ -174,11 +309,50 @@ The `destination` block supports:
 * `address_set_name` - (Optional, String) The IP address group name.
 
 * `address_type` - (Optional, Int) The address type. The options are as follows:
-    + **0**: IPv4;
-    + **1**: IPv6;
+  + **0**: IPv4;
+  + **1**: IPv6;
 
 * `domain_address_name` - (Optional, String) The name of the domain name address.
   This parameter cannot be left empty for the domain name type, and is empty for the manual or automatic type.
+
+* `region_list` - (Optional, List) The region list.
+  The [region_list](#ProtectionRule_RuleRegionList) structure is documented below.
+
+* `ip_address` - (Optional, List) The IP address list.
+
+* `domain_set_id` - (Optional, String) The ID of the domain group.
+
+* `domain_set_name` - (Optional, String) The name of domain group.
+
+* `address_group` - (Optional, List) The address group list.
+
+<a name="ProtectionRule_RuleCustomService"></a>
+The `custom_service` block supports:
+
+* `protocol` - (Required, Int) The protocol type. The options are as follows:
+  + **6**: TCP;
+  + **17**: UDP;
+  + **1**: ICMP;
+  + **58**: ICMPv6;
+  + **-1**: any protocol;
+
+* `source_port` - (Required, String) The source port.
+
+* `dest_port` - (Required, String) The destination port.
+
+<a name="ProtectionRule_RuleRegionList"></a>
+The `region_list` block supports:
+
+* `region_id` - (Required, String) The region ID.
+
+* `region_type` - (Required, Int) The region type. The options are as follows:
+  + **0**: country;
+  + **1**: province;
+  + **2**：continent;
+
+* `description_cn` - (Optional, String) The Chinese description of the region.
+
+* `description_en` - (Optional, String) The English description of the region.
 
 ## Attribute Reference
 
