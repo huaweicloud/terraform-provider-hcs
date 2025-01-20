@@ -1,5 +1,26 @@
 # CHANGELOG
 
+## 2.4.11 (January 20, 2025)
+
+- Add new resources and data source for SFS Turbo and UCS.
+- Add new resource to support RDS SQL audit management.
+- Add field `cluster_group_id` to support specifying cluster groups when creating OBS buckets.
+- GaussDB supports to obtain IPs of nodes when creating and querying.
+- CFW supports rules for managing domain names, domain name groups, address groups, and IP address rules.
+- Update docs: `enterprise_project_id` does not support changes in OBS, RDS and WAF.
+
+* **New Resources:**
+  + `hcs_rds_sql_audit`
+  + `hcs_sfs_turbo`
+  + `hcs_sfs_turbo_dir`
+  + `hcs_sfs_turbo_dir_quota`
+  + `hcs_ucs_cluster`
+  + `hcs_ucs_fleet`
+  + `hcs_ucs_policy`
+
+* **New Data Sources:**
+  + `hcs_sfs_turbos`
+
 ## 2.4.10 (November 29, 2024)
 
 - Add new resources and data source of RDS PostgreSQL.
