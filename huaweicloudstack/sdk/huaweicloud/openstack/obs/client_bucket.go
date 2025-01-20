@@ -779,3 +779,38 @@ func (obsClient ObsClient) GetBucketFetchJob(input *GetBucketFetchJobInput, exte
 	}
 	return
 }
+
+func (obsClient ObsClient) DeleteBucketCustomDomain(input *DeleteBucketCustomDomainInput, extensions ...extensionOptions) (output *BaseModel, err error) {
+	if input == nil {
+		return nil, errors.New("DeleteBucketCustomDomainInput is nil")
+	}
+
+	output = &BaseModel{}
+	err = obsClient.doActionWithBucket("DeleteBucketCustomDomain", HTTP_DELETE, input.Bucket, newSubResourceSerialV2(SubResourceCustomDomain, input.CustomDomain), output, extensions)
+	if err != nil {
+		output = nil
+	}
+	return
+}
+
+func (obsClient ObsClient) SetBucketCustomDomain(input *SetBucketCustomDomainInput, extensions ...extensionOptions) (output *BaseModel, err error) {
+	if input == nil {
+		return nil, errors.New("SetBucketCustomDomainInput is nil")
+	}
+
+	output = &BaseModel{}
+	err = obsClient.doActionWithBucket("SetBucketCustomDomain", HTTP_PUT, input.Bucket, newSubResourceSerialV2(SubResourceCustomDomain, input.CustomDomain), output, extensions)
+	if err != nil {
+		output = nil
+	}
+	return
+}
+
+func (obsClient ObsClient) GetBucketCustomDomain(bucketName string, extensions ...extensionOptions) (output *GetBucketCustomDomainOuput, err error) {
+	output = &GetBucketCustomDomainOuput{}
+	err = obsClient.doActionWithBucket("GetBucketCustomDomain", HTTP_GET, bucketName, newSubResourceSerial(SubResourceCustomDomain), output, extensions)
+	if err != nil {
+		output = nil
+	}
+	return
+}

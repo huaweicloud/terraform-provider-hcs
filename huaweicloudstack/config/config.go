@@ -691,6 +691,10 @@ func (c *HcsConfig) AadV1Client(region string) (*golangsdk.ServiceClient, error)
 	return c.NewServiceClient("aad", region)
 }
 
+func (c *HcsConfig) CsmsV1Client(region string) (*golangsdk.ServiceClient, error) {
+	return c.NewServiceClient("csms", region)
+}
+
 func (c *HcsConfig) KmsKeyV1Client(region string) (*golangsdk.ServiceClient, error) {
 	return c.NewServiceClient("kms", region)
 }
@@ -845,6 +849,10 @@ func (c *HcsConfig) GeminiDBV31Client(region string) (*golangsdk.ServiceClient, 
 
 func (c *HcsConfig) OpenGaussV3Client(region string) (*golangsdk.ServiceClient, error) {
 	return c.NewServiceClient("opengauss", region)
+}
+
+func (c *HcsConfig) OpenGaussV31Client(region string) (*golangsdk.ServiceClient, error) {
+	return c.NewServiceClient("opengaussv31", region)
 }
 
 func (c *HcsConfig) GaussdbV3Client(region string) (*golangsdk.ServiceClient, error) {

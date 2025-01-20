@@ -51,6 +51,8 @@ var (
 
 	HCS_OBS_BUCKET_NAME        = os.Getenv("HCS_OBS_BUCKET_NAME")
 	HCS_OBS_DESTINATION_BUCKET = os.Getenv("HCS_OBS_DESTINATION_BUCKET")
+	HCS_OBS_CLUSTER_GROUP1_ID  = os.Getenv("HCS_OBS_CLUSTER_GROUP1_ID")
+	HCS_OBS_CLUSTER_GROUP2_ID  = os.Getenv("HCS_OBS_CLUSTER_GROUP2_ID")
 
 	HCS_OMS_ENABLE_FLAG = os.Getenv("HCS_OMS_ENABLE_FLAG")
 
@@ -177,6 +179,9 @@ var (
 
 	HCS_RDS_INSTANCE_ID = os.Getenv("HCS_RDS_INSTANCE_ID")
 	HCS_RDS_BACKUP_ID   = os.Getenv("HCS_RDS_BACKUP_ID")
+
+	HCS_IAM_USER1_ID = os.Getenv("HCS_IAM_USER1_ID")
+	HCS_IAM_USER2_ID = os.Getenv("HCS_IAM_USER2_ID")
 )
 
 // TestAccProviders is a static map containing only the main provider instance.
@@ -811,5 +816,19 @@ func TestAccPreCheckKmsHsmClusterId(t *testing.T) {
 func TestAccPreCheckRdsInstance(t *testing.T) {
 	if HCS_RDS_INSTANCE_ID == "" || HCS_RDS_BACKUP_ID == "" {
 		t.Skip("HCS_RDS_INSTANCE_ID and HCS_RDS_BACKUP_ID must be set for RDS PostgreSql Restore acceptance tests.")
+	}
+}
+
+// lintignore:AT003
+func TestAccPreCheckUcs(t *testing.T) {
+	if HCS_IAM_USER1_ID == "" || HCS_IAM_USER2_ID == "" {
+		t.Skip("HCS_IAM_USER1_ID and HCS_IAM_USER2_ID must be set for UCS acceptance tests.")
+	}
+}
+
+// lintignore:AT003
+func TestAccPreCheckObsClusterGroupId(t *testing.T) {
+	if HCS_OBS_CLUSTER_GROUP1_ID == "" || HCS_OBS_CLUSTER_GROUP2_ID == "" {
+		t.Skip("HCS_OBS_CLUSTER_GROUP1_ID and HCS_OBS_CLUSTER_GROUP2_ID must be set for OBS acceptance tests.")
 	}
 }

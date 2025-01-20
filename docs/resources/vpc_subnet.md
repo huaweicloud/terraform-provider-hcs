@@ -60,9 +60,6 @@ The following arguments are supported:
   use more than two DNS servers. This parameter value is the superset of both DNS server address 1 and DNS server
   address 2.
 
-* `availability_zone` - (Optional, String, ForceNew) Specifies the availability zone (AZ) to which the subnet belongs.
-  The value must be an existing AZ in the system. Changing this creates a new Subnet.
-
 ## Attributes Reference
 
 In addition to all arguments above, the following attributes are exported:

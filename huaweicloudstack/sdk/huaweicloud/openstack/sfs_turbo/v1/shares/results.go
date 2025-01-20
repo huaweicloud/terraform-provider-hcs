@@ -28,6 +28,8 @@ type Turbo struct {
 	Name string `json:"name"`
 	// Size of the share in GB
 	Size string `json:"size"`
+	// Bandwidth of the share in MB/s.
+	Bandwidth int `json:"bandwidth"`
 	// The statue of the SFS Turbo file system
 	Status string `json:"status"`
 	// The sub-statue of the SFS Turbo file system
@@ -115,6 +117,14 @@ type DeleteResult struct {
 
 // ExpandResult contains the response body and error from a Expand request.
 type ExpandResult struct {
+	golangsdk.ErrResult
+}
+
+type UpdateNameResult struct {
+	golangsdk.ErrResult
+}
+
+type UpdateSecurityGroupIdResult struct {
 	golangsdk.ErrResult
 }
 

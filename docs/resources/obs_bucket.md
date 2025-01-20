@@ -157,6 +157,10 @@ The following arguments are supported:
 * `versioning` - (Optional, Bool) Whether enable versioning. Once you version-enable a bucket, it can never return to an
   versionless state. You can, however, suspend versioning on that bucket.
 
+* `cluster_group_id` - (Optional, String, ForceNew) Specifies which cluster group is used to create the bucket.
+
+  Changing this parameter will create a new bucket.
+
 * `logging` - (Optional, List) A settings of bucket logging.
   The [logging](#bucket_logging_args) structure is documented below.
 
@@ -193,8 +197,8 @@ The following arguments are supported:
 * `kms_key_project_id` - (Optional, String) Specifies the project ID to which the KMS key belongs. This field is valid
   only when `kms_key_id` is specified.
 
-* `enterprise_project_id` - (Optional, String) Specifies the enterprise project id of the OBS bucket.
-  Defaults to `0`.
+* `enterprise_project_id` - (Optional, String, ForceNew) Specifies the enterprise project id of the OBS bucket.
+  Defaults to `0`. Changing this will create a new bucket.
 
 * `user_domain_names` - (Optional, List) Specifies the user domain names. The restriction requirements for this field
   are as follows:

@@ -155,6 +155,9 @@ func (input CreateBucketInput) trans(isObs bool) (params map[string]string, head
 	if availableZone := input.AvailableZone; availableZone != "" {
 		setHeaders(headers, HEADER_AZ_REDUNDANCY, []string{availableZone}, isObs)
 	}
+	if clusterGroupId := input.ClusterGroupId; clusterGroupId != "" {
+		setHeaders(headers, HEADER_CLUSTER_GROUP_ID, []string{clusterGroupId}, isObs)
+	}
 
 	input.prepareGrantHeaders(headers, isObs)
 	if input.IsFSFileInterface {
@@ -175,6 +178,17 @@ func (input CreateBucketInput) trans(isObs bool) (params map[string]string, head
 
 		data = strings.Join(xml, "")
 	}
+
+	if bucketRedundancy := string(input.BucketRedundancy); bucketRedundancy != "" {
+		setHeaders(headers, HEADER_BUCKET_REDUNDANCY, []string{bucketRedundancy}, isObs)
+	}
+	if input.IsFusionAllowUpgrade {
+		setHeaders(headers, HEADER_FUSION_ALLOW_UPGRADE, []string{"true"}, isObs)
+	}
+	if input.IsRedundancyAllowALT {
+		setHeaders(headers, HEADER_FUSION_ALLOW_ALT, []string{"true"}, isObs)
+	}
+
 	return
 }
 

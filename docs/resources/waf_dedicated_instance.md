@@ -64,6 +64,8 @@ The following arguments are supported:
 * `enterprise_project_id` - (Optional, String) The enterprise project ID of WAF dedicated instance. Changing this
   will migrate the WAF instance to a new enterprise project.
 
+-> The `enterprise_project_id` can not be updated.
+
 * `security_group` - (Required, List, ForceNew) The security group of the instance. This is an array of security group
   ids. Changing this will create a new instance.
 

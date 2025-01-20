@@ -6,9 +6,11 @@ subcategory: "GaussDB"
 
 GaussDB OpenGauss instance management within HuaweiCouldStack.
 
+-> **NOTE:** If the endpoint is manually configured, both **opengauss** and **opengaussv31** should be configured.
+
 ## Example Usage
 
-### Create a instance for distributed HA mode
+### Create an instance for distributed HA mode
 
 ```hcl
 variable "vpc_id" {}
@@ -44,7 +46,7 @@ resource "hcs_gaussdb_opengauss_instance" "test" {
 }
 ```
 
-### Create a instance for centralized HA mode
+### Create an instance for centralized HA mode
 
 ```hcl
 variable "instance_name" {}
@@ -182,6 +184,11 @@ The `volume` block supports:
   Changing this parameter will create a new resource.
 
 * `size` - (Required, Int) Specifies the volume size (in gigabytes). The valid value is range form `40` to `4,000`.
+  - **ECS deployment scheme**: The value ranges from (Number of shards x 40 GB) to (Number of shards x 24 TB). The size
+    must be an integer multiple of (Number of shards x 40). The upper limit of disk usage varies according to the CPU
+    size.
+  - **BMS Deployment Scheme**: This parameter is automatically calculated based on the selected flavor and cannot be
+    specified. Even if this parameter is set, it does not take effect.
 
 <a name="opengauss_datastore"></a>
 The `datastore` block supports:
@@ -243,6 +250,21 @@ The `nodes` block contains:
 * `status` - Indicates the node status.
 
 * `availability_zone` - Indicates the availability zone of the node.
+
+* `private_ip` - Indicates the internal IP address of the node. This parameter is valid only for CN nodes in the
+  distributed edition. This parameter is valid for all nodes in the centralized edition.
+  The parameter value exists after the ECS is created.
+
+* `public_ip` - Indicates the bound external IP address of the node. This parameter is valid only for CN nodes in the
+  distributed edition. This parameter is valid for all nodes in the centralized edition.
+  The parameter value exists after the ECS is created and bound to an EIP.
+
+* `data_ip` - Indicates the data ip of the node.
+
+* `bms_hs_ip` - IP address of the high-speed NIC, which is a dedicated IP field of the BMS instance and is used for
+  data synchronization.
+
+* `management_ip` - Indicates the management ip of the node.
 
 ## Timeouts
 
