@@ -55,5 +55,5 @@ This resource provides the following timeouts configuration options:
 ELB policy can be imported using the policy ID, e.g.
 
 ```
-$ terraform import hcs_elb_policy.policy_1 5c20fdad-7288-11eb-b817-0255ac10158b
+$ terraform import hcs_elb_l7policy.policy_1 5c20fdad-7288-11eb-b817-0255ac10158b
 ```
