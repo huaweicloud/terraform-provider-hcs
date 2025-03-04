@@ -1,20 +1,21 @@
 package romaconnect
 
 import (
-	"github.com/hashicorp/go-multierror"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
+	"fmt"
 	"golang.org/x/net/context"
 	"log"
 	"time"
 
+	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/romaconnect/v2/instances"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
 )
 
 func ResourceRomaConnectInstance() *schema.Resource {
@@ -116,7 +117,7 @@ func ResourceRomaConnectInstance() *schema.Resource {
 							ConflictsWith: []string{"rocketmq_enable"},
 						},
 						"rocketmq_enable": {
-							Type:     schema.TypeString,
+							Type:     schema.TypeBool,
 							Optional: true,
 							ForceNew: true,
 						},
@@ -164,13 +165,16 @@ func ResourceRomaConnectInstance() *schema.Resource {
 				ForceNew: true,
 			},
 			"maintain_begin": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:         schema.TypeString,
+				Optional:     true,
+				Computed:     true,
+				ForceNew:     true,
+				RequiredWith: []string{"maintain_end"},
 			},
 			"maintain_end": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
+				Computed: true,
 				ForceNew: true,
 			},
 			"site_id": {
@@ -380,10 +384,11 @@ func resourceInstanceCreate(ctx context.Context, d *schema.ResourceData, meta in
 
 	d.SetId(n.ID)
 	log.Printf("[INFO] Waiting for ROMA Connect Instance(%s) to become available", n.ID)
+
 	stateConf := &resource.StateChangeConf{
-		Pending:      []string{"CREATING", "STARTING"},
-		Target:       []string{"AVAILABLE", "RUNNING"},
-		Refresh:      waitForResourceStatus(romaConnectClientV2, n.ID),
+		Pending:      []string{"PENDING"},
+		Target:       []string{"RUNNING"},
+		Refresh:      waitForResourceStatus(romaConnectClientV2, n.ID, []string{"RUNNING"}),
 		Timeout:      d.Timeout(schema.TimeoutCreate),
 		Delay:        15 * time.Second,
 		PollInterval: 30 * time.Second,
@@ -467,9 +472,9 @@ func resourceInstanceDelete(ctx context.Context, d *schema.ResourceData, meta in
 		return diag.Errorf("Error deleting ROMA Connect instance %s: %s", d.Id(), err)
 	}
 	stateConf := &resource.StateChangeConf{
-		Pending:      []string{"AVAILABLE", "DELETING"},
+		Pending:      []string{"PENDING"},
 		Target:       []string{"DELETED"},
-		Refresh:      waitForResourceStatus(romaConnectClientV2, d.Id()),
+		Refresh:      waitForResourceStatus(romaConnectClientV2, d.Id(), nil),
 		Timeout:      d.Timeout(schema.TimeoutDelete),
 		Delay:        15 * time.Second,
 		PollInterval: 30 * time.Second,
@@ -495,7 +500,7 @@ func buildResourceRomaConnectInstanceMqs(d *schema.ResourceData) instances.MqsOp
 	mqsOpts.EnablePublicIp = mqs["enable_publicip"].(bool)
 
 	// create a rocketmq instance
-	if mqs["rocketmq_enable"].(string) == "true" {
+	if mqs["rocketmq_enable"].(bool) {
 		mqsOpts.RocketMqEnable = mqs["rocketmq_enable"].(bool)
 		mqsOpts.EnableAcl = mqs["enable_acl"].(bool)
 		return mqsOpts
@@ -537,14 +542,27 @@ func flattenResourceRomaResource(resource instances.Resources) []map[string]inte
 	return resourceData
 }
 
-func waitForResourceStatus(romaConnectClient *golangsdk.ServiceClient, id string) resource.StateRefreshFunc {
+func waitForResourceStatus(romaConnectClient *golangsdk.ServiceClient, instanceId string,
+	targets []string) resource.StateRefreshFunc {
 	return func() (interface{}, string, error) {
-		n, err := instances.Get(romaConnectClient, id).Extract()
+		log.Printf("[DEBUG] Expect the status of ROMA Connect instance to be any one of the status list: %v", targets)
+		resp, err := instances.Get(romaConnectClient, instanceId).Extract()
 		if err != nil {
-			diag.Errorf("[ERROR] failed to get ROMA Connect instance status: %v", err)
-			return nil, "error", nil
+			if _, ok := err.(golangsdk.ErrDefault404); ok {
+				log.Printf("[DEBUG] The instance (%s) has been deleted", instanceId)
+				return resp, "DELETED", nil
+			}
+			return nil, "ERROR", err
 		}
 
-		return n, n.Status, nil
+		invalidStatuses := []string{"CREATE_FAILED", "ERROR", "FREEZE_FAILED", "DELETE_FAILED"}
+		if utils.IsStrContainsSliceElement(resp.Status, invalidStatuses, true, true) {
+			return resp, "ERROR", fmt.Errorf("unexpected status: %s", resp.Status)
+		}
+
+		if utils.StrSliceContains(targets, resp.Status) {
+			return resp, "RUNNING", nil
+		}
+		return resp, "PENDING", nil
 	}
 }

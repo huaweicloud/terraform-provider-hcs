@@ -51,7 +51,7 @@ variable "vpc_id" {}
 variable "subnet_id" {}
 variable "security_group_id" {}
 
-resource "hcs_roma_connect_instance" "test1" {
+resource "hcs_roma_connect_instance" "test2" {
   name              = "roma-test"
   description       = "terraform test description"
   product_id        = "00300-30101-0--0"
@@ -83,7 +83,7 @@ The following arguments are supported:
 * `name` - (Required, String, ForceNew) Specifies the name of instance.
   Changing this will create a new instance.
 
-* `description` - (Required, String, ForceNew) Specifies the description of instance.
+* `description` - (Optional, String, ForceNew) Specifies the description of instance.
   Changing this will create a new instance.
 
 * `product_id` - (Required, String, ForceNew) Specifies the product id of instance.
@@ -125,11 +125,17 @@ The following arguments are supported:
 * `mqs` - (Required, Map, ForceNew) Specifies MQS service parameters. The [mqs](#roma_mqs) structure is documented
   below. Changing this will create a new instance.
 
-* `maintain_begin` - (Required, String, ForceNew) Maintain start time. Example **22:00:00**.
+* `maintain_begin` - (Optional, String, ForceNew) Maintain start time. Example **22:00:00**. In the future, this
+  parameter will be **deprecated** by ROMA Connect Service, it is not recommended to continue using.
+
   Changing this will create a new instance.
 
-* `maintain_end` - (Required, String, ForceNew) Maintain end time. Example **02:00:00**.
+* `maintain_end` - (Optional, String, ForceNew) Maintain end time. Example **02:00:00**. In the future, this
+  parameter will be **deprecated** by ROMA Connect Service, it is not recommended to continue using.
+
   Changing this will create a new instance.
+
+-> **NOTE:** Parameters `maintain_begin` and `maintain_end` must be set in pairs.
 
 * `enterprise_project_id` - (Optional, String, ForceNew) Specifies the enterprise project ID.
   Changing this will create a new instance.
@@ -275,11 +281,3 @@ This resource provides the following timeouts configuration options:
 * `create` - Default is 30 minutes.
 
 * `delete` - Default is 30 minutes.
-
-## Import
-
-The instance can be imported using the instance ID.
-
-```bash
-$ terraform import hcs_roma_connect_instance.test <instance_id>
-```
