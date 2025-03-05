@@ -10,13 +10,13 @@ Manages a network ACL rule resource within HuaweiCloudStack.
 
 ```hcl
 resource "hcs_network_acl_rule" "rule_1" {
-  name                   = "rule_1"
-  protocol               = "udp"
-  action                 = "deny"
-  source_ip_address      = "1.2.3.4"
-  source_ports            = ["444"]
-  destination_ip_address = "4.3.2.0/24"
-  destination_ports       = ["555"]
+  name                     = "rule_1"
+  protocol                 = "udp"
+  action                   = "deny"
+  source_ip_addresses      = ["1.2.3.0/24"]
+  source_ports             = ["444"]
+  destination_ip_addresses = ["4.3.2.0/24"]
+  destination_ports        = ["555"]
 }
 ```
 
@@ -40,11 +40,11 @@ The following arguments are supported:
 * `ip_version` - (Optional, Int) Specifies the IP version, either 4 (default) or 6. This parameter is available after
   the IPv6 function is enabled.
 
-* `source_ip_address` - (Optional, String) Specifies the source IP address that the traffic is allowed from. The default
-  value is *0.0.0.0/0*. For example: xxx.xxx.xxx.xxx (IP address), xxx.xxx.xxx.0/24 (CIDR block).
+* `source_ip_addresses` - (Optional, List) A list of Specifies the source IP address that the traffic is allowed from. The default
+  value is *0.0.0.0/0*. For example: xxx.xxx.xxx.0/24 (CIDR block).
 
-* `destination_ip_address` - (Optional, String) Specifies the destination IP address to which the traffic is allowed.
-  The default value is *0.0.0.0/0*. For example: xxx.xxx.xxx.xxx (IP address), xxx.xxx.xxx.0/24 (CIDR block).
+* `destination_ip_addresses` - (Optional, List) A list of Specifies the destination IP address to which the traffic is allowed.
+  The default value is *0.0.0.0/0*. For example: xxx.xxx.xxx.0/24 (CIDR block).
 
 * `source_ports` - (Optional, List) A list of Specifies the source port number or port number range. The value ranges from 1 to
   65535. For a port number range, enter two port numbers connected by a colon(:). For example, 1:100.
