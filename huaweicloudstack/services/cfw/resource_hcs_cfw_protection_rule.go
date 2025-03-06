@@ -2,8 +2,6 @@ package cfw
 
 import (
 	"context"
-	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"strconv"
@@ -555,7 +553,10 @@ func resourceProtectionRuleRead(_ context.Context, d *schema.ResourceData, meta 
 	objectID := d.Get("object_id").(string)
 	rule, err := GetProtectionRule(client, d.Id(), objectID)
 	if err != nil {
-		return common.CheckDeletedDiag(d, parseError(err), "error retrieving protection rule")
+		return common.CheckDeletedDiag(d,
+			common.ConvertExpected400ErrInto404Err(err, "error_code", "CFW.00200005"),
+			"error retrieving protection rule",
+		)
 	}
 
 	count, err := getRuleHitCount(client, d.Id())
@@ -1001,11 +1002,17 @@ func resourceProtectionRuleDelete(ctx context.Context, d *schema.ResourceData, m
 	}
 	_, err = client.Request("DELETE", deleteProtectionRulePath, &deleteProtectionRuleOpt)
 	if err != nil {
-		return common.CheckDeletedDiag(d, parseError(err), "error deleting protection rule")
+		return common.CheckDeletedDiag(d,
+			common.ConvertExpected400ErrInto404Err(err, "error_code", "CFW.00200005"),
+			"error deleting protection rule",
+		)
 	}
 
 	err = deleteProtectionRuleWaitingForCompleted(ctx, client, d.Id(), d.Get("object_id").(string), d.Timeout(schema.TimeoutDelete))
-	return common.CheckDeletedDiag(d, parseError(err), "error deleting protection rule")
+	return common.CheckDeletedDiag(d,
+		common.ConvertExpected400ErrInto404Err(err, "error_code", "CFW.00200005"),
+		"error deleting protection rule",
+	)
 }
 
 func deleteProtectionRuleWaitingForCompleted(ctx context.Context, client *golangsdk.ServiceClient, id, objectID string, timeout time.Duration) error {
@@ -1038,22 +1045,4 @@ func resourceProtectionRuleImportState(_ context.Context, d *schema.ResourceData
 	d.SetId(parts[1])
 
 	return []*schema.ResourceData{d}, nil
-}
-
-func parseError(err error) error {
-	var errCode golangsdk.ErrDefault400
-	if errors.As(err, &errCode) {
-		var apiError interface{}
-		if jsonErr := json.Unmarshal(errCode.Body, &apiError); jsonErr != nil {
-			return err
-		}
-		errorCode := utils.PathSearch("error_code", apiError, nil)
-		if errorCode == nil {
-			return fmt.Errorf("error parsing error_code from response")
-		}
-		if errorCode == "CFW.00200005" {
-			return golangsdk.ErrDefault404(errCode)
-		}
-	}
-	return err
 }
