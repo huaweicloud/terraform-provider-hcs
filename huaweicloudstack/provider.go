@@ -31,6 +31,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/bms"
 	hcsCfw "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/cfw"
 	hcsCsms "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/csms"
+	hcsDcs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dcs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/deprecated"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dns"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ecs"
@@ -444,7 +445,7 @@ func Provider() *schema.Provider {
 			"hcs_cfw_address_group_member": hcsCfw.ResourceAddressGroupMember(),
 			"hcs_cfw_protection_rule":      hcsCfw.ResourceProtectionRule(),
 
-			"hcs_dcs_instance": dcs.ResourceDcsInstance(),
+			"hcs_dcs_instance": hcsDcs.ResourceDcsInstance(),
 			"hcs_dcs_backup":   dcs.ResourceDcsBackup(),
 
 			"hcs_csms_secret": hcsCsms.ResourceCsmsSecret(),
