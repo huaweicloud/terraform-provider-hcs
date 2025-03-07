@@ -20,6 +20,7 @@ You can use DCS for Redis 4.0, 5.0 or 6.0 instead. It is not possible to create 
 variable vpc_id {}
 variable subnet_id {}
 variable pwd {}
+variable az {}
 
 data "hcs_dcs_flavors" "single_flavors" {
   cache_mode = "single"
@@ -32,7 +33,7 @@ resource "hcs_dcs_instance" "instance_1" {
   engine_version     = "5.0"
   capacity           = data.hcs_dcs_flavors.single_flavors.capacity
   flavor             = data.hcs_dcs_flavors.single_flavors.flavors[0].name
-  availability_zones = ["cn-north-1a"]
+  availability_zones = [var.az]
   password           = var.pwd
   vpc_id             = var.vpc_id
   subnet_id          = var.subnet_id
@@ -45,6 +46,8 @@ resource "hcs_dcs_instance" "instance_1" {
 variable vpc_id {}
 variable subnet_id {}
 variable pwd {}
+variable az1 {}
+variable az2 {}
 
 resource "hcs_dcs_instance" "instance_2" {
   name               = "redis_name"
@@ -52,9 +55,9 @@ resource "hcs_dcs_instance" "instance_2" {
   engine_version     = "5.0"
   capacity           = 4
   flavor             = "redis.ha.xu1.large.r2.4"
-  # The first is the primary availability zone (cn-north-1a),
-  # and the second is the standby availability zone (cn-north-1b).
-  availability_zones = ["cn-north-1a", "cn-north-1b"]
+  # The first is the primary availability zone (var.az1),
+  # and the second is the standby availability zone (var.az2).
+  availability_zones = [var.az1, var.az2]
   password           = var.pwd
   vpc_id             = var.vpc_id
   subnet_id          = var.subnet_id
@@ -159,20 +162,18 @@ The following arguments are supported:
 * `whitelist_enable` - (Optional, Bool) Enable or disable the IP address whitelists. Defaults to true.
   If the whitelist is disabled, all IP addresses connected to the VPC can access the instance.
 
-* `maintain_begin` - (Optional, String) Time at which the maintenance time window starts. Defaults to **02:00:00**.
+* `maintain_begin` - (Optional, String) Time at which the maintenance time window starts.
   + The start time and end time of a maintenance time window must indicate the time segment of a supported maintenance
     time window.
   + The start time must be on the hour, such as **18:00:00**.
   + If parameter `maintain_begin` is left blank, parameter `maintain_end` is also blank.
-    In this case, the system automatically allocates the default start time **02:00:00**.
 
-* `maintain_end` - (Optional, String) Time at which the maintenance time window ends. Defaults to **06:00:00**.
+* `maintain_end` - (Optional, String) Time at which the maintenance time window ends.
   + The start time and end time of a maintenance time window must indicate the time segment of a supported maintenance
     time window.
   + The end time is one hour later than the start time. For example, if the start time is **18:00:00**, the end time is
     **22:00:00**.
   + If parameter `maintain_end` is left blank, parameter `maintain_begin` is also blank.
-    In this case, the system automatically allocates the default end time **06:00:00**.
 
 -> **NOTE:** Parameters `maintain_begin` and `maintain_end` must be set in pairs.
 
@@ -263,7 +264,6 @@ In addition to all arguments above, the following attributes are exported:
 * `vpc_name` - The name of VPC which the instance belongs to.
 
 * `subnet_name` - The name of subnet which the instance belongs to.
-
 
 * `security_group_name` - The name of security group which the instance belongs to.
 
