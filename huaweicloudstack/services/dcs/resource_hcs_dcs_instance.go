@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -15,7 +14,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/jmespath/go-jmespath"
 
 	"github.com/chnsz/golangsdk"
@@ -112,9 +110,6 @@ func ResourceDcsInstance() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
-				ValidateFunc: validation.StringInSlice([]string{
-					"Redis", "Memcached",
-				}, true),
 			},
 			"engine_version": {
 				Type:     schema.TypeString,
@@ -218,35 +213,27 @@ func ResourceDcsInstance() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"save_days": {
-							Type:         schema.TypeInt,
-							Optional:     true,
-							ValidateFunc: validation.IntBetween(1, 7),
+							Type:     schema.TypeInt,
+							Optional: true,
 						},
 						"backup_type": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							ValidateFunc: validation.StringInSlice([]string{"auto", "manual"}, false),
+							Type:     schema.TypeString,
+							Optional: true,
 						},
 						"begin_at": {
 							Type:     schema.TypeString,
 							Required: true,
-							ValidateFunc: validation.StringMatch(
-								regexp.MustCompile(`^([0-1]\d|2[0-3]):00-([0-1]\d|2[0-3]):00$`),
-								"format must be HH:00-HH:00",
-							),
 						},
 						"period_type": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							Default:      "weekly",
-							ValidateFunc: validation.StringInSlice([]string{"weekly"}, false),
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "weekly",
 						},
 						"backup_at": {
 							Type:     schema.TypeList,
 							Required: true,
 							Elem: &schema.Schema{
-								Type:         schema.TypeInt,
-								ValidateFunc: validation.IntBetween(1, 7),
+								Type: schema.TypeInt,
 							},
 						},
 					},
