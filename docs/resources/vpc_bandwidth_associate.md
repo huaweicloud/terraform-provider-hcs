@@ -104,3 +104,6 @@ In addition to all arguments above, the following attributes are exported:
 ## Import
 
 Bandwidth associations can be imported using the `bandwidth_id` and `eip_id` separated by a slash, e.g.:
+```
+$ terraform import hcs_vpc_bandwidth_associate.eip <bandwidth_id>/<eip_id>
+```
