@@ -33,11 +33,18 @@ The following arguments are supported:
   maximum of 255 characters, which may consist of letters, digits, underscores (_), and hyphens (-). Changing this
   creates a new server group.
 
-* `policies` - (Required, List, ForceNew) Specifies the set of policies for the server group. Only *anti-affinity*
-  policies are supported.
+* `policies` - (Required, List, ForceNew) Specifies the policy set for the server group. The value must belong 
+  to *anti-affinity*, *affinity*, *soft-affinity*, and *soft-anti-affinity*. *anti-affinity* and *affinity* 
+  cannot belong to the same group.
+  + `anti-affinity`: The servers in this group must be scheduled to different hosts
 
-  + `anti-affinity`: All ECS in this group must be deployed on different hosts. Changing this creates a new server
-    group.
+  + `affinity`: The servers in this group must be scheduled on the same host.
+
+  + `soft-affinity`: If possible, servers in this group are scheduled on the same host. However, 
+  if this function cannot be implemented, they should still be scheduled instead of causing task failure.
+
+  + `soft-anti-affinity`: If possible, servers in this group should be scheduled to different hosts. 
+  If this function cannot be implemented, they should still be scheduled instead of causing task failure.
 
 * `members` - (Optional, List) Specifies an array of one or more instance ID to attach server group.
 
@@ -52,5 +59,5 @@ In addition to all arguments above, the following attributes are exported:
 Server Groups can be imported using the `id`, e.g.
 
 ```
-$ terraform import hcs_ecs_compute_servergroup.test-sg 1bc30ee9-9d5b-4c30-bdd5-7f1e663f5edf
+$ terraform import hcs_ecs_compute_server_group.test-sg 1bc30ee9-9d5b-4c30-bdd5-7f1e663f5edf
 ```
