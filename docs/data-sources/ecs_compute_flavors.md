@@ -35,4 +35,13 @@ In addition to all arguments above, the following attributes are exported:
 
 * `ids` - A list of flavor IDs.
 
-* `flavors` - List of ECS flavors details. The object structure of each flavor is documented below.
+* `flavors` - List of ECS flavors details. The [flavor object](#compute_instance_flavor_object) structure of each flavor is documented below.
+
+<a name="compute_instance_flavor_object"></a>
+The `flavor` block supports:
+
+* `id` - The flavor ID.
+* `name` - The flavor Name.
+* `ram` - Memory size specified by the flavor.
+* `vcpus` - Number of virtual CPU cores specified by the flavor.
+* `ext_boot_type` - The system disk type, which can be a *Volume* or *LocalDisk*.
