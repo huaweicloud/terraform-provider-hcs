@@ -21,6 +21,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/mrs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/obs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/rds"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/secmaster"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/sfs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/swr"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/ucs"
@@ -45,6 +46,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/nat"
 	hcsObs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/obs"
 	hcsRomaConnect "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/romaconnect"
+	hcsSecmaster "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/secmaster"
 	hcsSfsturbo "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/sfsturbo"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/smn"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpc"
@@ -528,6 +530,15 @@ func Provider() *schema.Provider {
 
 			"hcs_roma_connect_instance": hcsRomaConnect.ResourceRomaConnectInstance(),
 
+			"hcs_secmaster_alert":            hcsSecmaster.ResourceAlert(),
+			"hcs_secmaster_incident":         hcsSecmaster.ResourceIncident(),
+			"hcs_secmaster_indicator":        hcsSecmaster.ResourceIndicator(),
+			"hcs_secmaster_alert_rule":       secmaster.ResourceAlertRule(),
+			"hcs_secmaster_playbook":         secmaster.ResourcePlaybook(),
+			"hcs_secmaster_playbook_action":  secmaster.ResourcePlaybookAction(),
+			"hcs_secmaster_playbook_version": secmaster.ResourcePlaybookVersion(),
+			"hcs_secmaster_playbook_rule":    secmaster.ResourcePlaybookRule(),
+
 			"hcs_sfs_access_rule": sfs.ResourceSFSAccessRuleV2(),
 			"hcs_sfs_file_system": sfs.ResourceSFSFileSystemV2(),
 
@@ -805,6 +816,9 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 	if _, ok := endpoints["opengauss"]; !ok {
 		openGaussUrl := "https://gaussdb.%s.%s/gaussdb/"
 		endpoints["opengauss"] = fmt.Sprintf(openGaussUrl, hcsConfig.Config.Region, hcsConfig.Config.Cloud)
+	}
+	if _, ok := endpoints["secmaster"]; !ok {
+		endpoints["secmaster"] = fmt.Sprintf("https://secmaster-tenant.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
 	}
 	if _, ok := endpoints["swr"]; !ok {
 		endpoints["swr"] = fmt.Sprintf("https://swr-api.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
