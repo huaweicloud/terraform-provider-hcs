@@ -41,6 +41,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eps"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/evs"
 	hcsGaussdb "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/gaussdb"
+	hcsHss "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/hss"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ims"
 	hcsLts "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/lts"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/nat"
@@ -505,6 +506,8 @@ func Provider() *schema.Provider {
 
 			"hcs_gaussdb_opengauss_instance": hcsGaussdb.ResourceOpenGaussInstance(),
 
+			"hcs_hss_host_group": hcsHss.ResourceHostGroup(),
+
 			"hcs_lts_host_access":               lts.ResourceHostAccessConfig(),
 			"hcs_lts_host_group":                lts.ResourceHostGroup(),
 			"hcs_lts_group":                     hcsLts.ResourceLTSGroup(),
@@ -806,10 +809,12 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 	if _, ok := endpoints["csms"]; !ok {
 		endpoints["csms"] = fmt.Sprintf("https://csms-scc-apig.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
 	}
+	if _, ok := endpoints["hss"]; !ok {
+		endpoints["hss"] = fmt.Sprintf("https://hss-api.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
+	}
 	if _, ok := endpoints["kms"]; !ok {
 		endpoints["kms"] = fmt.Sprintf("https://kms-scc-apig.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
 	}
-
 	if _, ok := endpoints["obs"]; !ok {
 		endpoints["obs"] = fmt.Sprintf("https://obsv3.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
 	}
