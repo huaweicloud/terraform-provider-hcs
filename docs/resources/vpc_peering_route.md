@@ -20,6 +20,7 @@ resource "hcs_vpc_peering_route" "peering" {
       nexthop     = var.vpc_peering_id2
       destination = "192.168.1.0/24"
   }
+}
  ```
 
 ## Argument Reference

@@ -39,7 +39,7 @@ The following arguments are supported:
 * `name` - (Required, String) Specifies the name of the VPC. The name must be unique for a tenant. The value is a string
   of no more than 64 characters and can contain digits, letters, underscores (_), and hyphens (-).
 
-* `cidr` - (Required, String) Specifies the range of available subnets in the VPC. The value ranges from 10.0.0.0/8 to
+* `cidr` - (Optional, String) Specifies the range of available subnets in the VPC. The value ranges from 10.0.0.0/8 to
   10.255.255.0/24, 172.16.0.0/12 to 172.31.255.0/24, or 192.168.0.0/16 to 192.168.255.0/24.
 
 * `enterprise_project_id` - (Optional, String) Specifies the enterprise project ID which the desired VPC belongs to.
