@@ -8,54 +8,6 @@ Manages a DNS record set resource within HuaweiCloudStack.
 
 ## Example Usage
 
-### Record Set with Multi-line
-
-```hcl
-resource "hcs_dns_zone" "example_zone" {
-  name        = "example.com."
-  email       = "email2@example.com"
-  description = "a zone"
-  ttl         = 6000
-  zone_type   = "public"
-}
-
-resource "hcs_dns_recordset" "test" {
-  zone_id     = hcs_dns_zone.example_zone.id
-  name        = "test.example.com."
-  type        = "A"
-  description = "a recordset description"
-  status      = "ENABLE"
-  ttl         = 300
-  records     = ["10.1.0.0"]
-
-  tags = {
-    key1 = "value1"
-    key2 = "value2"
-  }
-}
-```
-
-### Record Set with Public Zone
-
-```hcl
-resource "hcs_dns_zone" "example_zone" {
-  name        = "example.com."
-  email       = "email2@example.com"
-  description = "a public zone"
-  ttl         = 6000
-  zone_type   = "public"
-}
-
-resource "hcs_dns_recordset" "test" {
-  zone_id     = hcs_dns_zone.example_zone.id
-  name        = "rs.example.com."
-  description = "An example record set"
-  ttl         = 3000
-  type        = "A"
-  records     = ["10.0.0.1"]
-}
-```
-
 ### Record Set with Private Zone
 
 ```hcl
