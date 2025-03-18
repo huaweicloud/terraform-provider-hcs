@@ -58,6 +58,10 @@ func dataSourceVpcPeeringRead(_ context.Context, d *schema.ResourceData, meta in
 	if len(n) <= 0 || err != nil {
 		return diag.Errorf("error querying VPC Peering: %s", err)
 	}
+
+	if len(n) > 1 {
+		return diag.Errorf("multiple peering matched; use additional constraints to reduce matches to a single peering")
+	}
 	d.SetId(n[0].ID)
 	mErr := multierror.Append(nil,
 		d.Set("name", n[0].Name),

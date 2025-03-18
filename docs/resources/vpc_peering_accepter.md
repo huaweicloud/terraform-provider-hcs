@@ -2,14 +2,14 @@
 subcategory: "Virtual Private Cloud (VPC)"
 ---
 
-# hcs_vpc_peering_connection_accepter
+# hcs_vpc_peering_accepter
 
 Provides a resource to manage the accepter's side of a VPC Peering Connection.
 
 -> **NOTE:** When a cross-tenant (requester's tenant differs from the accepter's tenant) VPC Peering Connection
   is created, a VPC Peering Connection resource is automatically created in the accepter's account.
-  The requester can use the `hcs_vpc_peering_connection` resource to manage its side of the connection and
-  the accepter can use the `hcs_vpc_peering_connection_accepter` resource to accept its side of the connection
+  The requester can use the `hcs_vpc_peering` resource to manage its side of the connection and
+  the accepter can use the `hcs_vpc_peering_accepter` resource to accept its side of the connection
   into management.
 
 ## Example Usage

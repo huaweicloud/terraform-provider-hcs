@@ -187,6 +187,8 @@ func resourcePeeringAccepterRead(_ context.Context, d *schema.ResourceData, meta
 
 func resourcePeeringAccepterUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	if d.HasChange("accept") {
+		oldAccept, _ := d.GetChange("accept")
+		d.Set("accept", oldAccept)
 		return diag.Errorf("VPC peering action not permitted: Can not accept/reject peering request not in pending_acceptance state.")
 	}
 
