@@ -36,7 +36,7 @@ The following arguments are supported:
 
 * `email` - (Optional, String) The email address of the administrator managing the zone.
 
-* `zone_type` - (Optional, String, ForceNew) The type of zone. Changing this creates a new DNS zone.
+* `zone_type` - (Optional, String, ForceNew) The type of zone. It can only be 'private'.Changing this creates a new DNS zone.
 
 * `router` - (Optional, List) Router configuration block which is required if zone_type is private. The router
   structure is documented below.
