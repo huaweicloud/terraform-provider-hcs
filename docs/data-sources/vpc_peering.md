@@ -19,6 +19,9 @@ data "hcs_vpc_peering" "peering" {
 The arguments of this data source act as filters for querying the available VPC peering. The given filters
 must match exactly one VPC peering whose data will be exported as attributes.
 
+* `region` - (Optional, String) Specifies the region in which to obtain the VPC Peering. If omitted, the provider-level
+  region will be used.
+
 * `id` - (Optional, String) The ID of the specific VPC Peering to retrieve.
 
 * `name` - (Optional, String) The name of the specific VPC Peering to retrieve.
