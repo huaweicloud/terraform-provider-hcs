@@ -81,7 +81,7 @@ In addition to all arguments above, the following attributes are exported:
 Subnets can be imported using the subnet `Network ID`, e.g.
 
 ```
-$ terraform import hcs_vpc_subnet 4779ab1c-7c1a-44b1-a02e-93dfc361b32d
+$ terraform import hcs_vpc_subnet.subnet_v1 4779ab1c-7c1a-44b1-a02e-93dfc361b32d
 ```
 
 ## Timeouts
