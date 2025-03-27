@@ -137,6 +137,12 @@ The following arguments are supported:
 * `configuration_id` - (Optional, String, ForceNew) Specifies the parameter template ID.
   Changing this parameter will create a new resource.
 
+* `os_type` - (Optional, String, ForceNew) Specifies the OS type. The value is case sensitive. The GaussDB version
+  matching the Hce operating system must be 8.102 or later. The valid values are **Hce**, **Euler** and **Kylin**.
+  Default to **Hce**.
+
+  Changing this parameter will create a new resource.
+
 * `sharding_num` - (Optional, Int) Specifies the sharding number. The valid value is range form `1` to `9`.
   The default value is 3.
 
