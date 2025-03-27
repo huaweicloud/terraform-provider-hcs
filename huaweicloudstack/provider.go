@@ -822,6 +822,11 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 		openGaussUrl := "https://gaussdb.%s.%s/gaussdb/"
 		endpoints["opengauss"] = fmt.Sprintf(openGaussUrl, hcsConfig.Config.Region, hcsConfig.Config.Cloud)
 	}
+	if _, ok := endpoints["opengaussv31"]; !ok {
+		openGaussUrl := "https://gaussdb.%s.%s/gaussdb/"
+		endpoints["opengaussv31"] = fmt.Sprintf(openGaussUrl, hcsConfig.Config.Region, hcsConfig.Config.Cloud)
+	}
+
 	if _, ok := endpoints["secmaster"]; !ok {
 		endpoints["secmaster"] = fmt.Sprintf("https://secmaster-tenant.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
 	}

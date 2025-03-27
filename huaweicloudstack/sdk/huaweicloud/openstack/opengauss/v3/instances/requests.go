@@ -64,6 +64,7 @@ type CreateGaussDBOpts struct {
 	DiskEncryptionId    string       `json:"disk_encryption_id,omitempty"`
 	TimeZone            string       `json:"time_zone,omitempty"`
 	ConfigurationId     string       `json:"configuration_id,omitempty"`
+	OsType              string       `json:"os_type,omitempty"`
 	DsspoolId           string       `json:"dsspool_id,omitempty"`
 	ReplicaOfId         string       `json:"replica_of_id,omitempty"`
 	ShardingNum         int          `json:"sharding_num,omitempty"`
@@ -315,7 +316,7 @@ func Rename(client *golangsdk.ServiceClient, opts RenameOptsBuilder, id string) 
 	}
 
 	_, r.Err = client.Put(updateURL(client, id, "name"), b, &r.Body, &golangsdk.RequestOpts{
-		OkCodes:     []int{200},
+		OkCodes:     []int{200, 202},
 		MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en-us"},
 	})
 	return
