@@ -22,7 +22,7 @@ type GetResult struct {
 
 type RomaInstance struct {
 	ID                  string    `json:"instance_id"`
-	Name                string    `json:"instance_name"`
+	Name                string    `json:"name"`
 	SiteId              string    `json:"site_id"`
 	Description         string    `json:"description"`
 	FlavorId            string    `json:"flavor_id"`

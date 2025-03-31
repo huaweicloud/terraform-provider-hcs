@@ -178,7 +178,7 @@ func resourceHostGroupCreate(ctx context.Context, d *schema.ResourceData, meta i
 		return diag.FromErr(err)
 	}
 	log.Printf("[DEBUG] All hosts are availabile.")
-	if len(unprotected) > 1 {
+	if len(unprotected) > 0 {
 		log.Printf("[WARN] These hosts are not protected: %#v", unprotected)
 		d.Set("unprotect_host_ids", unprotected)
 	}
@@ -284,6 +284,14 @@ func resourceHostGroupRead(_ context.Context, d *schema.ResourceData, meta inter
 		d.Set("risk_host_num", resp.RiskHostNum),
 		d.Set("unprotect_host_num", resp.UnprotectHostNum),
 	)
+	if len(d.Get("unprotect_host_ids").([]interface{})) == 0 {
+		// The reason for writing an empty array to `unprotect_host_ids` is to avoid unexpected changes
+		mErr = multierror.Append(mErr, d.Set("unprotect_host_ids", make([]string, 0)))
+	}
+
+	if epsId != "" {
+		mErr = multierror.Append(mErr, d.Set("enterprise_project_id", epsId))
+	}
 
 	if err = mErr.ErrorOrNil(); err != nil {
 		return diag.Errorf("error saving host group fields: %s", err)
@@ -321,10 +329,11 @@ func resourceHostGroupUpdate(ctx context.Context, d *schema.ResourceData, meta i
 		return diag.FromErr(err)
 	}
 	log.Printf("[DEBUG] All hosts are availabile.")
-	if len(unprotected) > 1 {
+	if len(unprotected) > 0 {
 		log.Printf("[WARN] These hosts are not protected: %#v", unprotected)
 		d.Set("unprotect_host_ids", unprotected)
 	}
+
 	_, err = client.ChangeHostsGroup(&request)
 	if err != nil {
 		return diag.Errorf("error updating host group: %s", err)
