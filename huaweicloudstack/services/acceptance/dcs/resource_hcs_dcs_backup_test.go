@@ -81,6 +81,7 @@ func buildGetDcsBackupQueryParams(offset int) string {
 func TestAccDcsBackup_basic(t *testing.T) {
 	var obj interface{}
 
+	var pwd = acceptance.RandomPassword()
 	name := acceptance.RandomAccResourceName()
 	rName := "hcs_dcs_backup.test"
 
@@ -96,7 +97,7 @@ func TestAccDcsBackup_basic(t *testing.T) {
 		CheckDestroy:      rc.CheckResourceDestroy(),
 		Steps: []resource.TestStep{
 			{
-				Config: testDcsBackup_basic(name),
+				Config: testDcsBackup_basic(name, pwd),
 				Check: resource.ComposeTestCheckFunc(
 					rc.CheckResourceExists(),
 					resource.TestCheckResourceAttrPair(rName, "instance_id",
@@ -123,7 +124,7 @@ func TestAccDcsBackup_basic(t *testing.T) {
 	})
 }
 
-func testDcsBackup_basic(name string) string {
+func testDcsBackup_basic(name, pwd string) string {
 	return fmt.Sprintf(`
 %s
 
@@ -132,5 +133,5 @@ resource "hcs_dcs_backup" "test" {
   description   = "test DCS backup remark"
   backup_format = "rdb"
 }
-`, testAccDcsV1Instance_basic(name))
+`, testAccDcsV1Instance_basic(name, pwd))
 }

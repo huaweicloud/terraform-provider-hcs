@@ -269,16 +269,7 @@ func resourceVirtualPrivateCloudDelete(ctx context.Context, d *schema.ResourceDa
 		return diag.Errorf("error creating VPC client: %s", err)
 	}
 
-	stateConf := &resource.StateChangeConf{
-		Pending:    []string{"ACTIVE"},
-		Target:     []string{"DELETED"},
-		Refresh:    waitForVpcDelete(vpcClient, d.Id()),
-		Timeout:    d.Timeout(schema.TimeoutDelete),
-		Delay:      5 * time.Second,
-		MinTimeout: 3 * time.Second,
-	}
-
-	_, err = stateConf.WaitForStateContext(ctx)
+	err = vpcs.Delete(vpcClient, d.Id()).ExtractErr()
 	if err != nil {
 		return diag.Errorf("error deleting VPC %s: %s", d.Id(), err)
 	}

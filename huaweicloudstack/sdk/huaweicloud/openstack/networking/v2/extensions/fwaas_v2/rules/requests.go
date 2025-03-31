@@ -36,24 +36,26 @@ type ListOptsBuilder interface {
 // sort by a particular firewall rule attribute. SortDir sets the direction, and is
 // either `asc' or `desc'. Marker and Limit are used for pagination.
 type ListOpts struct {
-	TenantID             string   `q:"tenant_id"`
-	Name                 string   `q:"name"`
-	Description          string   `q:"description"`
-	Protocol             string   `q:"protocol"`
-	Action               string   `q:"action"`
-	IPVersion            int      `q:"ip_version"`
-	SourceIPAddress      string   `q:"source_ip_address"`
-	DestinationIPAddress string   `q:"destination_ip_address"`
-	SourcePort           string   `q:"source_port"`
-	DestinationPort      string   `q:"destination_port"`
-	SourcePorts          []string `q:"source_ports"`
-	DestinationPorts     []string `q:"destination_ports"`
-	Enabled              bool     `q:"enabled"`
-	ID                   string   `q:"id"`
-	Limit                int      `q:"limit"`
-	Marker               string   `q:"marker"`
-	SortKey              string   `q:"sort_key"`
-	SortDir              string   `q:"sort_dir"`
+	TenantID               string   `q:"tenant_id"`
+	Name                   string   `q:"name"`
+	Description            string   `q:"description"`
+	Protocol               string   `q:"protocol"`
+	Action                 string   `q:"action"`
+	IPVersion              int      `q:"ip_version"`
+	SourceIPAddress        string   `q:"source_ip_address"`
+	SourceIPAddresses      []string `q:"source_ip_addresses"`
+	DestinationIPAddress   string   `q:"destination_ip_address"`
+	DestinationIPAddresses []string `q:"destination_ip_addresses"`
+	SourcePort             string   `q:"source_port"`
+	DestinationPort        string   `q:"destination_port"`
+	SourcePorts            []string `q:"source_ports"`
+	DestinationPorts       []string `q:"destination_ports"`
+	Enabled                bool     `q:"enabled"`
+	ID                     string   `q:"id"`
+	Limit                  int      `q:"limit"`
+	Marker                 string   `q:"marker"`
+	SortKey                string   `q:"sort_key"`
+	SortDir                string   `q:"sort_dir"`
 }
 
 // ToRuleListQuery formats a ListOpts into a query string.
@@ -97,20 +99,22 @@ type CreateOptsBuilder interface {
 
 // CreateOpts contains all the values needed to create a new firewall rule.
 type CreateOpts struct {
-	Protocol             Protocol            `json:"protocol" required:"true"`
-	Action               string              `json:"action" required:"true"`
-	TenantID             string              `json:"tenant_id,omitempty"`
-	Name                 string              `json:"name,omitempty"`
-	Description          string              `json:"description,omitempty"`
-	IPVersion            golangsdk.IPVersion `json:"ip_version,omitempty"`
-	SourceIPAddress      string              `json:"source_ip_address,omitempty"`
-	DestinationIPAddress string              `json:"destination_ip_address,omitempty"`
-	SourcePort           string              `json:"source_port,omitempty"`
-	DestinationPort      string              `json:"destination_port,omitempty"`
-	SourcePorts          []string            `json:"source_ports,omitempty"`
-	DestinationPorts     []string            `json:"destination_ports,omitempty"`
-	Shared               *bool               `json:"shared,omitempty"`
-	Enabled              *bool               `json:"enabled,omitempty"`
+	Protocol               Protocol            `json:"protocol" required:"true"`
+	Action                 string              `json:"action" required:"true"`
+	TenantID               string              `json:"tenant_id,omitempty"`
+	Name                   string              `json:"name,omitempty"`
+	Description            string              `json:"description,omitempty"`
+	IPVersion              golangsdk.IPVersion `json:"ip_version,omitempty"`
+	SourceIPAddress        string              `json:"source_ip_address,omitempty"`
+	SourceIPAddresses      []string            `json:"source_ip_addresses,omitempty"`
+	DestinationIPAddress   string              `json:"destination_ip_address,omitempty"`
+	DestinationIPAddresses []string            `json:"destination_ip_addresses,omitempty"`
+	SourcePort             string              `json:"source_port,omitempty"`
+	DestinationPort        string              `json:"destination_port,omitempty"`
+	SourcePorts            []string            `json:"source_ports,omitempty"`
+	DestinationPorts       []string            `json:"destination_ports,omitempty"`
+	Shared                 *bool               `json:"shared,omitempty"`
+	Enabled                *bool               `json:"enabled,omitempty"`
 }
 
 // ToRuleCreateMap casts a CreateOpts struct to a map.
@@ -154,19 +158,21 @@ type UpdateOptsBuilder interface {
 
 // UpdateOpts contains the values used when updating a firewall rule.
 type UpdateOpts struct {
-	Protocol             *string              `json:"protocol"`
-	Action               *string              `json:"action,omitempty"`
-	Name                 *string              `json:"name,omitempty"`
-	Description          *string              `json:"description,omitempty"`
-	IPVersion            *golangsdk.IPVersion `json:"ip_version,omitempty"`
-	SourceIPAddress      *string              `json:"source_ip_address,omitempty"`
-	DestinationIPAddress *string              `json:"destination_ip_address,omitempty"`
-	SourcePort           *string              `json:"source_port,omitempty"`
-	DestinationPort      *string              `json:"destination_port,omitempty"`
-	SourcePorts          *[]string            `json:"source_ports,omitempty"`
-	DestinationPorts     *[]string            `json:"destination_ports,omitempty"`
-	Shared               *bool                `json:"shared,omitempty"`
-	Enabled              *bool                `json:"enabled,omitempty"`
+	Protocol               *string              `json:"protocol,omitempty"`
+	Action                 *string              `json:"action,omitempty"`
+	Name                   *string              `json:"name,omitempty"`
+	Description            *string              `json:"description,omitempty"`
+	IPVersion              *golangsdk.IPVersion `json:"ip_version,omitempty"`
+	SourceIPAddress        *string              `json:"source_ip_address,omitempty"`
+	SourceIPAddresses      *[]string            `json:"source_ip_addresses,omitempty"`
+	DestinationIPAddress   *string              `json:"destination_ip_address,omitempty"`
+	DestinationIPAddresses *[]string            `json:"destination_ip_addresses,omitempty"`
+	SourcePort             *string              `json:"source_port,omitempty"`
+	DestinationPort        *string              `json:"destination_port,omitempty"`
+	SourcePorts            *[]string            `json:"source_ports,omitempty"`
+	DestinationPorts       *[]string            `json:"destination_ports,omitempty"`
+	Shared                 *bool                `json:"shared,omitempty"`
+	Enabled                *bool                `json:"enabled,omitempty"`
 }
 
 // ToRuleUpdateMap casts a UpdateOpts struct to a map.

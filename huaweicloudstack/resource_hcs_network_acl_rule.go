@@ -64,12 +64,24 @@ func ResourceNetworkACLRule() *schema.Resource {
 				Default:  4,
 			},
 			"source_ip_address": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:       schema.TypeString,
+				Optional:   true,
+				Deprecated: "use source_ip_address instead",
 			},
 			"destination_ip_address": {
-				Type:     schema.TypeString,
+				Type:       schema.TypeString,
+				Optional:   true,
+				Deprecated: "use destination_ip_address instead",
+			},
+			"source_ip_addresses": {
+				Type:     schema.TypeSet,
 				Optional: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+			},
+			"destination_ip_addresses": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 			"source_port": {
 				Type:       schema.TypeString,
@@ -123,6 +135,20 @@ func resourceNetworkACLRuleCreate(d *schema.ResourceData, meta interface{}) erro
 		DestinationPort:      d.Get("destination_port").(string),
 		Enabled:              &enabled,
 	}
+	sourceIPAddresses := d.Get("source_ip_addresses").(*schema.Set).List()
+	if len(sourceIPAddresses) > 0 {
+		ruleConfiguration.SourceIPAddresses = make([]string, len(sourceIPAddresses))
+		for i, r := range sourceIPAddresses {
+			ruleConfiguration.SourceIPAddresses[i] = r.(string)
+		}
+	}
+	destinationIPAddresses := d.Get("destination_ip_addresses").(*schema.Set).List()
+	if len(destinationIPAddresses) > 0 {
+		ruleConfiguration.DestinationIPAddresses = make([]string, len(destinationIPAddresses))
+		for i, r := range destinationIPAddresses {
+			ruleConfiguration.DestinationIPAddresses[i] = r.(string)
+		}
+	}
 	sourcePorts := d.Get("source_ports").(*schema.Set).List()
 	if len(sourcePorts) > 0 {
 		ruleConfiguration.SourcePorts = make([]string, len(sourcePorts))
@@ -169,7 +195,9 @@ func resourceNetworkACLRuleRead(d *schema.ResourceData, meta interface{}) error 
 	d.Set("description", rule.Description)
 	d.Set("ip_version", rule.IPVersion)
 	d.Set("source_ip_address", rule.SourceIPAddress)
+	d.Set("source_ip_addresses", rule.SourceIPAddresses)
 	d.Set("destination_ip_address", rule.DestinationIPAddress)
+	d.Set("destination_ip_addresses", rule.DestinationIPAddresses)
 	d.Set("source_port", rule.SourcePort)
 	d.Set("destination_port", rule.DestinationPort)
 	d.Set("source_ports", rule.SourcePorts)
@@ -221,6 +249,17 @@ func resourceNetworkACLRuleUpdate(d *schema.ResourceData, meta interface{}) erro
 		sourceIPAddress := d.Get("source_ip_address").(string)
 		updateOpts.SourceIPAddress = &sourceIPAddress
 	}
+	if d.HasChange("source_ip_addresses") {
+
+		sourceIPAddresses := d.Get("source_ip_addresses").(*schema.Set).List()
+		addresses := make([]string, len(sourceIPAddresses))
+		if len(sourceIPAddresses) > 0 {
+			for i, r := range sourceIPAddresses {
+				addresses[i] = r.(string)
+			}
+		}
+		updateOpts.SourceIPAddresses = &addresses
+	}
 	if d.HasChange("source_port") {
 		sourcePort := d.Get("source_port").(string)
 		updateOpts.SourcePort = &sourcePort
@@ -238,6 +277,17 @@ func resourceNetworkACLRuleUpdate(d *schema.ResourceData, meta interface{}) erro
 	if d.HasChange("destination_ip_address") {
 		destinationIPAddress := d.Get("destination_ip_address").(string)
 		updateOpts.DestinationIPAddress = &destinationIPAddress
+	}
+	if d.HasChange("destination_ip_addresses") {
+
+		destinationIPAddresses := d.Get("destination_ip_addresses").(*schema.Set).List()
+		addresses := make([]string, len(destinationIPAddresses))
+		if len(destinationIPAddresses) > 0 {
+			for i, r := range destinationIPAddresses {
+				addresses[i] = r.(string)
+			}
+		}
+		updateOpts.DestinationIPAddresses = &addresses
 	}
 	if d.HasChange("destination_port") {
 		destinationPort := d.Get("destination_port").(string)

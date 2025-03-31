@@ -13,7 +13,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/eps/v1/enterpriseprojects"
 	"net/http"
 	"strconv"
 	"strings"
@@ -22,11 +21,14 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/bss/v2/orders"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/bss/v2/resources"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/eps/v1/enterpriseprojects"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/networking/v1/eips"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+	hw_golangsdk "github.com/chnsz/golangsdk"
 
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/sdkerr"
 
@@ -136,6 +138,8 @@ func CheckDeletedDiag(d *schema.ResourceData, err error, msg string) diag.Diagno
 
 	// check if the error is raised by **golangsdk**
 	if _, ok := err.(golangsdk.ErrDefault404); ok {
+		statusCode = http.StatusNotFound
+	} else if _, ok := err.(hw_golangsdk.ErrDefault404); ok {
 		statusCode = http.StatusNotFound
 	} else if responseErr, ok := err.(*sdkerr.ServiceResponseError); ok {
 		// check if the error is raised by **huaweicloudstack-sdk-go-v3**

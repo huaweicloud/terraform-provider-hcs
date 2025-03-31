@@ -8,18 +8,6 @@ Manages a DNS zone in the HuaweiCloudStack DNS Service.
 
 ## Example Usage
 
-### Create a public DNS zone
-
-```hcl
-resource "hcs_dns_zone" "my_public_zone" {
-  name        = "example.com."
-  email       = "jdoe@example.com"
-  description = "An example zone"
-  ttl         = 3000
-  zone_type   = "public"
-}
-```
-
 ### Create a private DNS zone
 
 ```hcl
@@ -48,8 +36,7 @@ The following arguments are supported:
 
 * `email` - (Optional, String) The email address of the administrator managing the zone.
 
-* `zone_type` - (Optional, String, ForceNew) The type of zone. Can either be `public` or `private`. Changing this
-  creates a new DNS zone.
+* `zone_type` - (Optional, String, ForceNew) The type of zone. It can only be 'private'.Changing this creates a new DNS zone.
 
 * `router` - (Optional, List) Router configuration block which is required if zone_type is private. The router
   structure is documented below.
@@ -85,5 +72,5 @@ This resource provides the following timeouts configuration options:
 This resource can be imported by specifying the zone ID:
 
 ```
-$ terraform import hcs_dns_zone.zone_1 <zone_id>
+$ terraform import hcs_dns_zone.zone_1  7117d38e-4c8f-4624-a505-bd96b97d024c
 ```

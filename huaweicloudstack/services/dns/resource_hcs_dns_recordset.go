@@ -298,6 +298,9 @@ func getDNSRecordsetStatus(getDNSRecordsetRespBody interface{}) string {
 }
 
 func resourceDNSRecordsetUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if d.HasChange("type") {
+		return diag.Errorf("recordset action not permitted: Can not support change recordset type.")
+	}
 	cfg := config.GetHcsConfig(meta)
 	region := cfg.GetRegion(d)
 

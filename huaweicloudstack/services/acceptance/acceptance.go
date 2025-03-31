@@ -163,7 +163,12 @@ var (
 	HCS_IMS_BACKUP_ID = os.Getenv("HCS_IMS_BACKUP_ID")
 
 	// The SecMaster workspace ID
-	HCS_SECMASTER_WORKSPACE_ID = os.Getenv("HCS_SECMASTER_WORKSPACE_ID")
+	HCS_SECMASTER_WORKSPACE_ID             = os.Getenv("HCS_SECMASTER_WORKSPACE_ID")
+	HCS_SECMASTER_PIPELINE_ID              = os.Getenv("HCS_SECMASTER_PIPELINE_ID")
+	HCS_SECMASTER_INDICATOR_TYPE_ID        = os.Getenv("HCS_SECMASTER_INDICATOR_TYPE_ID")
+	HCS_SECMASTER_INDICATOR_TYPE_ID_UPDATE = os.Getenv("HCS_SECMASTER_INDICATOR_TYPE_ID_UPDATE")
+	HCS_SECMASTER_DATACLASS_ID             = os.Getenv("HCS_SECMASTER_DATACLASS_ID")
+	HCS_SECMASTER_ACTION_ID                = os.Getenv("HCS_SECMASTER_ACTION_ID")
 
 	// Deprecated
 	HCS_SRC_ACCESS_KEY = os.Getenv("HCS_SRC_ACCESS_KEY")
@@ -757,8 +762,29 @@ func TestAccPreCheckSourceImage(t *testing.T) {
 
 // lintignore:AT003
 func TestAccPreCheckSecMaster(t *testing.T) {
-	if HCS_SECMASTER_WORKSPACE_ID == "" {
-		t.Skip("HCS_SECMASTER_WORKSPACE_ID must be set for SecMaster acceptance tests")
+	if HCS_SECMASTER_WORKSPACE_ID == "" || HCS_SECMASTER_PIPELINE_ID == "" {
+		t.Skip("HCS_SECMASTER_WORKSPACE_ID and HCS_SECMASTER_PIPELINE_ID must be set for SecMaster acceptance tests")
+	}
+}
+
+// lintignore:AT003
+func TestAccPreCheckSecMasterIndicator(t *testing.T) {
+	if HCS_SECMASTER_WORKSPACE_ID == "" || HCS_SECMASTER_PIPELINE_ID == "" {
+		t.Skip("HCS_SECMASTER_INDICATOR_TYPE_ID and HCS_SECMASTER_INDICATOR_TYPE_ID_UPDATE must be set for SecMaster acceptance tests")
+	}
+}
+
+// lintignore:AT003
+func TestAccPreCheckSecMasterPlaybookVersion(t *testing.T) {
+	if HCS_SECMASTER_DATACLASS_ID == "" {
+		t.Skip("HCS_SECMASTER_DATACLASS_ID must be set for SecMaster playbook version acceptance tests")
+	}
+}
+
+// lintignore:AT003
+func TestAccPreCheckSecMasterPlaybookAction(t *testing.T) {
+	if HCS_SECMASTER_ACTION_ID == "" {
+		t.Skip("HCS_SECMASTER_ACTION_ID must be set for SecMaster playbook action acceptance tests")
 	}
 }
 

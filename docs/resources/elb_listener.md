@@ -56,11 +56,6 @@ The following arguments are supported:
 * `http2_enable` - (Optional, Bool) Specifies whether to use HTTP/2. The default value is false. This parameter is valid
   only when the protocol is set to *HTTPS*.
 
-* `access_policy` - (Optional, String) Specifies the access policy for the listener. Valid options are *white* and
-  *black*.
-
-* `ip_group` - (Optional, String) Specifies the ip group id for the listener.
-
 * `server_certificate` - (Optional, String) Specifies the ID of the server certificate used by the listener. This
   parameter is mandatory when protocol is set to *HTTPS*.
 

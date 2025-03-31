@@ -36,6 +36,10 @@ const (
 	ConsistencyTypeEventual ConsistencyType = "eventual"
 )
 
+// @API GaussDB POST /gaussdb/v3.1/{project_id}/
+// @API GaussDB GET /gaussdb/v3.1/{project_id}/
+// @API GaussDB DELETE /gaussdb/v3/{project_id}/
+// @API GaussDB PUT /gaussdb/v3/{project_id}/
 func ResourceOpenGaussInstance() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceOpenGaussInstanceCreate,
@@ -173,6 +177,11 @@ func ResourceOpenGaussInstance() *schema.Resource {
 				ForceNew: true,
 			},
 			"configuration_id": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+			},
+			"os_type": {
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
@@ -393,6 +402,7 @@ func buildOpenGaussInstanceCreateOpts(d *schema.ResourceData,
 		TimeZone:            d.Get("time_zone").(string),
 		AvailabilityZone:    d.Get("availability_zone").(string),
 		ConfigurationId:     d.Get("configuration_id").(string),
+		OsType:              d.Get("os_type").(string),
 		ShardingNum:         d.Get("sharding_num").(int),
 		CoordinatorNum:      d.Get("coordinator_num").(int),
 		ReplicaNum:          d.Get("replica_num").(int),
@@ -783,7 +793,7 @@ func updateVolumeAndRelatedHaNumbers(ctx context.Context, config *config.HcsConf
 func resourceOpenGaussInstanceUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	conf := config.GetHcsConfig(meta)
 	region := conf.GetRegion(d)
-	client, err := conf.OpenGaussV31Client(region)
+	client, err := conf.OpenGaussV3Client(region)
 	if err != nil {
 		return diag.Errorf("error creating GaussDB v3 client: %s ", err)
 	}
@@ -862,7 +872,7 @@ func resourceOpenGaussInstanceUpdate(ctx context.Context, d *schema.ResourceData
 
 func resourceOpenGaussInstanceDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	conf := config.GetHcsConfig(meta)
-	client, err := conf.OpenGaussV31Client(conf.GetRegion(d))
+	client, err := conf.OpenGaussV3Client(conf.GetRegion(d))
 	if err != nil {
 		return diag.Errorf("error creating GaussDB v3 client: %s ", err)
 	}
