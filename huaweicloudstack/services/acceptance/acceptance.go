@@ -187,6 +187,9 @@ var (
 
 	HCS_IAM_USER1_ID = os.Getenv("HCS_IAM_USER1_ID")
 	HCS_IAM_USER2_ID = os.Getenv("HCS_IAM_USER2_ID")
+
+	// OpenGauss
+	DORADO_STORAGE_POOL_ID = os.Getenv("dorado_storage_pool_id")
 )
 
 // TestAccProviders is a static map containing only the main provider instance.
@@ -856,5 +859,12 @@ func TestAccPreCheckUcs(t *testing.T) {
 func TestAccPreCheckObsClusterGroupId(t *testing.T) {
 	if HCS_OBS_CLUSTER_GROUP1_ID == "" || HCS_OBS_CLUSTER_GROUP2_ID == "" {
 		t.Skip("HCS_OBS_CLUSTER_GROUP1_ID and HCS_OBS_CLUSTER_GROUP2_ID must be set for OBS acceptance tests.")
+	}
+}
+
+// lintignore:AT003
+func TestAccPreCheckOpengaussDoradoPool(t *testing.T) {
+	if DORADO_STORAGE_POOL_ID == "" {
+		t.Skip("dorado_storage_pool_id must be set for OpenGauss acceptance tests.")
 	}
 }
