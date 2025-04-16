@@ -129,6 +129,11 @@ func ResourceOpenGaussInstance() *schema.Resource {
 							}, true),
 							DiffSuppressFunc: utils.SuppressCaseDiffs,
 						},
+						"consistency_protocol": {
+							Type:     schema.TypeString,
+							Optional: true,
+							ForceNew: true,
+						},
 					},
 				},
 			},
@@ -202,6 +207,21 @@ func ResourceOpenGaussInstance() *schema.Resource {
 				Optional: true,
 				ForceNew: true,
 				Default:  "UTC+08:00",
+			},
+			"solution": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+			},
+			"dorado_storage_pool_id": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+			},
+			"enable_single_float_ip": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				ForceNew: true,
 			},
 			"datastore": {
 				Type:     schema.TypeList,
@@ -403,6 +423,9 @@ func buildOpenGaussInstanceCreateOpts(d *schema.ResourceData,
 		AvailabilityZone:    d.Get("availability_zone").(string),
 		ConfigurationId:     d.Get("configuration_id").(string),
 		OsType:              d.Get("os_type").(string),
+		Solution:            d.Get("solution").(string),
+		DoradoStoragePoolId: d.Get("dorado_storage_pool_id").(string),
+		EnableSingleFloatIp: d.Get("enable_single_float_ip").(bool),
 		ShardingNum:         d.Get("sharding_num").(int),
 		CoordinatorNum:      d.Get("coordinator_num").(int),
 		ReplicaNum:          d.Get("replica_num").(int),
@@ -410,16 +433,20 @@ func buildOpenGaussInstanceCreateOpts(d *schema.ResourceData,
 		BackupStrategy:      resourceOpenGaussBackupStrategy(d),
 	}
 
-	var dn_num int = 1
+	// build HA parameter
 	haRaw := d.Get("ha").([]interface{})
 	log.Printf("[DEBUG] The HA structure is: %#v", haRaw)
 	ha := haRaw[0].(map[string]interface{})
 	mode := ha["mode"].(string)
 	createOpts.Ha = &instances.HaOpt{
-		Mode:            mode,
-		ReplicationMode: ha["replication_mode"].(string),
-		Consistency:     ha["consistency"].(string),
+		Mode:                mode,
+		ReplicationMode:     ha["replication_mode"].(string),
+		Consistency:         ha["consistency"].(string),
+		ConsistencyProtocol: ha["consistency_protocol"].(string),
 	}
+
+	// build volume
+	var dn_num int = 1
 	if mode == string(HaModeDistributed) {
 		dn_num = d.Get("sharding_num").(int)
 	}

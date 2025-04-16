@@ -18,9 +18,10 @@ type BackupStrategyOpt struct {
 }
 
 type HaOpt struct {
-	Mode            string `json:"mode" required:"true"`
-	ReplicationMode string `json:"replication_mode" required:"true"`
-	Consistency     string `json:"consistency,omitempty"`
+	Mode                string `json:"mode" required:"true"`
+	ReplicationMode     string `json:"replication_mode" required:"true"`
+	Consistency         string `json:"consistency,omitempty"`
+	ConsistencyProtocol string `json:"consistency_protocol,omitempty"`
 }
 
 type VolumeOpt struct {
@@ -71,6 +72,9 @@ type CreateGaussDBOpts struct {
 	CoordinatorNum      int          `json:"coordinator_num,omitempty"`
 	EnterpriseProjectId string       `json:"enterprise_project_id,omitempty"`
 	ReplicaNum          int          `json:"replica_num,omitempty"`
+	DoradoStoragePoolId string       `json:"dorado_storage_pool_id,omitempty"`
+	EnableSingleFloatIp bool         `json:"enable_single_float_ip,omitempty"`
+	Solution            string       `json:"solution,omitempty"`
 }
 
 type CreateGaussDBBuilder interface {
