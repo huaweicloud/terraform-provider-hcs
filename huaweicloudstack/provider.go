@@ -346,7 +346,8 @@ func Provider() *schema.Provider {
 			"hcs_cce_node":           cce.DataSourceNode(),
 			"hcs_cce_nodes":          cce.DataSourceNodes(),
 
-			"hcs_cfw_firewalls": cfw.DataSourceFirewalls(),
+			"hcs_cfw_firewalls":                 cfw.DataSourceFirewalls(),
+			"hcs_cfw_protection_rule_hit_count": hcsCfw.DataSourceCfwProtectionRuleHitCount(),
 
 			"hcs_dcs_flavors":         dcs.DataSourceDcsFlavorsV2(),
 			"hcs_dcs_instances":       dcs.DataSourceDcsInstance(),
@@ -809,6 +810,9 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 	if _, ok := endpoints["csms"]; !ok {
 		endpoints["csms"] = fmt.Sprintf("https://csms-scc-apig.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
 	}
+	if _, ok := endpoints["cfw"]; !ok {
+		endpoints["cfw"] = fmt.Sprintf("https://cfwforhcs-api.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
+	}
 	if _, ok := endpoints["hss"]; !ok {
 		endpoints["hss"] = fmt.Sprintf("https://hss-api.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
 	}
@@ -826,7 +830,6 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 		openGaussUrl := "https://gaussdb.%s.%s/gaussdb/"
 		endpoints["opengaussv31"] = fmt.Sprintf(openGaussUrl, hcsConfig.Config.Region, hcsConfig.Config.Cloud)
 	}
-
 	if _, ok := endpoints["secmaster"]; !ok {
 		endpoints["secmaster"] = fmt.Sprintf("https://secmaster-tenant.%s.%s/", hcsConfig.Config.Region, hcsConfig.Config.Cloud)
 	}
