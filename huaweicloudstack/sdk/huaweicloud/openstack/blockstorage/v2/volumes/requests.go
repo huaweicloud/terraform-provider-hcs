@@ -35,6 +35,9 @@ type CreateOpts struct {
 	SourceReplica string `json:"source_replica,omitempty"`
 	// the ID of the existing volume
 	SourceVolID string `json:"source_volid,omitempty"`
+	// Specifies the encryption configuration for the volume.
+	// Required fields: cmk_id (KMS key ID), cipher (encryption algorithm).
+	EncryptionInfo map[string]interface{} `json:"encryption_info,omitempty"`
 	// The ID of the image from which you want to create the volume.
 	// Required to create a bootable volume.
 	ImageID string `json:"imageRef,omitempty"`
@@ -65,8 +68,8 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 	return
 }
 
-//DeleteOptsBuilder is an interface by which can be able to build the query string
-//of volume deletion.
+// DeleteOptsBuilder is an interface by which can be able to build the query string
+// of volume deletion.
 type DeleteOptsBuilder interface {
 	ToVolumeDeleteQuery() (string, error)
 }
@@ -81,7 +84,7 @@ func (opts DeleteOpts) ToVolumeDeleteQuery() (string, error) {
 	return q.String(), err
 }
 
-//Delete will delete the existing Volume with the provided ID
+// Delete will delete the existing Volume with the provided ID
 func Delete(client *golangsdk.ServiceClient, id string, opts DeleteOptsBuilder) (r DeleteResult) {
 	url := deleteURL(client, id)
 	if opts != nil {

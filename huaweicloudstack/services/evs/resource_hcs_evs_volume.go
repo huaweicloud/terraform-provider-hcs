@@ -97,6 +97,14 @@ func ResourceEvsVolume() *schema.Resource {
 				ForceNew: true,
 				Computed: true,
 			},
+			"encryption_info": {
+				Type:     schema.TypeMap,
+				Optional: true,
+				ForceNew: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 			"multiattach": {
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -196,6 +204,10 @@ func resourceEvsVolumeCreate(ctx context.Context, d *schema.ResourceData, meta i
 		Multiattach:         d.Get("multiattach").(bool),
 		EnterpriseProjectID: cfg.GetEnterpriseProjectID(d),
 	}
+	if v, ok := d.GetOk("encryption_info"); ok {
+		//log.Printf("[DEBUG] encryption_info: %+v", v)
+		createOpts.EncryptionInfo = v.(map[string]interface{})
+	}
 
 	log.Printf("[DEBUG] Create Options: %#v", createOpts)
 	v, err := volumes.Create(blockStorageClient, createOpts).Extract()
@@ -261,6 +273,7 @@ func resourceEvsVolumeRead(_ context.Context, d *schema.ResourceData, meta inter
 	d.Set("snapshot_id", v.SnapshotID)
 	d.Set("source_vol_id", v.SourceVolID)
 	d.Set("volume_type", v.VolumeType)
+	d.Set("encryption_info", v.EncryptionInfo)
 	d.Set("wwn", v.WWN)
 	d.Set("status", v.Status)
 	d.Set("created_at", v.CreatedAt)

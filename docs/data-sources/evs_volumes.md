@@ -71,6 +71,8 @@ The `volumes` block supports:
 
 * `metadata` - Metadata key/value pairs to associate with the disk.
 
+* `encryption_info` - Specifies the encryption configuration for the volume. Required fields: cmk_id (KMS key ID), cipher (encryption algorithm).
+
 The `attachments` block supports:
 
 * `id` - The ID of the attached resource in UUID format.
