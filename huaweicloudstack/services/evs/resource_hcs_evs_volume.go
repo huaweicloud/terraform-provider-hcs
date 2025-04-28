@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/evs/v2/cloudvolumes"
 	"log"
 	"strconv"
 	"time"
@@ -98,11 +99,33 @@ func ResourceEvsVolume() *schema.Resource {
 				Computed: true,
 			},
 			"encryption_info": {
-				Type:     schema.TypeMap,
+				Type:     schema.TypeList,
 				Optional: true,
 				ForceNew: true,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"cmk_id": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"cipher": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"encryption_sector_size": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"encryptor": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"impl_method": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+					},
 				},
 			},
 			"multiattach": {
@@ -205,8 +228,14 @@ func resourceEvsVolumeCreate(ctx context.Context, d *schema.ResourceData, meta i
 		EnterpriseProjectID: cfg.GetEnterpriseProjectID(d),
 	}
 	if v, ok := d.GetOk("encryption_info"); ok {
-		//log.Printf("[DEBUG] encryption_info: %+v", v)
-		createOpts.EncryptionInfo = v.(map[string]interface{})
+		encryptionInfo := v.([]interface{})[0].(map[string]interface{})
+		createOpts.EncryptionInfo = &cloudvolumes.EncryptionInfoSpec{
+			CmkID:                encryptionInfo["cmk_id"].(string),
+			Cipher:               encryptionInfo["cipher"].(string),
+			EncryptionSectorSize: encryptionInfo["encryption_sector_size"].(string),
+			Encryptor:            encryptionInfo["encryptor"].(string),
+			ImplMethod:           encryptionInfo["impl_method"].(string),
+		}
 	}
 
 	log.Printf("[DEBUG] Create Options: %#v", createOpts)
@@ -273,7 +302,7 @@ func resourceEvsVolumeRead(_ context.Context, d *schema.ResourceData, meta inter
 	d.Set("snapshot_id", v.SnapshotID)
 	d.Set("source_vol_id", v.SourceVolID)
 	d.Set("volume_type", v.VolumeType)
-	d.Set("encryption_info", v.EncryptionInfo)
+	//d.Set("encryption_info", v.EncryptionInfo)
 	d.Set("wwn", v.WWN)
 	d.Set("status", v.Status)
 	d.Set("created_at", v.CreatedAt)
@@ -283,6 +312,17 @@ func resourceEvsVolumeRead(_ context.Context, d *schema.ResourceData, meta inter
 	d.Set("tags", v.Tags)
 	d.Set("enterprise_project_id", v.EnterpriseProjectID)
 	d.Set("region", cfg.GetRegion(d))
+
+	if v.EncryptionInfo != nil {
+		encryptionInfo := map[string]interface{}{
+			"cmk_id":                 v.EncryptionInfo.CmkID,
+			"cipher":                 v.EncryptionInfo.Cipher,
+			"encryption_sector_size": v.EncryptionInfo.EncryptionSectorSize,
+			"encryptor":              v.EncryptionInfo.Encryptor,
+			"impl_method":            v.EncryptionInfo.ImplMethod,
+		}
+		d.Set("encryption_info", []interface{}{encryptionInfo})
+	}
 
 	attachments := make([]map[string]interface{}, len(v.Attachments))
 	for i, attachment := range v.Attachments {
