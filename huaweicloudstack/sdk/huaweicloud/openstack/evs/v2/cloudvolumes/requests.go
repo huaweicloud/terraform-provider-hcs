@@ -29,9 +29,9 @@ type CreateOpts struct {
 type EncryptionInfoSpec struct {
 	CmkID                string `json:"cmk_id"`
 	Cipher               string `json:"cipher"`
-	EncryptionSectorSize string `json:"encryption_sector_size,omitempty"`
-	Encryptor            string `json:"encryptor,omitempty"`
-	ImplMethod           string `json:"impl_method,omitempty"`
+	EncryptionSectorSize string `json:"encryption_sector_size"`
+	Encryptor            string `json:"encryptor"`
+	ImplMethod           string `json:"impl_method"`
 }
 
 type BssParam struct {
