@@ -107,10 +107,12 @@ func ResourceEvsVolume() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"cmk_id": {
 							Type:     schema.TypeString,
+							ForceNew: true,
 							Required: true,
 						},
 						"cipher": {
 							Type:     schema.TypeString,
+							ForceNew: true,
 							Required: true,
 						},
 						"encryption_sector_size": {

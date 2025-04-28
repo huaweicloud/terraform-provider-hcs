@@ -71,7 +71,17 @@ The `volumes` block supports:
 
 * `metadata` - Metadata key/value pairs to associate with the disk.
 
-* `encryption_info` - Specifies the encryption configuration for the volume. Structure is documented below.
+* `encryption_info` - The encryption configuration for the volume.
+
+  - `cmk_id` - The KMS key ID.
+  
+  - `cipher` - Encryption algorithm.
+  
+  - `encryption_sector_size` - Encrypted sector size (unit: byte).
+  
+  - `encryptor` - Encryption mode with default value.
+  
+  - `impl_method` - Kernel module used for encryption with default value.
 
 The `attachments` block supports:
 
@@ -84,15 +94,3 @@ The `attachments` block supports:
 * `device_name` - The device name to which the disk is attached.
 
 * `server_id` - The ID of the server to which the disk is attached.
-
-The `encryption_info` block supports:
-
-* `cmk_id` - The KMS key ID.
-
-* `cipher` - The encryption algorithm.
-
-* `encryption_sector_size` - Encrypted sector size (unit: byte).
-
-* `encryptor` - Encryption mode with default value.
-
-* `impl_method` - Kernel module used for encryption with default value.
