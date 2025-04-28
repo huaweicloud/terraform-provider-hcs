@@ -26,6 +26,14 @@ type CreateOpts struct {
 	ServerID   string         `json:"server_id,omitempty"`
 }
 
+type EncryptionInfoSpec struct {
+	CmkID                string `json:"cmk_id"`
+	Cipher               string `json:"cipher"`
+	EncryptionSectorSize string `json:"encryption_sector_size,omitempty"`
+	Encryptor            string `json:"encryptor,omitempty"`
+	ImplMethod           string `json:"impl_method,omitempty"`
+}
+
 type BssParam struct {
 	// Specifies the billing mode. The default value is postPaid.
 	//   prePaid: indicates the yearly/monthly billing mode.
@@ -79,6 +87,8 @@ type VolumeOpts struct {
 	Tags map[string]string `json:"tags,omitempty"`
 	// the enterprise project id
 	EnterpriseProjectID string `json:"enterprise_project_id,omitempty"`
+	//Specifies the encryption configuration for the volume.
+	EncryptionInfo *EncryptionInfoSpec `json:"encryption_info,omitempty"`
 }
 
 // SchedulerOpts contains the scheduler hints

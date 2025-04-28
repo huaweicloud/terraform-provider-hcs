@@ -227,7 +227,7 @@ func Provider() *schema.Provider {
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
 					"HCS_INSECURE",
 					"OS_INSECURE",
-				}, true),
+				}, false),
 			},
 
 			"cacert_file": {

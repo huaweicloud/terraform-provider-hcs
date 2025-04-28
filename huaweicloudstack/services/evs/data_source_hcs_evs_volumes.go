@@ -188,6 +188,26 @@ func sourceEvsAttachment(attachements []volumes.Attachment, metadata map[string]
 	return result
 }
 
+func flattenEvsVolumes(volumes []volumes.Volume) []map[string]interface{} {
+	result := make([]map[string]interface{}, len(volumes))
+	for i, v := range volumes {
+		volume := map[string]interface{}{
+			// 其他字段...
+		}
+		if v.EncryptionInfo != nil {
+			volume["encryption_info"] = []map[string]interface{}{{
+				"cmk_id":                 v.EncryptionInfo.CmkID,
+				"cipher":                 v.EncryptionInfo.Cipher,
+				"encryption_sector_size": v.EncryptionInfo.EncryptionSectorSize,
+				"encryptor":              v.EncryptionInfo.Encryptor,
+				"impl_method":            v.EncryptionInfo.ImplMethod,
+			}}
+		}
+		result[i] = volume
+	}
+	return result
+}
+
 func sourceEvsVolumes(vols []volumes.Volume) ([]map[string]interface{}, []string, error) {
 	result := make([]map[string]interface{}, len(vols))
 	ids := make([]string, len(vols))
@@ -210,6 +230,17 @@ func sourceEvsVolumes(vols []volumes.Volume) ([]map[string]interface{}, []string
 			"metadata":              volume.Metadata,
 			"tags":                  volume.Tags,
 		}
+
+		if volume.EncryptionInfo != nil {
+			vMap["encryption_info"] = []map[string]interface{}{{
+				"cmk_id":                 volume.EncryptionInfo.CmkID,
+				"cipher":                 volume.EncryptionInfo.Cipher,
+				"encryption_sector_size": volume.EncryptionInfo.EncryptionSectorSize,
+				"encryptor":              volume.EncryptionInfo.Encryptor,
+				"impl_method":            volume.EncryptionInfo.ImplMethod,
+			}}
+		}
+
 		bootable, err := strconv.ParseBool(volume.Bootable)
 		if err != nil {
 			return nil, nil, fmtp.Errorf("The bootable of volume (%s) connot be converted from boolen to string.",

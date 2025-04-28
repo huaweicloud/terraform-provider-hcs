@@ -2,6 +2,7 @@ package volumes
 
 import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/evs/v2/cloudvolumes"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/pagination"
 )
 
@@ -36,8 +37,8 @@ type CreateOpts struct {
 	// the ID of the existing volume
 	SourceVolID string `json:"source_volid,omitempty"`
 	// Specifies the encryption configuration for the volume.
-	// Required fields: cmk_id (KMS key ID), cipher (encryption algorithm).
-	EncryptionInfo map[string]interface{} `json:"encryption_info,omitempty"`
+	// Required fields: cmk_id (KMS key ID), cipher (encryption algorithm, supports: AES256-XTS, SM4-XTS).
+	EncryptionInfo *cloudvolumes.EncryptionInfoSpec `json:"encryption_info,omitempty"`
 	// The ID of the image from which you want to create the volume.
 	// Required to create a bootable volume.
 	ImageID string `json:"imageRef,omitempty"`
