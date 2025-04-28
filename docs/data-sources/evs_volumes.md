@@ -71,7 +71,7 @@ The `volumes` block supports:
 
 * `metadata` - Metadata key/value pairs to associate with the disk.
 
-* `encryption_info` - Specifies the encryption configuration for the volume. Required fields: cmk_id (KMS key ID), cipher (encryption algorithm).
+* `encryption_info` - Specifies the encryption configuration for the volume. Required fields: cmk_id (KMS key ID), cipher (encryption algorithm, supports: AES256-XTS, SM4-XTS).
 
 The `attachments` block supports:
 
@@ -84,3 +84,9 @@ The `attachments` block supports:
 * `device_name` - The device name to which the disk is attached.
 
 * `server_id` - The ID of the server to which the disk is attached.
+
+The `encryption_info` block supports:
+
+* `cmk_id` - The KMS key ID.
+
+* `cipher` - encryption algorithm, supports: AES256-XTS, SM4-XTS.

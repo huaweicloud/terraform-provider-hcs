@@ -15,6 +15,14 @@ type Attachment struct {
 	VolumeID     string `json:"volume_id"`
 }
 
+type EncryptionInfoResponse struct {
+	CmkID                string `json:"cmk_id"`
+	Cipher               string `json:"cipher"`
+	EncryptionSectorSize string `json:"encryption_sector_size"`
+	Encryptor            string `json:"encryptor"`
+	ImplMethod           string `json:"impl_method"`
+}
+
 // Volume contains all the information associated with an OpenStack Volume.
 type Volume struct {
 	// Unique identifier for the volume.
@@ -53,7 +61,7 @@ type Volume struct {
 	Bootable string `json:"bootable"`
 	// Specifies the encryption configuration for the volume.
 	// Required fields: cmk_id (KMS key ID), cipher (encryption algorithm).
-	EncryptionInfo map[string]string `json:"encryption_info"`
+	EncryptionInfo *EncryptionInfoResponse `json:"encryption_info"`
 	// Encrypted denotes if the volume is encrypted.
 	Encrypted bool `json:"encrypted"`
 	// ReplicationStatus is the status of replication.
