@@ -105,6 +105,34 @@ func DataSourceEvsVolumesV2() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
+						"encryption_info": {
+							Type:     schema.TypeList,
+							Computed: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"cmk_id": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"cipher": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"encryption_sector_size": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"encryptor": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"impl_method": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+								},
+							},
+						},
 						"enterprise_project_id": {
 							Type:     schema.TypeString,
 							Computed: true,
