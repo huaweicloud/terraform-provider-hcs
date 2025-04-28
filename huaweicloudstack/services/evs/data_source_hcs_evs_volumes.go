@@ -188,26 +188,6 @@ func sourceEvsAttachment(attachements []volumes.Attachment, metadata map[string]
 	return result
 }
 
-func flattenEvsVolumes(volumes []volumes.Volume) []map[string]interface{} {
-	result := make([]map[string]interface{}, len(volumes))
-	for i, v := range volumes {
-		volume := map[string]interface{}{
-			// 其他字段...
-		}
-		if v.EncryptionInfo != nil {
-			volume["encryption_info"] = []map[string]interface{}{{
-				"cmk_id":                 v.EncryptionInfo.CmkID,
-				"cipher":                 v.EncryptionInfo.Cipher,
-				"encryption_sector_size": v.EncryptionInfo.EncryptionSectorSize,
-				"encryptor":              v.EncryptionInfo.Encryptor,
-				"impl_method":            v.EncryptionInfo.ImplMethod,
-			}}
-		}
-		result[i] = volume
-	}
-	return result
-}
-
 func sourceEvsVolumes(vols []volumes.Volume) ([]map[string]interface{}, []string, error) {
 	result := make([]map[string]interface{}, len(vols))
 	ids := make([]string, len(vols))

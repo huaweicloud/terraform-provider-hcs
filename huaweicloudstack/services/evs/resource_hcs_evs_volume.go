@@ -302,7 +302,6 @@ func resourceEvsVolumeRead(_ context.Context, d *schema.ResourceData, meta inter
 	d.Set("snapshot_id", v.SnapshotID)
 	d.Set("source_vol_id", v.SourceVolID)
 	d.Set("volume_type", v.VolumeType)
-	//d.Set("encryption_info", v.EncryptionInfo)
 	d.Set("wwn", v.WWN)
 	d.Set("status", v.Status)
 	d.Set("created_at", v.CreatedAt)
