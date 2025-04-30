@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2.4.13 (April 30, 2025)
+
+-  OpenGauss support to specify the OS type when creating instances
+-  OpenGauss new arguments supported: dorado_storage_id, enable_single_float_ip, solution, and consistency_protocol when creating instances.
+-  Add a datasource to query CFW protection rule hit count.
+
+* **New Data Sources:**
+  + `hcs_cfw_protection_rule_hit_count`
+
 ## 2.4.12 (March 31, 2025)
 
 - Add new resources for SecMaster and HSS.
@@ -7,15 +16,15 @@
 - Fix some bugs.
 
 * **New Resources:**
- + `hcs_secmaster_alert`
- + `hcs_secmaster_incident`
- + `hcs_secmaster_indicator`
- + `hcs_secmaster_alert_rule`
- + `hcs_secmaster_playbook`
- + `hcs_secmaster_playbook_action`
- + `hcs_secmaster_playbook_version`
- + `hcs_secmaster_playbook_rule`
- + `hcs_hss_host_group`
+  + `hcs_secmaster_alert`
+  + `hcs_secmaster_incident`
+  + `hcs_secmaster_indicator`
+  + `hcs_secmaster_alert_rule`
+  + `hcs_secmaster_playbook`
+  + `hcs_secmaster_playbook_action`
+  + `hcs_secmaster_playbook_version`
+  + `hcs_secmaster_playbook_rule`
+  + `hcs_hss_host_group`
 
 ## 2.4.11 (January 20, 2025)
 
