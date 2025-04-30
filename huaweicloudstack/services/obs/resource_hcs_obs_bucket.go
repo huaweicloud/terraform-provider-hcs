@@ -44,12 +44,18 @@ func ResourceObsBucket() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "STANDARD",
+				DiffSuppressFunc: func(_, oldValue, newValue string, d *schema.ResourceData) bool {
+					return oldValue == "" && newValue == "STANDARD"
+				},
 			},
 
 			"acl": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "private",
+				DiffSuppressFunc: func(_, oldValue, newValue string, d *schema.ResourceData) bool {
+					return oldValue == "" && newValue == "private"
+				},
 			},
 
 			"policy": {
@@ -286,6 +292,9 @@ func ResourceObsBucket() *schema.Resource {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  false,
+				DiffSuppressFunc: func(_, oldValue, newValue string, d *schema.ResourceData) bool {
+					return oldValue == "" && newValue == "false"
+				},
 			},
 
 			"region": {
@@ -336,16 +345,25 @@ func ResourceObsBucket() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  obs.BucketRedundancyClassic,
+				DiffSuppressFunc: func(_, oldValue, newValue string, d *schema.ResourceData) bool {
+					return oldValue == "" && newValue == "CLASSIC"
+				},
 			},
 			"fusion_allow_upgrade": {
 				Type:     schema.TypeBool,
 				Default:  false,
 				Optional: true,
+				DiffSuppressFunc: func(_, oldValue, newValue string, d *schema.ResourceData) bool {
+					return oldValue == "" && newValue == "false"
+				},
 			},
 			"fusion_allow_alternative": {
 				Type:     schema.TypeBool,
 				Default:  false,
 				Optional: true,
+				DiffSuppressFunc: func(_, oldValue, newValue string, d *schema.ResourceData) bool {
+					return oldValue == "" && newValue == "false"
+				},
 			},
 
 			"bucket_domain_name": {

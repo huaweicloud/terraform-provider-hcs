@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"strconv"
 	"strings"
 	"time"
 
@@ -559,18 +558,6 @@ func resourceProtectionRuleRead(_ context.Context, d *schema.ResourceData, meta 
 		)
 	}
 
-	count, err := getRuleHitCount(client, d.Id())
-	if err != nil {
-		return diag.Errorf("error retrieving protection rule hit count: %s", err)
-	}
-
-	ruleHitCount := ""
-	if count != nil {
-		if v, ok := count.(float64); ok {
-			ruleHitCount = strconv.FormatFloat(v, 'f', -1, 64)
-		}
-	}
-
 	// the params 'sequence' and 'type 'not not returned
 	mErr = multierror.Append(
 		mErr,
@@ -589,7 +576,6 @@ func resourceProtectionRuleRead(_ context.Context, d *schema.ResourceData, meta 
 		d.Set("destination", flattenGetProtectionRuleResponseBodyRuleDestinationAddressDto(rule)),
 		d.Set("status", utils.PathSearch("status", rule, nil)),
 		d.Set("tags", flattenGetProtectionRuleResponseBodyRuleTagsVO(rule)),
-		d.Set("rule_hit_count", ruleHitCount),
 	)
 
 	return diag.FromErr(mErr.ErrorOrNil())
@@ -628,39 +614,6 @@ func GetProtectionRule(client *golangsdk.ServiceClient, id, objectID string) (in
 		if int(total.(float64)) <= offset {
 			return nil, golangsdk.ErrDefault404{}
 		}
-	}
-}
-
-func getRuleHitCount(client *golangsdk.ServiceClient, id string) (interface{}, error) {
-	getProtectionRuleHitCountHttpUrl := "v1/{project_id}/acl-rule/count"
-	getProtectionRuleHitCountPath := client.Endpoint + getProtectionRuleHitCountHttpUrl
-	getProtectionRuleHitCountPath = strings.ReplaceAll(getProtectionRuleHitCountPath, "{project_id}", client.ProjectID)
-
-	getProtectionRuleHitCountOpt := golangsdk.RequestOpts{
-		KeepResponseBody: true,
-		JSONBody:         buildRuleHitCountBodyParams(id),
-	}
-
-	getProtectionRuleHitCountResp, err := client.Request("POST", getProtectionRuleHitCountPath, &getProtectionRuleHitCountOpt)
-	if err != nil {
-		return nil, err
-	}
-
-	getProtectionRuleHitCountRespBody, err := utils.FlattenResponse(getProtectionRuleHitCountResp)
-	if err != nil {
-		return nil, err
-	}
-
-	count := utils.PathSearch("data.records[0].rule_hit_count", getProtectionRuleHitCountRespBody, nil)
-	if count == nil {
-		return nil, fmt.Errorf("error parsing rule_hit_count from response= %#v", getProtectionRuleHitCountRespBody)
-	}
-	return count, nil
-}
-
-func buildRuleHitCountBodyParams(id string) map[string]interface{} {
-	return map[string]interface{}{
-		"rule_ids": []string{id},
 	}
 }
 
@@ -822,10 +775,9 @@ func resourceProtectionRuleUpdate(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	var (
-		updateProtectionRuleHttpUrl         = "v1/{project_id}/acl-rule/{id}"
-		updateProtectionRuleOrderHttpUrl    = "v1/{project_id}/acl-rule/order/{id}"
-		updateProtectionRuleHitCountHttpUrl = "v1/{project_id}/acl-rule/count"
-		updateProtectionRuleProduct         = "cfw"
+		updateProtectionRuleHttpUrl      = "v1/{project_id}/acl-rule/{id}"
+		updateProtectionRuleOrderHttpUrl = "v1/{project_id}/acl-rule/order/{id}"
+		updateProtectionRuleProduct      = "cfw"
 	)
 	client, err := conf.NewServiceClient(updateProtectionRuleProduct, region)
 	if err != nil {
@@ -861,19 +813,6 @@ func resourceProtectionRuleUpdate(ctx context.Context, d *schema.ResourceData, m
 		_, err = client.Request("PUT", updateProtectionRuleOrderPath, &updateProtectionRuleOrderOpt)
 		if err != nil {
 			return diag.Errorf("error updating protection rule order: %s", err)
-		}
-	}
-
-	if d.HasChange("rule_hit_count") {
-		updateRuleHitCountPath := client.Endpoint + updateProtectionRuleHitCountHttpUrl
-		updateRuleHitCountPath = strings.ReplaceAll(updateRuleHitCountPath, "{project_id}", client.ProjectID)
-		updateRuleHitCountOpt := golangsdk.RequestOpts{
-			KeepResponseBody: true,
-			JSONBody:         buildRuleHitCountBodyParams(d.Id()),
-		}
-		_, err := client.Request("DELETE", updateRuleHitCountPath, &updateRuleHitCountOpt)
-		if err != nil {
-			return diag.Errorf("error updating protection rule hit count: %s", err)
 		}
 	}
 

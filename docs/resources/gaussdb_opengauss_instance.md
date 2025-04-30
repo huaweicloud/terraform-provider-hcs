@@ -162,6 +162,34 @@ The following arguments are supported:
 * `force_import` - (Optional, Bool) Specifies whether to import the instance with the given configuration instead of
   creation. If specified, try to import the instance instead of creation if the instance already existed.
 
+* `dorado_storage_pool_id` - (Optional, String, ForceNew) Specifies the dorado storage pool ID.
+
+  Changing this parameter will create a new resource.
+
+* `enable_single_float_ip` - (Optional, Bool, ForceNew) Single intranet address policy. 
+  This parameter is supported only by active/standby. The default value is **false**,
+  indicating that the single private IP address policy is disabled.
+  - **true**.The single private IP address policy is enabled. Only one private IP address is bound to the active node.
+    If an active/standby switchover occurs, the private IP address does not change.
+  - **false**: The single private IP address policy is disabled. Each node is bound with a private IP address.
+    If an active/standby switchover occurs, the private IP address changes.
+
+  Changing this parameter will create a new resource.
+
+-> **NOTE:** Only version active/standby instances with version 3.206 and above are supported `enable_single_float_ip`.
+
+* `solution` - (Optional, String, ForceNew) Specifies the deployment modes supported by GaussDB.
+  When `ha.mode` is **centralization_standard**, the valid values are as follows.
+  - **triset**. Active/standby version: 1 active node and 2 standby nodes.
+  - **quadruset**. Active/standby version: 1 active node and 3 standby nodes.
+  - **double**. Active/standby version: 1 active and 1 standby node. Only 3.220 and later versions are supported.
+  - **single**. Active/standby version single copy.
+  - **logger**. Active/standby version: 1 active node, 1 standby node, and 1 log node. Only 3.200 and later versions
+    are supported.
+  - **loggerdorado**. Active/standby version: 1 active node, 1 standby node, 1 log node(shared storage).
+
+  Changing this parameter will create a new resource.
+
 * `datastore` - (Optional, List, ForceNew) Specifies the datastore information.
   The [datastore](#opengauss_datastore) structure is documented below.
   Changing this parameter will create a new resource.
@@ -183,11 +211,41 @@ The `ha` block supports:
   The valid values are **strong** and **eventual**, not case sensitive.
   Changing this parameter will create a new resource.
 
+* `consistency_protocol` - (Optional, String, ForceNew) Specifies the replica consistency protocol type, which is case
+  insensitive. If this parameter is left blank, **quorum** is used by default. If Solution is set to
+  **double** or **logger**, **paxos** is used.
+  The valid values are as follows.
+  - **quorum**. This is active/standby synchronous replication mechanism. After a client initiates a transaction, the
+    primary database responds to the client only after the corresponding WAL logs are replicated to multiple copies.
+    The breakdown of a few data nodes does not affect global availability, ensuring data consistency.
+  - **paxos**. After the DCF mode is enabled, DN supports Paxos-based replication and arbitration. Paxos-based DN
+    primary node selection and log replication. Compression and flow control are supported during replication to prevent
+    high bandwidth usage. Node types based on multiple Paxos roles are provided and can be adjusted. Querying the status
+    of the current database instance. This value is only supported when `solution` is **double** or **logger**.
+  - **syncStorage**. Shared Storage Replica Consistency Protocol.
+
+  Changing this parameter will create a new resource.
+
+-> **NOTE:** After the **gaussdb_feature_supportSetConsistencyProtocol** whitelist is enabled, **Paxos** instances can
+be created, and only active/standby instances of version 3.200 or later are supported.
+
 <a name="opengauss_volume"></a>
 The `volume` block supports:
 
-* `type` - (Required, String, ForceNew) Specifies the volume type. Only **ULTRAHIGH** is supported now.
+* `type` - (Required, String, ForceNew) Specifies the volume type. The valid values are as follows.
+  - **ULTRAHIGH**. This value is supported only when ECS deployment, indicating cloud disks.
+  - **LOCALSSD**. Both active/standby modes are supported, indicating that local SSDs are used.
+    ECS deployment is not supported.
+  - **DORADO**. Flash storage.
+
   Changing this parameter will create a new resource.
+
+-> **NOTE:** If your HCS version is 8.5.0 and above, when Resource Type is set to ECS and Copy Consistency Protocol Type
+is set to Shared Storage Copy Consistency Protocol, DB Engine Version 8.0 or later is required to create an instance
+whose Disk Type is Flash Storage.
+
+-> **NOTE:** If your HCS version is 8.5.0 and above, when creating a flash storage instance, ensure that the flash
+storage license has been imported to the current region. Reference [document](https://support.huawei.com/enterprise/zh/cloud-computing/huawei-cloud-stack-pid-23864287).
 
 * `size` - (Required, Int) Specifies the volume size (in gigabytes). The valid value is range form `40` to `4,000`.
   - **ECS deployment scheme**: The value ranges from (Number of shards x 40 GB) to (Number of shards x 24 TB). The size
