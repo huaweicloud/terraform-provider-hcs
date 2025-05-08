@@ -2,6 +2,7 @@ package elb
 
 import (
 	"fmt"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance/common"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -111,6 +112,34 @@ func TestAccElbV3LoadBalancer_withEIP(t *testing.T) {
 	})
 }
 
+func TestAccElbV3LoadBalancer_withFlavor(t *testing.T) {
+	var lb loadbalancers.LoadBalancer
+	rName := acceptance.RandomAccResourceNameWithDash()
+	resourceName := "hcs_elb_loadbalancer.test"
+
+	rc := acceptance.InitResourceCheck(
+		resourceName,
+		&lb,
+		getELBResourceFunc,
+	)
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
+		ProviderFactories: acceptance.TestAccProviderFactories,
+		CheckDestroy:      rc.CheckResourceDestroy(),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccElbV3LoadBalancerConfig_withFlavor(rName),
+				Check: resource.ComposeTestCheckFunc(
+					rc.CheckResourceExists(),
+					resource.TestCheckResourceAttr(resourceName, "name", rName),
+					resource.TestCheckResourceAttrSet(resourceName, "l7_flavor_id"),
+				),
+			},
+		},
+	})
+}
+
 func testAccElbV3LoadBalancerConfig_basic(rName string) string {
 	return fmt.Sprintf(`
 data "hcs_vpc_subnet" "test" {
@@ -120,7 +149,7 @@ data "hcs_vpc_subnet" "test" {
 resource "hcs_elb_loadbalancer" "test" {
   name            = "%s"
   ipv4_subnet_id  = data.hcs_vpc_subnet.test.ipv4_subnet_id
-
+ 
   tags = {
     key   = "value"
     owner = "terraform"
@@ -164,4 +193,18 @@ resource "hcs_elb_loadbalancer" "test" {
   bandwidth_size        = 5
 }
 `, rName, acceptance.HCS_EIP_NAME)
+}
+
+func testAccElbV3LoadBalancerConfig_withFlavor(rName string) string {
+	return fmt.Sprintf(`
+%[1]s
+
+%[2]s
+
+resource "hcs_elb_loadbalancer" "test" {
+  name            = "%[3]s"
+  ipv4_subnet_id  = hcs_vpc_subnet.test.ipv4_subnet_id
+  l7_flavor_id = hcs_elb_flavor.test.id
+}
+`, common.TestVpc(rName), testAccElbV3FlavorConfig_basic(rName), rName)
 }

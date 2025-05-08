@@ -29,7 +29,7 @@ type CreateOpts struct {
 	IpV6VipSubnetID string `json:"ipv6_vip_virsubnet_id,omitempty"`
 
 	// The UUID of a l4 flavor.
-	L4Flavor string `json:"l4_flavor_id,omitempty"`
+	L4Flavor *string `json:"l4_flavor_id,omitempty"`
 
 	// Guaranteed.
 	Guaranteed *bool `json:"guaranteed,omitempty"`
@@ -51,7 +51,7 @@ type CreateOpts struct {
 	AdminStateUp *bool `json:"admin_state_up,omitempty"`
 
 	// The UUID of a l7 flavor.
-	L7Flavor string `json:"l7_flavor_id,omitempty"`
+	L7Flavor *string `json:"l7_flavor_id,omitempty"`
 
 	// IPv6 Bandwidth.
 	IPV6Bandwidth *BandwidthRef `json:"ipv6_bandwidth,omitempty"`
@@ -193,10 +193,10 @@ type UpdateOpts struct {
 	AdminStateUp *bool `json:"admin_state_up,omitempty"`
 
 	// The UUID of a l4 flavor.
-	L4Flavor string `json:"l4_flavor_id,omitempty"`
+	L4Flavor *string `json:"l4_flavor_id,omitempty"`
 
 	// The UUID of a l7 flavor.
-	L7Flavor string `json:"l7_flavor_id,omitempty"`
+	L7Flavor *string `json:"l7_flavor_id,omitempty"`
 
 	// IPv6 Bandwidth.
 	IPV6Bandwidth *UBandwidthRef `json:"ipv6_bandwidth,omitempty"`

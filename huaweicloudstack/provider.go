@@ -377,6 +377,7 @@ func Provider() *schema.Provider {
 
 			"hcs_elb_certificate": elb.DataSourceELBCertificateV3(),
 			"hcs_elb_pools":       elb.DataSourcePools(),
+			"hcs_elb_flavors":     elb.DataSourceElbFlavorsV3(),
 
 			"hcs_enterprise_project": eps.DataSourceEnterpriseProject(),
 
@@ -498,6 +499,7 @@ func Provider() *schema.Provider {
 			"hcs_elb_member":          elb.ResourceMemberV3(),
 			"hcs_elb_monitor":         elb.ResourceMonitorV3(),
 			"hcs_elb_pool":            elb.ResourcePoolV3(),
+			"hcs_elb_flavor":          elb.ResourceFlavorV3(),
 			"hcs_elb_security_policy": elb.ResourceSecurityPolicy(),
 
 			"hcs_enterprise_project": eps.ResourceEnterpriseProject(),

@@ -100,9 +100,9 @@ The following arguments are supported:
 
 * `bandwidth_size` - (Optional, Int, ForceNew) Bandwidth size. Changing this parameter will create a new resource.
 
-* `l4_flavor_id` - (Optional, String) The L4 flavor id of the load balancer.
+* `l4_flavor_id` - (Optional, String) The L4 flavor(Qos) id of the load balancer.
 
-* `l7_flavor_id` - (Optional, String) The L7 flavor id of the load balancer.
+* `l7_flavor_id` - (Optional, String) The L7 flavor(Qos) id of the load balancer.
 
 * `tags` - (Optional, Map) The key/value pairs to associate with the loadbalancer.
 
