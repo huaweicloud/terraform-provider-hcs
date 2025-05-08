@@ -147,13 +147,11 @@ func ResourceLoadBalancerV3() *schema.Resource {
 			"l4_flavor_id": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
 			},
 
 			"l7_flavor_id": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
 			},
 
 			"name": {
@@ -227,6 +225,8 @@ func resourceLoadBalancerV3Create(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	iPTargetEnable := d.Get("cross_vpc_backend").(bool)
+	l4Flavor := d.Get("l4_flavor_id").(string)
+	l7Flavor := d.Get("l7_flavor_id").(string)
 	createOpts := loadbalancers.CreateOpts{
 		AvailabilityZoneList: resourceElbV3AvailabilityZone(d),
 		IPTargetEnable:       &iPTargetEnable,
@@ -234,8 +234,8 @@ func resourceLoadBalancerV3Create(ctx context.Context, d *schema.ResourceData, m
 		VipSubnetID:          d.Get("ipv4_subnet_id").(string),
 		IpV6VipSubnetID:      d.Get("ipv6_network_id").(string),
 		VipAddress:           d.Get("ipv4_address").(string),
-		L4Flavor:             d.Get("l4_flavor_id").(string),
-		L7Flavor:             d.Get("l7_flavor_id").(string),
+		L4Flavor:             &l4Flavor,
+		L7Flavor:             &l7Flavor,
 		Name:                 d.Get("name").(string),
 		Description:          d.Get("description").(string),
 		EnterpriseProjectID:  common.GetEnterpriseProjectID(d, cfg),
@@ -452,10 +452,12 @@ func buildUpdateLoadBalancerBodyParams(d *schema.ResourceData) loadbalancers.Upd
 		updateOpts.IPTargetEnable = &iPTargetEnable
 	}
 	if d.HasChange("l4_flavor_id") {
-		updateOpts.L4Flavor = d.Get("l4_flavor_id").(string)
+		val := d.Get("l4_flavor_id").(string)
+		updateOpts.L4Flavor = &val
 	}
 	if d.HasChange("l7_flavor_id") {
-		updateOpts.L7Flavor = d.Get("l7_flavor_id").(string)
+		val := d.Get("l7_flavor_id").(string)
+		updateOpts.L7Flavor = &val
 	}
 	if d.HasChange("ipv6_bandwidth_id") {
 		if v, ok := d.GetOk("ipv6_bandwidth_id"); ok {
@@ -475,8 +477,10 @@ func buildUpdateLoadBalancerBodyParams(d *schema.ResourceData) loadbalancers.Upd
 		if autoscalingEnabled {
 			updateOpts.AutoScaling.MinL7Flavor = d.Get("min_l7_flavor_id").(string)
 		} else {
-			updateOpts.L4Flavor = d.Get("l4_flavor_id").(string)
-			updateOpts.L7Flavor = d.Get("l7_flavor_id").(string)
+			l4 := d.Get("l4_flavor_id").(string)
+			l7 := d.Get("l7_flavor_id").(string)
+			updateOpts.L4Flavor = &l4
+			updateOpts.L7Flavor = &l7
 			updateOpts.AutoScaling.MinL7Flavor = ""
 		}
 	} else if d.HasChange("min_l7_flavor_id") && d.Get("autoscaling_enabled").(bool) {
