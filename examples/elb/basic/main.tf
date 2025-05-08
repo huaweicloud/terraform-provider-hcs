@@ -9,8 +9,26 @@ resource "hcs_vpc_subnet" "subnet_1" {
   gateway_ip  = var.subnet_gateway
 }
 
+resource "hcs_elb_flavor" "flavor_1"{
+  name = "flavor1"
+  type = "l4"
+  info {
+    flavor_type = "cps"
+    value       = 1000
+  }
+  info {
+    flavor_type = "connection"
+    value       = 5000
+  }
+  info {
+    flavor_type = "bandwidth"
+    value       = 20
+  }
+}
+
 resource "hcs_elb_loadbalancer" "elb_1" {
   name          = "elb-te"
+  l4_flavor_id = hcs_elb_flavor.flavor1.id
   ipv4_subnet_id = hcs_vpc_subnet.subnet_1.ipv4_subnet_id
 }
 
