@@ -1,5 +1,5 @@
 ---
-subcategory: Dedicated Load Balance (Dedicated ELB)
+subcategory: "Dedicated Load Balance (Dedicated ELB)"
 ---
 
 # hcs_elb_flavors
@@ -9,12 +9,10 @@ Use this data source to get the available ELB Flavors(Qos).
 ## Example Usage
 
 ```hcl
-data "hcs_elb_flavors" "flavors" {
-  type            = "l7"
-  max_connections = 20000
-  cps             = 1000
-  bandwidth       = 20
-  qps             = 80
+variable "flavor_name" {}
+
+data "hcs_elb_flavors" "test" {
+  name = var.flavor_name
 }
 ```
 
@@ -24,10 +22,6 @@ data "hcs_elb_flavors" "flavors" {
   used.
 
 * `flavor_id` - (Optional, String) Specifies the flavor ID.
-
-* `type` - (Optional, String) Specifies the flavor type. Values options:
-    + **l4**: indicates Layer-4 flavor.
-    + **l7**: indicates Layer-7 flavor.
 
 * `name` - (Optional, String) Specifies the flavor name.
 
