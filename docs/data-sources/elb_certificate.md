@@ -4,7 +4,7 @@ subcategory: "Dedicated Load Balance (Dedicated ELB)"
 
 # hcs_elb_certificate
 
-Use this data source to get the certificate in HuaweiCloud Dedicated Load Balance (Dedicated ELB).
+Use this data source to get the certificate in HuaweiCloudStack Dedicated Load Balance (Dedicated ELB).
 
 ## Example Usage
 
