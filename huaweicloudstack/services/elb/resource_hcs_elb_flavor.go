@@ -79,7 +79,7 @@ func ResourceFlavorV3() *schema.Resource {
 			},
 			"info": {
 				Type:     schema.TypeSet,
-				Required: true,
+				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"flavor_type": {
@@ -149,6 +149,9 @@ func buildFlavorInfo(infoRaw interface{}, resourceType string) ([]flavors.Info, 
 			Value:      ivalue,
 		})
 	}
+	if len(result) == 0 {
+		return []flavors.Info{}, nil
+	}
 	return result, nil
 }
 
@@ -170,10 +173,7 @@ func resourceFlavorV3Create(ctx context.Context, d *schema.ResourceData, meta in
 		Type: d.Get("type").(string),
 	}
 
-	// Must omit if not set
-	if len(info) > 0 {
-		createOpts.Info = &info
-	}
+	createOpts.Info = &info
 
 	log.Printf("[DEBUG] Create Options: %#v", createOpts)
 	flavor, err := flavors.Create(elbClient, createOpts).Extract()

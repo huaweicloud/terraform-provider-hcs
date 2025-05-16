@@ -35,12 +35,12 @@ The following arguments are supported:
   provider-level region will be used. Changing this creates a new flavor.
 
 * `type` - (Required, String, ForceNew) Specifies the flavor type. Values options:
--- l4: indicates Layer-4 flavor.
--- l7: indicates Layer-7 flavor.
+  + l4: indicates Layer-4 flavor.
+  + l7: indicates Layer-7 flavor.
 
 * `name` - (Optional, String) Human-readable name for the Flavor. Does not have to be unique.
 
-* `info` - (Required, Set) Specifies the details of each flavor metric. Multiple info blocks can be provided.
+* `info` - (Optional, Set) Specifies the details of each flavor metric. Multiple info blocks can be provided.
   The [object](#info) structure is documented below.
 
 <a name="info"></a>
