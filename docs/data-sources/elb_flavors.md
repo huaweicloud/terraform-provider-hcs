@@ -4,7 +4,7 @@ subcategory: "Dedicated Load Balance (Dedicated ELB)"
 
 # hcs_elb_flavors
 
-Use this data source to get the available ELB Flavors(Qos).
+Use this data source to get the available ELB Flavors(QoS).
 
 ## Example Usage
 
@@ -44,6 +44,10 @@ The `flavors` block supports:
 * `name` - Indicates the name of the flavor.
 
 * `type` - Indicates the type of the flavor.
+
+* `shared` - (Optional, Boolean) Specifies whether the flavor is available to all users(*Not supported currently*). Value options:
+  + **true**: indicates that the flavor is available to all users.
+  + **false**: indicates that the flavor is available only to a specific user.
 
 * `flavor_sold_out` - Indicates whether the flavor has ten or more load balancers bound.
   + **true**: The flavor has ten or more load balancers bound.

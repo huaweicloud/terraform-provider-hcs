@@ -4,7 +4,7 @@ subcategory: "Dedicated Load Balance (Dedicated ELB)"
 
 # hcs_elb_flavor
 
-Manages an ELB Flavor(Qos) resource within HCS.
+Manages an ELB Flavor(QoS) resource within HCS.
 
 ## Example Usage
 
@@ -38,10 +38,10 @@ The following arguments are supported:
   + l4: indicates Layer-4 flavor.
   + l7: indicates Layer-7 flavor.
 
-* `name` - (Optional, String) Human-readable name for the Flavor. Does not have to be unique.
+* `name` - (Optional, String) Specifies the flavor name.
 
 * `info` - (Optional, Set) Specifies the details of each flavor metric. Multiple info blocks can be provided.
-  The [object](#info) structure is documented below.
+  The [info](#info) structure is documented below.
 
 <a name="info"></a>
 The `info` block supports:
