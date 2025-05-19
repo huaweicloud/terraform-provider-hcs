@@ -45,17 +45,11 @@ The `flavors` block supports:
 
 * `type` - Indicates the type of the flavor.
 
-* `shared` - (Optional, Boolean) Specifies whether the flavor is available to all users(*Not supported currently*). Value options:
-  + **true**: indicates that the flavor is available to all users.
-  + **false**: indicates that the flavor is available only to a specific user.
+* `shared` - Indicates whether the flavor is available to all users(*Not supported currently*).
 
 * `flavor_sold_out` - Indicates whether the flavor has ten or more load balancers bound.
-  + **true**: The flavor has ten or more load balancers bound.
-  + **false**: The flavor has fewer than ten load balancers bound.
 
-* `status` - Specifies the binding status of the flavor. Allowed values are:
-  + **bind** – Indicates the flavor is currently bound.
-  + **unbind** – Indicates the flavor is currently unbound.
+* `status` - Indicates the binding status of the flavor.
 
 * `max_connections` - Indicates the maximum connections of the flavor.
 
