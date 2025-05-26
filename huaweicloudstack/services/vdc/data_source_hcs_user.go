@@ -107,7 +107,7 @@ func DataResourceVdcUser() *schema.Resource {
 func dataResourceVdcUserRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	config := config.GetHcsConfig(meta)
 	region := config.GetRegion(d)
-	vdcUserClient, err := config.VdcUserClient(region)
+	vdcUserClient, err := config.VdcClient(region)
 	if err != nil {
 		return fmtp.DiagErrorf("Error creating Huaweicloud vdc user client %s", err)
 	}
