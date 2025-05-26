@@ -76,30 +76,6 @@ func DataResourceVdcUser() *schema.Resource {
 				Optional: true,
 				Required: false,
 			},
-			"start": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				Required: false,
-				Default:  0,
-			},
-			"limit": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				Required: false,
-				Default:  100,
-			},
-			"sort_key": {
-				Type:     schema.TypeString,
-				Required: false,
-				Optional: true,
-				Default:  "name",
-			},
-			"sort_dir": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Required: false,
-				Default:  "asc",
-			},
 		},
 	}
 }
@@ -160,7 +136,7 @@ func dataResourceVdcUserRead(_ context.Context, d *schema.ResourceData, meta int
 					}
 					allUsers = append(allUsers, res.Users...)
 				} else {
-					return diag.Errorf("您的查询返回了多个结果，请更改搜索名称进行精确查询。")
+					return diag.Errorf("your query returned no results, please change your search criteria and try again.")
 				}
 			}
 		}
@@ -173,8 +149,7 @@ func findSearchName(users []user.VdcUserModel, searchName string) user.VdcUserMo
 
 	for _, val := range users {
 		if val.Name == searchName {
-			userModel = val
-			break
+			return val
 		}
 	}
 
