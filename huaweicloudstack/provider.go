@@ -53,6 +53,8 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/smn"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpc"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpcep"
+
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vdc"
 )
 
 // Provider returns a schema.Provider for HuaweiCloudStack.
@@ -381,6 +383,7 @@ func Provider() *schema.Provider {
 			"hcs_elb_flavors":     elb.DataSourceElbFlavorsV3(),
 
 			"hcs_enterprise_project": eps.DataSourceEnterpriseProject(),
+			"hcs_vdc_user":           vdc.DataResourceVdcUser(),
 
 			"hcs_evs_volumes":      evs.DataSourceEvsVolumesV2(),
 			"hcs_evs_volume_types": evs.DataSourceEvsVolumeTypesV2(),
