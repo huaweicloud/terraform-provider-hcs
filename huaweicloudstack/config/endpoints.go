@@ -93,6 +93,15 @@ var allServiceCatalog = map[string]ServiceCatalog{
 		WithOutProjectID: true,
 		Product:          "EPS",
 	},
+
+	// ******* catalog for vdcUser *******
+	"user": {
+		Name:             "sc",
+		Scope:            "global",
+		Admin:            true,
+		WithOutProjectID: true,
+		Product:          "USER",
+	},
 	"bss": {
 		Name:             "bss",
 		Version:          "v1.0",
