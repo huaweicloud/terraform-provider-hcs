@@ -129,7 +129,7 @@ func dataResourceVdcUserRead(_ context.Context, d *schema.ResourceData, meta int
 				return diag.FromErr(nil)
 			} else {
 				if len(allUsers) < int(res.Total) {
-					listOpts.Start = listOpts.Start + 1
+					listOpts.Start = listOpts.Start + user.Limit
 					res, err = user.List(vdcUserClient, vdcId, listOpts).Extract()
 					if err != nil {
 						return fmtp.DiagErrorf("Error retrieving vdc user %s", err)
