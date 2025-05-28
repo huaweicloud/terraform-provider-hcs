@@ -105,6 +105,34 @@ func DataSourceEvsVolumesV2() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
+						"encryption_info": {
+							Type:     schema.TypeList,
+							Computed: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"cmk_id": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"cipher": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"encryption_sector_size": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"encryptor": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"impl_method": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+								},
+							},
+						},
 						"enterprise_project_id": {
 							Type:     schema.TypeString,
 							Computed: true,
@@ -210,6 +238,17 @@ func sourceEvsVolumes(vols []volumes.Volume) ([]map[string]interface{}, []string
 			"metadata":              volume.Metadata,
 			"tags":                  volume.Tags,
 		}
+
+		if volume.EncryptionInfo != nil {
+			vMap["encryption_info"] = []map[string]interface{}{{
+				"cmk_id":                 volume.EncryptionInfo.CmkID,
+				"cipher":                 volume.EncryptionInfo.Cipher,
+				"encryption_sector_size": volume.EncryptionInfo.EncryptionSectorSize,
+				"encryptor":              volume.EncryptionInfo.Encryptor,
+				"impl_method":            volume.EncryptionInfo.ImplMethod,
+			}}
+		}
+
 		bootable, err := strconv.ParseBool(volume.Bootable)
 		if err != nil {
 			return nil, nil, fmtp.Errorf("The bootable of volume (%s) connot be converted from boolen to string.",

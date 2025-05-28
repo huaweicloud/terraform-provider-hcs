@@ -6,13 +6,21 @@ import (
 )
 
 type Attachment struct {
-	AttachedAt   string    `json:"attached_at"`
-	AttachmentID string    `json:"attachment_id"`
-	Device       string    `json:"device"`
-	HostName     string    `json:"host_name"`
-	ID           string    `json:"id"`
-	ServerID     string    `json:"server_id"`
-	VolumeID     string    `json:"volume_id"`
+	AttachedAt   string `json:"attached_at"`
+	AttachmentID string `json:"attachment_id"`
+	Device       string `json:"device"`
+	HostName     string `json:"host_name"`
+	ID           string `json:"id"`
+	ServerID     string `json:"server_id"`
+	VolumeID     string `json:"volume_id"`
+}
+
+type EncryptionInfoResponse struct {
+	CmkID                string `json:"cmk_id"`
+	Cipher               string `json:"cipher"`
+	EncryptionSectorSize string `json:"encryption_sector_size"`
+	Encryptor            string `json:"encryptor"`
+	ImplMethod           string `json:"impl_method"`
 }
 
 // Volume contains all the information associated with an OpenStack Volume.
@@ -51,6 +59,9 @@ type Volume struct {
 	UserID string `json:"user_id"`
 	// Indicates whether this is a bootable volume.
 	Bootable string `json:"bootable"`
+	// Specifies the encryption configuration for the volume.
+	// Required fields: cmk_id (KMS key ID), cipher (encryption algorithm).
+	EncryptionInfo *EncryptionInfoResponse `json:"encryption_info"`
 	// Encrypted denotes if the volume is encrypted.
 	Encrypted bool `json:"encrypted"`
 	// ReplicationStatus is the status of replication.

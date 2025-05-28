@@ -20,6 +20,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/blockstorage/v2/volumes"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/common/tags"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/compute/v2/extensions/volumeattach"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/evs/v2/cloudvolumes"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils/fmtp"
 )
@@ -96,6 +97,38 @@ func ResourceEvsVolume() *schema.Resource {
 				Optional: true,
 				ForceNew: true,
 				Computed: true,
+			},
+			"encryption_info": {
+				Type:     schema.TypeList,
+				Optional: true,
+				ForceNew: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"cmk_id": {
+							Type:     schema.TypeString,
+							ForceNew: true,
+							Required: true,
+						},
+						"cipher": {
+							Type:     schema.TypeString,
+							ForceNew: true,
+							Required: true,
+						},
+						"encryption_sector_size": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"encryptor": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"impl_method": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+					},
+				},
 			},
 			"multiattach": {
 				Type:     schema.TypeBool,
@@ -196,6 +229,16 @@ func resourceEvsVolumeCreate(ctx context.Context, d *schema.ResourceData, meta i
 		Multiattach:         d.Get("multiattach").(bool),
 		EnterpriseProjectID: cfg.GetEnterpriseProjectID(d),
 	}
+	if v, ok := d.GetOk("encryption_info"); ok {
+		encryptionInfo := v.([]interface{})[0].(map[string]interface{})
+		createOpts.EncryptionInfo = &cloudvolumes.EncryptionInfoSpec{
+			CmkID:                encryptionInfo["cmk_id"].(string),
+			Cipher:               encryptionInfo["cipher"].(string),
+			EncryptionSectorSize: encryptionInfo["encryption_sector_size"].(string),
+			Encryptor:            encryptionInfo["encryptor"].(string),
+			ImplMethod:           encryptionInfo["impl_method"].(string),
+		}
+	}
 
 	log.Printf("[DEBUG] Create Options: %#v", createOpts)
 	v, err := volumes.Create(blockStorageClient, createOpts).Extract()
@@ -270,6 +313,17 @@ func resourceEvsVolumeRead(_ context.Context, d *schema.ResourceData, meta inter
 	d.Set("tags", v.Tags)
 	d.Set("enterprise_project_id", v.EnterpriseProjectID)
 	d.Set("region", cfg.GetRegion(d))
+
+	if v.EncryptionInfo != nil {
+		encryptionInfo := map[string]interface{}{
+			"cmk_id":                 v.EncryptionInfo.CmkID,
+			"cipher":                 v.EncryptionInfo.Cipher,
+			"encryption_sector_size": v.EncryptionInfo.EncryptionSectorSize,
+			"encryptor":              v.EncryptionInfo.Encryptor,
+			"impl_method":            v.EncryptionInfo.ImplMethod,
+		}
+		d.Set("encryption_info", []interface{}{encryptionInfo})
+	}
 
 	attachments := make([]map[string]interface{}, len(v.Attachments))
 	for i, attachment := range v.Attachments {

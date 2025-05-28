@@ -1,5 +1,5 @@
 ---
-subcategory: Dedicated Load Balance (Dedicated ELB)
+subcategory: "Dedicated Load Balance (Dedicated ELB)"
 ---
 
 # hcs_elb_pools

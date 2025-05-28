@@ -10,10 +10,10 @@ Manages a volume resource within HuaweiCloudStack.
 
 ```hcl
 resource "hcs_evs_volume" "volume_1" {
-  availability_zone      = "az"
-  name                   = "volume_1"
-  description            = "first test volume"
-  size                   = 3
+  availability_zone = "az"
+  name              = "volume_1"
+  description       = "first test volume"
+  size              = 3
   tags = {
     key1 = "value1"
     key2 = "value2"
@@ -41,7 +41,8 @@ The following arguments are supported:
 * `metadata` - (Optional, Map) Metadata key/value pairs to associate with the disk. Changing this updates the existing
   disk metadata.
 
-* `enterprise_project_id` - (Optional, String) Specifies the enterprise project ID which the desired the disk belongs to.
+* `enterprise_project_id` - (Optional, String) Specifies the enterprise project ID which the desired the disk belongs
+  to.
 
 * `name` - (Optional, String) A unique name for the disk. Changing this updates the disk's name.
 
@@ -53,10 +54,14 @@ The following arguments are supported:
 
 * `volume_type` - (Optional, String, ForceNew) The type of disk to create. Changing this creates a new disk.
 
-* `multiattach` - (Optional, Bool, ForceNew) Specifies whether the disk is shareable. The default value is false. 
+* `multiattach` - (Optional, Bool, ForceNew) Specifies whether the disk is shareable. The default value is false.
   Changing this creates a new disk.
 
 * `tags` - (Optional, Map) The key/value pairs to associate with the disk.
+
+* `encryption_info` - (Optional, List, ForceNew) Specifies the encryption configuration for the volume.
+  - `cmk_id` - (Required, String, ForceNew) The KMS key ID.
+  - `cipher` - (Required, String, ForceNew) Encryption algorithm, supports: `AES256-XTS`, `SM4-XTS`.
 
 ## Attribute Reference
 
