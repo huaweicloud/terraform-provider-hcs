@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2.4.14 (May 28, 2025)
+
+- ELB supports QoS.
+- EVS supports encryption.
+
+* **New Data Sources:**
+  + `hcs_elb_flavors`
+
+* **New Resources:**
+  + `hcs_elb_flavor`
+
 ## 2.4.13 (April 30, 2025)
 
 -  OpenGauss support to specify the OS type when creating instances
