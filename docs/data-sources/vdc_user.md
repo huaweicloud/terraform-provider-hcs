@@ -19,35 +19,35 @@ data "hcs_vdc_user" "userList" {
 
 The following arguments are supported:
 
-* `name` - (必填, String)用户名，按照名称字段模糊搜索。长度：1到128个字符。
+* `name` - (Required, String) Username. Fuzzy search by the name field is supported. The value can contain 1 to 128 characters.
 
-* `vdc_id` - (必填, String) 用于查询指定VDC下的用户列表，VDC id，只能包含小写字母、数字、中划线，长度在1-36之间。
+* `vdc_id` - (Required, String) VDC ID, which is used to query the user list in the specified VDC. The value can contain 1 to 36 characters, including only lowercase letters, digits, and hyphens (-).
 
 
 ## Attributes Reference
 
 In addition to all arguments above, the following attributes are exported:
 
-* `id` - 用户id。
+* `id` - User ID。
   
-* `domain_id` - 租户ID。
+* `domain_id` - Tenant ID.
 
-* `name` - 用户名，长度在5-32之间，首位为字母或下划线_，不能为纯数字，且不能包含除下划线_以外的特殊字符。
+* `name` - Username. The value can contain 5 to 32 characters. The first character is a letter or an underscore (_). The value cannot contain only digits and cannot contain special characters except underscores (_).
 
-* `display_name` - 用户别名，由除">"和"<"之外的字符组成，0-128个字符。
+* `display_name` - Alias of a user. The value can contain 0 to 128 characters. The following special characters are not allowed: ><
 
-* `enabled` - 用户状态，true或false，默认为true。为false时，表示用户处于停用状态，无法登录。
+* `enabled` - Whether a user is enabled. The value can be true (default value) or false. If the value is false, the user is disabled and cannot be used for login.
 
-* `description` - 说明，长度小于等于255。
+* `description` - Description with not more than 255 characters.
 
 * `vdc_id` - VDC ID。
 
-* `ldap_id` - LDAP服务器配置id。
+* `ldap_id` - LDAP server configuration ID.
 
-* `create_at` - 创建时间。
+* `create_at` - Creation time.
 
-* `auth_type` - 用户类型; 分别有"LOCAL_AUTH"、"SAML_AUTH"、"LDAP_AUTH"、"MACHINE_USER", 表示本地认证、SAML认证、LDAP认证、机机用户。
+* `auth_type` - User type. The value can be LOCAL_AUTH (local authentication), SAML_AUTH (SAML authentication), LDAP_AUTH (LDAP authentication), or MACHINE_USER (machine-machine user).
 
-* `access_mode` - 访问方式; 分别有 "default"、"programmatic"、"console", 表示控制台访问、编程访问、控制台访问。
+* `access_mode` - Access mode. The value can be default (console access or programming access), console (console access), or programmatic (programming access).
 
-* `top_vdc_id` - 一级VDC id，只能包含小写字母、数字、中划线，长度在1-36之间。
+* `top_vdc_id` - ID of the first-level VDC. The value can contain 1 to 36 characters, including only lowercase letters, digits, and hyphens (-).
