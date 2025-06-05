@@ -2,6 +2,40 @@ package user
 
 import golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 
+type commonResult struct {
+	golangsdk.Result
+}
+
+type CreatResult struct {
+	commonResult
+}
+
+type UpdateResult struct {
+	golangsdk.Result
+}
+
+func (r UpdateResult) ToExtract() ([]int, error) {
+	var code []int
+	err := r.Result.ExtractInto(&code)
+	return code, err
+}
+
+type DeleteResult struct {
+	golangsdk.ErrResult
+}
+
+type GetResult struct {
+	commonResult
+}
+
+func (r commonResult) ToExtract() (VdcUserModel, error) {
+	var a struct {
+		User VdcUserModel `json:"User"`
+	}
+	err := r.Result.ExtractInto(&a)
+	return a.User, err
+}
+
 var AuthType map[string]string = map[string]string{
 	"0": "LOCAL_AUTH",
 	"1": "SAML_AUTH",
@@ -11,8 +45,8 @@ var AuthType map[string]string = map[string]string{
 
 var AccessMode map[string]string = map[string]string{
 	"0": "default",
-	"1": "programmatic",
-	"2": "console",
+	"1": "console",
+	"2": "programmatic",
 }
 
 type VdcUserModel struct {
