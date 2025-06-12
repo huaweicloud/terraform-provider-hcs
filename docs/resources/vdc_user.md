@@ -10,7 +10,7 @@ Manages an vdc user within HuaweiCloudStack.
 
 ```hcl
 resource "hcs_vdc_user" "user01" {
-  vdc_id = "xxx-xxx-xxx"
+  vdc_id = "xxx"
   name = "userName"
   password = "xxx"
   display_name = "displayName"
@@ -54,7 +54,7 @@ In addition to all arguments above, the following attributes are exported:
 Instances can be imported by their `id`. For example,
 
 ```
-terraform import hcs_vdc_user.user01 xxx-xxx-xxx
+terraform import hcs_vdc_user.user01 xxx
 ```
 
 ## Timeouts
