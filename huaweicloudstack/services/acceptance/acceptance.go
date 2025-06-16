@@ -363,6 +363,24 @@ func TestAccPreCheckMaas(t *testing.T) {
 	}
 }
 
+var roleNames = []string{"tag_adm", "vdc_user", "readonly"}
+var roleDisplayNames = []string{"Tag Admin", "Tenant Guest"}
+
+func GetExistAccVdcRoleName() string {
+	return fmt.Sprintf("%s", roleNames[acctest.RandIntRange(0, 3)])
+}
+
+func GetExistAccVdcRoleDisplayName() string {
+	return fmt.Sprintf("%s", roleDisplayNames[acctest.RandIntRange(0, 2)])
+}
+
+func RandomAccVdcRoleName() string {
+	return fmt.Sprintf("random_role_name_%s", acctest.RandString(5))
+}
+func RandomAccVdcRoleDisplayName() string {
+	return fmt.Sprintf("random_role_display_name_%s", acctest.RandString(5))
+}
+
 func RandomAccResourceName() string {
 	return fmt.Sprintf("tf_test_%s", acctest.RandString(5))
 }
