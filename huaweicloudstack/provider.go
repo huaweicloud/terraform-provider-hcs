@@ -432,6 +432,8 @@ func Provider() *schema.Provider {
 			"hcs_waf_dedicated_instances": waf.DataSourceWafDedicatedInstancesV1(),
 			"hcs_waf_policies":            waf.DataSourceWafPoliciesV1(),
 			"hcs_waf_reference_tables":    waf.DataSourceWafReferenceTablesV1(),
+
+			"hcs_vdc_role": vdc.DataSourceVdcRole(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
