@@ -74,18 +74,16 @@ func dataSourceVdcRoleRead(_ context.Context, schemaResourceData *schema.Resourc
 	domainId := configContext.Config.DomainID // 从全局配置中获取domain_id
 	// 需要处理如下用户传入的参数
 	// domain_id 用户传入domainId
-	var existDomainId bool
 	userInputDomainId := schemaResourceData.Get("domain_id").(string)
-	existDomainId = userInputDomainId != ""
+	existDomainId := userInputDomainId != ""
 	if existDomainId {
 		domainId = userInputDomainId
 	}
 
 	var isSystem string
 	//role_type 用户传入查询类型参数，根据类型过滤, system, custom
-	var existRoleType bool
 	userInputRoleType := schemaResourceData.Get("role_type").(string)
-	existRoleType = userInputRoleType != ""
+	existRoleType := userInputRoleType != ""
 
 	if existRoleType {
 		if userInputRoleType == RoleTypeSystem {
@@ -97,14 +95,12 @@ func dataSourceVdcRoleRead(_ context.Context, schemaResourceData *schema.Resourc
 		}
 	}
 	// display_name 用户传入显示名参数 根据显示名精确查找
-	var existDisplayName bool
 	userInputDisplayName := schemaResourceData.Get("display_name").(string)
-	existDisplayName = userInputDisplayName != ""
+	existDisplayName := userInputDisplayName != ""
 
 	// name 用户传入名称参数， 根据name精确查找
-	var existName bool
 	userInputName := schemaResourceData.Get("name").(string)
-	existName = userInputName != ""
+	existName := userInputName != ""
 
 	listOpts := RoleSDK.ListOpts{
 		DomainId:    domainId, // 租户ID，租户侧用户调用时为必填参数，管理侧用户调用时为选填参数。
@@ -218,7 +214,7 @@ func isExistByName(allVdcRoleResponseList []RoleSDK.VdcRoleModel, findValue stri
 			return []RoleSDK.VdcRoleModel{roleModel}, true
 		}
 	}
-	return nil, false
+	return []RoleSDK.VdcRoleModel{}, false
 }
 
 func isExistByDisplayName(allVdcRoleResponseList []RoleSDK.VdcRoleModel, findValue string) ([]RoleSDK.VdcRoleModel, bool) {
@@ -229,5 +225,5 @@ func isExistByDisplayName(allVdcRoleResponseList []RoleSDK.VdcRoleModel, findVal
 			return []RoleSDK.VdcRoleModel{roleModel}, true
 		}
 	}
-	return nil, false
+	return []RoleSDK.VdcRoleModel{}, false
 }
