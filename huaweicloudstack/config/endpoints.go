@@ -260,13 +260,6 @@ var allServiceCatalog = map[string]ServiceCatalog{
 		WithOutProjectID: true,
 		Product:          "VPC",
 	},
-	"vdc": {
-		Name:             "sc",
-		Scope:            "global",
-		Admin:            true,
-		WithOutProjectID: true,
-		Product:          "VDC",
-	},
 	"networkv2": {
 		Name:             "vpc",
 		Version:          "v2.0",

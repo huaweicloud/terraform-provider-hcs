@@ -134,12 +134,12 @@ func dataSourceVdcRoleRead(_ context.Context, schemaResourceData *schema.Resourc
 	}
 
 	if len(roles) < 1 {
-		return diag.Errorf("your query returned no results. " +
+		return diag.Errorf("Your query returned no results. " +
 			"Please change your search criteria and try again.")
 	}
 
 	if len(roles) > 1 {
-		return diag.Errorf("your query returned more than one result. " +
+		return diag.Errorf("Your query returned more than one result. " +
 			"Please try a more specific search criteria.")
 	}
 
@@ -152,7 +152,7 @@ func dataSourceVdcRoleRead(_ context.Context, schemaResourceData *schema.Resourc
 func dataSourceVdcRoleAttributes(schemaResourceData *schema.ResourceData, role *RoleSDK.VdcRoleModel) diag.Diagnostics {
 	policy, err := json.Marshal(role.Policy)
 	if err != nil {
-		return diag.Errorf("error marshaling the policy of vdc role: %s", err)
+		return diag.Errorf("Error marshaling the policy of vdc role: %s", err)
 	}
 
 	mErr := multierror.Append(nil,
@@ -165,7 +165,7 @@ func dataSourceVdcRoleAttributes(schemaResourceData *schema.ResourceData, role *
 	)
 
 	if err = mErr.ErrorOrNil(); err != nil {
-		return diag.Errorf("error setting vdc role fields: %s", err)
+		return diag.Errorf("Error setting vdc role fields: %s", err)
 	}
 	return nil
 }
@@ -180,7 +180,7 @@ func findVdcRoleList(vdcRoleClient *golangsdk.ServiceClient, listOpts RoleSDK.Li
 		vdcRoleResponse, total, err := RoleSDK.List(vdcRoleClient, listOpts).Extract()
 
 		if err != nil {
-			fmtp.DiagErrorf("unable to query vdc roles: %s", err)
+			fmtp.DiagErrorf("Unable to query vdc roles: %s", err)
 			return []RoleSDK.VdcRoleModel{}, err
 		}
 		for _, item := range vdcRoleResponse {
