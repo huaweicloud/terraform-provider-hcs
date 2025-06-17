@@ -121,10 +121,10 @@ func dataSourceVdcRoleRead(_ context.Context, schemaResourceData *schema.Resourc
 		var findResultRoles = make([]RoleSDK.VdcRoleModel, len(tempAllRoles))
 		copy(findResultRoles, tempAllRoles)
 		if existName {
-			findResultRoles, exist = isExistByName(findResultRoles, userInputName)
+			findResultRoles, exist = findRoleByName(findResultRoles, userInputName)
 		}
 		if existDisplayName {
-			findResultRoles, exist = isExistByDisplayName(findResultRoles, userInputDisplayName)
+			findResultRoles, exist = findRoleByDisplayName(findResultRoles, userInputDisplayName)
 		}
 		return findResultRoles, exist
 	})
@@ -211,7 +211,7 @@ func findVdcRoleList(vdcRoleClient *golangsdk.ServiceClient, listOpts RoleSDK.Li
 	return []RoleSDK.VdcRoleModel{}, nil
 }
 
-func isExistByName(allVdcRoleResponseList []RoleSDK.VdcRoleModel, findValue string) ([]RoleSDK.VdcRoleModel, bool) {
+func findRoleByName(allVdcRoleResponseList []RoleSDK.VdcRoleModel, findValue string) ([]RoleSDK.VdcRoleModel, bool) {
 	for _, roleModel := range allVdcRoleResponseList {
 		value := roleModel.Name
 
@@ -222,7 +222,7 @@ func isExistByName(allVdcRoleResponseList []RoleSDK.VdcRoleModel, findValue stri
 	return []RoleSDK.VdcRoleModel{}, false
 }
 
-func isExistByDisplayName(allVdcRoleResponseList []RoleSDK.VdcRoleModel, findValue string) ([]RoleSDK.VdcRoleModel, bool) {
+func findRoleByDisplayName(allVdcRoleResponseList []RoleSDK.VdcRoleModel, findValue string) ([]RoleSDK.VdcRoleModel, bool) {
 	for _, roleModel := range allVdcRoleResponseList {
 		value := roleModel.DisplayName
 
