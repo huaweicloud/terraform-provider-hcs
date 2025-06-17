@@ -30,16 +30,16 @@ type Flavor struct {
 
 type FlavorInfo struct {
 	// Specifies the connection
-	Connection int `json:"connection"`
+	Connection *int `json:"connection"`
 
 	// Specifies the cps.
-	Cps int `json:"cps"`
+	Cps *int `json:"cps"`
 
 	// Specifies the qps
-	Qps int `json:"qps"`
+	Qps *int `json:"qps"`
 
 	// Specifies the bandwidth
-	Bandwidth int `json:"bandwidth"`
+	Bandwidth *int `json:"bandwidth"`
 }
 
 // FlavorsPage is the page returned by a pager when traversing over a
