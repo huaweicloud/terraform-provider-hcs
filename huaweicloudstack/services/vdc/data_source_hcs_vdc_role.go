@@ -54,6 +54,10 @@ func DataSourceVdcRole() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"catalog": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -158,6 +162,7 @@ func dataSourceVdcRoleAttributes(schemaResourceData *schema.ResourceData, role *
 		schemaResourceData.Set("display_name", role.DisplayName),
 		schemaResourceData.Set("type", role.Type),
 		schemaResourceData.Set("policy", string(policy)),
+		schemaResourceData.Set("catalog", role.Catalog),
 	)
 
 	if err = mErr.ErrorOrNil(); err != nil {
