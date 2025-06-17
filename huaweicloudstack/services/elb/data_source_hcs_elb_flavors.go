@@ -99,21 +99,10 @@ func DataSourceElbFlavorsV3() *schema.Resource {
 							Type:     schema.TypeBool,
 							Computed: true,
 						},
-						"max_connections": {
-							Type:     schema.TypeInt,
+						"info": {
+							Type:     schema.TypeMap,
 							Computed: true,
-						},
-						"cps": {
-							Type:     schema.TypeInt,
-							Computed: true,
-						},
-						"qps": {
-							Type:     schema.TypeInt,
-							Computed: true,
-						},
-						"bandwidth": {
-							Type:     schema.TypeInt,
-							Computed: true,
+							Elem:     &schema.Schema{Type: schema.TypeInt},
 						},
 						"status": {
 							Type:     schema.TypeString,
@@ -204,49 +193,100 @@ func flattenListFlavorsBody(d *schema.ResourceData, resp interface{}) ([]interfa
 	if resp == nil {
 		return nil, nil
 	}
-	curJson := utils.PathSearch("flavors", resp, make([]interface{}, 0))
+	curJson := utils.PathSearch("flavors", resp, []interface{}{})
 	if curJson == nil {
 		return nil, nil
 	}
+	// represent info filters condition when querying
+	hasMaxConnections := false
+	hasCps := false
+	hasQps := false
+	hasBandwidth := false
 
-	maxConnections := d.Get("max_connections").(int)
-	cps := d.Get("cps").(int)
-	qps := d.Get("qps").(int)
-	bandwidth := d.Get("bandwidth").(int)
+	maxConnections := 0
+	cps := 0
+	qps := 0
+	bandwidth := 0
+
+	if v, ok := d.GetOkExists("max_connections"); ok {
+		maxConnections = v.(int)
+		hasMaxConnections = true
+	}
+	if v, ok := d.GetOkExists("cps"); ok {
+		cps = v.(int)
+		hasCps = true
+	}
+	if v, ok := d.GetOkExists("qps"); ok {
+		qps = v.(int)
+		hasQps = true
+	}
+	if v, ok := d.GetOkExists("bandwidth"); ok {
+		bandwidth = v.(int)
+		hasBandwidth = true
+	}
 
 	curArray := curJson.([]interface{})
 	rst := make([]interface{}, 0, len(curArray))
 	ids := make([]string, 0, len(curArray))
-	for _, v := range curArray {
-		rawConnection := utils.PathSearch("info.connection", v, float64(0)).(float64)
-		if maxConnections > 0 && int(rawConnection) != maxConnections {
-			continue
-		}
-		rawCps := utils.PathSearch("info.cps", v, float64(0)).(float64)
-		if cps > 0 && int(rawCps) != cps {
-			continue
-		}
-		rawQPS := utils.PathSearch("info.qps", v, float64(0)).(float64)
-		if qps > 0 && int(rawQPS) != qps {
-			continue
-		}
-		rawBandwidth := utils.PathSearch("info.bandwidth", v, float64(0)).(float64)
-		if bandwidth > 0 && int(rawBandwidth) != bandwidth {
-			continue
-		}
 
-		rst = append(rst, map[string]interface{}{
+	for _, v := range curArray {
+		flavorMap := map[string]interface{}{
 			"id":              utils.PathSearch("id", v, nil),
 			"name":            utils.PathSearch("name", v, nil),
 			"type":            utils.PathSearch("type", v, nil),
 			"shared":          utils.PathSearch("shared", v, nil),
 			"flavor_sold_out": utils.PathSearch("flavor_sold_out", v, nil),
 			"status":          utils.PathSearch("status", v, nil),
-			"max_connections": rawConnection,
-			"cps":             rawCps,
-			"qps":             rawQPS,
-			"bandwidth":       rawBandwidth,
-		})
+		}
+
+		// Flatten the info field and include it regardless of filtering
+		rawInfo := utils.PathSearch("info", v, nil)
+		info := map[string]interface{}{}
+		if rawInfoMap, ok := rawInfo.(map[string]interface{}); ok && rawInfoMap != nil {
+			for k, vv := range rawInfoMap {
+				info[k] = vv
+			}
+		}
+		// filter qos key
+		if hasMaxConnections {
+			if val, ok := info["connection"].(float64); ok {
+				if int(val) != maxConnections {
+					continue
+				}
+			} else {
+				continue
+			}
+		}
+		if hasCps {
+			if val, ok := info["cps"].(float64); ok {
+				if int(val) != cps {
+					continue
+				}
+			} else {
+				continue
+			}
+		}
+		if hasQps {
+			if val, ok := info["qps"].(float64); ok {
+				if int(val) != qps {
+					continue
+				}
+			} else {
+				continue
+			}
+		}
+		if hasBandwidth {
+			if val, ok := info["bandwidth"].(float64); ok {
+				if int(val) != bandwidth {
+					continue
+				}
+			} else {
+				continue
+			}
+		}
+
+		flavorMap["info"] = info
+		rst = append(rst, flavorMap)
 		ids = append(ids, utils.PathSearch("id", v, "").(string))
 	}
 	return rst, ids
