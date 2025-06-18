@@ -638,6 +638,8 @@ func Provider() *schema.Provider {
 			"hcs_network_acl":              ResourceNetworkACL(),
 			"hcs_network_acl_rule":         ResourceNetworkACLRule(),
 
+			"hcs_vdc_role": vdc.ResourceVdcRole(),
+
 			// Deprecated
 			"hcs_networking_port":    deprecated.ResourceNetworkingPortV2(),
 			"hcs_networking_port_v2": deprecated.ResourceNetworkingPortV2(),
