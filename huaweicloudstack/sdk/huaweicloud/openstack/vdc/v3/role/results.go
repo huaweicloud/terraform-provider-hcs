@@ -1,6 +1,6 @@
 package role
 
-import "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
+import golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 
 type VdcRoleResponse struct {
 	Total       int            `json:"total"`
@@ -55,4 +55,44 @@ func (listResult ListResult) Extract() ([]VdcRoleModel, int, error) {
 	}
 	err := listResult.Result.ExtractInto(&result)
 	return append(result.SystemRoles, result.CustomRoles...), result.Total, err
+}
+
+type CreateResult struct {
+	golangsdk.Result
+}
+
+func (createResult CreateResult) Extract() (*VdcRoleModel, error) {
+	var result struct {
+		Role *VdcRoleModel `json:"role"`
+	}
+	err := createResult.Result.ExtractInto(&result)
+	return result.Role, err
+}
+
+type UpdateResult struct {
+	golangsdk.Result
+}
+
+func (updateResult UpdateResult) Extract() (*VdcRoleModel, error) {
+	var result struct {
+		Role *VdcRoleModel `json:"role"`
+	}
+	err := updateResult.Result.ExtractInto(&result)
+	return result.Role, err
+}
+
+type DeleteResult struct {
+	golangsdk.ErrResult
+}
+
+type GetResult struct {
+	golangsdk.Result
+}
+
+func (getResult GetResult) Extract() (*VdcRoleModel, error) {
+	var result struct {
+		Role *VdcRoleModel `json:"role"`
+	}
+	err := getResult.Result.ExtractInto(&result)
+	return result.Role, err
 }
