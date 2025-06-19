@@ -512,6 +512,7 @@ func Provider() *schema.Provider {
 			"hcs_elb_security_policy": elb.ResourceSecurityPolicy(),
 
 			"hcs_enterprise_project": eps.ResourceEnterpriseProject(),
+			"hcs_vdc_user":           vdc.ResourceVdcUser(),
 
 			"hcs_evs_volume":   evs.ResourceEvsVolume(),
 			"hcs_evs_snapshot": evs.ResourceEvsSnapshotV2(),
