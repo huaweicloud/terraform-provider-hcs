@@ -44,6 +44,8 @@ type GaussDBInstance struct {
 	PublicIps         []string `json:"public_ips"`
 	PrivateIps        []string `json:"private_ips"`
 	ReplicaNum        int      `json:"replica_num"`
+	KmsTdeKeyId       string   `json:"kms_tde_key_id"`
+	KmsProjectName    string   `json:"kms_project_name"`
 
 	Volume         VolumeOpt         `json:"volume"`
 	Ha             HaOpt             `json:"ha"`
@@ -139,6 +141,21 @@ type RenameResult struct {
 
 func (r RenameResult) Extract() (*RenameResponse, error) {
 	var response RenameResponse
+	err := r.ExtractInto(&response)
+	return &response, err
+}
+
+type UpdateKmsResponse struct {
+	Instance GaussDBResponse `json:"instance"`
+	JobId    string          `json:"job_id"`
+}
+
+type UpdateKmsResult struct {
+	commonResult
+}
+
+func (r UpdateKmsResult) Extract() (*UpdateKmsResponse, error) {
+	var response UpdateKmsResponse
 	err := r.ExtractInto(&response)
 	return &response, err
 }
