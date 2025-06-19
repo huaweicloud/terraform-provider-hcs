@@ -27,7 +27,6 @@ type CreateOpts struct {
 	Enabled     bool   `json:"enabled" required:"false"`
 	Description string `json:"description,omitempty" required:"false"`
 	AccessMode  string `json:"access_mode" required:"false"`
-	LdapId      string `json:"ldap_id,omitempty" required:"false"`
 }
 
 func Create(client *golangsdk.ServiceClient, vdcId string, opts CreateOpts) (r CreatResult) {
