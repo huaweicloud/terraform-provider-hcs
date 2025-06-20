@@ -250,8 +250,7 @@ func dataSourceComputeInstanceRead(_ context.Context, d *schema.ResourceData, me
 	if len(filterServers) > 1 {
 		return diag.Errorf("your query returned more than one result, please try a more specific search criteria.")
 	}
-
-	server := allServers[0]
+	server := filterServers[0].(cloudservers.CloudServer)
 	log.Printf("[DEBUG] fetching the ECS instance: %#v", server)
 
 	d.SetId(server.ID)
@@ -288,7 +287,7 @@ func setEcsInstanceParams(d *schema.ResourceData, conf *config.HcsConfig, ecsCli
 		d.Set("scheduler_hints", flattenEcsInstanceSchedulerHints(server.OsSchedulerHints)),
 
 		setEcsInstanceNetworks(d, networkingClient, server.Addresses),
-		setEcsInstanceVolumeAttached(d, ecsClient, blockStorageClient, server.VolumeAttached),
+		setEcsInstanceVolumeAttached(d, ecsClient, blockStorageClient),
 	)
 	return diag.FromErr(mErr.ErrorOrNil())
 }
@@ -307,12 +306,7 @@ func setEcsInstanceNetworks(d *schema.ResourceData, client *golangsdk.ServiceCli
 	return mErr.ErrorOrNil()
 }
 
-func setEcsInstanceVolumeAttached(d *schema.ResourceData, ecsClient, evsClient *golangsdk.ServiceClient,
-	attached []cloudservers.VolumeAttached) error {
-	if len(attached) == 0 {
-		return nil
-	}
-
+func setEcsInstanceVolumeAttached(d *schema.ResourceData, ecsClient, evsClient *golangsdk.ServiceClient) error {
 	vols, sysDiskID := flattenEcsInstanceVolumeAttached(ecsClient, evsClient, d.Id())
 	mErr := multierror.Append(nil,
 		d.Set("system_disk_id", sysDiskID),
