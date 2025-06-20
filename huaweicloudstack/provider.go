@@ -35,7 +35,6 @@ import (
 	hcsCsms "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/csms"
 	hcsDcs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dcs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/deprecated"
-	hcsDms "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dms"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dns"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ecs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eip"
@@ -472,8 +471,6 @@ func Provider() *schema.Provider {
 			"hcs_dms_kafka_permissions":    dms.ResourceDmsKafkaPermissions(),
 			"hcs_dms_kafka_topic":          dms.ResourceDmsKafkaTopic(),
 			"hcs_dms_kafka_user":           dms.ResourceDmsKafkaUser(),
-
-			"hcs_dms_rocketmq_instance": hcsDms.ResourceDmsRocketMQInstance(),
 
 			"hcs_dns_recordset": dns.ResourceDNSRecordset(),
 			"hcs_dns_zone":      dns.ResourceDNSZone(),
