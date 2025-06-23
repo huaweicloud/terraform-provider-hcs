@@ -38,7 +38,7 @@ The following arguments are supported:
   + l4: indicates Layer-4 flavor.
   + l7: indicates Layer-7 flavor.
 
-* `name` - (Optional, String) Specifies the flavor name.
+* `name` - (Required, String) Specifies the flavor name.
 
 * `info` - (Optional, Set) Specifies the details of each flavor metric. Multiple info blocks can be provided.
   The [info](#info) structure is documented below.

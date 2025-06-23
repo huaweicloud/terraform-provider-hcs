@@ -55,6 +55,13 @@ func ResourceFlavorV3() *schema.Resource {
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
+				ValidateFunc: func(val interface{}, key string) (warns []string, errs []error) {
+					v := val.(string)
+					if v == "" {
+						errs = append(errs, fmt.Errorf("%q must not be empty or null", key))
+					}
+					return
+				},
 			},
 			"shared": {
 				Type:     schema.TypeBool,
