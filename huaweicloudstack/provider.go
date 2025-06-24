@@ -513,6 +513,7 @@ func Provider() *schema.Provider {
 
 			"hcs_enterprise_project": eps.ResourceEnterpriseProject(),
 			"hcs_vdc_user":           vdc.ResourceVdcUser(),
+			"hcs_vdc_group":          vdc.ResourceVdcUserGroup(),
 
 			"hcs_evs_volume":   evs.ResourceEvsVolume(),
 			"hcs_evs_snapshot": evs.ResourceEvsSnapshotV2(),
