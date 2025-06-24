@@ -54,17 +54,17 @@ func dataSourceVdcGroupRead(_ context.Context, d *schema.ResourceData, meta inte
 		return diag.Errorf("error get vdc user group client: %s", err)
 	}
 
-	var groupInfo vdc.Group
+	var groupInfo group.Group
 	start := 0
 	for {
-		listOpts := vdc.ListReqParam{
+		listOpts := group.ListReqParam{
 			VdcID: d.Get("vdc_id").(string),
 			Name:  d.Get("name").(string),
 			Start: start,
 			Limit: 100,
 		}
 
-		allGroups, total, err1 := vdc.GetGroupList(vdcGroupClient, listOpts).Extract()
+		allGroups, total, err1 := group.GetGroupList(vdcGroupClient, listOpts).Extract()
 		if err1 != nil {
 			return diag.Errorf("error to retrieve vdc user groups: %s", err1)
 		}
@@ -83,7 +83,7 @@ func dataSourceVdcGroupRead(_ context.Context, d *schema.ResourceData, meta inte
 
 		// 如果查到数据了
 		if len(foundGroups) == 1 {
-			groupInfo = foundGroups[0].(vdc.Group)
+			groupInfo = foundGroups[0].(group.Group)
 			d.SetId(groupInfo.ID)
 			mErr := multierror.Append(nil,
 				d.Set("name", groupInfo.Name),
