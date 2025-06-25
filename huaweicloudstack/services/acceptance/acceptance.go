@@ -189,7 +189,8 @@ var (
 	HCS_IAM_USER2_ID = os.Getenv("HCS_IAM_USER2_ID")
 
 	// OpenGauss
-	DORADO_STORAGE_POOL_ID = os.Getenv("dorado_storage_pool_id")
+	DORADO_STORAGE_POOL_ID     = os.Getenv("dorado_storage_pool_id")
+	OPENGAUSS_KMS_PROJECT_NAME = os.Getenv("kms_project_name")
 )
 
 // TestAccProviders is a static map containing only the main provider instance.
@@ -883,6 +884,13 @@ func TestAccPreCheckObsClusterGroupId(t *testing.T) {
 // lintignore:AT003
 func TestAccPreCheckOpengaussDoradoPool(t *testing.T) {
 	if DORADO_STORAGE_POOL_ID == "" {
-		t.Skip("dorado_storage_pool_id must be set for OpenGauss acceptance tests.")
+		t.Skip("DORADO_STORAGE_POOL_ID must be set for OpenGauss acceptance tests.")
+	}
+}
+
+// lintignore:AT003
+func TestAccPreCheckOpengaussKmsProjectName(t *testing.T) {
+	if OPENGAUSS_KMS_PROJECT_NAME == "" {
+		t.Skip("OPENGAUSS_KMS_PROJECT_NAME must be set for OpenGauss KMS acceptance tests.")
 	}
 }
