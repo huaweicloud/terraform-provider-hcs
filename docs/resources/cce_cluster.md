@@ -111,7 +111,7 @@ resource "hcs_vpc_subnet" "eni_test_2" {
 }
 
 resource "hcs_cce_cluster" "test" {
-  name                   = cluster"
+  name                   = "cluster"
   flavor_id              = "cce.s1.small"
   vpc_id                 = hcs_vpc.myvpc.id
   subnet_id              = hcs_vpc_subnet.mysubnet.id
@@ -178,6 +178,10 @@ The following arguments are supported:
   Changing this parameter will create a new cluster resource.
 
 * `service_network_cidr` - (Optional, String, ForceNew) Specifies the service network segment.
+  Changing this parameter will create a new cluster resource.
+
+* `enterprise_project_id` - (Optional, String, ForceNew) The enterprise project ID of the CCE cluster.
+
   Changing this parameter will create a new cluster resource.
 
 * `eni_subnet_id` - (Optional, String) Specifies the **IPv4 subnet ID** of the subnet where the ENI resides.
