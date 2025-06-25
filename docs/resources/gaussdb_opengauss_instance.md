@@ -8,6 +8,14 @@ GaussDB OpenGauss instance management within HuaweiCouldStack.
 
 -> **NOTE:** If the endpoint is manually configured, both **opengauss** and **opengaussv31** should be configured.
 
+-> **NOTE:** After the instance is created, some initialization operations are required inside. It is recommended to
+wait a few minutes after creation before performing other operations.
+
+-> **NOTE:** If the instance is being backed up, the following operations cannot be performed: **Create a backup**,
+**Stop the instance**, **Restart the instance**, **Node stop/Node start**, **HashBucket table migration**,
+**Distributed cluster expansion**, **Restore to the current instance**, **Spec change**, **Shrink CN**, **Expand CN**,
+**Node replacement**, **Modify port**.
+
 ## Example Usage
 
 ### Create an instance for distributed HA mode
@@ -50,9 +58,10 @@ resource "hcs_gaussdb_opengauss_instance" "test" {
 
 ```hcl
 variable "instance_name" {}
-variable "instance_password" {}
 variable "vpc_id" {}
 variable "subnet_network_id" {}
+variable "security_group_id" {}
+variable "instance_password" {}
 
 data "hcs_availability_zones" "test" {}
 
@@ -76,6 +85,45 @@ resource "hcs_gaussdb_opengauss_instance" "instance_acc" {
   volume {
     type = "ULTRAHIGH"
     size = 40
+  }
+}
+```
+
+### Create an instance with KMS
+
+```hcl
+variable "vpc_id" {}
+variable "subnet_network_id" {}
+variable "security_group_id" {}
+variable "instance_password" {}
+variable "project_name" {}
+
+data "hcs_availability_zones" "test" {}
+
+resource "hcs_gaussdb_opengauss_instance" "instance_acc" {
+  vpc_id            = var.vpc_id
+  subnet_id         = var.subnet_network_id
+  security_group_id = var.security_group_id
+  name              = "terraform-test"
+  password          = var.instance_password
+  flavor            = "gaussdb.opengauss.ee.m6.2xlarge.x868.ha"
+  availability_zone = join(",", slice(data.hcs_availability_zones.myaz.names, 0, 3))
+
+  sharding_num      = 1
+  coordinator_num   = 2
+
+  kms_tde_key_id   = "12345678-1234-1234-1234-12345678abcd"
+  kms_project_name = var.project_name
+  
+  ha {
+    mode             = "centralization_standard"
+    replication_mode = "sync"
+    consistency      = "strong"
+  }
+
+  volume {
+    type = "ULTRAHIGH"
+    size = 480
   }
 }
 ```
@@ -189,6 +237,18 @@ The following arguments are supported:
   - **loggerdorado**. Active/standby version: 1 active node, 1 standby node, 1 log node(shared storage).
 
   Changing this parameter will create a new resource.
+
+* `kms_tde_key_id` - (Optional, String) Specifies the KMS master ID for transparent encryption of GaussDB instance. Enter
+  the ID means to enable transparent encryption.
+  It is **Required** when `kms_project_name` is not empty.
+
+* `kms_project_name` - (Optional, String) Specifies the resource space name where the KMS master ID is located.
+  It is **Required** when `kms_tde_key_id` is not empty.
+
+* `kms_tde_status` - (Optional, String) The encryption statement that needs to be switched. The vaild value is **on**.
+  It is **Required** when **Updating** `kms_tde_key_id` or `kms_project_name`.
+
+-> **NOTE:** Only when the database version greater than or equal to **3.300** are supported to change KMS.
 
 * `datastore` - (Optional, List, ForceNew) Specifies the datastore information.
   The [datastore](#opengauss_datastore) structure is documented below.
