@@ -32,26 +32,17 @@ func ResourceVdcUserGroup() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"id": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Required: false,
-				Computed: true,
-			},
 			"vdc_id": {
 				Type:     schema.TypeString,
-				Optional: false,
 				Required: true,
 			},
 			"name": {
 				Type:     schema.TypeString,
-				Optional: false,
 				Required: true,
 			},
 			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Required: false,
 			},
 		},
 	}
@@ -97,7 +88,6 @@ func resourceVdcUserGroupRead(_ context.Context, d *schema.ResourceData, meta in
 	}
 
 	mErr := multierror.Append(nil,
-		d.Set("id", userGroupDetail.ID),
 		d.Set("name", userGroupDetail.Name),
 		d.Set("description", userGroupDetail.Description),
 	)
@@ -168,7 +158,6 @@ func resourceVdcUserGroupInstanceImportState(_ context.Context, d *schema.Resour
 
 	mErr := multierror.Append(nil,
 		d.Set("vdc_id", userGroupDetail.VdcId),
-		d.Set("id", userGroupDetail.ID),
 		d.Set("name", userGroupDetail.Name),
 		d.Set("description", userGroupDetail.Description),
 	)

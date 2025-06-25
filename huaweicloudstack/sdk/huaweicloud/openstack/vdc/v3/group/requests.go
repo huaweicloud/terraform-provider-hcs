@@ -14,7 +14,7 @@ type CreateOpts struct {
 }
 
 var RequestOpts = golangsdk.RequestOpts{
-	MoreHeaders: map[string]string{"Content-Type": "application/json;charset=UTF8", "X-Language": "en-us"},
+	MoreHeaders: map[string]string{"Content-Type": "application/json;charset=utf-8", "X-Language": "en-us"},
 }
 
 func Create(client *golangsdk.ServiceClient, vdcId string, opts CreateOpts) (r CreatResult) {
