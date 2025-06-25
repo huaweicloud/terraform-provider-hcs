@@ -101,31 +101,33 @@ func ResourceEvsVolume() *schema.Resource {
 			"encryption_info": {
 				Type:     schema.TypeList,
 				Optional: true,
-				ForceNew: true,
-				MaxItems: 1,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"cmk_id": {
 							Type:     schema.TypeString,
-							ForceNew: true,
-							Required: true,
+							Optional: true,
+							Computed: true,
 						},
 						"cipher": {
 							Type:     schema.TypeString,
-							ForceNew: true,
-							Required: true,
+							Optional: true,
+							Computed: true,
 						},
 						"encryption_sector_size": {
 							Type:     schema.TypeString,
 							Computed: true,
+							Optional: true,
 						},
 						"encryptor": {
 							Type:     schema.TypeString,
 							Computed: true,
+							Optional: true,
 						},
 						"impl_method": {
 							Type:     schema.TypeString,
 							Computed: true,
+							Optional: true,
 						},
 					},
 				},
@@ -231,6 +233,9 @@ func resourceEvsVolumeCreate(ctx context.Context, d *schema.ResourceData, meta i
 	}
 	if v, ok := d.GetOk("encryption_info"); ok {
 		encryptionInfo := v.([]interface{})[0].(map[string]interface{})
+		if encryptionInfo["cmk_id"].(string) == "" || encryptionInfo["cipher"].(string) == "" {
+			return fmtp.DiagErrorf("encryption_info block requires both cmk_id and cipher to be set")
+		}
 		createOpts.EncryptionInfo = &cloudvolumes.EncryptionInfoSpec{
 			CmkID:                encryptionInfo["cmk_id"].(string),
 			Cipher:               encryptionInfo["cipher"].(string),

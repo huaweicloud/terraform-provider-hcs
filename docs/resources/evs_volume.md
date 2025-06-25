@@ -59,9 +59,9 @@ The following arguments are supported:
 
 * `tags` - (Optional, Map) The key/value pairs to associate with the disk.
 
-* `encryption_info` - (Optional, List, ForceNew) Specifies the encryption configuration for the volume.
-  - `cmk_id` - (Required, String, ForceNew) The KMS key ID.
-  - `cipher` - (Required, String, ForceNew) Encryption algorithm, supports: `AES256-XTS`, `SM4-XTS`.
+* `encryption_info` - (Optional, List) Specifies the encryption configuration for the volume.
+  - `cmk_id` - (Optional, String) The KMS key ID.
+  - `cipher` - (Optional, String) Encryption algorithm, supports: `AES256-XTS`, `SM4-XTS`.
 
 ## Attribute Reference
 
