@@ -5,13 +5,26 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/helper/fileconfig"
 	RoleSDK "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/vdc/v3/role"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils/fmtp"
 	"testing"
 )
 
+func initConfig() *fileconfig.ConfigForAcceptance {
+	var cfg, err = fileconfig.GetTestConfig()
+
+	if err != nil {
+		fmt.Printf("failed to get configuration.")
+		return nil
+	}
+	return cfg
+}
+
 func TestAccVdcRoleResourceCreate(t *testing.T) {
+	var testConfigEnv *fileconfig.ConfigForAcceptance
+	testConfigEnv = initConfig()
 	var role RoleSDK.VdcRoleModel
 	resourceName := "hcs_vdc_role.test"
 
@@ -20,10 +33,10 @@ func TestAccVdcRoleResourceCreate(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
 		ProviderFactories: acceptance.TestAccProviderFactories,
-		CheckDestroy:      testAccCheckVdcDestroy,
+		CheckDestroy:      testAccCheckVdcDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceVdcRoleCreate(rName),
+				Config: testAccResourceVdcRoleCreate(rName, testConfigEnv),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckVdcRoleExists(resourceName, &role),
 					resource.TestCheckResourceAttr(resourceName, "name", rName),
@@ -35,6 +48,9 @@ func TestAccVdcRoleResourceCreate(t *testing.T) {
 }
 
 func TestAccVdcRoleResourceUpdate(t *testing.T) {
+
+	var testConfigEnv *fileconfig.ConfigForAcceptance
+	testConfigEnv = initConfig()
 	var role RoleSDK.VdcRoleModel
 	resourceName := "hcs_vdc_role.test"
 
@@ -45,10 +61,10 @@ func TestAccVdcRoleResourceUpdate(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
 		ProviderFactories: acceptance.TestAccProviderFactories,
-		CheckDestroy:      testAccCheckVdcDestroy,
+		CheckDestroy:      testAccCheckVdcDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceVdcRoleCreate(rName),
+				Config: testAccResourceVdcRoleCreate(rName, testConfigEnv),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckVdcRoleExists(resourceName, &role),
 					resource.TestCheckResourceAttr(resourceName, "name", rName),
@@ -56,7 +72,7 @@ func TestAccVdcRoleResourceUpdate(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceVdcRoleUpdate(rNameUpdate),
+				Config: testAccResourceVdcRoleUpdate(rNameUpdate, testConfigEnv),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckVdcRoleExists(resourceName, &role),
 					resource.TestCheckResourceAttr(resourceName, "name", rNameUpdate),
@@ -68,38 +84,39 @@ func TestAccVdcRoleResourceUpdate(t *testing.T) {
 }
 
 func TestAccVdcRoleResourceDelete(t *testing.T) {
+
+	var testConfigEnv *fileconfig.ConfigForAcceptance
+	testConfigEnv = initConfig()
 	var role RoleSDK.VdcRoleModel
 	resourceName := "hcs_vdc_role.test"
-	resourceName2 := "hcs_vdc_role.test1"
 	rName := acceptance.RandomAccResourceName()
-	rName2 := rName + "1"
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
 		ProviderFactories: acceptance.TestAccProviderFactories,
-		CheckDestroy:      testAccCheckVdcDestroy,
+		CheckDestroy:      testAccCheckVdcDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceVdcRoleCreate(rName),
+				Config: testAccResourceVdcRoleCreate(rName, testConfigEnv),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckVdcRoleExists(resourceName, &role),
-					resource.TestCheckResourceAttr(resourceName, "name", rName),
-					resource.TestCheckResourceAttr(resourceName, "type", "XA"),
 				),
 			},
 			{
-				Config: testAccResourceVdcRoleDelete(rName2),
+				Config:  " ",
+				Destroy: true,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckVdcRoleExists(resourceName2, &role),
+					testAccCheckVdcDestroy(resourceName),
 				),
 			},
 		},
 	})
 }
 
-func testAccResourceVdcRoleCreate(rName string) string {
+func testAccResourceVdcRoleCreate(rName string, testConfigEnv *fileconfig.ConfigForAcceptance) string {
+
 	return fmt.Sprintf(`
 		resource "hcs_vdc_role" "test" {
-		  domain_id = "82a610a5e8ac49bcbce7ca01e0092f4a"
+		  domain_id = "%s"
 		  name = "%s"
 		  type = "XA"
 		  policy = <<EOF
@@ -118,13 +135,14 @@ func testAccResourceVdcRoleCreate(rName string) string {
 		}
 		EOF
 		}`,
+		testConfigEnv.NewDomainId,
 		rName)
 }
 
-func testAccResourceVdcRoleUpdate(rName string) string {
+func testAccResourceVdcRoleUpdate(rName string, testConfigEnv *fileconfig.ConfigForAcceptance) string {
 	return fmt.Sprintf(`
 		resource "hcs_vdc_role" "test" {
-		  domain_id = "82a610a5e8ac49bcbce7ca01e0092f4a"
+		  domain_id = "%s"
 		  name = "%s"
 		  type = "AX"
 		  policy = <<EOF
@@ -143,30 +161,7 @@ func testAccResourceVdcRoleUpdate(rName string) string {
 		}
 		EOF
 		}`,
-		rName)
-}
-func testAccResourceVdcRoleDelete(rName string) string {
-	return fmt.Sprintf(`
-		resource "hcs_vdc_role" "test1" {
-		  domain_id = "82a610a5e8ac49bcbce7ca01e0092f4a"
-		  name = "%s"
-		  type = "AX"
-		  policy = <<EOF
-		{
-		  "Depends": [],
-		  "Statement": [
-			{
-			  "Action": [
-				"ecs:cloudServers:start",
-				"ecs:cloudServers:list"
-			  ],
-			  "Effect": "Allow"
-			}
-		  ],
-		  "Version": "1.1"
-		}
-		EOF
-		}`,
+		testConfigEnv.NewDomainId,
 		rName)
 }
 func testAccCheckVdcRoleExists(n string, role *RoleSDK.VdcRoleModel) resource.TestCheckFunc {
@@ -201,23 +196,33 @@ func testAccCheckVdcRoleExists(n string, role *RoleSDK.VdcRoleModel) resource.Te
 	}
 }
 
-func testAccCheckVdcDestroy(s *terraform.State) error {
-	hcsConfig := config.GetHcsConfig(acceptance.TestAccProvider.Meta())
-	vdcClient, err := hcsConfig.VdcClient(acceptance.HCS_REGION_NAME)
-	if err != nil {
-		return fmtp.Errorf("Error creating hcs vdc client: %s", err)
-	}
+func testAccCheckVdcDestroy(resourceName string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		hcsConfig := config.GetHcsConfig(acceptance.TestAccProvider.Meta())
 
-	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "hcs_vdc_role" {
-			continue
+		vdcClient, err := hcsConfig.VdcClient(acceptance.HCS_REGION_NAME)
+		if err != nil {
+			return fmtp.Errorf("Error creating hcs vdc client: %s", err)
 		}
 
-		_, err := RoleSDK.Get(vdcClient, rs.Primary.ID).Extract()
-		if err == nil {
-			return fmtp.Errorf("Vdc still exists")
+		for _, rs := range s.RootModule().Resources {
+			if rs.Type != resourceName {
+				continue
+			}
+			if rs.Primary.ID == "" {
+				return fmt.Errorf("resource ID is empty")
+			}
+			role, err := RoleSDK.Get(vdcClient, rs.Primary.ID).Extract()
+			if err == nil {
+				return fmtp.Errorf("Vdc still exists")
+			}
+
+			if role.ID != rs.Primary.ID {
+				return fmtp.Errorf("resource ID does not match: expected=%s, got=%s", rs.Primary.ID, role.ID)
+			}
 		}
+
+		return nil
 	}
 
-	return nil
 }

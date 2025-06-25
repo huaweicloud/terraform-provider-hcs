@@ -68,9 +68,7 @@ func resourceVdcRoleCreate(ctx context.Context, schemaResourceData *schema.Resou
 		return fmtp.DiagErrorf("Error creating http client %s", err)
 	}
 
-	domainId := configContext.Config.DomainID // 从全局配置中获取domain_id
-	// 需要处理如下用户传入的参数
-	// 用户传入domainId
+	domainId := configContext.Config.DomainID
 	userInputDomainId := schemaResourceData.Get("domain_id").(string)
 	if userInputDomainId != "" {
 		domainId = userInputDomainId
@@ -83,12 +81,12 @@ func resourceVdcRoleCreate(ctx context.Context, schemaResourceData *schema.Resou
 		return diag.Errorf("Error unmarshalling policy, please check the format of the policy document: %s", err)
 	}
 	createOpts := &RoleSDK.CreateOpts{
-		DomainId: domainId, // 租户ID，租户侧用户调用时为必填参数。
+		DomainId: domainId,
 		Role: RoleSDK.RequestBodyVdcRole{
 			DisplayName: schemaResourceData.Get("name").(string),
 			Type:        schemaResourceData.Get("type").(string),
 			Description: schemaResourceData.Get("description").(string),
-			Policy:      policy, // policy 用户传入policy内容json字符串
+			Policy:      policy,
 		},
 	}
 	role, err := RoleSDK.Create(vdcRoleClient, createOpts).Extract()
@@ -139,9 +137,11 @@ func resourceVdcRoleUpdate(ctx context.Context, schemaResourceData *schema.Resou
 		return diag.Errorf("Error creating http client: %s", err)
 	}
 
-	domainId := configContext.Config.DomainID // 从全局配置中获取domain_id
-	// 需要处理如下用户传入的参数
-	// 用户传入domainId
+	if schemaResourceData.HasChange("domain_id") {
+		return diag.Errorf(`Unsupported attribute values for modification: "domain_id".`)
+	}
+
+	domainId := configContext.Config.DomainID
 	userInputDomainId := schemaResourceData.Get("domain_id").(string)
 	if userInputDomainId != "" {
 		domainId = userInputDomainId
@@ -154,21 +154,22 @@ func resourceVdcRoleUpdate(ctx context.Context, schemaResourceData *schema.Resou
 		return diag.Errorf("Error unmarshalling policy, please check the format of the policy document: %s", err)
 	}
 
-	createOpts := &RoleSDK.CreateOpts{
-		DomainId: domainId, // 租户ID，租户侧用户调用时为必填参数。
-		Role: RoleSDK.RequestBodyVdcRole{
-			DisplayName: schemaResourceData.Get("name").(string),
-			Type:        schemaResourceData.Get("type").(string),
-			Description: schemaResourceData.Get("description").(string),
-			Policy:      policy, // policy 用户传入policy内容json字符串
-		},
-	}
+	if schemaResourceData.HasChanges("name", "Description", "policy") {
+		updateOpts := &RoleSDK.UpdateOpts{
+			DomainId: domainId,
+			Role: RoleSDK.RequestBodyVdcRole{
+				DisplayName: schemaResourceData.Get("name").(string),
+				Type:        schemaResourceData.Get("type").(string),
+				Description: schemaResourceData.Get("description").(string),
+				Policy:      policy,
+			},
+		}
 
-	_, err = RoleSDK.Update(vdcRoleClient, schemaResourceData.Id(), createOpts).Extract()
-	if err != nil {
-		return diag.Errorf("Error updating Vdc custom policy: %s", err)
+		_, err = RoleSDK.Update(vdcRoleClient, schemaResourceData.Id(), updateOpts).Extract()
+		if err != nil {
+			return diag.Errorf("Error updating Vdc custom policy: %s", err)
+		}
 	}
-
 	return resourceVdcRoleRead(ctx, schemaResourceData, meta)
 }
 

@@ -1,6 +1,11 @@
 package role
 
-import "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
+import (
+	"fmt"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
+	"net/url"
+	"strings"
+)
 
 const vdcResourceBasePath = "rest/vdc/v3.0"
 
@@ -12,18 +17,26 @@ func CreateVdcRoleURL(httpClient *golangsdk.ServiceClient) string {
 	return httpClient.ServiceURL(vdcResourceBasePath, "OS-ROLE/roles")
 }
 
-func getVdcRoleURLByRoleId(httpClient *golangsdk.ServiceClient, roleId string) string {
-	return httpClient.ServiceURL(vdcResourceBasePath, "OS-ROLE/roles", roleId)
+func IsValidRoleId(roleId string) bool {
+	return !(strings.Contains(roleId, "/") || strings.Contains(roleId, ".."))
 }
 
-func DeleteVdcRoleURL(httpClient *golangsdk.ServiceClient, roleId string) string {
+func getVdcRoleURLByRoleId(httpClient *golangsdk.ServiceClient, roleId string) (string, error) {
+	if IsValidRoleId(roleId) {
+		return httpClient.ServiceURL(vdcResourceBasePath, "OS-ROLE/roles", url.PathEscape(roleId)), nil
+	} else {
+		return "", fmt.Errorf("invalid roleId")
+	}
+}
+
+func DeleteVdcRoleURL(httpClient *golangsdk.ServiceClient, roleId string) (string, error) {
 	return getVdcRoleURLByRoleId(httpClient, roleId)
 }
 
-func UpdateVdcRoleURL(httpClient *golangsdk.ServiceClient, roleId string) string {
+func UpdateVdcRoleURL(httpClient *golangsdk.ServiceClient, roleId string) (string, error) {
 	return getVdcRoleURLByRoleId(httpClient, roleId)
 }
 
-func GetVdcRoleURL(httpClient *golangsdk.ServiceClient, roleId string) string {
+func GetVdcRoleURL(httpClient *golangsdk.ServiceClient, roleId string) (string, error) {
 	return getVdcRoleURLByRoleId(httpClient, roleId)
 }

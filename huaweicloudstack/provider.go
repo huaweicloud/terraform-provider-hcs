@@ -575,7 +575,8 @@ func Provider() *schema.Provider {
 
 			"hcs_vdc_user":             vdc.ResourceVdcUser(),
 			"hcs_vdc_group_membership": vdc.ResourceVdcGroupMembership(),
-			
+			"hcs_vdc_role":             vdc.ResourceVdcRole(),
+
 			"hcs_vpcep_approval": vpcep.ResourceVPCEndpointApproval(),
 			"hcs_vpcep_endpoint": vpcep.ResourceVPCEndpoint(),
 			"hcs_vpcep_service":  vpcep.ResourceVPCEndpointService(),
@@ -642,8 +643,6 @@ func Provider() *schema.Provider {
 			"hcs_vpc_flow_log":             vpc.ResourceVpcFlowLog(),
 			"hcs_network_acl":              ResourceNetworkACL(),
 			"hcs_network_acl_rule":         ResourceNetworkACLRule(),
-
-			"hcs_vdc_role": vdc.ResourceVdcRole(),
 
 			// Deprecated
 			"hcs_networking_port":    deprecated.ResourceNetworkingPortV2(),
