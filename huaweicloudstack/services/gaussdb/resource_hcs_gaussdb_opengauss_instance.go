@@ -36,10 +36,14 @@ const (
 	ConsistencyTypeEventual ConsistencyType = "eventual"
 )
 
-// @API GaussDB POST /gaussdb/v3.1/{project_id}/
-// @API GaussDB GET /gaussdb/v3.1/{project_id}/
-// @API GaussDB DELETE /gaussdb/v3/{project_id}/
-// @API GaussDB PUT /gaussdb/v3/{project_id}/
+// GaussDB POST    /gaussdb/v3.1/{project_id}/instances
+// GaussDB GET     /gaussdb/v3.1/{project_id}/{instance_id}
+// GaussDB DELETE  /gaussdb/v3/{project_id}/{instance_id}
+// GaussDB PUT     /gaussdb/v3/{project_id}/instances/{instance_id}/name
+// GaussDB POST    /gaussdb/v3/{project_id}/instances/{instance_id}/password
+// GaussDB POST    /gaussdb/v3/{project_id}/instances/{instance_id}/action
+// GaussDB PUT     /gaussdb/v3/{project_id}/instances/{instance_id}/backups/policy
+// GaussDB PUT     /gaussdb/v3/{project_id}/instances/{instance_id}/kms-tde/switch
 func ResourceOpenGaussInstance() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceOpenGaussInstanceCreate,
@@ -222,6 +226,22 @@ func ResourceOpenGaussInstance() *schema.Resource {
 				Type:     schema.TypeBool,
 				Optional: true,
 				ForceNew: true,
+			},
+			"kms_tde_key_id": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Computed:     true,
+				RequiredWith: []string{"kms_project_name"},
+			},
+			"kms_project_name": {
+				Type:         schema.TypeString,
+				Computed:     true,
+				Optional:     true,
+				RequiredWith: []string{"kms_tde_key_id"},
+			},
+			"kms_tde_status": {
+				Type:     schema.TypeString,
+				Optional: true,
 			},
 			"datastore": {
 				Type:     schema.TypeList,
@@ -429,6 +449,8 @@ func buildOpenGaussInstanceCreateOpts(d *schema.ResourceData,
 		ShardingNum:         d.Get("sharding_num").(int),
 		CoordinatorNum:      d.Get("coordinator_num").(int),
 		ReplicaNum:          d.Get("replica_num").(int),
+		KmsTdeKeyId:         d.Get("kms_tde_key_id").(string),
+		KmsProjectName:      d.Get("kms_project_name").(string),
 		DataStore:           resourceOpenGaussDataStore(d),
 		BackupStrategy:      resourceOpenGaussBackupStrategy(d),
 	}
@@ -544,8 +566,8 @@ func resourceOpenGaussInstanceCreate(ctx context.Context, d *schema.ResourceData
 
 	// waiting for the instance to become ready
 	stateConf := &resource.StateChangeConf{
-		Pending:                   []string{"BUILD", "BACKING UP"},
-		Target:                    []string{"ACTIVE"},
+		Pending:                   []string{"BUILD"},
+		Target:                    []string{"ACTIVE", "BACKING UP"},
 		Refresh:                   OpenGaussInstanceStateRefreshFunc(client, d.Id()),
 		Timeout:                   d.Timeout(schema.TimeoutCreate),
 		Delay:                     20 * time.Second,
@@ -557,9 +579,6 @@ func resourceOpenGaussInstanceCreate(ctx context.Context, d *schema.ResourceData
 	if err != nil {
 		return diag.Errorf("error waiting for instance (%s) to become ready: %s", d.Id(), err)
 	}
-
-	// This is a workaround to avoid db connection issue
-	time.Sleep(360 * time.Second) //lintignore:R018
 
 	return resourceOpenGaussInstanceRead(ctx, d, meta)
 }
@@ -709,6 +728,8 @@ func resourceOpenGaussInstanceRead(_ context.Context, d *schema.ResourceData, me
 		setOpenGaussNodesAndRelatedNumbers(d, instance, &dnNum),
 		d.Set("volume", flattenOpenGaussVolume(instance.Volume, dnNum)),
 		setOpenGaussPrivateIpsAndEndpoints(d, instance.PrivateIps, instance.Port),
+		d.Set("kms_tde_key_id", instance.KmsTdeKeyId),
+		d.Set("kms_project_name", instance.KmsProjectName),
 	)
 
 	if mErr.ErrorOrNil() != nil {
@@ -881,6 +902,19 @@ func resourceOpenGaussInstanceUpdate(ctx context.Context, d *schema.ResourceData
 		err = backups.Update(client, d.Id(), updateOpts).ExtractErr()
 		if err != nil {
 			return diag.Errorf("error updating backup_strategy: %s", err)
+		}
+	}
+
+	if d.HasChanges("kms_tde_key_id", "kms_project_name", "kms_tde_status") {
+		updateKmsOpts := instances.UpdateKmsOpts{
+			KmsTdeKeyId:    d.Get("kms_tde_key_id").(string),
+			KmsProjectName: d.Get("kms_project_name").(string),
+			KmsTdeStatus:   d.Get("kms_tde_status").(string),
+		}
+		log.Printf("[DEBUG] The update object of KMS is: %#v", updateKmsOpts)
+		_, err = instances.UpdateKms(client, updateKmsOpts, d.Id()).Extract()
+		if err != nil {
+			return diag.Errorf("error updating KMS information for instance (%s): %s", d.Id(), err)
 		}
 	}
 

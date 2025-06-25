@@ -227,6 +227,52 @@ func TestAccCluster_secGroup(t *testing.T) {
 	})
 }
 
+// enterprise_project_id
+func TestAccCluster_eps(t *testing.T) {
+	var cluster clusters.Clusters
+
+	rName := fmt.Sprintf("tf-acc-test-%s", acctest.RandString(5))
+	resourceName := "hcs_cce_cluster.test"
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck: func() {
+			acceptance.TestAccPreCheck(t)
+			acceptance.TestAccPreCheckEpsID(t)
+		},
+		ProviderFactories: acceptance.TestAccProviderFactories,
+		CheckDestroy:      testAccCheckClusterDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCluster_eps(rName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckClusterExists(resourceName, &cluster),
+					resource.TestCheckResourceAttr(resourceName, "name", rName),
+					resource.TestCheckResourceAttr(resourceName, "status", "Available"),
+					resource.TestCheckResourceAttr(resourceName, "cluster_type", "VirtualMachine"),
+					resource.TestCheckResourceAttr(resourceName, "flavor_id", "cce.s1.small"),
+					resource.TestCheckResourceAttr(resourceName, "container_network_type", "overlay_l2"),
+					resource.TestCheckResourceAttr(resourceName, "authentication_mode", "rbac"),
+					resource.TestCheckResourceAttr(resourceName, "service_network_cidr", "10.248.0.0/16"),
+					resource.TestCheckResourceAttr(resourceName, "enterprise_project_id", acceptance.HCS_ENTERPRISE_PROJECT_ID),
+				),
+			},
+			{
+				Config: testAccCluster_eps_update(rName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckClusterExists(resourceName, &cluster),
+					resource.TestCheckResourceAttr(resourceName, "name", rName),
+					resource.TestCheckResourceAttr(resourceName, "status", "Available"),
+					resource.TestCheckResourceAttr(resourceName, "cluster_type", "VirtualMachine"),
+					resource.TestCheckResourceAttr(resourceName, "flavor_id", "cce.s1.small"),
+					resource.TestCheckResourceAttr(resourceName, "container_network_type", "overlay_l2"),
+					resource.TestCheckResourceAttr(resourceName, "authentication_mode", "rbac"),
+					resource.TestCheckResourceAttr(resourceName, "enterprise_project_id", "0"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckClusterDestroy(s *terraform.State) error {
 	config := config.GetHcsConfig(acceptance.TestAccProvider.Meta())
 	cceClient, err := config.CceV3Client(acceptance.HCS_REGION_NAME)
@@ -475,6 +521,50 @@ resource "hcs_cce_cluster" "test" {
   service_network_cidr   = "10.248.0.0/16"
   description            = "created by terraform update"
   security_group_id      = hcs_networking_secgroup.test2.id
+
+  tags = {
+    foo = "bar"
+    key = "value"
+  }
+}
+`, common.TestVpc(rName), rName)
+}
+
+func testAccCluster_eps(rName string) string {
+	return fmt.Sprintf(`
+%[1]s
+
+resource "hcs_cce_cluster" "test" {
+  name                   = "%[2]s"
+  flavor_id              = "cce.s1.small"
+  vpc_id                 = hcs_vpc.test.id
+  subnet_id              = hcs_vpc_subnet.test.id
+  container_network_type = "overlay_l2"
+  service_network_cidr   = "10.248.0.0/16"
+
+  enterprise_project_id = "%[3]s"
+
+  tags = {
+    foo = "bar"
+    key = "value"
+  }
+}
+`, common.TestVpc(rName), rName, acceptance.HCS_ENTERPRISE_PROJECT_ID)
+}
+
+func testAccCluster_eps_update(rName string) string {
+	return fmt.Sprintf(`
+%[1]s
+
+resource "hcs_cce_cluster" "test" {
+  name                   = "%[2]s"
+  flavor_id              = "cce.s1.small"
+  vpc_id                 = hcs_vpc.test.id
+  subnet_id              = hcs_vpc_subnet.test.id
+  container_network_type = "overlay_l2"
+  service_network_cidr   = "10.248.0.0/16"
+
+  enterprise_project_id = "0"
 
   tags = {
     foo = "bar"

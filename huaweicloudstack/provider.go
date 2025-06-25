@@ -30,6 +30,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/as"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/bms"
+	hcsCce "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/cce"
 	hcsCfw "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/cfw"
 	hcsCsms "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/csms"
 	hcsDcs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dcs"
@@ -342,12 +343,13 @@ func Provider() *schema.Provider {
 
 			"hcs_bms_flavors": bms.DataSourceBmsFlavors(),
 
-			"hcs_cce_cluster":        cce.DataSourceCCEClusterV3(),
-			"hcs_cce_clusters":       cce.DataSourceCCEClusters(),
-			"hcs_cce_addon_template": cce.DataSourceAddonTemplate(),
-			"hcs_cce_node_pool":      cce.DataSourceCCENodePoolV3(),
-			"hcs_cce_node":           cce.DataSourceNode(),
-			"hcs_cce_nodes":          cce.DataSourceNodes(),
+			"hcs_cce_cluster":             cce.DataSourceCCEClusterV3(),
+			"hcs_cce_clusters":            cce.DataSourceCCEClusters(),
+			"hcs_cce_addon_template":      cce.DataSourceAddonTemplate(),
+			"hcs_cce_node_pool":           cce.DataSourceCCENodePoolV3(),
+			"hcs_cce_node":                cce.DataSourceNode(),
+			"hcs_cce_nodes":               cce.DataSourceNodes(),
+			"hcs_cce_cluster_certificate": hcsCce.DataSourceCCEClusterCertificate(),
 
 			"hcs_cfw_firewalls":                 cfw.DataSourceFirewalls(),
 			"hcs_cfw_protection_rule_hit_count": hcsCfw.DataSourceCfwProtectionRuleHitCount(),
@@ -571,6 +573,9 @@ func Provider() *schema.Provider {
 			"hcs_ucs_fleet":   ucs.ResourceFleet(),
 			"hcs_ucs_policy":  ucs.ResourcePolicy(),
 
+			"hcs_vdc_user":             vdc.ResourceVdcUser(),
+			"hcs_vdc_group_membership": vdc.ResourceVdcGroupMembership(),
+			
 			"hcs_vpcep_approval": vpcep.ResourceVPCEndpointApproval(),
 			"hcs_vpcep_endpoint": vpcep.ResourceVPCEndpoint(),
 			"hcs_vpcep_service":  vpcep.ResourceVPCEndpointService(),
