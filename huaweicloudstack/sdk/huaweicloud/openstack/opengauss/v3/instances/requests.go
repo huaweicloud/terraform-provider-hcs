@@ -75,6 +75,8 @@ type CreateGaussDBOpts struct {
 	DoradoStoragePoolId string       `json:"dorado_storage_pool_id,omitempty"`
 	EnableSingleFloatIp bool         `json:"enable_single_float_ip,omitempty"`
 	Solution            string       `json:"solution,omitempty"`
+	KmsTdeKeyId         string       `json:"kms_tde_key_id,omitempty"`
+	KmsProjectName      string       `json:"kms_project_name,omitempty"`
 }
 
 type CreateGaussDBBuilder interface {
@@ -347,6 +349,34 @@ func RestorePassword(client *golangsdk.ServiceClient, opts RestorePasswordOptsBu
 
 	_, r.Err = client.Post(updateURL(client, id, "password"), b, nil, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
+		MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en-us"},
+	})
+	return
+}
+
+type UpdateKmsOptsBuilder interface {
+	ToUpdateKmsMap() (map[string]interface{}, error)
+}
+
+type UpdateKmsOpts struct {
+	KmsTdeKeyId    string `json:"kms_tde_key_id" required:"true"`
+	KmsProjectName string `json:"kms_project_name" required:"true"`
+	KmsTdeStatus   string `json:"kms_tde_status" required:"true"`
+}
+
+func (opts UpdateKmsOpts) ToUpdateKmsMap() (map[string]interface{}, error) {
+	return golangsdk.BuildRequestBody(opts, "")
+}
+
+func UpdateKms(client *golangsdk.ServiceClient, opts UpdateKmsOptsBuilder, id string) (r UpdateKmsResult) {
+	b, err := opts.ToUpdateKmsMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+
+	_, r.Err = client.Put(updateKms(client, id), b, &r.Body, &golangsdk.RequestOpts{
+		OkCodes:     []int{200, 202},
 		MoreHeaders: map[string]string{"Content-Type": "application/json", "X-Language": "en-us"},
 	})
 	return
