@@ -39,8 +39,27 @@ func List(httpClient *golangsdk.ServiceClient, listOptsBuilder ListOptsBuilder) 
 
 // CreateOpts 创建角色的北向接口支持的body参数定义
 type CreateOpts struct {
-	DomainId string             `json:"domain_id,omitempty" require:"true"` // 创建接口要求必须传domain_id，若用户在resource中指定了domain_id，则以填的为准，否则从provider中获取。
+	DomainId string             `json:"domain_id,omitempty" require:"true"`
 	Role     RequestBodyVdcRole `json:"role,omitempty" require:"true"`
+}
+
+// UpdateOpts 更新角色的北向接口支持的body参数定义
+type UpdateOpts struct {
+	DomainId string             `json:"domain_id,omitempty" require:"true"`
+	Role     RequestBodyVdcRole `json:"role,omitempty" require:"true"`
+}
+
+type UpdateOptsBuilder interface {
+	GetRequestBodyForUpdateVdcRole() (map[string]interface{}, error)
+}
+
+func (opts UpdateOpts) GetRequestBodyForUpdateVdcRole() (map[string]interface{}, error) {
+	requestBody, err := golangsdk.BuildRequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
+	return requestBody, nil
 }
 
 type RequestBodyVdcRole struct {
@@ -74,37 +93,54 @@ func Create(httpClient *golangsdk.ServiceClient, opts CreateOptsBuilder) (create
 	}
 	reqOpt := &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
-		MoreHeaders: map[string]string{"Content-Type": "application/json"},
+		MoreHeaders: map[string]string{"Content-Type": "application/json;charset=utf-8", "X-Language": "en-us"},
 	}
 	_, createResult.Err = httpClient.Post(url, &requestBody, &createResult.Body, reqOpt)
 	return
 }
 
-func Delete(client *golangsdk.ServiceClient, roleID string) (r DeleteResult) {
-	_, r.Err = client.Delete(DeleteVdcRoleURL(client, roleID), &golangsdk.RequestOpts{
+func Delete(client *golangsdk.ServiceClient, roleId string) (deleteResult DeleteResult) {
+	url, err := DeleteVdcRoleURL(client, roleId)
+	if err != nil {
+		deleteResult.Err = err
+		return
+	}
+	_, deleteResult.Err = client.Delete(url, &golangsdk.RequestOpts{
 		OkCodes:     []int{204},
-		MoreHeaders: map[string]string{"Content-Type": "application/json"},
+		MoreHeaders: map[string]string{"Content-Type": "application/json;charset=utf-8", "X-Language": "en-us"},
 	})
 	return
 }
 
-func Update(client *golangsdk.ServiceClient, roleID string, opts CreateOptsBuilder) (updateResult UpdateResult) {
-	b, err := opts.GetRequestBodyForCreateVdcRole()
+func Update(client *golangsdk.ServiceClient, roleId string, opts UpdateOptsBuilder) (updateResult UpdateResult) {
+	b, err := opts.GetRequestBodyForUpdateVdcRole()
 	if err != nil {
 		updateResult.Err = err
 		return
 	}
-	_, updateResult.Err = client.Put(UpdateVdcRoleURL(client, roleID), &b, &updateResult.Body, &golangsdk.RequestOpts{
+
+	url, err := UpdateVdcRoleURL(client, roleId)
+	if err != nil {
+		updateResult.Err = err
+		return
+	}
+	_, updateResult.Err = client.Put(url, &b, &updateResult.Body, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
-		MoreHeaders: map[string]string{"Content-Type": "application/json"},
+		MoreHeaders: map[string]string{"Content-Type": "application/json;charset=utf-8", "X-Language": "en-us"},
 	})
 	return
 }
 
-func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
-	_, r.Err = client.Get(GetVdcRoleURL(client, id), &r.Body, &golangsdk.RequestOpts{
+func Get(client *golangsdk.ServiceClient, roleId string) (getResult GetResult) {
+
+	url, err := GetVdcRoleURL(client, roleId)
+	if err != nil {
+		getResult.Err = err
+		return
+	}
+	_, getResult.Err = client.Get(url, &getResult.Body, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
-		MoreHeaders: map[string]string{"Content-Type": "application/json"},
+		MoreHeaders: map[string]string{"Content-Type": "application/json;charset=utf-8", "X-Language": "en-us"},
 	})
 	return
 }
