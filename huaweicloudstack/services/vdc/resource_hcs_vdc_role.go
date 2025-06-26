@@ -108,7 +108,7 @@ func resourceVdcRoleRead(_ context.Context, schemaResourceData *schema.ResourceD
 
 	role, err := roleSDK.Get(vdcRoleClient, schemaResourceData.Id()).Extract()
 	if err != nil {
-		return common.CheckDeletedDiag(schemaResourceData, err, "IAM custom policy")
+		return common.CheckDeletedDiag(schemaResourceData, err, "VDC custom role")
 	}
 
 	policy, err := json.Marshal(role.Policy)
@@ -154,7 +154,7 @@ func resourceVdcRoleUpdate(ctx context.Context, schemaResourceData *schema.Resou
 		return diag.Errorf("Error unmarshalling policy, please check the format of the policy document: %s", err)
 	}
 
-	if schemaResourceData.HasChanges("name", "Description", "policy") {
+	if schemaResourceData.HasChanges("name", "description", "policy") {
 		updateOpts := &roleSDK.UpdateOpts{
 			DomainId: domainId,
 			Role: roleSDK.RequestBodyVdcRole{
