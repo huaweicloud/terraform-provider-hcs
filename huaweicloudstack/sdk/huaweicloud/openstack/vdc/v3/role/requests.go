@@ -4,6 +4,8 @@ import (
 	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 )
 
+var moreHeaders = map[string]string{"Content-Type": "application/json;charset=utf-8", "X-Language": "en-us"}
+
 // ListOpts 查询角色列表的北向接口支持的query参数定义
 type ListOpts struct {
 	DomainId    string `q:"domain_id"`
@@ -93,7 +95,7 @@ func Create(httpClient *golangsdk.ServiceClient, opts CreateOptsBuilder) (create
 	}
 	reqOpt := &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
-		MoreHeaders: map[string]string{"Content-Type": "application/json;charset=utf-8", "X-Language": "en-us"},
+		MoreHeaders: moreHeaders,
 	}
 	_, createResult.Err = httpClient.Post(url, &requestBody, &createResult.Body, reqOpt)
 	return
@@ -107,7 +109,7 @@ func Delete(client *golangsdk.ServiceClient, roleId string) (deleteResult Delete
 	}
 	_, deleteResult.Err = client.Delete(url, &golangsdk.RequestOpts{
 		OkCodes:     []int{204},
-		MoreHeaders: map[string]string{"Content-Type": "application/json;charset=utf-8", "X-Language": "en-us"},
+		MoreHeaders: moreHeaders,
 	})
 	return
 }
@@ -126,7 +128,7 @@ func Update(client *golangsdk.ServiceClient, roleId string, opts UpdateOptsBuild
 	}
 	_, updateResult.Err = client.Put(url, &b, &updateResult.Body, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
-		MoreHeaders: map[string]string{"Content-Type": "application/json;charset=utf-8", "X-Language": "en-us"},
+		MoreHeaders: moreHeaders,
 	})
 	return
 }
@@ -140,7 +142,7 @@ func Get(client *golangsdk.ServiceClient, roleId string) (getResult GetResult) {
 	}
 	_, getResult.Err = client.Get(url, &getResult.Body, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
-		MoreHeaders: map[string]string{"Content-Type": "application/json;charset=utf-8", "X-Language": "en-us"},
+		MoreHeaders: moreHeaders,
 	})
 	return
 }
