@@ -385,7 +385,6 @@ func Provider() *schema.Provider {
 			"hcs_elb_flavors":     elb.DataSourceElbFlavorsV3(),
 
 			"hcs_enterprise_project": eps.DataSourceEnterpriseProject(),
-			"hcs_vdc_user":           vdc.DataResourceVdcUser(),
 
 			"hcs_evs_volumes":      evs.DataSourceEvsVolumesV2(),
 			"hcs_evs_volume_types": evs.DataSourceEvsVolumeTypesV2(),
@@ -412,6 +411,10 @@ func Provider() *schema.Provider {
 
 			"hcs_smn_topics": smn.DataSourceTopics(),
 
+			"hcs_vdc_group": vdc.DataSourceVdcGroup(),
+			"hcs_vdc_role":  vdc.DataSourceVdcRole(),
+			"hcs_vdc_user":  vdc.DataResourceVdcUser(),
+
 			"hcs_vpc":                    vpc.DataSourceVpcV1(),
 			"hcs_vpc_subnet":             vpc.DataSourceVpcSubnetV1(),
 			"hcs_vpc_subnet_v1":          vpc.DataSourceVpcSubnetV1(),
@@ -434,9 +437,6 @@ func Provider() *schema.Provider {
 			"hcs_waf_dedicated_instances": waf.DataSourceWafDedicatedInstancesV1(),
 			"hcs_waf_policies":            waf.DataSourceWafPoliciesV1(),
 			"hcs_waf_reference_tables":    waf.DataSourceWafReferenceTablesV1(),
-
-			"hcs_vdc_group": vdc.DataSourceVdcGroup(),
-			"hcs_vdc_role":  vdc.DataSourceVdcRole(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -573,8 +573,9 @@ func Provider() *schema.Provider {
 			"hcs_ucs_fleet":   ucs.ResourceFleet(),
 			"hcs_ucs_policy":  ucs.ResourcePolicy(),
 
-			"hcs_vdc_user":             vdc.ResourceVdcUser(),
+			"hcs_vdc_group":            vdc.ResourceVdcUserGroup(),
 			"hcs_vdc_group_membership": vdc.ResourceVdcGroupMembership(),
+			"hcs_vdc_user":             vdc.ResourceVdcUser(),
 			"hcs_vdc_role":             vdc.ResourceVdcRole(),
 
 			"hcs_vpcep_approval": vpcep.ResourceVPCEndpointApproval(),
