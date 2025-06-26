@@ -239,7 +239,7 @@ func sourceEvsVolumes(vols []volumes.Volume) ([]map[string]interface{}, []string
 			"tags":                  volume.Tags,
 		}
 
-		if volume.EncryptionInfo != nil {
+		if volume.EncryptionInfo.CmkID != "" || volume.EncryptionInfo.Cipher != "" {
 			vMap["encryption_info"] = []map[string]interface{}{{
 				"cmk_id":                 volume.EncryptionInfo.CmkID,
 				"cipher":                 volume.EncryptionInfo.Cipher,
