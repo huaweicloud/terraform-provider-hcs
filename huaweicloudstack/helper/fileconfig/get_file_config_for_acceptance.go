@@ -12,8 +12,8 @@ const (
 )
 
 type ConfigForAcceptance struct {
-	NewDomainId    string `json:"NEW_DOMAIN_ID"`
-	UpdateDomainId string `json:"UPDATE_DOMAIN_ID"`
+	NewDomainId    string `json:"new_domain_id"`
+	UpdateDomainId string `json:"update_domain_id"`
 }
 
 // GetTestConfig Get the test configuration
