@@ -3,7 +3,7 @@ package user
 import golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 
 var RequestOpts = golangsdk.RequestOpts{
-	MoreHeaders: map[string]string{"Content-Type": "application/json;charset=UTF8", "X-Language": "en-us"},
+	MoreHeaders: map[string]string{"Content-Type": "application/json;charset=utf-8", "X-Language": "en-us"},
 }
 
 var ApiAuthType map[string]string = map[string]string{
