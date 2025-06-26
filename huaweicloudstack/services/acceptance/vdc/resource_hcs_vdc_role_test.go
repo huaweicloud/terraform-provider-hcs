@@ -23,8 +23,6 @@ func initConfig() *fileconfig.ConfigForAcceptance {
 }
 
 func TestAccVdcRoleResourceCreate(t *testing.T) {
-	var testConfigEnv *fileconfig.ConfigForAcceptance
-	testConfigEnv = initConfig()
 	var role RoleSDK.VdcRoleModel
 	resourceName := "hcs_vdc_role.test"
 
@@ -36,7 +34,7 @@ func TestAccVdcRoleResourceCreate(t *testing.T) {
 		CheckDestroy:      testAccCheckVdcDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceVdcRoleCreate(rName, testConfigEnv),
+				Config: testAccResourceVdcRoleCreate(rName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckVdcRoleExists(resourceName, &role),
 					resource.TestCheckResourceAttr(resourceName, "name", rName),
@@ -48,9 +46,6 @@ func TestAccVdcRoleResourceCreate(t *testing.T) {
 }
 
 func TestAccVdcRoleResourceUpdate(t *testing.T) {
-
-	var testConfigEnv *fileconfig.ConfigForAcceptance
-	testConfigEnv = initConfig()
 	var role RoleSDK.VdcRoleModel
 	resourceName := "hcs_vdc_role.test"
 
@@ -64,7 +59,7 @@ func TestAccVdcRoleResourceUpdate(t *testing.T) {
 		CheckDestroy:      testAccCheckVdcDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceVdcRoleCreate(rName, testConfigEnv),
+				Config: testAccResourceVdcRoleCreate(rName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckVdcRoleExists(resourceName, &role),
 					resource.TestCheckResourceAttr(resourceName, "name", rName),
@@ -72,7 +67,7 @@ func TestAccVdcRoleResourceUpdate(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceVdcRoleUpdate(rNameUpdate, testConfigEnv),
+				Config: testAccResourceVdcRoleUpdate(rNameUpdate),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckVdcRoleExists(resourceName, &role),
 					resource.TestCheckResourceAttr(resourceName, "name", rNameUpdate),
@@ -84,9 +79,6 @@ func TestAccVdcRoleResourceUpdate(t *testing.T) {
 }
 
 func TestAccVdcRoleResourceDelete(t *testing.T) {
-
-	var testConfigEnv *fileconfig.ConfigForAcceptance
-	testConfigEnv = initConfig()
 	var role RoleSDK.VdcRoleModel
 	resourceName := "hcs_vdc_role.test"
 	rName := acceptance.RandomAccResourceName()
@@ -96,7 +88,7 @@ func TestAccVdcRoleResourceDelete(t *testing.T) {
 		CheckDestroy:      testAccCheckVdcDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceVdcRoleCreate(rName, testConfigEnv),
+				Config: testAccResourceVdcRoleCreate(rName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckVdcRoleExists(resourceName, &role),
 				),
@@ -112,8 +104,9 @@ func TestAccVdcRoleResourceDelete(t *testing.T) {
 	})
 }
 
-func testAccResourceVdcRoleCreate(rName string, testConfigEnv *fileconfig.ConfigForAcceptance) string {
-
+func testAccResourceVdcRoleCreate(rName string) string {
+	var testConfigEnv *fileconfig.ConfigForAcceptance
+	testConfigEnv = initConfig()
 	return fmt.Sprintf(`
 		resource "hcs_vdc_role" "test" {
 		  domain_id = "%s"
@@ -139,7 +132,9 @@ func testAccResourceVdcRoleCreate(rName string, testConfigEnv *fileconfig.Config
 		rName)
 }
 
-func testAccResourceVdcRoleUpdate(rName string, testConfigEnv *fileconfig.ConfigForAcceptance) string {
+func testAccResourceVdcRoleUpdate(rName string) string {
+	var testConfigEnv *fileconfig.ConfigForAcceptance
+	testConfigEnv = initConfig()
 	return fmt.Sprintf(`
 		resource "hcs_vdc_role" "test" {
 		  domain_id = "%s"

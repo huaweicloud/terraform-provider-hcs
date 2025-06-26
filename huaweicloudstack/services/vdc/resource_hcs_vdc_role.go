@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
-	RoleSDK "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/vdc/v3/role"
+	roleSDK "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/vdc/v3/role"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils/fmtp"
 )
@@ -74,22 +74,22 @@ func resourceVdcRoleCreate(ctx context.Context, schemaResourceData *schema.Resou
 		domainId = userInputDomainId
 	}
 
-	policy := RoleSDK.PolicyBase{}
+	policy := roleSDK.PolicyBase{}
 	policyDoc := schemaResourceData.Get("policy").(string)
 	err = json.Unmarshal([]byte(policyDoc), &policy)
 	if err != nil {
 		return diag.Errorf("Error unmarshalling policy, please check the format of the policy document: %s", err)
 	}
-	createOpts := &RoleSDK.CreateOpts{
+	createOpts := &roleSDK.CreateOpts{
 		DomainId: domainId,
-		Role: RoleSDK.RequestBodyVdcRole{
+		Role: roleSDK.RequestBodyVdcRole{
 			DisplayName: schemaResourceData.Get("name").(string),
 			Type:        schemaResourceData.Get("type").(string),
 			Description: schemaResourceData.Get("description").(string),
 			Policy:      policy,
 		},
 	}
-	role, err := RoleSDK.Create(vdcRoleClient, createOpts).Extract()
+	role, err := roleSDK.Create(vdcRoleClient, createOpts).Extract()
 	if err != nil {
 		return diag.Errorf("Error creating VDC custom role: %s", err)
 	}
@@ -106,7 +106,7 @@ func resourceVdcRoleRead(_ context.Context, schemaResourceData *schema.ResourceD
 		return diag.Errorf("Error creating http client: %s", err)
 	}
 
-	role, err := RoleSDK.Get(vdcRoleClient, schemaResourceData.Id()).Extract()
+	role, err := roleSDK.Get(vdcRoleClient, schemaResourceData.Id()).Extract()
 	if err != nil {
 		return common.CheckDeletedDiag(schemaResourceData, err, "IAM custom policy")
 	}
@@ -147,7 +147,7 @@ func resourceVdcRoleUpdate(ctx context.Context, schemaResourceData *schema.Resou
 		domainId = userInputDomainId
 	}
 
-	policy := RoleSDK.PolicyBase{}
+	policy := roleSDK.PolicyBase{}
 	policyDoc := schemaResourceData.Get("policy").(string)
 	err = json.Unmarshal([]byte(policyDoc), &policy)
 	if err != nil {
@@ -155,9 +155,9 @@ func resourceVdcRoleUpdate(ctx context.Context, schemaResourceData *schema.Resou
 	}
 
 	if schemaResourceData.HasChanges("name", "Description", "policy") {
-		updateOpts := &RoleSDK.UpdateOpts{
+		updateOpts := &roleSDK.UpdateOpts{
 			DomainId: domainId,
-			Role: RoleSDK.RequestBodyVdcRole{
+			Role: roleSDK.RequestBodyVdcRole{
 				DisplayName: schemaResourceData.Get("name").(string),
 				Type:        schemaResourceData.Get("type").(string),
 				Description: schemaResourceData.Get("description").(string),
@@ -165,7 +165,7 @@ func resourceVdcRoleUpdate(ctx context.Context, schemaResourceData *schema.Resou
 			},
 		}
 
-		_, err = RoleSDK.Update(vdcRoleClient, schemaResourceData.Id(), updateOpts).Extract()
+		_, err = roleSDK.Update(vdcRoleClient, schemaResourceData.Id(), updateOpts).Extract()
 		if err != nil {
 			return diag.Errorf("Error updating Vdc custom policy: %s", err)
 		}
@@ -181,7 +181,7 @@ func resourceVdcRoleDelete(_ context.Context, schemaResourceData *schema.Resourc
 		return diag.Errorf("Error creating http client: %s", err)
 	}
 
-	err = RoleSDK.Delete(vdcRoleClient, schemaResourceData.Id()).ExtractErr()
+	err = roleSDK.Delete(vdcRoleClient, schemaResourceData.Id()).ExtractErr()
 	if err != nil {
 		return diag.Errorf("Error deleting Vdc custom policy: %s", err)
 	}
