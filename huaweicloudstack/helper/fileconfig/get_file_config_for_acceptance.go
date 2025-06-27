@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sync"
 )
 
 const (
@@ -16,28 +17,33 @@ type ConfigForAcceptance struct {
 	UpdateDomainId string `json:"update_domain_id"`
 }
 
-// GetTestConfig Get the test configuration
-func GetTestConfig() (*ConfigForAcceptance, error) {
-	// 1. Get the current working directory
-	workingDir, err := os.Getwd()
-	if err != nil {
-		return nil, fmt.Errorf("unable to get current working directory")
-	}
+var config ConfigForAcceptance
+var once sync.Once
 
-	// 2. the configuration file path
-	configFilePath := filepath.Join(workingDir, testEnvConfigFileName)
+// GetTestConfig Get the test configuration, this method panics on error
+func GetTestConfig() *ConfigForAcceptance {
+	once.Do(func() {
+		// 1. Get the current working directory
+		workingDir, err := os.Getwd()
+		if err != nil {
+			panic(fmt.Errorf("unable to get current working directory"))
+		}
 
-	// 3. Read the configuration file content (including auto-close file)
-	configContent, err := os.ReadFile(configFilePath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read configuration file: %s", testEnvConfigFileName)
-	}
+		// 2. the configuration file path
+		configFilePath := filepath.Join(workingDir, testEnvConfigFileName)
 
-	// 4. Parse JSON configuration
-	var config ConfigForAcceptance
-	if err := json.Unmarshal(configContent, &config); err != nil {
-		return nil, fmt.Errorf("failed to parse JSON configuration: %s", testEnvConfigFileName)
-	}
+		// 3. Read the configuration file content (including auto-close file)
+		configContent, err := os.ReadFile(configFilePath)
+		if err != nil {
+			panic(fmt.Errorf("failed to read configuration file: %s", testEnvConfigFileName))
+		}
 
-	return &config, nil
+		// 4. Parse JSON configuration
+		var c ConfigForAcceptance
+		if err := json.Unmarshal(configContent, &c); err != nil {
+			panic(fmt.Errorf("failed to parse JSON configuration: %s", testEnvConfigFileName))
+		}
+		config = c
+	})
+	return &config
 }
