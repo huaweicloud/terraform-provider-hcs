@@ -12,15 +12,7 @@ import (
 	"testing"
 )
 
-func initConfig() *fileconfig.ConfigForAcceptance {
-	var cfg, err = fileconfig.GetTestConfig()
-
-	if err != nil {
-		fmt.Printf("failed to get configuration.")
-		return nil
-	}
-	return cfg
-}
+var cfg = fileconfig.GetTestConfig()
 
 func TestAccVdcRoleResourceCreate(t *testing.T) {
 	var role RoleSDK.VdcRoleModel
@@ -105,8 +97,6 @@ func TestAccVdcRoleResourceDelete(t *testing.T) {
 }
 
 func testAccResourceVdcRoleCreate(rName string) string {
-	var testConfigEnv *fileconfig.ConfigForAcceptance
-	testConfigEnv = initConfig()
 	return fmt.Sprintf(`
 		resource "hcs_vdc_role" "test" {
 		  domain_id = "%s"
@@ -128,13 +118,11 @@ func testAccResourceVdcRoleCreate(rName string) string {
 		}
 		EOF
 		}`,
-		testConfigEnv.NewDomainId,
+		cfg.NewDomainId,
 		rName)
 }
 
 func testAccResourceVdcRoleUpdate(rName string) string {
-	var testConfigEnv *fileconfig.ConfigForAcceptance
-	testConfigEnv = initConfig()
 	return fmt.Sprintf(`
 		resource "hcs_vdc_role" "test" {
 		  domain_id = "%s"
@@ -156,7 +144,7 @@ func testAccResourceVdcRoleUpdate(rName string) string {
 		}
 		EOF
 		}`,
-		testConfigEnv.NewDomainId,
+		cfg.NewDomainId,
 		rName)
 }
 func testAccCheckVdcRoleExists(n string, role *RoleSDK.VdcRoleModel) resource.TestCheckFunc {
@@ -219,5 +207,4 @@ func testAccCheckVdcDestroy(resourceName string) resource.TestCheckFunc {
 
 		return nil
 	}
-
 }
