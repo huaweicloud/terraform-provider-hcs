@@ -191,6 +191,9 @@ var (
 	// OpenGauss
 	DORADO_STORAGE_POOL_ID     = os.Getenv("dorado_storage_pool_id")
 	OPENGAUSS_KMS_PROJECT_NAME = os.Getenv("kms_project_name")
+
+	// vdc project
+	HCS_VDC_PROJECT_VDC_ID = os.Getenv("hcs_vdc_project_vdc_id")
 )
 
 // TestAccProviders is a static map containing only the main provider instance.
@@ -384,6 +387,10 @@ func RandomAccVdcRoleDisplayName() string {
 
 func RandomAccResourceName() string {
 	return fmt.Sprintf("tf_test_%s", acctest.RandString(5))
+}
+
+func RandomAccResourceNameWithPrefix(prefix string) string {
+	return fmt.Sprintf("%s_%s", prefix, acctest.RandString(5))
 }
 
 func RandomAccResourceNameWithDash() string {
