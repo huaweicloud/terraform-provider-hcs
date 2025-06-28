@@ -148,8 +148,10 @@ The following arguments are supported:
   changed, a temporary instance will be generated. This temporary instance will occupy the association of the VPC
   security group and cannot be deleted for 12 hours.
 
-* `db` - (Required, List, ForceNew) Specifies the database information. Structure is documented below. Changing this
-  parameter will create a new resource.
+* `db` - (Required, List, ForceNew) Specifies the database information.
+  The [object](#rds_db) structure is documented below. 
+
+  Changing this parameter will create a new resource.
 
 * `vpc_id` - (Required, String, ForceNew) Specifies the VPC ID. Changing this parameter will create a new resource.
 
@@ -158,14 +160,18 @@ The following arguments are supported:
 
 * `security_group_id` - (Required, String) Specifies the security group which the RDS DB instance belongs to.
 
-* `volume` - (Required, List) Specifies the volume information. Structure is documented below.
+* `volume` - (Required, List) Specifies the volume information.
+  The [object](#rds_volume) structure is documented below.
 
 * `restore` - (Optional, List, ForceNew) Specifies the restoration information. It only supported restore to postpaid
-  instance. Structure is documented below. Changing this parameter will create a new resource.
+  instance. The [object](#rds_restore) structure is documented below.
+
+  Changing this parameter will create a new resource.
 
 * `fixed_ip` - (Optional, String) Specifies an intranet floating IP address of RDS DB instance.
 
-* `backup_strategy` - (Optional, List) Specifies the advanced backup policy. Structure is documented below.
+* `backup_strategy` - (Optional, List) Specifies the advanced backup policy.
+  The [object](#rds_backup_strategy) structure is documented below.
 
 * `ha_replication_mode` - (Optional, String) Specifies the replication mode for the standby DB instance.
   + For PostgreSQL, the value is **async** or **sync**.
@@ -193,8 +199,10 @@ The following arguments are supported:
   pair.
 
 * `parameters` - (Optional, List) Specify an array of one or more parameters to be set to the RDS instance after
-  launched. You can check on console to see which parameters supported. Structure is documented below.
+  launched. You can check on console to see which parameters supported.
+  The [object](#rds_parameters) structure is documented below.
 
+<a name="rds_db"></a>
 The `db` block supports:
 
 * `type` - (Required, String, ForceNew) Specifies the DB engine. Available value are **PostgreSQL**.
@@ -210,6 +218,7 @@ The `db` block supports:
 * `port` - (Optional, Int) Specifies the database port.
   + The PostgreSQL database port ranges from 2100 to 9500. The default value is 5432.
 
+<a name="rds_volume"></a>
 The `volume` block supports:
 
 * `size` - (Required, Int) Specifies the volume size. Its value range is from 40 GB to 4000 GB. The value must be a
@@ -232,6 +241,10 @@ The `volume` block supports:
   + **15**
   + **20**
 
+* `disk_encryption_id` - (Optional, String, ForceNew) Specifies the key ID for disk encryption.
+  Changing this parameter will create a new resource.
+
+<a name="rds_restore"></a>
 The `restore` block supports:
 
 * `instance_id` - (Required, String, ForceNew) Specifies the source DB instance ID. Changing this parameter will create
@@ -240,6 +253,7 @@ The `restore` block supports:
 * `backup_id` - (Required, String, ForceNew) Specifies the ID of the backup used to restore data. Changing this
   parameter will create a new resource.
 
+<a name="rds_backup_strategy"></a>
 The `backup_strategy` block supports:
 
 * `keep_days` - (Required, Int) Specifies the retention days for specific backup files. The value range is from 0 to 732.
@@ -255,6 +269,7 @@ The `backup_strategy` block supports:
   number represents a day of the week. For example, a value of 1,2,3,4 would set the backup cycle to Monday, Tuesday,
   Wednesday, and Thursday. The default value is 1,2,3,4,5,6,7.
 
+<a name="rds_parameters"></a>
 The `parameters` block supports:
 
 * `name` - (Required, String) Specifies the parameter name. Some of them needs the instance to be restarted
@@ -274,7 +289,7 @@ In addition to all arguments above, the following attributes are exported:
 
 * `created` - Indicates the creation time.
 
-* `nodes` - Indicates the instance nodes information. Structure is documented below.
+* `nodes` - Indicates the instance nodes information. The [object](#rds_nodes) structure is documented below.
 
 * `private_ips` - Indicates the private IP address list. It is a blank string until an ECS is created.
 
@@ -282,6 +297,7 @@ In addition to all arguments above, the following attributes are exported:
 
 * `public_ips` - Indicates the public IP address list.
 
+<a name="rds_nodes"></a>
 The `nodes` block contains:
 
 * `availability_zone` - Indicates the AZ.
