@@ -18,6 +18,8 @@ const (
 	DefaultMaxBackoffRetries = 5
 )
 
+var MoreHeaders = map[string]string{"Content-Type": "application/json;charset=utf-8", "X-Language": "en-us"}
+
 // UserAgent represents a User-Agent header.
 type UserAgent struct {
 	// prepend is the slice of User-Agent strings to prepend to DefaultUserAgent.

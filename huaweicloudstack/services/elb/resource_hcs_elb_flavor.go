@@ -54,8 +54,14 @@ func ResourceFlavorV3() *schema.Resource {
 			},
 			"name": {
 				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
+				Required: true,
+				ValidateFunc: func(val interface{}, key string) (warns []string, errs []error) {
+					v := val.(string)
+					if v == "" {
+						errs = append(errs, fmt.Errorf("%q must not be empty or null", key))
+					}
+					return
+				},
 			},
 			"shared": {
 				Type:     schema.TypeBool,
@@ -101,7 +107,7 @@ func ResourceFlavorV3() *schema.Resource {
 	}
 }
 
-func buildFlavorInfo(infoRaw interface{}, resourceType string) ([]flavors.Info, error) {
+func buildFlavorInfo(infoRaw interface{}, qosName string, resourceType string) ([]flavors.Info, error) {
 	// Support both TypeSet and TypeList
 	var infos []interface{}
 	switch v := infoRaw.(type) {
@@ -110,25 +116,25 @@ func buildFlavorInfo(infoRaw interface{}, resourceType string) ([]flavors.Info, 
 	case *schema.Set:
 		infos = v.List()
 	default:
-		return nil, fmt.Errorf("info must be a list or set, got %T", infoRaw)
+		return nil, fmt.Errorf("flavor name=%s info must be a list or set, got %T", qosName, infoRaw)
 	}
 	allowedTypes, ok := flavorType[resourceType]
 	if !ok {
-		return nil, fmt.Errorf("invalid resource type: %s", resourceType)
+		return nil, fmt.Errorf("flavor name=%s invalid resource type: %s", qosName, resourceType)
 	}
 	var result []flavors.Info
-	for idx, v := range infos {
+	for _, v := range infos {
 		mp, ok := v.(map[string]interface{})
 		if !ok {
-			return nil, fmt.Errorf("info[%d] [%v] must be a map", idx, v)
+			return nil, fmt.Errorf("flavor name=%s info [%v] must be a map", qosName, v)
 		}
 		t, _ := mp["flavor_type"].(string)
 		if _, exists := allowedTypes[t]; !exists {
-			return nil, fmt.Errorf("info[%d] flavor_type=%s not allowed for type=%s", idx, t, resourceType)
+			return nil, fmt.Errorf("flavor name=%s info flavor_type=%s not allowed for type=%s", qosName, t, resourceType)
 		}
 		valRaw, exists := mp["value"]
 		if !exists {
-			return nil, fmt.Errorf("info[%d] missing value", idx)
+			return nil, fmt.Errorf("flavor name=%s info missing value for flavor_type=%s", qosName, t)
 		}
 		var ivalue int
 		switch val := valRaw.(type) {
@@ -139,10 +145,10 @@ func buildFlavorInfo(infoRaw interface{}, resourceType string) ([]flavors.Info, 
 		case float64: // Compatible with schema decode
 			ivalue = int(val)
 		default:
-			return nil, fmt.Errorf("info[%d] value must be int, got %T", idx, valRaw)
+			return nil, fmt.Errorf("flavor name=%s value for flavor_type=%s must be int, got %T", qosName, t, valRaw)
 		}
 		if ivalue < 0 {
-			return nil, fmt.Errorf("info[%d] value must >= 0", idx)
+			return nil, fmt.Errorf("flavor name=%s value for flavor_type=%s must >= 0", qosName, t)
 		}
 		result = append(result, flavors.Info{
 			FlavorType: t,
@@ -163,7 +169,7 @@ func resourceFlavorV3Create(ctx context.Context, d *schema.ResourceData, meta in
 	}
 
 	resourceType := d.Get("type").(string)
-	info, err := buildFlavorInfo(d.Get("info"), resourceType)
+	info, err := buildFlavorInfo(d.Get("info"), d.Get("name").(string), resourceType)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -216,16 +222,29 @@ func resourceFlavorV3Read(_ context.Context, d *schema.ResourceData, meta interf
 	var info []map[string]interface{}
 	switch flavor.Type {
 	case "l4":
-		info = append(info, map[string]interface{}{"flavor_type": "bandwidth", "value": flavor.Info.Bandwidth})
-		info = append(info, map[string]interface{}{"flavor_type": "cps", "value": flavor.Info.Cps})
-		info = append(info, map[string]interface{}{"flavor_type": "connection", "value": flavor.Info.Connection})
+		if flavor.Info.Bandwidth != nil {
+			info = append(info, map[string]interface{}{"flavor_type": "bandwidth", "value": *flavor.Info.Bandwidth})
+		}
+		if flavor.Info.Cps != nil {
+			info = append(info, map[string]interface{}{"flavor_type": "cps", "value": *flavor.Info.Cps})
+		}
+		if flavor.Info.Connection != nil {
+			info = append(info, map[string]interface{}{"flavor_type": "connection", "value": *flavor.Info.Connection})
+		}
 	case "l7":
-		info = append(info, map[string]interface{}{"flavor_type": "bandwidth", "value": flavor.Info.Bandwidth})
-		info = append(info, map[string]interface{}{"flavor_type": "cps", "value": flavor.Info.Cps})
-		info = append(info, map[string]interface{}{"flavor_type": "connection", "value": flavor.Info.Connection})
-		info = append(info, map[string]interface{}{"flavor_type": "qps", "value": flavor.Info.Qps})
+		if flavor.Info.Bandwidth != nil {
+			info = append(info, map[string]interface{}{"flavor_type": "bandwidth", "value": *flavor.Info.Bandwidth})
+		}
+		if flavor.Info.Cps != nil {
+			info = append(info, map[string]interface{}{"flavor_type": "cps", "value": *flavor.Info.Cps})
+		}
+		if flavor.Info.Connection != nil {
+			info = append(info, map[string]interface{}{"flavor_type": "connection", "value": *flavor.Info.Connection})
+		}
+		if flavor.Info.Qps != nil {
+			info = append(info, map[string]interface{}{"flavor_type": "qps", "value": *flavor.Info.Qps})
+		}
 	default:
-		// For unsupported type, clear info
 		info = nil
 	}
 	// Ensure the output order is stable
@@ -253,7 +272,7 @@ func resourceFlavorV3Update(ctx context.Context, d *schema.ResourceData, meta in
 	}
 	if d.HasChange("info") {
 		resourceType := d.Get("type").(string)
-		info, err := buildFlavorInfo(d.Get("info"), resourceType)
+		info, err := buildFlavorInfo(d.Get("info"), d.Get("name").(string), resourceType)
 		if err != nil {
 			return diag.FromErr(err)
 		}

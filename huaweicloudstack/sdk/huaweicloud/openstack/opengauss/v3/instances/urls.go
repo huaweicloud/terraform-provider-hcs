@@ -17,3 +17,7 @@ func updateURL(c *golangsdk.ServiceClient, instanceID, updata string) string {
 func listURL(c *golangsdk.ServiceClient) string {
 	return c.ServiceURL("instances")
 }
+
+func updateKms(c *golangsdk.ServiceClient, instanceID string) string {
+	return c.ServiceURL("instances", instanceID, "kms-tde/switch")
+}

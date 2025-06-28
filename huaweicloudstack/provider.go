@@ -30,10 +30,12 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/as"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/bms"
+	hcsCce "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/cce"
 	hcsCfw "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/cfw"
 	hcsCsms "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/csms"
 	hcsDcs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dcs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/deprecated"
+	hcsDms "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dms"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dns"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ecs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eip"
@@ -52,6 +54,8 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/smn"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpc"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpcep"
+
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vdc"
 )
 
 // Provider returns a schema.Provider for HuaweiCloudStack.
@@ -339,12 +343,13 @@ func Provider() *schema.Provider {
 
 			"hcs_bms_flavors": bms.DataSourceBmsFlavors(),
 
-			"hcs_cce_cluster":        cce.DataSourceCCEClusterV3(),
-			"hcs_cce_clusters":       cce.DataSourceCCEClusters(),
-			"hcs_cce_addon_template": cce.DataSourceAddonTemplate(),
-			"hcs_cce_node_pool":      cce.DataSourceCCENodePoolV3(),
-			"hcs_cce_node":           cce.DataSourceNode(),
-			"hcs_cce_nodes":          cce.DataSourceNodes(),
+			"hcs_cce_cluster":             cce.DataSourceCCEClusterV3(),
+			"hcs_cce_clusters":            cce.DataSourceCCEClusters(),
+			"hcs_cce_addon_template":      cce.DataSourceAddonTemplate(),
+			"hcs_cce_node_pool":           cce.DataSourceCCENodePoolV3(),
+			"hcs_cce_node":                cce.DataSourceNode(),
+			"hcs_cce_nodes":               cce.DataSourceNodes(),
+			"hcs_cce_cluster_certificate": hcsCce.DataSourceCCEClusterCertificate(),
 
 			"hcs_cfw_firewalls":                 cfw.DataSourceFirewalls(),
 			"hcs_cfw_protection_rule_hit_count": hcsCfw.DataSourceCfwProtectionRuleHitCount(),
@@ -406,6 +411,10 @@ func Provider() *schema.Provider {
 
 			"hcs_smn_topics": smn.DataSourceTopics(),
 
+			"hcs_vdc_group": vdc.DataSourceVdcGroup(),
+			"hcs_vdc_role":  vdc.DataSourceVdcRole(),
+			"hcs_vdc_user":  vdc.DataResourceVdcUser(),
+
 			"hcs_vpc":                    vpc.DataSourceVpcV1(),
 			"hcs_vpc_subnet":             vpc.DataSourceVpcSubnetV1(),
 			"hcs_vpc_subnet_v1":          vpc.DataSourceVpcSubnetV1(),
@@ -463,6 +472,8 @@ func Provider() *schema.Provider {
 			"hcs_dms_kafka_permissions":    dms.ResourceDmsKafkaPermissions(),
 			"hcs_dms_kafka_topic":          dms.ResourceDmsKafkaTopic(),
 			"hcs_dms_kafka_user":           dms.ResourceDmsKafkaUser(),
+
+			"hcs_dms_rocketmq_instance": hcsDms.ResourceDmsRocketMQInstance(),
 
 			"hcs_dns_recordset": dns.ResourceDNSRecordset(),
 			"hcs_dns_zone":      dns.ResourceDNSZone(),
@@ -561,6 +572,11 @@ func Provider() *schema.Provider {
 			"hcs_ucs_cluster": ucs.ResourceCluster(),
 			"hcs_ucs_fleet":   ucs.ResourceFleet(),
 			"hcs_ucs_policy":  ucs.ResourcePolicy(),
+
+			"hcs_vdc_group":            vdc.ResourceVdcUserGroup(),
+			"hcs_vdc_group_membership": vdc.ResourceVdcGroupMembership(),
+			"hcs_vdc_user":             vdc.ResourceVdcUser(),
+			"hcs_vdc_role":             vdc.ResourceVdcRole(),
 
 			"hcs_vpcep_approval": vpcep.ResourceVPCEndpointApproval(),
 			"hcs_vpcep_endpoint": vpcep.ResourceVPCEndpoint(),

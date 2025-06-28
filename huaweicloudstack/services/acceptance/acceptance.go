@@ -189,7 +189,8 @@ var (
 	HCS_IAM_USER2_ID = os.Getenv("HCS_IAM_USER2_ID")
 
 	// OpenGauss
-	DORADO_STORAGE_POOL_ID = os.Getenv("dorado_storage_pool_id")
+	DORADO_STORAGE_POOL_ID     = os.Getenv("dorado_storage_pool_id")
+	OPENGAUSS_KMS_PROJECT_NAME = os.Getenv("kms_project_name")
 )
 
 // TestAccProviders is a static map containing only the main provider instance.
@@ -361,6 +362,24 @@ func TestAccPreCheckMaas(t *testing.T) {
 	if HCS_ACCESS_KEY == "" || HCS_SECRET_KEY == "" || HCS_SRC_ACCESS_KEY == "" || HCS_SRC_SECRET_KEY == "" {
 		t.Skip("HCS_ACCESS_KEY, HCS_SECRET_KEY, HCS_SRC_ACCESS_KEY, and HCS_SRC_SECRET_KEY  must be set for MAAS acceptance tests")
 	}
+}
+
+var roleNames = []string{"tag_adm", "vdc_user", "readonly"}
+var roleDisplayNames = []string{"Tag Admin", "Tenant Guest"}
+
+func GetExistAccVdcRoleName() string {
+	return fmt.Sprintf("%s", roleNames[acctest.RandIntRange(0, 3)])
+}
+
+func GetExistAccVdcRoleDisplayName() string {
+	return fmt.Sprintf("%s", roleDisplayNames[acctest.RandIntRange(0, 2)])
+}
+
+func RandomAccVdcRoleName() string {
+	return fmt.Sprintf("random_role_name_%s", acctest.RandString(5))
+}
+func RandomAccVdcRoleDisplayName() string {
+	return fmt.Sprintf("random_role_display_name_%s", acctest.RandString(5))
 }
 
 func RandomAccResourceName() string {
@@ -865,6 +884,13 @@ func TestAccPreCheckObsClusterGroupId(t *testing.T) {
 // lintignore:AT003
 func TestAccPreCheckOpengaussDoradoPool(t *testing.T) {
 	if DORADO_STORAGE_POOL_ID == "" {
-		t.Skip("dorado_storage_pool_id must be set for OpenGauss acceptance tests.")
+		t.Skip("DORADO_STORAGE_POOL_ID must be set for OpenGauss acceptance tests.")
+	}
+}
+
+// lintignore:AT003
+func TestAccPreCheckOpengaussKmsProjectName(t *testing.T) {
+	if OPENGAUSS_KMS_PROJECT_NAME == "" {
+		t.Skip("OPENGAUSS_KMS_PROJECT_NAME must be set for OpenGauss KMS acceptance tests.")
 	}
 }

@@ -482,6 +482,11 @@ func (c *HcsConfig) EnterpriseProjectClient(region string) (*golangsdk.ServiceCl
 	return c.NewServiceClient("eps", region)
 }
 
+// ********** client for vdc **********
+func (c *HcsConfig) VdcClient(region string) (*golangsdk.ServiceClient, error) {
+	return c.NewServiceClient("vdc", region)
+}
+
 // ********** client for Compute **********
 func (c *HcsConfig) ComputeV1Client(region string) (*golangsdk.ServiceClient, error) {
 	return c.NewServiceClient("ecs", region)
