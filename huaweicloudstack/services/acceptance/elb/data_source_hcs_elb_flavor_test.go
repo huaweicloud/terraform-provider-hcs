@@ -29,10 +29,10 @@ func TestAccDataSourceELbFlavorV3_basic(t *testing.T) {
 					resource.TestCheckResourceAttrSet(dataSourceName, "flavors.0.type"),
 					resource.TestCheckResourceAttrSet(dataSourceName, "flavors.0.shared"),
 					resource.TestCheckResourceAttrSet(dataSourceName, "flavors.0.flavor_sold_out"),
-					resource.TestCheckResourceAttrSet(dataSourceName, "flavors.0.max_connections"),
-					resource.TestCheckResourceAttrSet(dataSourceName, "flavors.0.cps"),
-					resource.TestCheckResourceAttrSet(dataSourceName, "flavors.0.qps"),
-					resource.TestCheckResourceAttrSet(dataSourceName, "flavors.0.bandwidth"),
+					resource.TestCheckResourceAttrSet(dataSourceName, "flavors.0.info.connection"),
+					resource.TestCheckResourceAttrSet(dataSourceName, "flavors.0.info.cps"),
+					resource.TestCheckResourceAttrSet(dataSourceName, "flavors.0.info.qps"),
+					resource.TestCheckResourceAttrSet(dataSourceName, "flavors.0.info.bandwidth"),
 					resource.TestCheckResourceAttrSet(dataSourceName, "ids.#"),
 
 					resource.TestCheckOutput("flavor_id_filter_is_useful", "true"),
@@ -51,7 +51,33 @@ func TestAccDataSourceELbFlavorV3_basic(t *testing.T) {
 
 func testAccElbFlavorsDataSource_basic() string {
 	return fmt.Sprintf(`
-data "hcs_elb_flavors" "test" {}
+data "hcs_elb_flavors" "test" {
+  name = "qos-test"
+  depends_on = [
+    hcs_elb_flavor.flavor_1
+  ]
+}
+
+resource "hcs_elb_flavor" "flavor_1" {
+    name            = "qos-test"
+    type            = "l7"
+  info {
+    flavor_type = "cps"
+    value       = 0
+  }
+  info {
+    flavor_type = "connection"
+    value       = 100
+  }
+  info {
+    flavor_type = "bandwidth"
+    value       = 300
+  }
+  info {
+    flavor_type = "qps"
+    value       = 300
+  }
+}
 
 locals {
   flavor_id = data.hcs_elb_flavors.test.flavors[0].id
@@ -102,26 +128,26 @@ output "shared_filter_is_useful" {
 }
 
 locals {
-  max_connections = data.hcs_elb_flavors.test.flavors[0].max_connections
+  connection = data.hcs_elb_flavors.test.flavors[0].info["connection"]
 }
 data "hcs_elb_flavors" "max_connections_filter" {
-  max_connections = data.hcs_elb_flavors.test.flavors[0].max_connections
+  max_connections = data.hcs_elb_flavors.test.flavors[0].info["connection"]
 }
 output "max_connections_filter_is_useful" {
   value = length(data.hcs_elb_flavors.max_connections_filter.flavors) > 0 && alltrue(
-  [for v in data.hcs_elb_flavors.max_connections_filter.flavors[*].max_connections : v == local.max_connections]
+  [for v in data.hcs_elb_flavors.max_connections_filter.flavors[*].info["connection"] : v == local.connection]
   )
 }
 
 locals {
-  cps = data.hcs_elb_flavors.test.flavors[0].cps
+  cps = data.hcs_elb_flavors.test.flavors[0].info["cps"]
 }
 data "hcs_elb_flavors" "cps_filter" {
-  cps = data.hcs_elb_flavors.test.flavors[0].cps
+  cps = data.hcs_elb_flavors.test.flavors[0].info["cps"]
 }
 output "cps_filter_is_useful" {
   value = length(data.hcs_elb_flavors.cps_filter.flavors) > 0 && alltrue(
-  [for v in data.hcs_elb_flavors.cps_filter.flavors[*].cps : v == local.cps]
+  [for v in data.hcs_elb_flavors.cps_filter.flavors[*].info["cps"] : v == local.cps]
   )
 }
 
@@ -130,7 +156,7 @@ locals {
     for f in data.hcs_elb_flavors.test.flavors : f
     if f.type == "l7"
   ]
-  qps = local.l7_flavors[0].qps
+  qps = local.l7_flavors[0].info["qps"]
 }
 data "hcs_elb_flavors" "qps_filter" {
   qps  = local.qps
@@ -139,20 +165,20 @@ data "hcs_elb_flavors" "qps_filter" {
 output "qps_filter_is_useful" {
   value = local.type == "l7" ? (
     length(data.hcs_elb_flavors.qps_filter.flavors) > 0 && alltrue(
-      [for v in data.hcs_elb_flavors.qps_filter.flavors[*].qps : v == local.qps]
+      [for v in data.hcs_elb_flavors.qps_filter.flavors[*].info["qps"] : v == local.qps]
     )
   ) : null
 }
 
 locals {
-  bandwidth = data.hcs_elb_flavors.test.flavors[0].bandwidth
+  bandwidth = data.hcs_elb_flavors.test.flavors[0].info["bandwidth"]
 }
 data "hcs_elb_flavors" "bandwidth_filter" {
-  bandwidth = data.hcs_elb_flavors.test.flavors[0].bandwidth
+  bandwidth = data.hcs_elb_flavors.test.flavors[0].info["bandwidth"]
 }
 output "bandwidth_filter_is_useful" {
   value = length(data.hcs_elb_flavors.bandwidth_filter.flavors) > 0 && alltrue(
-  [for v in data.hcs_elb_flavors.bandwidth_filter.flavors[*].bandwidth : v == local.bandwidth]
+  [for v in data.hcs_elb_flavors.bandwidth_filter.flavors[*].info["bandwidth"] : v == local.bandwidth]
   )
 }
 `)

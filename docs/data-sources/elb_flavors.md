@@ -51,10 +51,10 @@ The `flavors` block supports:
 
 * `status` - Indicates the binding status of the flavor.
 
-* `max_connections` - Indicates the maximum connections of the flavor.
+* `info` - A map of flavor specifications, which may include:
 
-* `cps` - Indicates the cps of the flavor.
+   + **connection** - Indicates the maximum connections of the flavor.
+   + **cps** - Indicates the cps of the flavor.
+   + **bandwidth** - Indicates the bandwidth size (Mbit/s) of the flavor.
+   + **qps** - Indicates the qps of the L7 flavor.
 
-* `qps` - Indicates the qps of the L7 flavor.
-
-* `bandwidth` - Indicates the bandwidth size(Mbit/s) of the flavor.
