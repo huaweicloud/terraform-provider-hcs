@@ -98,6 +98,11 @@ func Update(client *golangsdk.ServiceClient, opts CreateOpts, id string) (r Upda
 	return
 }
 
+func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
+	_, r.Err = client.Delete(resourceURL(client, id), nil)
+	return
+}
+
 type ActionOpts struct {
 	// enable: Enable an enterprise project.
 	// disable: Disable an enterprise project.
