@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2.4.15 (June 28, 2025)
+
+- Add a resource to manage RocketMQ instances.
+- Add a resource to manage CCE certificates.
+
+* **New Data Sources:**
+  + `hcs_dms_rocketmq_instance`
+
+* **New Resources:**
+  + `hcs_cce_cluster_certificate`
+
 ## 2.4.14 (May 28, 2025)
 
 - ELB supports QoS.
