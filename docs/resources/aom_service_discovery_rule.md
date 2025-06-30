@@ -58,8 +58,9 @@ The following arguments are supported:
 * `name` - (Required, String) Specifies the rule name, which contains `4` to `63` characters. It must start
   with a lowercase letter but cannot end with a hyphen (-). Only digits, lowercase letters, and hyphens are allowed.
 
-* `service_type` - (Required, String) Specifies the service type, which is used only for rule classification and UI display.
-  You can enter any field. For example, enter Java or Python by technology stack, or enter collector or database by function.
+* `service_type` - (Required, String) Specifies the service type, which is used only for rule classification and UI
+  display. You can enter any field. For example, enter Java or Python by technology stack, or enter collector
+  or database by function.
 
 * `discovery_rules` - (Required, List) Specifies the discovery rule. If the array contains multiple conditions, only the
   processes that meet all the conditions will be matched. If the value of `check_type` is **cmdLine**, set the value of
@@ -74,7 +75,7 @@ The following arguments are supported:
   + `check_content` - (Required, List) Specifies the matched value. This is a list of strings.
   
 * `name_rules` - (Required, List) Specifies the naming rules for discovered services and applications.
-  The [object](#name_rules_object) structure is documented below.
+  The [object](#aom_name_rules) structure is documented below.
 
 * `log_file_suffix` - (Required, List) Specifies the log file suffix. This is a list of strings.
   The values can be: **log**, **trace**, and **out**.
@@ -97,7 +98,7 @@ The following arguments are supported:
 
 * `description` - (Optional, String) Specifies the rule description.
 
-<a name="name_rules_object"></a>
+<a name="aom_name_rules"></a>
 The `name_rules` block supports:
 
 * `service_name_rule` - (Required, List) Specifies the service name rule. If there are multiple objects in the array,
