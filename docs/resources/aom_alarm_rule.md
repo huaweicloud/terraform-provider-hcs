@@ -53,7 +53,9 @@ The following arguments are supported:
 * `namespace` - (Required, String, ForceNew) Specifies the alarm namespace.
   Changing this creates a new resource.
 
-* `dimensions` - (Required, List, ForceNew) Specifies the list of metric dimensions. The structure is described below.
+* `dimensions` - (Required, List, ForceNew) Specifies the list of metric dimensions.
+  The [object](#aom_dimensions) structure is documented below.
+
   Changing this creates a new resource.
 
 * `period` - (Required, Int) Specifies the alarm checking period in milliseconds.
@@ -94,7 +96,8 @@ The following arguments are supported:
 * `insufficient_data_actions` - (Optional, List, ForceNew) Specifies the action triggered when the data is not enough.
   This is a list of strings. Changing this creates a new resource.
 
-The `dimensions` block supports:
+<a name="aom_dimension"></a>
+The `aom_dimensions` block supports:
 
 * `name` - (Required, String, ForceNew) Specifies the dimension name. Changing this creates a new resource.
 
