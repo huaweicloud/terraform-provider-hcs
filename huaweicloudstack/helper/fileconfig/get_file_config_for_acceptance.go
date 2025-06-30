@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"sync"
 )
 
@@ -24,7 +25,7 @@ var once sync.Once
 func GetTestConfig() *ConfigForAcceptance {
 	once.Do(func() {
 		// 1. Get the current working directory
-		workingDir, err := os.Getwd()
+		workingDir, err := getProjectRoot()
 		if err != nil {
 			panic(fmt.Errorf("unable to get current working directory"))
 		}
@@ -46,4 +47,21 @@ func GetTestConfig() *ConfigForAcceptance {
 		config = c
 	})
 	return &config
+}
+
+func getProjectRoot() (string, error) {
+	_, filename, _, _ := runtime.Caller(0)
+	dir := filepath.Dir(filename)
+
+	for {
+		if _, err := os.Stat(filepath.Join(dir, "go.mod")); err == nil {
+			return dir, err
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
+	}
+	return "", nil
 }
