@@ -170,7 +170,7 @@ func resourceVdcProjectDelete(_ context.Context, schemaResourceData *schema.Reso
 	}
 	err = sdk.Delete(vdcClient, schemaResourceData.Id(), deleteOpts).ExtractErr()
 	if err != nil {
-		return diag.Errorf("Error deleting Vdc Vdc project: %s", err)
+		return diag.Errorf("Error deleting Vdc project: %s", err)
 	}
 
 	return nil
