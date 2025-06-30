@@ -145,7 +145,7 @@ func testAccCheckVdcProjectExists(n string, project *sdk.QueryProjectDetailV31) 
 	}
 }
 
-func testAccCheckVdcProjectDestroy(resourceName string) resource.TestCheckFunc {
+func testAccCheckVdcProjectDestroy(resourceType string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		hcsConfig := config.GetHcsConfig(acceptance.TestAccProvider.Meta())
 
@@ -155,7 +155,7 @@ func testAccCheckVdcProjectDestroy(resourceName string) resource.TestCheckFunc {
 		}
 
 		for _, rs := range s.RootModule().Resources {
-			if rs.Type != resourceName {
+			if rs.Type != resourceType {
 				continue
 			}
 			if rs.Primary.ID == "" {
