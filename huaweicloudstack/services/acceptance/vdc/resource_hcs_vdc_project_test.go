@@ -13,14 +13,15 @@ import (
 
 func TestAccVdcProjectResourceCreate(t *testing.T) {
 	var project sdk.QueryProjectDetailV31
-	resourceName := "hcs_vdc_project.test"
+	resourceType := "hcs_vdc_project"
+	resourceName := resourceType + ".test"
 
 	rName := acceptance.RandomAccResourceNameWithPrefix(acceptance.HCS_REGION_NAME)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
 		ProviderFactories: acceptance.TestAccProviderFactories,
-		CheckDestroy:      testAccCheckVdcProjectDestroy(resourceName),
+		CheckDestroy:      testAccCheckVdcProjectDestroy(resourceType),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceVdcProjectCreate(rName),
@@ -35,7 +36,8 @@ func TestAccVdcProjectResourceCreate(t *testing.T) {
 
 func TestAccVdcProjectResourceUpdate(t *testing.T) {
 	var project sdk.QueryProjectDetailV31
-	resourceName := "hcs_vdc_project.test"
+	resourceType := "hcs_vdc_project"
+	resourceName := resourceType + ".test"
 
 	rName := acceptance.RandomAccResourceNameWithPrefix(acceptance.HCS_REGION_NAME)
 
@@ -44,7 +46,7 @@ func TestAccVdcProjectResourceUpdate(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
 		ProviderFactories: acceptance.TestAccProviderFactories,
-		CheckDestroy:      testAccCheckVdcProjectDestroy(resourceName),
+		CheckDestroy:      testAccCheckVdcProjectDestroy(resourceType),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceVdcProjectCreate(rName),
@@ -66,12 +68,14 @@ func TestAccVdcProjectResourceUpdate(t *testing.T) {
 
 func TestAccVdcProjectResourceDelete(t *testing.T) {
 	var project sdk.QueryProjectDetailV31
-	resourceName := "hcs_vdc_project.test"
+	resourceType := "hcs_vdc_project"
+	resourceName := resourceType + ".test"
+
 	rName := acceptance.RandomAccResourceNameWithPrefix(acceptance.HCS_REGION_NAME)
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
 		ProviderFactories: acceptance.TestAccProviderFactories,
-		CheckDestroy:      testAccCheckVdcProjectDestroy(resourceName),
+		CheckDestroy:      testAccCheckVdcProjectDestroy(resourceType),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceVdcProjectCreate(rName),
