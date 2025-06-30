@@ -14,8 +14,36 @@ func CreateVdcProjectURL(httpClient *golangsdk.ServiceClient) string {
 	return httpClient.ServiceURL(vdcResourceBasePath, "v3.1/projects")
 }
 
+func checkUrlParamsValidByLoopDecode(pathParams string) bool {
+	decoded := pathParams
+	maxDecodeTimes := 3
+	var i int
+
+	for i = 0; i < maxDecodeTimes; i++ {
+		unescape, err := url.PathUnescape(decoded)
+		if err != nil || unescape == decoded {
+			decoded = unescape
+			break
+		}
+
+		decoded = unescape
+
+		if strings.Contains(decoded, "/") || strings.Contains(decoded, "..") {
+			return false
+		}
+	}
+
+	return true
+}
+
+// IsValidProjectId check project valid and prevent decoded attack
 func IsValidProjectId(projectId string) bool {
-	return !(strings.Contains(projectId, "/") || strings.Contains(projectId, ".."))
+
+	if strings.Contains(projectId, "/") || strings.Contains(projectId, "..") {
+		return false
+	}
+
+	return checkUrlParamsValidByLoopDecode(projectId)
 }
 
 func IsValidVersion(version string) bool {
