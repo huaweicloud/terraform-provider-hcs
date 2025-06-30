@@ -87,7 +87,7 @@ func TestAccVdcProjectResourceDelete(t *testing.T) {
 				Config:  " ",
 				Destroy: true,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckVdcProjectDestroy(resourceName),
+					testAccCheckVdcProjectDestroy(resourceType),
 				),
 			},
 		},
@@ -161,13 +161,9 @@ func testAccCheckVdcProjectDestroy(resourceType string) resource.TestCheckFunc {
 			if rs.Primary.ID == "" {
 				return fmt.Errorf("resource ID is empty")
 			}
-			project, err := sdk.Get(vdcClient, rs.Primary.ID, sdk.GetOpts{}).Extract()
+			_, err := sdk.Get(vdcClient, rs.Primary.ID, sdk.GetOpts{}).Extract()
 			if err == nil {
-				return fmtp.Errorf("Vdc still exists")
-			}
-
-			if project.Id != rs.Primary.ID {
-				return fmtp.Errorf("resource ID does not match: expected=%s, got=%s", rs.Primary.ID, project.Id)
+				return fmtp.Errorf("Vdc project still exists")
 			}
 		}
 
