@@ -72,8 +72,13 @@ func resourceVdcProjectCreate(ctx context.Context, schemaResourceData *schema.Re
 	}
 
 	name := schemaResourceData.Get("name").(string)
-	regionId := strings.Split(name, "_")[0]
+	temps := strings.Split(name, "_")
 
+	if len(temps) < 2 {
+		return fmtp.DiagErrorf("Error the format of the name input parameter is incorrect. It should start with \"${region_id}_\" .  %s", name)
+	}
+
+	regionId := temps[0]
 	createOpts := &sdk.CreateOpts{
 		Project: sdk.CreateProjectV31{
 			Name:                schemaResourceData.Get("name").(string),
