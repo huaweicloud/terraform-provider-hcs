@@ -573,6 +573,7 @@ func Provider() *schema.Provider {
 			"hcs_vdc_group":            vdc.ResourceVdcUserGroup(),
 			"hcs_vdc_group_membership": vdc.ResourceVdcGroupMembership(),
 			"hcs_vdc_user":             vdc.ResourceVdcUser(),
+			"hcs_vdc_project":          vdc.ResourceVdcProject(),
 			"hcs_vdc_role":             vdc.ResourceVdcRole(),
 
 			"hcs_vpcep_approval": vpcep.ResourceVPCEndpointApproval(),

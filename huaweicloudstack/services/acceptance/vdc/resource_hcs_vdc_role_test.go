@@ -16,14 +16,15 @@ var cfg = fileconfig.GetTestConfig()
 
 func TestAccVdcRoleResourceCreate(t *testing.T) {
 	var role RoleSDK.VdcRoleModel
-	resourceName := "hcs_vdc_role.test"
+	resourceType := "hcs_vdc_role"
+	resourceName := resourceType + ".test"
 
 	rName := acceptance.RandomAccResourceName()
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
 		ProviderFactories: acceptance.TestAccProviderFactories,
-		CheckDestroy:      testAccCheckVdcDestroy(resourceName),
+		CheckDestroy:      testAccCheckVdcDestroy(resourceType),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceVdcRoleCreate(rName),
@@ -39,8 +40,8 @@ func TestAccVdcRoleResourceCreate(t *testing.T) {
 
 func TestAccVdcRoleResourceUpdate(t *testing.T) {
 	var role RoleSDK.VdcRoleModel
-	resourceName := "hcs_vdc_role.test"
-
+	resourceType := "hcs_vdc_role"
+	resourceName := resourceType + ".test"
 	rName := acceptance.RandomAccResourceName()
 
 	rNameUpdate := rName + "_update"
@@ -48,7 +49,7 @@ func TestAccVdcRoleResourceUpdate(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
 		ProviderFactories: acceptance.TestAccProviderFactories,
-		CheckDestroy:      testAccCheckVdcDestroy(resourceName),
+		CheckDestroy:      testAccCheckVdcDestroy(resourceType),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceVdcRoleCreate(rName),
@@ -72,12 +73,13 @@ func TestAccVdcRoleResourceUpdate(t *testing.T) {
 
 func TestAccVdcRoleResourceDelete(t *testing.T) {
 	var role RoleSDK.VdcRoleModel
-	resourceName := "hcs_vdc_role.test"
+	resourceType := "hcs_vdc_role"
+	resourceName := resourceType + ".test"
 	rName := acceptance.RandomAccResourceName()
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
 		ProviderFactories: acceptance.TestAccProviderFactories,
-		CheckDestroy:      testAccCheckVdcDestroy(resourceName),
+		CheckDestroy:      testAccCheckVdcDestroy(resourceType),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceVdcRoleCreate(rName),
@@ -89,7 +91,7 @@ func TestAccVdcRoleResourceDelete(t *testing.T) {
 				Config:  " ",
 				Destroy: true,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckVdcDestroy(resourceName),
+					testAccCheckVdcDestroy(resourceType),
 				),
 			},
 		},
@@ -170,7 +172,7 @@ func testAccCheckVdcRoleExists(n string, role *RoleSDK.VdcRoleModel) resource.Te
 		}
 
 		if found.ID != rs.Primary.ID {
-			return fmtp.Errorf("vdc not found")
+			return fmtp.Errorf("vdc role not found")
 		}
 
 		*role = *found
@@ -195,13 +197,9 @@ func testAccCheckVdcDestroy(resourceName string) resource.TestCheckFunc {
 			if rs.Primary.ID == "" {
 				return fmt.Errorf("resource ID is empty")
 			}
-			role, err := RoleSDK.Get(vdcClient, rs.Primary.ID).Extract()
+			_, err := RoleSDK.Get(vdcClient, rs.Primary.ID).Extract()
 			if err == nil {
-				return fmtp.Errorf("Vdc still exists")
-			}
-
-			if role.ID != rs.Primary.ID {
-				return fmtp.Errorf("resource ID does not match: expected=%s, got=%s", rs.Primary.ID, role.ID)
+				return fmtp.Errorf("Vdc role still exists")
 			}
 		}
 

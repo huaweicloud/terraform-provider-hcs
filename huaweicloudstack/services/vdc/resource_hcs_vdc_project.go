@@ -134,9 +134,10 @@ func resourceVdcProjectUpdate(ctx context.Context, schemaResourceData *schema.Re
 	}
 
 	name := schemaResourceData.Get("name").(string)
-	if !strings.HasPrefix(name, region) {
-		return fmtp.DiagErrorf(
-			"%q must be start with \"%q_\": %q", "name", region, name)
+	temps := strings.Split(name, "_")
+
+	if len(temps) < 2 {
+		return fmtp.DiagErrorf("Error the format of the name input parameter is incorrect.  %s", name)
 	}
 
 	if schemaResourceData.HasChanges("name", "description", "display_name") {
@@ -169,7 +170,7 @@ func resourceVdcProjectDelete(_ context.Context, schemaResourceData *schema.Reso
 	}
 	err = sdk.Delete(vdcClient, schemaResourceData.Id(), deleteOpts).ExtractErr()
 	if err != nil {
-		return diag.Errorf("Error deleting Vdc custom policy: %s", err)
+		return diag.Errorf("Error deleting Vdc Vdc project: %s", err)
 	}
 
 	return nil
