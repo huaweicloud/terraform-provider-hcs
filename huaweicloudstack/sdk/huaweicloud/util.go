@@ -100,3 +100,24 @@ func NormalizePathURL(basePath, rawPath string) (string, error) {
 	return u.String(), nil
 
 }
+func CheckUrlParamsValidByLoopDecode(pathParams string) bool {
+	decoded := pathParams
+	maxDecodeTimes := 3
+	var i int
+
+	for i = 0; i < maxDecodeTimes; i++ {
+		unescape, err := url.PathUnescape(decoded)
+		if err != nil || unescape == decoded {
+			decoded = unescape
+			break
+		}
+
+		decoded = unescape
+
+		if strings.Contains(decoded, "/") || strings.Contains(decoded, "..") {
+			return false
+		}
+	}
+
+	return true
+}
