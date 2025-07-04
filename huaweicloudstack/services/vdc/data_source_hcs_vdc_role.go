@@ -170,7 +170,7 @@ func findVdcRoleList(vdcRoleClient *golangsdk.ServiceClient, listOpts RoleSDK.Li
 		vdcRoleResponse, total, err := RoleSDK.List(vdcRoleClient, listOpts).Extract()
 
 		if err != nil {
-			fmtp.DiagErrorf("Unable to query vdc roles: %s", err)
+			fmtp.DiagErrorf("Unable to query VDC roles: %s", err)
 			return []RoleSDK.VdcRoleModel{}, err
 		}
 		for _, item := range vdcRoleResponse {
