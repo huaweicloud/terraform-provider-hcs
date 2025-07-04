@@ -126,7 +126,7 @@ func resourceVdcRoleRead(_ context.Context, schemaResourceData *schema.ResourceD
 		schemaResourceData.Set("catalog", role.Catalog),
 	)
 	if err = mErr.ErrorOrNil(); err != nil {
-		return diag.Errorf("Error setting Vdc custom role fields: %s", err)
+		return diag.Errorf("Error setting VDC custom role fields: %s", err)
 	}
 
 	return nil
@@ -165,7 +165,7 @@ func resourceVdcRoleUpdate(ctx context.Context, schemaResourceData *schema.Resou
 
 		_, err = roleSDK.Update(vdcRoleClient, schemaResourceData.Id(), updateOpts).Extract()
 		if err != nil {
-			return diag.Errorf("Error updating Vdc custom role: %s", err)
+			return diag.Errorf("Error updating VDC custom role: %s", err)
 		}
 	}
 	return resourceVdcRoleRead(ctx, schemaResourceData, meta)
@@ -181,7 +181,7 @@ func resourceVdcRoleDelete(_ context.Context, schemaResourceData *schema.Resourc
 
 	err = roleSDK.Delete(vdcRoleClient, schemaResourceData.Id()).ExtractErr()
 	if err != nil {
-		return diag.Errorf("Error deleting Vdc custom role: %s", err)
+		return diag.Errorf("Error deleting VDC custom role: %s", err)
 	}
 
 	return nil
