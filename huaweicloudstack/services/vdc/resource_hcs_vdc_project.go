@@ -111,7 +111,7 @@ func resourceVdcProjectRead(_ context.Context, schemaResourceData *schema.Resour
 
 	project, err := sdk.Get(vdcClient, schemaResourceData.Id(), getOpts).Extract()
 	if err != nil {
-		return common.CheckDeletedDiag(schemaResourceData, err, "vdc project")
+		return common.CheckDeletedDiag(schemaResourceData, err, "VDC project")
 	}
 
 	mErr := multierror.Append(nil,
@@ -120,7 +120,7 @@ func resourceVdcProjectRead(_ context.Context, schemaResourceData *schema.Resour
 		schemaResourceData.Set("description", project.Description),
 	)
 	if err = mErr.ErrorOrNil(); err != nil {
-		return diag.Errorf("Error setting Vdc project fields: %s", err)
+		return diag.Errorf("Error setting VDC project fields: %s", err)
 	}
 
 	return nil
@@ -140,6 +140,10 @@ func resourceVdcProjectUpdate(ctx context.Context, schemaResourceData *schema.Re
 		return fmtp.DiagErrorf("Error the format of the name input parameter is incorrect.  %s", name)
 	}
 
+	if schemaResourceData.HasChanges("vdc_id") {
+		return fmtp.DiagErrorf("Unsupported attribute values for modification: \"vdc_id\".")
+	}
+
 	if schemaResourceData.HasChanges("name", "description", "display_name") {
 		updateOpts := &sdk.UpdateOpts{
 			Project: sdk.UpdateProject{
@@ -151,7 +155,7 @@ func resourceVdcProjectUpdate(ctx context.Context, schemaResourceData *schema.Re
 
 		err = sdk.Update(vdcClient, schemaResourceData.Id(), updateOpts).ExtractErr()
 		if err != nil {
-			return diag.Errorf("Error updating Vdc project: %s", err)
+			return diag.Errorf("Error updating VDC project: %s", err)
 		}
 	}
 
@@ -170,7 +174,7 @@ func resourceVdcProjectDelete(_ context.Context, schemaResourceData *schema.Reso
 	}
 	err = sdk.Delete(vdcClient, schemaResourceData.Id(), deleteOpts).ExtractErr()
 	if err != nil {
-		return diag.Errorf("Error deleting Vdc project: %s", err)
+		return diag.Errorf("Error deleting VDC project: %s", err)
 	}
 
 	return nil

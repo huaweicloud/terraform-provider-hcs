@@ -117,14 +117,16 @@ func resourceVdcRoleRead(_ context.Context, schemaResourceData *schema.ResourceD
 	}
 
 	mErr := multierror.Append(nil,
+		schemaResourceData.Set("id", role.ID),
 		schemaResourceData.Set("name", role.DisplayName),
 		schemaResourceData.Set("description", role.Description),
 		schemaResourceData.Set("type", role.Type),
 		schemaResourceData.Set("policy", string(policy)),
 		schemaResourceData.Set("domain_id", role.DomainId),
+		schemaResourceData.Set("catalog", role.Catalog),
 	)
 	if err = mErr.ErrorOrNil(); err != nil {
-		return diag.Errorf("Error setting Vdc custom policy fields: %s", err)
+		return diag.Errorf("Error setting Vdc custom role fields: %s", err)
 	}
 
 	return nil
@@ -142,10 +144,6 @@ func resourceVdcRoleUpdate(ctx context.Context, schemaResourceData *schema.Resou
 	}
 
 	domainId := configContext.Config.DomainID
-	userInputDomainId := schemaResourceData.Get("domain_id").(string)
-	if userInputDomainId != "" {
-		domainId = userInputDomainId
-	}
 
 	policy := roleSDK.PolicyBase{}
 	policyDoc := schemaResourceData.Get("policy").(string)
@@ -167,7 +165,7 @@ func resourceVdcRoleUpdate(ctx context.Context, schemaResourceData *schema.Resou
 
 		_, err = roleSDK.Update(vdcRoleClient, schemaResourceData.Id(), updateOpts).Extract()
 		if err != nil {
-			return diag.Errorf("Error updating Vdc custom policy: %s", err)
+			return diag.Errorf("Error updating Vdc custom role: %s", err)
 		}
 	}
 	return resourceVdcRoleRead(ctx, schemaResourceData, meta)
@@ -183,7 +181,7 @@ func resourceVdcRoleDelete(_ context.Context, schemaResourceData *schema.Resourc
 
 	err = roleSDK.Delete(vdcRoleClient, schemaResourceData.Id()).ExtractErr()
 	if err != nil {
-		return diag.Errorf("Error deleting Vdc custom policy: %s", err)
+		return diag.Errorf("Error deleting Vdc custom role: %s", err)
 	}
 
 	return nil
