@@ -18,10 +18,6 @@ func DataSourceVdcRole() *schema.Resource {
 		ReadContext: dataSourceVdcRoleRead,
 
 		Schema: map[string]*schema.Schema{
-			"domain_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
 			"role_type": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -76,13 +72,6 @@ func dataSourceVdcRoleRead(_ context.Context, schemaResourceData *schema.Resourc
 	}
 
 	domainId := configContext.Config.DomainID // 从全局配置中获取domain_id
-	// 需要处理如下用户传入的参数
-	// domain_id 用户传入domainId
-	userInputDomainId := schemaResourceData.Get("domain_id").(string)
-	existDomainId := userInputDomainId != ""
-	if existDomainId {
-		domainId = userInputDomainId
-	}
 
 	var isSystem string
 	//role_type 用户传入查询类型参数，根据类型过滤, system, custom
@@ -130,7 +119,7 @@ func dataSourceVdcRoleRead(_ context.Context, schemaResourceData *schema.Resourc
 	})
 
 	if err != nil {
-		return fmtp.DiagErrorf("Error retrieving vdc roles %s", err)
+		return fmtp.DiagErrorf("Error retrieving VDC roles %s", err)
 	}
 
 	if len(roles) < 1 {
@@ -152,7 +141,7 @@ func dataSourceVdcRoleRead(_ context.Context, schemaResourceData *schema.Resourc
 func dataSourceVdcRoleAttributes(schemaResourceData *schema.ResourceData, role *RoleSDK.VdcRoleModel) diag.Diagnostics {
 	policy, err := json.Marshal(role.Policy)
 	if err != nil {
-		return diag.Errorf("Error marshaling the policy of vdc role: %s", err)
+		return diag.Errorf("Error marshaling the policy of VDC role: %s", err)
 	}
 
 	mErr := multierror.Append(nil,
@@ -166,7 +155,7 @@ func dataSourceVdcRoleAttributes(schemaResourceData *schema.ResourceData, role *
 	)
 
 	if err = mErr.ErrorOrNil(); err != nil {
-		return diag.Errorf("Error setting vdc role fields: %s", err)
+		return diag.Errorf("Error setting VDC role fields: %s", err)
 	}
 	return nil
 }
