@@ -52,7 +52,7 @@ type ProjectCloudInfraInfo struct {
 	CloudInfraType   string `json:"cloud_infra_type,omitempty" require:"false"`
 	CloudInfraStatus string `json:"cloud_infra_status,omitempty" require:"false"`
 
-	Azs    []ProjectAzInfo `json:"available_zones" require:"false"`
+	Azs    []ProjectAzInfo `json:"azs" require:"false"`
 	Quotas []QuotaInfo     `json:"quotas,omitempty" require:"false"`
 }
 
