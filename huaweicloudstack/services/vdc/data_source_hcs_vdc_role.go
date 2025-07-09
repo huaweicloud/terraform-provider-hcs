@@ -71,7 +71,7 @@ func dataSourceVdcRoleRead(_ context.Context, schemaResourceData *schema.Resourc
 		return fmtp.DiagErrorf("Error creating http client %s", err)
 	}
 
-	domainId := configContext.Config.DomainID // 从全局配置中获取domain_id
+	domainId := configContext.DomainID // 从全局配置中获取domain_id
 
 	var isSystem string
 	//role_type 用户传入查询类型参数，根据类型过滤, system, custom
