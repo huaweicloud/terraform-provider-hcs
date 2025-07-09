@@ -30,10 +30,6 @@ func ResourceVdcRole() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"domain_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
@@ -69,10 +65,6 @@ func resourceVdcRoleCreate(ctx context.Context, schemaResourceData *schema.Resou
 	}
 
 	domainId := configContext.Config.DomainID
-	userInputDomainId := schemaResourceData.Get("domain_id").(string)
-	if userInputDomainId != "" {
-		domainId = userInputDomainId
-	}
 
 	policy := roleSDK.PolicyBase{}
 	policyDoc := schemaResourceData.Get("policy").(string)
@@ -143,7 +135,7 @@ func resourceVdcRoleUpdate(ctx context.Context, schemaResourceData *schema.Resou
 		return diag.Errorf(`Unsupported attribute values for modification: "domain_id".`)
 	}
 
-	domainId := configContext.Config.DomainID
+	domainId := configContext.DomainID
 
 	policy := roleSDK.PolicyBase{}
 	policyDoc := schemaResourceData.Get("policy").(string)
