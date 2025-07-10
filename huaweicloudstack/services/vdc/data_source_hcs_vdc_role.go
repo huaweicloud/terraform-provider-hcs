@@ -145,7 +145,6 @@ func dataSourceVdcRoleAttributes(schemaResourceData *schema.ResourceData, role *
 	}
 
 	mErr := multierror.Append(nil,
-		schemaResourceData.Set("domain_id", role.DomainId),
 		schemaResourceData.Set("name", role.Name),
 		schemaResourceData.Set("description", role.Description),
 		schemaResourceData.Set("display_name", role.DisplayName),

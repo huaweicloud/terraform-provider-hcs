@@ -5,14 +5,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/helper/fileconfig"
 	RoleSDK "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/vdc/v3/role"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils/fmtp"
 	"testing"
 )
-
-var cfg = fileconfig.GetTestConfig()
 
 func TestAccVdcRoleResourceCreate(t *testing.T) {
 	var role RoleSDK.VdcRoleModel
@@ -101,7 +98,6 @@ func TestAccVdcRoleResourceDelete(t *testing.T) {
 func testAccResourceVdcRoleCreate(rName string) string {
 	return fmt.Sprintf(`
 		resource "hcs_vdc_role" "test" {
-		  domain_id = "%s"
 		  name = "%s"
 		  type = "XA"
 		  policy = <<EOF
@@ -120,14 +116,12 @@ func testAccResourceVdcRoleCreate(rName string) string {
 		}
 		EOF
 		}`,
-		cfg.NewDomainId,
 		rName)
 }
 
 func testAccResourceVdcRoleUpdate(rName string) string {
 	return fmt.Sprintf(`
 		resource "hcs_vdc_role" "test" {
-		  domain_id = "%s"
 		  name = "%s"
 		  type = "AX"
 		  policy = <<EOF
@@ -146,7 +140,6 @@ func testAccResourceVdcRoleUpdate(rName string) string {
 		}
 		EOF
 		}`,
-		cfg.NewDomainId,
 		rName)
 }
 func testAccCheckVdcRoleExists(n string, role *RoleSDK.VdcRoleModel) resource.TestCheckFunc {
