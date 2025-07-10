@@ -64,7 +64,7 @@ func resourceVdcRoleCreate(ctx context.Context, schemaResourceData *schema.Resou
 		return fmtp.DiagErrorf("Error creating http client %s", err)
 	}
 
-	domainId := configContext.Config.DomainID
+	domainId := configContext.DomainID
 
 	policy := roleSDK.PolicyBase{}
 	policyDoc := schemaResourceData.Get("policy").(string)
