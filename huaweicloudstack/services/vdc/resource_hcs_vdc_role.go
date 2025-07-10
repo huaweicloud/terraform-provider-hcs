@@ -109,13 +109,10 @@ func resourceVdcRoleRead(_ context.Context, schemaResourceData *schema.ResourceD
 	}
 
 	mErr := multierror.Append(nil,
-		schemaResourceData.Set("id", role.ID),
 		schemaResourceData.Set("name", role.DisplayName),
 		schemaResourceData.Set("description", role.Description),
 		schemaResourceData.Set("type", role.Type),
 		schemaResourceData.Set("policy", string(policy)),
-		schemaResourceData.Set("domain_id", role.DomainId),
-		schemaResourceData.Set("catalog", role.Catalog),
 	)
 	if err = mErr.ErrorOrNil(); err != nil {
 		return diag.Errorf("Error setting VDC custom role fields: %s", err)
@@ -129,10 +126,6 @@ func resourceVdcRoleUpdate(ctx context.Context, schemaResourceData *schema.Resou
 	vdcRoleClient, err := configContext.VdcClient(region)
 	if err != nil {
 		return diag.Errorf("Error creating http client: %s", err)
-	}
-
-	if schemaResourceData.HasChange("domain_id") {
-		return diag.Errorf(`Unsupported attribute values for modification: "domain_id".`)
 	}
 
 	domainId := configContext.DomainID
