@@ -1,9 +1,7 @@
 package role
 
 import (
-	"fmt"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
-	"net/url"
 	"strings"
 )
 
@@ -28,11 +26,7 @@ func IsValidRoleId(roleId string) bool {
 }
 
 func getVdcRoleURLByRoleId(httpClient *golangsdk.ServiceClient, roleId string) (string, error) {
-	if IsValidRoleId(roleId) {
-		return httpClient.ServiceURL(vdcResourceBasePath, "OS-ROLE/roles", url.PathEscape(roleId)), nil
-	} else {
-		return "", fmt.Errorf("invalid roleId")
-	}
+	return httpClient.ServiceURL(vdcResourceBasePath, "OS-ROLE/roles", roleId), nil
 }
 
 func DeleteVdcRoleURL(httpClient *golangsdk.ServiceClient, roleId string) (string, error) {
