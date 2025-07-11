@@ -1,9 +1,7 @@
 package project
 
 import (
-	"fmt"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
-	"net/url"
 	"strings"
 )
 
@@ -24,11 +22,7 @@ func IsValidProjectId(projectId string) bool {
 }
 
 func getVdcProjectURLByProjectId(httpClient *golangsdk.ServiceClient, version string, projectId string) (string, error) {
-	if IsValidProjectId(projectId) {
-		return httpClient.ServiceURL(vdcResourceBasePath, version, "projects", url.PathEscape(projectId)), nil
-	} else {
-		return "", fmt.Errorf("invalid project_id or version")
-	}
+	return httpClient.ServiceURL(vdcResourceBasePath, version, "projects", projectId), nil
 }
 
 func DeleteVdcProjectURL(httpClient *golangsdk.ServiceClient, projectId string) (string, error) {
