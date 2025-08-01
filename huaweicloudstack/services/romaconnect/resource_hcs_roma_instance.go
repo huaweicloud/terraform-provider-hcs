@@ -2,9 +2,10 @@ package romaconnect
 
 import (
 	"fmt"
-	"golang.org/x/net/context"
 	"log"
 	"time"
+
+	"golang.org/x/net/context"
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -15,9 +16,26 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/romaconnect/v2/instances"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpc"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
 )
 
+const (
+	PendingStatus      = "PENDING"
+	CreatingStatus     = "CREATING"
+	RunningStatus      = "RUNNING"
+	CreateFailedStatus = "CREATE_FAILED"
+	ErrorStatus        = "ERROR"
+	DeletedStatus      = "DELETED"
+)
+
+// ROMA Connect POST /v2/{project_id}/instances
+// ROMA Connect GET /v2/{project_id}/{instance_id}
+// ROMA Connect GET /v2/{project_id}/instances/{instance_id}/process
+// ROMA Connect DELETE /v2/{project_id}/roma/instances/{instance_id}
+// ROMA Connect GET /v2/{project_id}/instances?{query}
+// VPC GET /v1/{project_id}/vpcs/{vpc_id}
+// VPC GET /v1/{project_id}/subnets/{subnet_id}
 func ResourceRomaConnectInstance() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceInstanceCreate,
@@ -28,7 +46,7 @@ func ResourceRomaConnectInstance() *schema.Resource {
 		},
 
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(30 * time.Minute),
+			Create: schema.DefaultTimeout(60 * time.Minute),
 			Delete: schema.DefaultTimeout(30 * time.Minute),
 		},
 
@@ -46,7 +64,7 @@ func ResourceRomaConnectInstance() *schema.Resource {
 			},
 			"description": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 				ForceNew: true,
 			},
 			"product_id": {
@@ -352,6 +370,19 @@ func resourceInstanceCreate(ctx context.Context, d *schema.ResourceData, meta in
 		return diag.Errorf("[Create]Error creating ROMA Connect v2 client: %s", err)
 	}
 
+	// check network
+	vpcId := d.Get("vpc_id").(string)
+	_, err = vpc.GetVpcById(conf, region, vpcId)
+	if err != nil {
+		return diag.Errorf("unable to find the vpc (%s) on the server: %s", vpcId, err)
+	}
+
+	subnetId := d.Get("subnet_id").(string)
+	_, err = vpc.GetVpcSubnetById(conf, region, subnetId)
+	if err != nil {
+		return diag.Errorf("unable to find the subnet (%s) on the server: %s", subnetId, err)
+	}
+
 	// the available_zones of API is []string
 	var az []string
 	if availableZones, ok := d.GetOk("available_zones"); ok {
@@ -363,10 +394,10 @@ func resourceInstanceCreate(ctx context.Context, d *schema.ResourceData, meta in
 		Description:           d.Get("description").(string),
 		ProductId:             d.Get("product_id").(string),
 		AvailableZones:        az,
-		EnterpriseProjectId:   d.Get("enterprise_project_id").(string),
-		VpcId:                 d.Get("vpc_id").(string),
-		SubnetId:              d.Get("subnet_id").(string),
+		VpcId:                 vpcId,
+		SubnetId:              subnetId,
 		SecurityGroupId:       d.Get("security_group_id").(string),
+		EnterpriseProjectId:   d.Get("enterprise_project_id").(string),
 		Ipv6Enable:            utils.Bool(d.Get("ipv6_enable").(bool)),
 		EnableAll:             utils.Bool(d.Get("enable_all").(bool)),
 		EipId:                 d.Get("eip_id").(string),
@@ -382,13 +413,11 @@ func resourceInstanceCreate(ctx context.Context, d *schema.ResourceData, meta in
 		return diag.Errorf("Error creating ROMA Connect Instance: %s", err)
 	}
 
-	d.SetId(n.ID)
 	log.Printf("[INFO] Waiting for ROMA Connect Instance(%s) to become available", n.ID)
-
 	stateConf := &resource.StateChangeConf{
-		Pending:      []string{"PENDING"},
-		Target:       []string{"RUNNING"},
-		Refresh:      waitForResourceStatus(romaConnectClientV2, n.ID, []string{"RUNNING"}),
+		Pending:      []string{CreatingStatus},
+		Target:       []string{RunningStatus},
+		Refresh:      waitForInstanceRunning(romaConnectClientV2, n.ID, []string{RunningStatus}),
 		Timeout:      d.Timeout(schema.TimeoutCreate),
 		Delay:        15 * time.Second,
 		PollInterval: 30 * time.Second,
@@ -398,7 +427,22 @@ func resourceInstanceCreate(ctx context.Context, d *schema.ResourceData, meta in
 		return diag.Errorf("Error waiting for ROMA Connect Instance(%s) to become available: %s", n.ID, stateErr)
 	}
 
+	d.SetId(n.ID)
+
 	return resourceInstanceRead(ctx, d, meta)
+}
+
+func getRomaInstanceStatus(client *golangsdk.ServiceClient, d *schema.ResourceData) diag.Diagnostics {
+	n, err := instances.GetProcess(client, d.Id()).Extract()
+	if err != nil {
+		return common.CheckDeletedDiag(d, err, "[GET Process] ROMA Connect Instance")
+	}
+
+	// The values are 'CREATING', 'RUNNING' or 'CREATE_FAILED'
+	if n.Instance.Status == RunningStatus {
+		return nil
+	}
+	return diag.Errorf("The ROMA instance is not running: %v", n.Instance)
 }
 
 func resourceInstanceRead(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -409,9 +453,13 @@ func resourceInstanceRead(_ context.Context, d *schema.ResourceData, meta interf
 		return diag.Errorf("[Read]Error creating ROMA Connect client: %s", err)
 	}
 
+	if err := getRomaInstanceStatus(romaConnectClient, d); err != nil {
+		return err
+	}
+
 	n, err := instances.Get(romaConnectClient, d.Id()).Extract()
 	if err != nil {
-		return common.CheckDeletedDiag(d, err, "ROMA Connect Instance")
+		return diag.Errorf("[Read]Error get ROMA instance detail: %s", err)
 	}
 
 	log.Printf("[DEBUG] retrieving ROMA Connect Instance: %#v", n)
@@ -472,9 +520,9 @@ func resourceInstanceDelete(ctx context.Context, d *schema.ResourceData, meta in
 		return diag.Errorf("Error deleting ROMA Connect instance %s: %s", d.Id(), err)
 	}
 	stateConf := &resource.StateChangeConf{
-		Pending:      []string{"PENDING"},
-		Target:       []string{"DELETED"},
-		Refresh:      waitForResourceStatus(romaConnectClientV2, d.Id(), nil),
+		Pending:      []string{PendingStatus},
+		Target:       []string{DeletedStatus},
+		Refresh:      waitForInstanceDeleted(romaConnectClientV2, d.Id()),
 		Timeout:      d.Timeout(schema.TimeoutDelete),
 		Delay:        15 * time.Second,
 		PollInterval: 30 * time.Second,
@@ -542,27 +590,33 @@ func flattenResourceRomaResource(resource instances.Resources) []map[string]inte
 	return resourceData
 }
 
-func waitForResourceStatus(romaConnectClient *golangsdk.ServiceClient, instanceId string,
+func waitForInstanceRunning(client *golangsdk.ServiceClient, instanceId string,
 	targets []string) resource.StateRefreshFunc {
 	return func() (interface{}, string, error) {
-		log.Printf("[DEBUG] Expect the status of ROMA Connect instance to be any one of the status list: %v", targets)
-		resp, err := instances.Get(romaConnectClient, instanceId).Extract()
+		resp, err := instances.GetProcess(client, instanceId).Extract()
+		if err != nil || resp.Instance.ErrorMessage != "" {
+			return nil, CreateFailedStatus, fmt.Errorf("error message: %v", resp.Instance.ErrorMessage)
+		}
+
+		if utils.StrSliceContains(targets, resp.Instance.Status) {
+			return resp, RunningStatus, nil
+		}
+
+		return resp, CreatingStatus, nil
+	}
+}
+
+// waitForInstanceDeleted used to check the length of instances in response
+func waitForInstanceDeleted(romaConnectClient *golangsdk.ServiceClient, instanceId string) resource.StateRefreshFunc {
+	return func() (interface{}, string, error) {
+		resp, err := instances.CheckList(romaConnectClient, instanceId).Extract()
 		if err != nil {
-			if _, ok := err.(golangsdk.ErrDefault404); ok {
-				log.Printf("[DEBUG] The instance (%s) has been deleted", instanceId)
-				return resp, "DELETED", nil
-			}
-			return nil, "ERROR", err
+			return nil, ErrorStatus, err
 		}
 
-		invalidStatuses := []string{"CREATE_FAILED", "ERROR", "FREEZE_FAILED", "DELETE_FAILED"}
-		if utils.IsStrContainsSliceElement(resp.Status, invalidStatuses, true, true) {
-			return resp, "ERROR", fmt.Errorf("unexpected status: %s", resp.Status)
+		if len(resp.Instances) == 0 {
+			return resp, DeletedStatus, nil
 		}
-
-		if utils.StrSliceContains(targets, resp.Status) {
-			return resp, "RUNNING", nil
-		}
-		return resp, "PENDING", nil
+		return resp, PendingStatus, nil
 	}
 }
