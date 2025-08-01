@@ -3,6 +3,7 @@ package huaweicloudstack
 import (
 	"context"
 	"fmt"
+	hcsMrs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/mrs"
 	"log"
 	"strings"
 	"sync"
@@ -396,6 +397,7 @@ func Provider() *schema.Provider {
 
 			"hcs_mrs_versions": mrs.DataSourceMrsVersions(),
 			"hcs_mrs_clusters": mrs.DataSourceMrsClusters(),
+			"hcs_mrs_cluster":  hcsMrs.DataSourceMrsCluster(),
 
 			"hcs_nat_gateway": nat.DataSourcePublicGateway(),
 
@@ -570,11 +572,11 @@ func Provider() *schema.Provider {
 			"hcs_ucs_fleet":   ucs.ResourceFleet(),
 			"hcs_ucs_policy":  ucs.ResourcePolicy(),
 
-			"hcs_vdc_group":            vdc.ResourceVdcUserGroup(),
-			"hcs_vdc_group_membership": vdc.ResourceVdcGroupMembership(),
-			"hcs_vdc_user":             vdc.ResourceVdcUser(),
-			"hcs_vdc_project":          vdc.ResourceVdcProject(),
-			"hcs_vdc_role":             vdc.ResourceVdcRole(),
+			"hcs_vdc_group":                 vdc.ResourceVdcUserGroup(),
+			"hcs_vdc_group_membership":      vdc.ResourceVdcGroupMembership(),
+			"hcs_vdc_user":                  vdc.ResourceVdcUser(),
+			"hcs_vdc_project":               vdc.ResourceVdcProject(),
+			"hcs_vdc_role":                  vdc.ResourceVdcRole(),
 			"hcs_vdc_group_role_assignment": vdc.ResourceVdcGroupRoleAssignment(),
 
 			"hcs_vpcep_approval": vpcep.ResourceVPCEndpointApproval(),
