@@ -1,6 +1,8 @@
 package instances
 
 import (
+	"fmt"
+
 	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 )
 
@@ -67,6 +69,19 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 // Get retrieves the ROMA Connect instances with the provided ID.
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 	_, r.Err = client.Get(resourceURL(client, id), &r.Body, nil)
+	return
+}
+
+// Get status of ROMA Connect instance and components status
+func GetProcess(client *golangsdk.ServiceClient, id string) (r GetProcessResult) {
+	_, r.Err = client.Get(getProcess(client, id), &r.Body, nil)
+	return
+}
+
+// Get status of ROMA Connect instance and components status
+func CheckList(client *golangsdk.ServiceClient, id string) (r CheckListResult) {
+	query := fmt.Sprintf("?id=%s", id)
+	_, r.Err = client.Get(checkList(client, query), &r.Body, nil)
 	return
 }
 
