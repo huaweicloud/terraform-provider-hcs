@@ -1,10 +1,13 @@
 ---
 subcategory: "Cloud Container Engine (CCE)"
+layout: "huaweicloudstack"
+page_title: "HuaweiCloudStack: hcs_cce_addon"
+description: ""
 ---
 
 # hcs_cce_addon
 
-Provides a CCE add-on resource.
+Manages a CCE add-on resource within HuaweiCloudStack.
 
 ## Example Usage
 
@@ -34,9 +37,10 @@ The following arguments are supported:
 * `version` - (Optional, String) Specifies the version of the add-on.
 
 * `values` - (Optional, List) Specifies the add-on template installation parameters.
-  These parameters vary depending on the add-on. The [structure](#cce_addon_values) is documented below.
+  These parameters vary depending on the add-on.
+  The [object](#cce_addon) structure is documented below.
 
-<a name="cce_addon_values"></a>
+<a name="cce_addon"></a>
 The `values` block supports:
 
 * `basic_json` - (Optional, String) Specifies the json string vary depending on the add-on.
@@ -57,7 +61,7 @@ The `values` block supports:
   Only supports non-nested structure and only supports string type elements.
   This is an alternative to `flavor_json`, but it is not recommended.
 
-Arguments which can be passed to the `basic_json`, `custom_json` and `flavor_json` add-on parameters depends on
+-> **NOTE:** Arguments which can be passed to the `basic_json`, `custom_json` and `flavor_json` add-on parameters depends on
 the add-on type and version.
 
 ## Attribute Reference

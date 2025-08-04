@@ -1,5 +1,8 @@
 ---
 subcategory: "Cloud Container Engine (CCE)"
+layout: "huaweicloudstack"
+page_title: "HuaweiCloudStack: hcs_cce_pvc"
+description: ""
 ---
 
 # hcs_cce_pvc
@@ -76,31 +79,38 @@ The following arguments are supported:
 * `cluster_id` - (Required, String, ForceNew) Specifies the cluster ID to which the CCE PVC belongs.
 
 * `namespace` - (Required, String, ForceNew) Specifies the namespace to logically divide your containers into different
-  group. Changing this will create a new PVC resource.
+  group. 
+
+  Changing this will create a new PVC resource.
 
 * `name` - (Required, String, ForceNew) Specifies the unique name of the PVC resource. This parameter can contain a
   maximum of 63 characters, which may consist of lowercase letters, digits and hyphens (-), and must start and end with
-  lowercase letters and digits. Changing this will create a new PVC resource.
+  lowercase letters and digits.
+
+  Changing this will create a new PVC resource.
 
 * `annotations` - (Optional, Map, ForceNew) Specifies the unstructured key value map for external parameters.
+
   Changing this will create a new PVC resource.
 
 * `labels` - (Optional, Map, ForceNew) Specifies the map of string keys and values for labels.
+
   Changing this will create a new PVC resource.
 
 * `storage_class_name` - (Required, String, ForceNew) Specifies the type of the storage bound to the CCE PVC.
   The valid values are as follows:
-    + **csi-disk**: EVS.
-    + **csi-obs**: OBS.
-    + **csi-nas**: SFS.
+  + **csi-disk**: EVS.
+  + **csi-obs**: OBS.
+  + **csi-nas**: SFS.
 
 * `access_modes` - (Required, List, ForceNew) Specifies the desired access modes the volume should have.
   The valid values are as follows:
-    + **ReadWriteOnce**: The volume can be mounted as read-write by a single node.
-    + **ReadOnlyMany**: The volume can be mounted as read-only by many nodes.
-    + **ReadWriteMany**: The volume can be mounted as read-write by many nodes.
+  + **ReadWriteOnce**: The volume can be mounted as read-write by a single node.
+  + **ReadOnlyMany**: The volume can be mounted as read-only by many nodes.
+  + **ReadWriteMany**: The volume can be mounted as read-write by many nodes.
 
 * `storage` - (Required, String, ForceNew) Specifies the minimum amount of storage resources required.
+
   Changing this creates a new PVC resource.
 
 ## Attribute Reference
@@ -112,8 +122,8 @@ In addition to all arguments above, the following attributes are exported:
 * `creation_timestamp` - The server time when PVC was created.
 
 * `status` - The current phase of the PVC.
-    + **Pending**: Not yet bound.
-    + **Bound**: Already bound.
+  + **Pending**: Not yet bound.
+  + **Bound**: Already bound.
 
 ## Timeouts
 

@@ -3,6 +3,7 @@ package huaweicloudstack
 import (
 	"context"
 	"fmt"
+	hcsMrs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/mrs"
 	"log"
 	"strings"
 	"sync"
@@ -35,7 +36,6 @@ import (
 	hcsCsms "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/csms"
 	hcsDcs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dcs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/deprecated"
-	hcsDms "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dms"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dns"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ecs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eip"
@@ -397,6 +397,7 @@ func Provider() *schema.Provider {
 
 			"hcs_mrs_versions": mrs.DataSourceMrsVersions(),
 			"hcs_mrs_clusters": mrs.DataSourceMrsClusters(),
+			"hcs_mrs_cluster":  hcsMrs.DataSourceMrsCluster(),
 
 			"hcs_nat_gateway": nat.DataSourcePublicGateway(),
 
@@ -472,8 +473,6 @@ func Provider() *schema.Provider {
 			"hcs_dms_kafka_permissions":    dms.ResourceDmsKafkaPermissions(),
 			"hcs_dms_kafka_topic":          dms.ResourceDmsKafkaTopic(),
 			"hcs_dms_kafka_user":           dms.ResourceDmsKafkaUser(),
-
-			"hcs_dms_rocketmq_instance": hcsDms.ResourceDmsRocketMQInstance(),
 
 			"hcs_dns_recordset": dns.ResourceDNSRecordset(),
 			"hcs_dns_zone":      dns.ResourceDNSZone(),
@@ -573,10 +572,12 @@ func Provider() *schema.Provider {
 			"hcs_ucs_fleet":   ucs.ResourceFleet(),
 			"hcs_ucs_policy":  ucs.ResourcePolicy(),
 
-			"hcs_vdc_group":            vdc.ResourceVdcUserGroup(),
-			"hcs_vdc_group_membership": vdc.ResourceVdcGroupMembership(),
-			"hcs_vdc_user":             vdc.ResourceVdcUser(),
-			"hcs_vdc_role":             vdc.ResourceVdcRole(),
+			"hcs_vdc_group":                 vdc.ResourceVdcUserGroup(),
+			"hcs_vdc_group_membership":      vdc.ResourceVdcGroupMembership(),
+			"hcs_vdc_user":                  vdc.ResourceVdcUser(),
+			"hcs_vdc_project":               vdc.ResourceVdcProject(),
+			"hcs_vdc_role":                  vdc.ResourceVdcRole(),
+			"hcs_vdc_group_role_assignment": vdc.ResourceVdcGroupRoleAssignment(),
 
 			"hcs_vpcep_approval": vpcep.ResourceVPCEndpointApproval(),
 			"hcs_vpcep_endpoint": vpcep.ResourceVPCEndpoint(),
