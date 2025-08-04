@@ -5,144 +5,115 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
-	RoleSDK "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/vdc/v3/role"
+	sdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/vdc/v3/project"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/acceptance"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils/fmtp"
 	"testing"
 )
 
-func TestAccVdcRoleResourceCreate(t *testing.T) {
-	var role RoleSDK.VdcRoleModel
-	resourceType := "hcs_vdc_role"
+func TestAccVdcProjectResourceCreate(t *testing.T) {
+	var project sdk.QueryProjectDetailV31
+	resourceType := "hcs_vdc_project"
 	resourceName := resourceType + ".test"
 
-	rName := acceptance.RandomAccResourceName()
+	rName := acceptance.RandomAccResourceNameWithPrefix(acceptance.HCS_REGION_NAME)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
 		ProviderFactories: acceptance.TestAccProviderFactories,
-		CheckDestroy:      testAccCheckVdcDestroy(resourceType),
+		CheckDestroy:      testAccCheckVdcProjectDestroy(resourceType),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceVdcRoleCreate(rName),
+				Config: testAccResourceVdcProjectCreate(rName),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckVdcRoleExists(resourceName, &role),
+					testAccCheckVdcProjectExists(resourceName, &project),
 					resource.TestCheckResourceAttr(resourceName, "name", rName),
-					resource.TestCheckResourceAttr(resourceName, "type", "XA"),
 				),
 			},
 		},
 	})
 }
 
-func TestAccVdcRoleResourceUpdate(t *testing.T) {
-	var role RoleSDK.VdcRoleModel
-	resourceType := "hcs_vdc_role"
+func TestAccVdcProjectResourceUpdate(t *testing.T) {
+	var project sdk.QueryProjectDetailV31
+	resourceType := "hcs_vdc_project"
 	resourceName := resourceType + ".test"
-	rName := acceptance.RandomAccResourceName()
 
-	rNameUpdate := rName + "_update"
+	rName := acceptance.RandomAccResourceNameWithPrefix(acceptance.HCS_REGION_NAME)
+
+	rNameUpdate := acceptance.RandomAccResourceNameWithPrefix(acceptance.HCS_REGION_NAME)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
 		ProviderFactories: acceptance.TestAccProviderFactories,
-		CheckDestroy:      testAccCheckVdcDestroy(resourceType),
+		CheckDestroy:      testAccCheckVdcProjectDestroy(resourceType),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceVdcRoleCreate(rName),
+				Config: testAccResourceVdcProjectCreate(rName),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckVdcRoleExists(resourceName, &role),
+					testAccCheckVdcProjectExists(resourceName, &project),
 					resource.TestCheckResourceAttr(resourceName, "name", rName),
-					resource.TestCheckResourceAttr(resourceName, "type", "XA"),
 				),
 			},
 			{
-				Config: testAccResourceVdcRoleUpdate(rNameUpdate),
+				Config: testAccResourceVdcProjectUpdate(rNameUpdate),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckVdcRoleExists(resourceName, &role),
+					testAccCheckVdcProjectExists(resourceName, &project),
 					resource.TestCheckResourceAttr(resourceName, "name", rNameUpdate),
-					resource.TestCheckResourceAttr(resourceName, "type", "AX"),
 				),
 			},
 		},
 	})
 }
 
-func TestAccVdcRoleResourceDelete(t *testing.T) {
-	var role RoleSDK.VdcRoleModel
-	resourceType := "hcs_vdc_role"
+func TestAccVdcProjectResourceDelete(t *testing.T) {
+	var project sdk.QueryProjectDetailV31
+	resourceType := "hcs_vdc_project"
 	resourceName := resourceType + ".test"
-	rName := acceptance.RandomAccResourceName()
+
+	rName := acceptance.RandomAccResourceNameWithPrefix(acceptance.HCS_REGION_NAME)
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
 		ProviderFactories: acceptance.TestAccProviderFactories,
-		CheckDestroy:      testAccCheckVdcDestroy(resourceType),
+		CheckDestroy:      testAccCheckVdcProjectDestroy(resourceType),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceVdcRoleCreate(rName),
+				Config: testAccResourceVdcProjectCreate(rName),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckVdcRoleExists(resourceName, &role),
+					testAccCheckVdcProjectExists(resourceName, &project),
 				),
 			},
 			{
 				Config:  " ",
 				Destroy: true,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckVdcDestroy(resourceType),
+					testAccCheckVdcProjectDestroy(resourceType),
 				),
 			},
 		},
 	})
 }
 
-func testAccResourceVdcRoleCreate(rName string) string {
+func testAccResourceVdcProjectCreate(rName string) string {
 	return fmt.Sprintf(`
-		resource "hcs_vdc_role" "test" {
+		resource "hcs_vdc_project" "test" {
+		  vdc_id = "%s"
 		  name = "%s"
-		  type = "XA"
-		  policy = <<EOF
-		{
-		  "Depends": [],
-		  "Statement": [
-			{
-			  "Action": [
-				"ecs:cloudServers:start",
-				"ecs:cloudServers:list"
-			  ],
-			  "Effect": "Allow"
-			}
-		  ],
-		  "Version": "1.1"
-		}
-		EOF
 		}`,
+		acceptance.HCS_VDC_PROJECT_VDC_ID,
 		rName)
 }
 
-func testAccResourceVdcRoleUpdate(rName string) string {
+func testAccResourceVdcProjectUpdate(rName string) string {
 	return fmt.Sprintf(`
-		resource "hcs_vdc_role" "test" {
+		resource "hcs_vdc_project" "test" {
+		  vdc_id = "%s"
 		  name = "%s"
-		  type = "AX"
-		  policy = <<EOF
-		{
-		  "Depends": [],
-		  "Statement": [
-			{
-			  "Action": [
-				"ecs:cloudServers:start",
-				"ecs:cloudServers:list"
-			  ],
-			  "Effect": "Allow"
-			}
-		  ],
-		  "Version": "1.1"
-		}
-		EOF
 		}`,
+		acceptance.HCS_VDC_PROJECT_VDC_ID,
 		rName)
 }
-func testAccCheckVdcRoleExists(n string, role *RoleSDK.VdcRoleModel) resource.TestCheckFunc {
+func testAccCheckVdcProjectExists(n string, project *sdk.QueryProjectDetailV31) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -159,22 +130,22 @@ func testAccCheckVdcRoleExists(n string, role *RoleSDK.VdcRoleModel) resource.Te
 			return fmtp.Errorf("Error creating hcs vdc client: %s", err)
 		}
 
-		found, err := RoleSDK.Get(vdcClient, rs.Primary.ID).Extract()
+		found, err := sdk.Get(vdcClient, rs.Primary.ID, sdk.GetOpts{}).Extract()
 		if err != nil {
 			return err
 		}
 
-		if found.ID != rs.Primary.ID {
-			return fmtp.Errorf("vdc role not found")
+		if found.Id != rs.Primary.ID {
+			return fmtp.Errorf("vdc not found")
 		}
 
-		*role = *found
+		project = found
 
 		return nil
 	}
 }
 
-func testAccCheckVdcDestroy(resourceName string) resource.TestCheckFunc {
+func testAccCheckVdcProjectDestroy(resourceType string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		hcsConfig := config.GetHcsConfig(acceptance.TestAccProvider.Meta())
 
@@ -184,15 +155,15 @@ func testAccCheckVdcDestroy(resourceName string) resource.TestCheckFunc {
 		}
 
 		for _, rs := range s.RootModule().Resources {
-			if rs.Type != resourceName {
+			if rs.Type != resourceType {
 				continue
 			}
 			if rs.Primary.ID == "" {
 				return fmt.Errorf("resource ID is empty")
 			}
-			_, err := RoleSDK.Get(vdcClient, rs.Primary.ID).Extract()
+			_, err := sdk.Get(vdcClient, rs.Primary.ID, sdk.GetOpts{}).Extract()
 			if err == nil {
-				return fmtp.Errorf("Vdc role still exists")
+				return fmtp.Errorf("Vdc project still exists")
 			}
 		}
 

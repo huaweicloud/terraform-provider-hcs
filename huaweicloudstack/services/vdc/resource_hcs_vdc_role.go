@@ -30,10 +30,6 @@ func ResourceVdcRole() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"domain_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
@@ -68,11 +64,7 @@ func resourceVdcRoleCreate(ctx context.Context, schemaResourceData *schema.Resou
 		return fmtp.DiagErrorf("Error creating http client %s", err)
 	}
 
-	domainId := configContext.Config.DomainID
-	userInputDomainId := schemaResourceData.Get("domain_id").(string)
-	if userInputDomainId != "" {
-		domainId = userInputDomainId
-	}
+	domainId := configContext.DomainID
 
 	policy := roleSDK.PolicyBase{}
 	policyDoc := schemaResourceData.Get("policy").(string)
@@ -121,10 +113,9 @@ func resourceVdcRoleRead(_ context.Context, schemaResourceData *schema.ResourceD
 		schemaResourceData.Set("description", role.Description),
 		schemaResourceData.Set("type", role.Type),
 		schemaResourceData.Set("policy", string(policy)),
-		schemaResourceData.Set("domain_id", role.DomainId),
 	)
 	if err = mErr.ErrorOrNil(); err != nil {
-		return diag.Errorf("Error setting Vdc custom policy fields: %s", err)
+		return diag.Errorf("Error setting VDC custom role fields: %s", err)
 	}
 
 	return nil
@@ -137,15 +128,7 @@ func resourceVdcRoleUpdate(ctx context.Context, schemaResourceData *schema.Resou
 		return diag.Errorf("Error creating http client: %s", err)
 	}
 
-	if schemaResourceData.HasChange("domain_id") {
-		return diag.Errorf(`Unsupported attribute values for modification: "domain_id".`)
-	}
-
-	domainId := configContext.Config.DomainID
-	userInputDomainId := schemaResourceData.Get("domain_id").(string)
-	if userInputDomainId != "" {
-		domainId = userInputDomainId
-	}
+	domainId := configContext.DomainID
 
 	policy := roleSDK.PolicyBase{}
 	policyDoc := schemaResourceData.Get("policy").(string)
@@ -167,7 +150,7 @@ func resourceVdcRoleUpdate(ctx context.Context, schemaResourceData *schema.Resou
 
 		_, err = roleSDK.Update(vdcRoleClient, schemaResourceData.Id(), updateOpts).Extract()
 		if err != nil {
-			return diag.Errorf("Error updating Vdc custom policy: %s", err)
+			return diag.Errorf("Error updating VDC custom role: %s", err)
 		}
 	}
 	return resourceVdcRoleRead(ctx, schemaResourceData, meta)
@@ -183,7 +166,7 @@ func resourceVdcRoleDelete(_ context.Context, schemaResourceData *schema.Resourc
 
 	err = roleSDK.Delete(vdcRoleClient, schemaResourceData.Id()).ExtractErr()
 	if err != nil {
-		return diag.Errorf("Error deleting Vdc custom policy: %s", err)
+		return diag.Errorf("Error deleting VDC custom role: %s", err)
 	}
 
 	return nil

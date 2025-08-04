@@ -20,3 +20,13 @@ func resourceURL(c *golangsdk.ServiceClient, id string) string {
 func deleteURL(c *golangsdk.ServiceClient, id string) string {
 	return c.ServiceURL("roma", rootPath, id)
 }
+
+// GET v2
+func getProcess(c *golangsdk.ServiceClient, id string) string {
+	return c.ServiceURL(rootPath, id, "process")
+}
+
+// GET v2
+func checkList(c *golangsdk.ServiceClient, query string) string {
+	return c.ServiceURL(rootPath, query)
+}

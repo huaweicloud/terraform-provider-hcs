@@ -20,6 +20,14 @@ type GetResult struct {
 	commonResult
 }
 
+type GetProcessResult struct {
+	commonResult
+}
+
+type CheckListResult struct {
+	commonResult
+}
+
 type RomaInstance struct {
 	ID                  string    `json:"instance_id"`
 	Name                string    `json:"name"`
@@ -118,6 +126,25 @@ type Link struct {
 	Enable bool   `json:"enable"`
 }
 
+// GET Instance Process
+type Process struct {
+	Instance Instance `json:"instance"`
+	Process  int      `json:"process"`
+}
+
+type Instance struct {
+	Id           string `json:"instance_id"`
+	Name         string `json:"name"`
+	Status       string `json:"status"`
+	ErrorCode    string `json:"errorCode"`
+	ErrorMessage string `json:"errorMessage"`
+}
+
+// GET Instance list
+type InstanceList struct {
+	Instances []Instance `json:"instances"`
+}
+
 // DeleteResult represents the result of a delete operation. Call its ExtractErr
 // method to determine if the request succeeded or failed.
 type DeleteResult struct {
@@ -126,6 +153,18 @@ type DeleteResult struct {
 
 func (r commonResult) Extract() (*RomaInstance, error) {
 	var s RomaInstance
+	err := r.ExtractInto(&s)
+	return &s, err
+}
+
+func (r GetProcessResult) Extract() (*Process, error) {
+	var s Process
+	err := r.ExtractInto(&s)
+	return &s, err
+}
+
+func (r CheckListResult) Extract() (*InstanceList, error) {
+	var s InstanceList
 	err := r.ExtractInto(&s)
 	return &s, err
 }

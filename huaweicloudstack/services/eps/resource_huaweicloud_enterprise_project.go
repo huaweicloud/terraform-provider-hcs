@@ -17,6 +17,10 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/eps/v1/enterpriseprojects"
 )
 
+// @API EPS POST /v1.0/enterprise-projects
+// @API EPS GET v1.0/enterprise-projects/{enterprise_project_id}
+// @API EPS PUT v1.0/enterprise-projects/{enterprise_project_id}
+// @API EPS DELETE v1.0/enterprise-projects/{enterprise_project_id}
 func ResourceEnterpriseProject() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceEnterpriseProjectCreate,
@@ -140,5 +144,19 @@ func resourceEnterpriseProjectUpdate(ctx context.Context, d *schema.ResourceData
 }
 
 func resourceEnterpriseProjectDelete(_ context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	hcsConfig := config.GetHcsConfig(meta)
+	epsClient, err := hcsConfig.EnterpriseProjectClient(hcsConfig.GetRegion(d))
+
+	if err != nil {
+		return fmtp.DiagErrorf("Unable to create HuaweiCloudStack EPS client : %s", err)
+	}
+
+	err = enterpriseprojects.Delete(epsClient, d.Id()).ExtractErr()
+	if err != nil {
+		return diag.Errorf("error deleting EPS %s: %s", d.Id(), err)
+	}
+
+	d.SetId("")
+
 	return nil
 }

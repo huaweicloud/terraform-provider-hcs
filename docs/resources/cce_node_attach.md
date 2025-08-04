@@ -1,5 +1,8 @@
 ---
 subcategory: "Cloud Container Engine (CCE)"
+layout: "huaweicloudstack"
+page_title: "HuaweiCloudStack: hcs_cce_node_attach"
+description: ""
 ---
 
 # hcs_cce_node_attach
@@ -51,7 +54,7 @@ The following arguments are supported:
   This parameter can be plain or salted and is alternative to `key_pair`.
   Changing this parameter will reset the node.
 
-* `max_pods` - (Optional, Int, ForceNew) Specifies the the maximum number of instances a node is allowed to create.
+* `max_pods` - (Optional, Int, ForceNew) Specifies the maximum number of instances a node is allowed to create.
   Changing this parameter will create a new resource.
 
 * `docker_base_size` - (Optional, Int, ForceNew) Specifies the available disk space of a single docker container on the
@@ -78,42 +81,64 @@ Changing this parameter will create a new resource.
 * `tags` - (Optional, Map) Specifies the tags of a VM node, key/value pair format.
 
 * `taints` - (Optional, List, ForceNew) Specifies the taints configuration of the nodes to set anti-affinity.
-  Changing this parameter will create a new resource. Each taint contains the following parameters:
+  The [object](#cce_taints) structure is documented below.
 
-  + `key` - (Required, String, ForceNew) A key must contain 1 to 63 characters starting with a letter or digit.
-    Only letters, digits, hyphens (-), underscores (_), and periods (.) are allowed. A DNS subdomain name can be used
-    as the prefix of a key. Changing this parameter will create a new resource.
-  + `value` - (Required, String, ForceNew) A value must start with a letter or digit and can contain a maximum of 63
-    characters, including letters, digits, hyphens (-), underscores (_), and periods (.). Changing this parameter will
-    create a new resource.
-  + `effect` - (Required, String, ForceNew) Available options are NoSchedule, PreferNoSchedule, and NoExecute.
-    Changing this parameter will create a new resource.
+  Changing this parameter will create a new resource.
+
+<a name="cce_taints"></a>
+The `taints` block supports:
+
+* `key` - (Required, String, ForceNew) A key must contain 1 to 63 characters starting with a letter or digit.
+  Only letters, digits, hyphens (-), underscores (_), and periods (.) are allowed. A DNS subdomain name can be used
+  as the prefix of a key.
+  
+ Changing this parameter will create a new resource.
+
+* `value` - (Required, String, ForceNew) A value must start with a letter or digit and can contain a maximum of 63
+  characters, including letters, digits, hyphens (-), underscores (_), and periods (.). 
+
+  Changing this parameter will create a new resource.
+
+* `effect` - (Required, String, ForceNew) Available options are NoSchedule, PreferNoSchedule, and NoExecute.
+
+  Changing this parameter will create a new resource.
 
 ## Attribute Reference
 
 In addition to all arguments above, the following attributes are exported:
 
 * `id` - The resource ID in UUID format.
+
 * `status` - Node status information.
+
 * `private_ip` - Private IP of the CCE node.
+
 * `public_ip` - Public IP of the CCE node.
+
 * `flavor_id` - The flavor ID of the CCE node.
+
 * `availability_zone` - The name of the available partition (AZ).
+
 * `runtime` - The runtime of the CCE node.
+
 * `ecs_group_id` - The Ecs group ID.
+
 * `subnet_id` - The ID of the subnet to which the NIC belongs.
 
-* `root_volume` - The configuration of the system disk.
-  + `size` - The disk size in GB.
-  + `volumetype` - The disk type.
-  + `extend_params` - The disk expansion parameters.
-  + `kms_key_id` - The ID of a KMS key. This is used to encrypt the volume.
+* `root_volume` - The configuration of the system disk. The [object](#cce_volume) structure is documented below.
 
-* `data_volumes` - The configurations of the data disk.
-  + `size` - The disk size in GB.
-  + `volumetype` - The disk type.
-  + `extend_params` - The disk expansion parameters.
-  + `kms_key_id` - The ID of a KMS key. This is used to encrypt the volume.
+* `data_volumes` - The configurations of the data disk. The [object](#cce_volume) structure is documented below.
+
+<a name="cce_volume"></a>
+The `root_volume` and `data_volumes` block supports:
+
+* `size` - The disk size in GB.
+
+* `volumetype` - The disk type.
+
+* `extend_params` - The disk expansion parameters.
+
+* `kms_key_id` - The ID of a KMS key. This is used to encrypt the volume.
 
 ## Timeouts
 

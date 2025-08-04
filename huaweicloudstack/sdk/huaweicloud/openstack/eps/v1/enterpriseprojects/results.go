@@ -52,6 +52,10 @@ type UpdateResult struct {
 	commonResult
 }
 
+type DeleteResult struct {
+	golangsdk.ErrResult
+}
+
 type ActionResult struct {
 	commonResult
 }

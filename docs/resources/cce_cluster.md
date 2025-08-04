@@ -1,10 +1,13 @@
 ---
 subcategory: "Cloud Container Engine (CCE)"
+layout: "huaweicloudstack"
+page_title: "HuaweiCloudStack: hcs_cce_cluster"
+description: ""
 ---
 
 # hcs_cce_cluster
 
-Provides a CCE cluster resource.
+Manages a CCE cluster resource within HuaweiCloudStack.
 
 ## Basic Usage
 
@@ -212,7 +215,9 @@ The following arguments are supported:
 
 * `masters` - (Optional, List, ForceNew) Specifies the advanced configuration of master nodes.
   The [object](#cce_cluster_masters) structure is documented below.
-  This parameter and `multi_az` are alternative. Changing this parameter will create a new cluster resource.
+  This parameter and `multi_az` are alternative.
+
+  Changing this parameter will create a new cluster resource.
 
 * `eip` - (Optional, String) Specifies the EIP address of the cluster.
 
@@ -266,14 +271,16 @@ In addition to all arguments above, the following attributes are exported:
 
 * `status` - Cluster status information.
 
-* `certificate_clusters` - The certificate clusters. Structure is documented below.
+* `certificate_clusters` - The certificate clusters. The [object](#cce_attr_certificate_clusters) structure 
+  is documented below.
 
-* `certificate_users` - The certificate users. Structure is documented below.
+* `certificate_users` - The certificate users. The [object](#cce_attr_certificate_users) structure is documented below.
 
 * `eni_subnet_cidr` - The ENI network segment. This value is valid when only one eni_subnet_id is specified.
 
 * `kube_config_raw` - Raw Kubernetes config to be used by kubectl and other compatible tools.
 
+<a name="cce_attr_certificate_clusters"></a>
 The `certificate_clusters` block supports:
 
 * `name` - The cluster name.
@@ -282,6 +289,7 @@ The `certificate_clusters` block supports:
 
 * `certificate_authority_data` - The certificate data.
 
+<a name="cce_attr_certificate_users"></a>
 The `certificate_users` block supports:
 
 * `name` - The user name.

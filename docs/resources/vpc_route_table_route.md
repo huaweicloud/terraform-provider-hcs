@@ -68,17 +68,15 @@ The following arguments are supported:
   subnet in the VPC. Changing this creates a new resource.
 
 * `type` - (Required, String) Specifies the route type. Currently, the value can be:
-  **eni**, **subeni**, **vip**, **nat**, **peering**, **vpn**, **dc**, **cc** and **externalip**.
+  **eni**, **subeni**, **vip**, **peering**, **vpn**, **dc** and **externalip**.
 
 * `nexthop` - (Required, String) Specifies the next hop.
   + If the route type is **eni**, the value is the NIC or extension NIC of an ECS in the VPC.
   + If the route type is **subeni**, the value is the supplementary NIC of a NIC in the VPC.
   + If the route type is **vip**, the value is a VIP port ID.
-  + If the route type is **nat**, the value is a VPN gateway ID.
   + If the route type is **peering**, the value is a peer VPC ID.
   + If the route type is **vpn**, the value is a VPN gateway ID.
   + If the route type is **dc**, the value is a Direct Connect gateway ID.
-  + If the route type is **cc**, the value is a Cloud Connection ID.
   + If the route type is **externalip**, the value is an external IP address.
 
 * `description` - (Optional, String) Specifies the supplementary information about the route.

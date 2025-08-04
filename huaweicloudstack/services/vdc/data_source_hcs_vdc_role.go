@@ -18,10 +18,6 @@ func DataSourceVdcRole() *schema.Resource {
 		ReadContext: dataSourceVdcRoleRead,
 
 		Schema: map[string]*schema.Schema{
-			"domain_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
 			"role_type": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -75,14 +71,7 @@ func dataSourceVdcRoleRead(_ context.Context, schemaResourceData *schema.Resourc
 		return fmtp.DiagErrorf("Error creating http client %s", err)
 	}
 
-	domainId := configContext.Config.DomainID // 从全局配置中获取domain_id
-	// 需要处理如下用户传入的参数
-	// domain_id 用户传入domainId
-	userInputDomainId := schemaResourceData.Get("domain_id").(string)
-	existDomainId := userInputDomainId != ""
-	if existDomainId {
-		domainId = userInputDomainId
-	}
+	domainId := configContext.DomainID // 从全局配置中获取domain_id
 
 	var isSystem string
 	//role_type 用户传入查询类型参数，根据类型过滤, system, custom
@@ -130,7 +119,7 @@ func dataSourceVdcRoleRead(_ context.Context, schemaResourceData *schema.Resourc
 	})
 
 	if err != nil {
-		return fmtp.DiagErrorf("Error retrieving vdc roles %s", err)
+		return fmtp.DiagErrorf("Error retrieving VDC roles %s", err)
 	}
 
 	if len(roles) < 1 {
@@ -152,11 +141,10 @@ func dataSourceVdcRoleRead(_ context.Context, schemaResourceData *schema.Resourc
 func dataSourceVdcRoleAttributes(schemaResourceData *schema.ResourceData, role *RoleSDK.VdcRoleModel) diag.Diagnostics {
 	policy, err := json.Marshal(role.Policy)
 	if err != nil {
-		return diag.Errorf("Error marshaling the policy of vdc role: %s", err)
+		return diag.Errorf("Error marshaling the policy of VDC role: %s", err)
 	}
 
 	mErr := multierror.Append(nil,
-		schemaResourceData.Set("domain_id", role.DomainId),
 		schemaResourceData.Set("name", role.Name),
 		schemaResourceData.Set("description", role.Description),
 		schemaResourceData.Set("display_name", role.DisplayName),
@@ -166,7 +154,7 @@ func dataSourceVdcRoleAttributes(schemaResourceData *schema.ResourceData, role *
 	)
 
 	if err = mErr.ErrorOrNil(); err != nil {
-		return diag.Errorf("Error setting vdc role fields: %s", err)
+		return diag.Errorf("Error setting VDC role fields: %s", err)
 	}
 	return nil
 }
@@ -181,7 +169,7 @@ func findVdcRoleList(vdcRoleClient *golangsdk.ServiceClient, listOpts RoleSDK.Li
 		vdcRoleResponse, total, err := RoleSDK.List(vdcRoleClient, listOpts).Extract()
 
 		if err != nil {
-			fmtp.DiagErrorf("Unable to query vdc roles: %s", err)
+			fmtp.DiagErrorf("Unable to query VDC roles: %s", err)
 			return []RoleSDK.VdcRoleModel{}, err
 		}
 		for _, item := range vdcRoleResponse {

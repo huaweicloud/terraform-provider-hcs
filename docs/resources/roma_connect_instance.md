@@ -9,6 +9,8 @@ description: ""
 
 Manage a ROMA Connect instance resource within HuaweiCloudStack.
 
+> :warning: To use this resource, you need to manually register the ROMA Connect API in your environment.
+
 ## Example Usage
 
 ### Create a Family Bucket instance using kafka engine 
@@ -81,9 +83,11 @@ The following arguments are supported:
   the provider-level region will be used. Changing this will create a new instance.
 
 * `name` - (Required, String, ForceNew) Specifies the name of instance.
+
   Changing this will create a new instance.
 
 * `description` - (Optional, String, ForceNew) Specifies the description of instance.
+
   Changing this will create a new instance.
 
 * `product_id` - (Required, String, ForceNew) Specifies the product id of instance.
@@ -96,19 +100,25 @@ The following arguments are supported:
   Changing this will create a new instance.
 
 * `available_zones` - (Required, List, ForceNew) Specifies the availability zone name.
+
   Changing this will create a new instance.
 
 * `vpc_id` - (Required, String, ForceNew) Specifies the ID of the vpc used to create the instance.
+
   Changing this will create a new instance.
 
 * `subnet_id` - (Required, String, ForceNew) Specifies the ID of the subnet used to create the instance.
+
   Changing this will create a new instance.
 
 * `security_group_id` - (Required, String, ForceNew) Specifies the ID of the security group used to create the instance.
+
   Changing this will create a new instance.
 
 * `ipv6_enable` - (Required, Bool, ForceNew) Specifies whether using IPv6 to create instance. If true, the subnet must
-  supports IPV6. Changing this will create a new instance.
+  supports IPV6.
+
+  Changing this will create a new instance.
 
 * `enable_all` - (Required, Bool, ForceNew) Specifies whether a bucket instance is a family bucket instance.
   - **true**. Create a Family Bucket instance.
@@ -116,14 +126,17 @@ The following arguments are supported:
 
   Changing this will create a new instance.
 
-* `cpu_architecture` - (Required, String, ForceNew) Architecture type, the valid value are as follows.
+* `cpu_architecture` - (Required, String, ForceNew) Specifies the architecture type of instance, the valid value are
+  as follows.
   - **x86**. Create a x86 architecture instance.
   - **arm**. Create a arm architecture instance.
 
   Changing this will create a new instance.
 
 * `mqs` - (Required, Map, ForceNew) Specifies MQS service parameters. The [mqs](#roma_mqs) structure is documented
-  below. Changing this will create a new instance.
+  below.
+
+  Changing this will create a new instance.
 
 * `maintain_begin` - (Optional, String, ForceNew) Maintain start time. Example **22:00:00**. In the future, this
   parameter will be **deprecated** by ROMA Connect Service, it is not recommended to continue using.
@@ -138,6 +151,7 @@ The following arguments are supported:
 -> **NOTE:** Parameters `maintain_begin` and `maintain_end` must be set in pairs.
 
 * `enterprise_project_id` - (Optional, String, ForceNew) Specifies the enterprise project ID.
+
   Changing this will create a new instance.
 
 * `entrance_bandwidth_size` - (Optional, Int, ForceNew) Specifies the ingress bandwidth. This parameter is **Required**
@@ -149,10 +163,14 @@ The following arguments are supported:
 The `mqs` object supports the following:
 
 * `enable_publicip` - (Optional, Bool, ForceNew) Specifies whether public network access is supported.
-  Default to **false**. Changing this will create a new instance.
+  Default to **false**.
+
+  Changing this will create a new instance.
 
 * `ssl_enable` - (Optional, Bool, ForceNew) Specifies whether public network access is supported.
-  Default to **false**. Changing this will create a new instance.
+  Default to **false**.
+
+  Changing this will create a new instance.
 
 * `engine_version` - (Optional, String, ForceNew) Specifies the **Kafka** engine version. This parameter is conflicted
   with `rocketmq_enable`. Valid version are **2.7**, **2.3.0**, **1.1.0**.
@@ -169,8 +187,8 @@ The `mqs` object supports the following:
 
   Changing this will create a new instance.
 
-* `retention_policy` - (Optional, String, ForceNew) Message integration capacity threshold policy. This parameter is
-  valid only when the engine type is **Kafka**.
+* `retention_policy` - (Optional, String, ForceNew) Specifies the message integration capacity threshold policy.
+  This parameter is valid only when the engine type is **Kafka**.
   - **produce_reject**: production is restricted.
   - **time_base**: automatic deletion.
 
@@ -197,64 +215,68 @@ In addition to all arguments above, the following attributes are exported:
 
 * `id` - The ROMA Connect instance ID.
 
-* `site_id` - ID of a site instance. This parameter is valid only in the site scenario.
+* `site_id` - The ID of a site instance. This parameter is valid only in the site scenario.
 
-* `flavor_id` - Specifies the instance flavor ID.
+* `flavor_id` - The instance flavor ID.
 
-* `flavor_type` - Specifies the instance flavor type. The type are **basic**, **professional**, **enterprise**,
-  **platinum**, **platinumXB**.
+* `flavor_type` - The instance flavor type.
+  + **basic**
+  + **professional**
+  + **enterprise** 
+  + **platinum**
+  + **platinumXB**
 
-* `cpu_arch` - CPU architecture type. The options are as follows.
+* `cpu_arch` - The CPU architecture type. The options are as follows.
   - **x86_64**: x86 architecture. 
   - **aarch64**: ARM architecture.
 
-* `publicip_id` - Specifies the EIP ID bound to the instance.
+* `publicip_id` - The EIP ID bound to the instance.
 
-* `publicip_address` - Specifies the EIP bound to the instance.
+* `publicip_address` -The EIP address bound to the instance.
 
-* `publicip_enable` - Indicates whether to enable public network access. When public network access is enabled,
+* `publicip_enable` - Whether to enable public network access. When public network access is enabled,
   **publicip_id** is mandatory.
 
-* `connect_address` - ROMA Connect connection address.
+* `connect_address` - The ROMA Connect connection address.
 
-* `charge_type` - Charging type of a resource specification. postPaid: indicates the pay-per-use charging type.
-  The service is used first and then paid.
+* `charge_type` - The charging type of the resource specification.
+  + **postPaid**
 
-* `bandwidths` - Specifies the egress bandwidth of the public network.
+* `bandwidths` - The egress bandwidth of the public network.
 
-* `ipv6_connect_address` - ROMA Connect connection address in IPv6 scenarios.
+* `ipv6_connect_address` - The ROMA Connect connection address in IPv6 scenarios.
 
-* `external_elb_enable` - Indicates whether to enable the external ELB.
+* `external_elb_enable` - Whether to enable the external ELB.
 
-* `external_elb_id` - IP address ID of the external ELB.
+* `external_elb_id` - The IP address ID of the external ELB.
 
-* `external_elb_address` - IP address of the external ELB.
+* `external_elb_address` - The IP address of the external ELB.
 
-* `external_eip_bound` - Specifies whether the external ELB is bound to a public IP address.
+* `external_eip_bound` - Whether the external ELB is bound to a public IP address.
 
-* `external_eip_id` - Specifies the ID of the public network address bound to the external load balancer.
+* `external_eip_id` - The ID of the public network address bound to the external load balancer.
 
-* `external_eip_address` - Specifies the public IP address bound to the external ELB.
+* `external_eip_address` - The public IP address bound to the external ELB.
 
-* `create_time` - Creation time.
+* `create_time` - The creation time.
 
-* `update_time` - Last update time.
+* `update_time` - The last update time.
 
 * `resources` - The description of resource information. The [resources](#attr_resources) structure is documented below.
 
 * <a name="attr_resources"></a>
 The `resources` object supports the following:
 
-* `mqs` - Specifies MQS service parameters. The [mqs](#attr_mqs) structure is documented below.
+* `mqs` - The MQS service parameters. The [mqs](#attr_mqs) structure is documented below.
 
 <a name="attr_mqs"></a>
 The `mqs` object supports the following:
 
-* `id` - Indicates the instance ID.
+* `id` - The instance ID of ROMA Connect.
 
-* `enable` - Indicates whether to enable the MQS component.
+* `enable` - Whether to enable the MQS component.
 
-* `retention_policy` - Message integration capacity threshold policy.
+* `retention_policy` - The message integration capacity threshold policy.
 
 * `ssl_enable` - Whether to enable SSL.
 
@@ -262,22 +284,22 @@ The `mqs` object supports the following:
 
 * `vpc_client_plain` - Whether to enable plaintext access in a VPC.
 
-* `partition_num` - Number of partitions.
+* `partition_num` - The number of partitions.
 
-* `specification` - Indicates the specification.
+* `specification` - The specification of instance.
 
-* `private_connect_address` - Internal connection address.
+* `private_connect_address` - The internal connection address.
 
-* `public_connect_address` - External connection address.
+* `public_connect_address` - The external connection address.
 
-* `private_restful_address` - Internal restful connection address.
+* `private_restful_address` - The internal restful connection address.
 
-* `public_restful_address` - Internal restful connection address.
+* `public_restful_address` - The external restful connection address.
 
 ## Timeouts
 
 This resource provides the following timeouts configuration options:
 
-* `create` - Default is 30 minutes.
+* `create` - Default is 60 minutes.
 
 * `delete` - Default is 30 minutes.

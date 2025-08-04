@@ -121,9 +121,12 @@ The following arguments are supported:
 * `enterprise_project_id` - (Optional) Default Enterprise Project ID for supported resources. If omitted, the
   `HCS_ENTERPRISE_PROJECT_ID` environment variable is used.
 
-* `endpoints` - (Optional) Configuration block in key/value pairs for customizing service endpoints. The following
-  endpoints support to be customized: autoscaling, ecs, ims, vpc, nat, evs, obs, sfs, cce, rds, dds, iam. An example
-  provider configuration:
+* `domain_name` - (Required) The name of the agency domain for assume role.
+  If omitted, the `HCS_ASSUME_ROLE_DOMAIN_NAME` environment variable is used.
+
+* `endpoints` - (Optional) Configuration block in key/value pairs for customizing service endpoints.
+  The [endpoints](#block--endpoints) block to support custom endpoints is documented below.
+  An example provider configuration:
 
 ```hcl
 provider "hcs" {
@@ -134,9 +137,78 @@ provider "hcs" {
 }
 ```
 
+<a name="block--endpoints"></a>
+The `endpoints` block supports:
 
-* `domain_name` - (Required) The name of the agency domain for assume role.
-  If omitted, the `HCS_ASSUME_ROLE_DOMAIN_NAME` environment variable is used.
+* `aom` - (Optional) Use this to override the default endpoint URL. It's used to customize **AOM** endpoints.
+
+* `autoscaling` - (Optional) Use this to override the default endpoint URL. It's used to customize **AS** endpoints.
+
+* `bms` - (Optional) Use this to override the default endpoint URL. It's used to customize **BMS** endpoints.
+
+* `cce` - (Optional) Use this to override the default endpoint URL. It's used to customize **CCE** endpoints.
+
+* `cfw` - (Optional) Use this to override the default endpoint URL. It's used to customize **CFW** endpoints.
+
+* `csms` - (Optional) Use this to override the default endpoint URL. It's used to customize **CSMS** endpoints.
+
+* `dcs` - (Optional) Use this to override the default endpoint URL. It's used to customize **DCS** endpoints.
+
+* `dms` - (Optional) Use this to override the default endpoint URL. It's used to customize **DMS** endpoints.
+
+* `dns` - (Optional) Use this to override the default endpoint URL. It's used to customize **DNS** endpoints.
+
+* `dws` - (Optional) Use this to override the default endpoint URL. It's used to customize **DWS** endpoints.
+
+* `ecs` - (Optional) Use this to override the default endpoint URL. It's used to customize **ECS** endpoints.
+
+* `elb` - (Optional) Use this to override the default endpoint URL. It's used to customize **ELB** endpoints.
+
+* `eps` - (Optional) Use this to override the default endpoint URL. It's used to customize **EPS** endpoints.
+
+* `evs` - (Optional) Use this to override the default endpoint URL. It's used to customize **EVS** endpoints.
+
+* `hss` - (Optional) Use this to override the default endpoint URL. It's used to customize **HSS** endpoints.
+
+* `iam` - (Optional) Use this to override the default endpoint URL. It's used to customize **IAM** endpoints.
+
+* `ims` - (Optional) Use this to override the default endpoint URL. It's used to customize **IMS** endpoints.
+
+* `kms` - (Optional) Use this to override the default endpoint URL. It's used to customize **DEW** endpoints.
+
+* `lts` - (Optional) Use this to override the default endpoint URL. It's used to customize **LTS** endpoints.
+
+* `mrs` - (Optional) Use this to override the default endpoint URL. It's used to customize **MRS** endpoints.
+
+* `nat` - (Optional) Use this to override the default endpoint URL. It's used to customize **NAT** endpoints.
+
+* `opengauss` - (Optional) Use this to override the default endpoint URL. It's used to customize **OpenGauss**
+  endpoints. It is **Required** when **opengaussv31** is not empty.
+
+* `opengaussv31` - (Optional) Use this to override the default endpoint URL. It's used to customize **OpenGauss**
+  endpoints. It is **Required** when **opengauss** is not empty.
+
+* `roma` - (Optional) Use this to override the default endpoint URL. It's used to customize **ROMA Connect** endpoints.
+
+* `rds` - (Optional) Use this to override the default endpoint URL. It's used to customize **RDS** endpoints.
+
+* `secmaster` - (Optional) Use this to override the default endpoint URL. It's used to customize **SecMaster** endpoints.
+
+* `sfs` - (Optional) Use this to override the default endpoint URL. It's used to customize **SFS** endpoints.
+
+* `sfs-turbo` - (Optional) Use this to override the default endpoint URL. It's used to customize **SFSTurbo** endpoints.
+
+* `smn` - (Optional) Use this to override the default endpoint URL. It's used to customize **SMN** endpoints.
+
+* `swr` - (Optional) Use this to override the default endpoint URL. It's used to customize **SWR** endpoints.
+
+* `ucs` - (Optional) Use this to override the default endpoint URL. It's used to customize **UCS** endpoints.
+
+* `vpc` - (Optional) Use this to override the default endpoint URL. It's used to customize **VPC** endpoints.
+
+* `vpcep` - (Optional) Use this to override the default endpoint URL. It's used to customize **VPCEP** endpoints.
+
+* `waf` - (Optional) Use this to override the default endpoint URL. It's used to customize **WAF** endpoints.
 
 ## Testing and Development
 
