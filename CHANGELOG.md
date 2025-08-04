@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2.4.16 (Aug 4, 2025)
+
+* **New Data Sources:**
+  + `hcs_mrs_cluster`
+
+* **New Resources:**
+  + `hcs_vdc_project`
+  + `hcs_vdc_group_role_assignment`
+
 ## 2.4.15 (June 28, 2025)
 
 - Add a resource to manage RocketMQ instances.
