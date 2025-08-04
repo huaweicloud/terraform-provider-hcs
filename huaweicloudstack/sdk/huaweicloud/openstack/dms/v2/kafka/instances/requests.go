@@ -81,7 +81,7 @@ type CreateOps struct {
 	// Indicates the username for logging in to the Kafka Manager.
 	// The username consists of 4 to 64 characters and can contain
 	//letters, digits, hyphens (-), and underscores (_).
-	KafkaManagerUser string `json:"kafka_manager_user" required:"true"`
+	KafkaManagerUser string `json:"kafka_manager_user"`
 
 	// Indicates the password for logging in to the Kafka Manager.
 	// The password must meet the following complexity requirements:
@@ -91,7 +91,7 @@ type CreateOps struct {
 	// Uppercase letters
 	// Digits
 	// Special characters `~!@#$%^&*()-_=+\|[{}];:',<.>/?
-	KafkaManagerPassword string `json:"kafka_manager_password" required:"true"`
+	KafkaManagerPassword string `json:"kafka_manager_password"`
 
 	// Indicates the time at which a maintenance time window starts.
 	// Format: HH:mm:ss
@@ -112,6 +112,12 @@ type CreateOps struct {
 
 	// Indicates whether to enable SSL-encrypted access.
 	SslEnable bool `json:"ssl_enable,omitempty"`
+
+	// Indicates the protocol to use after SASL is enabled.
+	KafkaSecurityProtocol string `json:"kafka_security_protocol,omitempty"`
+
+	// Indicates the authentication mechanisms to use after SASL is enabled.
+	SaslEnabledMechanisms []string `json:"sasl_enabled_mechanisms,omitempty"`
 
 	// Indicates the action to be taken when the memory usage reaches the disk capacity threshold. Options:
 	// time_base: Automatically delete the earliest messages.
