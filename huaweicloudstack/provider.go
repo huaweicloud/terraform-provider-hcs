@@ -52,10 +52,10 @@ import (
 	hcsSecmaster "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/secmaster"
 	hcsSfsturbo "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/sfsturbo"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/smn"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vdc"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpc"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpcep"
-
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vdc"
+	hcsWaf "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/waf"
 )
 
 // Provider returns a schema.Provider for HuaweiCloudStack.
@@ -583,10 +583,10 @@ func Provider() *schema.Provider {
 			"hcs_vpcep_endpoint": vpcep.ResourceVPCEndpoint(),
 			"hcs_vpcep_service":  vpcep.ResourceVPCEndpointService(),
 
+			"hcs_waf_dedicated_instance":                  hcsWaf.ResourceWafDedicatedInstance(),
 			"hcs_waf_address_group":                       waf.ResourceWafAddressGroup(),
 			"hcs_waf_certificate":                         waf.ResourceWafCertificateV1(),
 			"hcs_waf_dedicated_domain":                    waf.ResourceWafDedicatedDomain(),
-			"hcs_waf_dedicated_instance":                  waf.ResourceWafDedicatedInstance(),
 			"hcs_waf_policy":                              waf.ResourceWafPolicyV1(),
 			"hcs_waf_reference_table":                     waf.ResourceWafReferenceTableV1(),
 			"hcs_waf_rule_blacklist":                      waf.ResourceWafRuleBlackListV1(),
