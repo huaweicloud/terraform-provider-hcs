@@ -3,7 +3,6 @@ package huaweicloudstack
 import (
 	"context"
 	"fmt"
-	hcsMrs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/mrs"
 	"log"
 	"strings"
 	"sync"
@@ -46,6 +45,7 @@ import (
 	hcsHss "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/hss"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ims"
 	hcsLts "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/lts"
+	hcsMrs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/mrs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/nat"
 	hcsObs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/obs"
 	hcsRomaConnect "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/romaconnect"
@@ -529,7 +529,7 @@ func Provider() *schema.Provider {
 			"hcs_lts_structuring_configuration": lts.ResourceStructConfig(),
 			"hcs_lts_transfer":                  lts.ResourceLtsTransfer(),
 
-			"hcs_mrs_cluster": mrs.ResourceMRSClusterV2(),
+			"hcs_mrs_cluster": hcsMrs.ResourceMRSClusterV2(),
 			"hcs_mrs_job":     mrs.ResourceMRSJobV2(),
 
 			"hcs_obs_bucket":            hcsObs.ResourceObsBucket(),
