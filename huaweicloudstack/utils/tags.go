@@ -146,8 +146,16 @@ func ExpandResourceTagsString(tagMap map[string]interface{}) []interface{} {
 
 	tagList := make([]interface{}, 0, len(tagMap))
 	for k, v := range tagMap {
-		str := fmt.Sprintf("%s.%s", k, v)
-		tagList = append(tagList, str)
+		if k == "" && v == "" {
+			return nil
+		} else if k == "" {
+			tagList = append(tagList, v)
+		} else if v == "" {
+			tagList = append(tagList, k)
+		} else {
+			str := fmt.Sprintf("%s.%s", k, v)
+			tagList = append(tagList, str)
+		}
 	}
 
 	return tagList
