@@ -25,10 +25,6 @@ resource "hcs_sfs_file_system" "share-file" {
   access_level = "rw"
   access_to    = var.vpc_id
   description  = var.share_description
-
-  tags = {
-    key = "value"
-  }
 }
 ```
 
@@ -56,9 +52,6 @@ resource "hcs_sfs_file_system" "share-file" {
     "#sfs_crypt_key_id"    = hcs_kms_key.mykey.id
     "#sfs_crypt_domain_id" = hcs_kms_key.mykey.domain_id
     "#sfs_crypt_alias"     = hcs_kms_key.mykey.key_alias
-  }
-  tags     = {
-    function = "encryption"
   }
 }
 ```
