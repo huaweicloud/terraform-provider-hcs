@@ -136,6 +136,9 @@ type CreateOps struct {
 	// Indicates the enterprise project ID.
 	EnterpriseProjectID string `json:"enterprise_project_id,omitempty"`
 
+	// CPU architecture
+	ArchType string `json:"arch_type,omitempty"`
+
 	// Indicates the tags of the instance
 	Tags []tags.ResourceTag `json:"tags,omitempty"`
 

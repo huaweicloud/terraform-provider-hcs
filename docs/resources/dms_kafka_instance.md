@@ -141,6 +141,12 @@ The following arguments are supported:
   complexity requirements: Must be 8 to 32 characters long. Must contain at least 2 of the following character types:
   lowercase letters, uppercase letters, digits, and special characters (`~!@#$%^&*()-_=+\\|[{}]:'",<.>/?).
 
+* `arch_type` - (Optional, String, ForceNew) Specifies the CPU architecture. The valid values are as follows:
+  + **X86**
+  + **ARM**
+
+  -> The default value depends on the HCS environment.
+
 * `security_protocol` - (Optional, String, ForceNew) Specifies the protocol to use after SASL is enabled. Value options:
   + **SASL_SSL**: Data is encrypted with SSL certificates for high-security transmission.
   + **SASL_PLAINTEXT**: Data is transmitted in plaintext with username and password authentication. This protocol only
