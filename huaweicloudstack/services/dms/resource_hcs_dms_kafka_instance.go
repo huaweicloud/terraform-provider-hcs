@@ -124,6 +124,11 @@ func ResourceDmsKafkaInstance() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			"arch_type": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+			},
 			"storage_space": {
 				Type:     schema.TypeInt,
 				Optional: true,
@@ -201,6 +206,8 @@ func ResourceDmsKafkaInstance() *schema.Resource {
 				Computed: true,
 			},
 			"tags": common.TagsSchema(),
+
+			// Attributes
 			"engine": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -487,6 +494,7 @@ func createKafkaInstanceWithFlavor(ctx context.Context, d *schema.ResourceData, 
 		VPCID:               d.Get("vpc_id").(string),
 		SecurityGroupID:     d.Get("security_group_id").(string),
 		SubnetID:            d.Get("network_id").(string),
+		ArchType:            d.Get("arch_type").(string),
 		ProductID:           d.Get("flavor_id").(string),
 		MaintainBegin:       d.Get("maintain_begin").(string),
 		MaintainEnd:         d.Get("maintain_end").(string),
@@ -611,6 +619,7 @@ func createKafkaInstanceWithProductID(ctx context.Context, d *schema.ResourceDat
 		SubnetID:            d.Get("network_id").(string),
 		AvailableZones:      availableZones,
 		ProductID:           d.Get("product_id").(string),
+		ArchType:            d.Get("arch_type").(string),
 		KafkaManagerUser:    d.Get("manager_user").(string),
 		MaintainBegin:       d.Get("maintain_begin").(string),
 		MaintainEnd:         d.Get("maintain_end").(string),
