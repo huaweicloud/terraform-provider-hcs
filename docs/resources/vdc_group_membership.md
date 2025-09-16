@@ -4,7 +4,7 @@ subcategory: "VDC"
 
 # hcs_vdc_group_membership
 
-Manages vdc user group membership within Huawei Cloud Stack.
+Manages VDC user group membership within Huawei Cloud Stack.
 
 ## Example Usage
 
@@ -53,7 +53,7 @@ In addition to all arguments above, the following attributes are exported:
 
 ## Import
 
-vdc user group membership can be imported using the `id`, e.g.
+VDC user group membership can be imported using the `id`, e.g.
 
 ```
 $ terraform import hcs_vdc_group_membership.vdc_group_membership1 3b002f5e4aae407082630a00d2ac0f40
