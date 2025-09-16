@@ -52,7 +52,7 @@ func resourceVdcUserGroupCreate(ctx context.Context, d *schema.ResourceData, met
 	hcsConfig := config.GetHcsConfig(meta)
 	userGroupClient, err := hcsConfig.VdcClient(hcsConfig.GetRegion(d))
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating Huaweicloud vdc user group client %s", err)
+		return fmtp.DiagErrorf("Error creating Huaweicloud VDC user group client %s", err)
 	}
 
 	vdcId := d.Get("vdc_id").(string)
@@ -66,7 +66,7 @@ func resourceVdcUserGroupCreate(ctx context.Context, d *schema.ResourceData, met
 	addUserGroup, err := group.Create(userGroupClient, vdcId, createOpts).ToExtract()
 
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloudStack vdc user group: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack VDC user group: %s", err)
 	}
 
 	d.SetId(addUserGroup.ID)
@@ -79,12 +79,12 @@ func resourceVdcUserGroupRead(_ context.Context, d *schema.ResourceData, meta in
 	userGroupClient, err := hcsConfig.VdcClient(hcsConfig.GetRegion(d))
 
 	if err != nil {
-		return fmtp.DiagErrorf("Unable to create HuaweiCloudStack vdc user group client : %s", err)
+		return fmtp.DiagErrorf("Unable to create HuaweiCloudStack VDC user group client : %s", err)
 	}
 
 	userGroupDetail, err := group.Get(userGroupClient, d.Id()).ToExtract()
 	if err != nil {
-		return common.CheckDeletedDiag(d, err, "Error retrieving HuaweiCloudStack vdc user group")
+		return common.CheckDeletedDiag(d, err, "Error retrieving HuaweiCloudStack VDC user group")
 	}
 
 	mErr := multierror.Append(nil,
@@ -93,7 +93,7 @@ func resourceVdcUserGroupRead(_ context.Context, d *schema.ResourceData, meta in
 	)
 
 	if err := mErr.ErrorOrNil(); err != nil {
-		return fmtp.DiagErrorf("error setting HuaweiCloudStack vdc user group fields: %w", err)
+		return fmtp.DiagErrorf("error setting HuaweiCloudStack VDC user group fields: %w", err)
 	}
 
 	return nil
@@ -107,7 +107,7 @@ func resourceVdcUserGroupUpdate(ctx context.Context, d *schema.ResourceData, met
 	hcsConfig := config.GetHcsConfig(meta)
 	userGroupClient, err := hcsConfig.VdcClient(hcsConfig.GetRegion(d))
 	if err != nil {
-		return fmtp.DiagErrorf("Unable to create HuaweiCloudStack vdc user group client : %s", err)
+		return fmtp.DiagErrorf("Unable to create HuaweiCloudStack VDC user group client : %s", err)
 	}
 
 	if d.HasChanges("description", "name") {
@@ -118,7 +118,7 @@ func resourceVdcUserGroupUpdate(ctx context.Context, d *schema.ResourceData, met
 
 		_, err = group.Update(userGroupClient, updateOpts, d.Id()).ToExtract()
 		if err != nil {
-			return fmtp.DiagErrorf("Error updating HuaweiCloudStack vdc user group: %s", err)
+			return fmtp.DiagErrorf("Error updating HuaweiCloudStack VDC user group: %s", err)
 		}
 	}
 
@@ -130,12 +130,12 @@ func resourceVdcUserGroupDelete(_ context.Context, d *schema.ResourceData, meta 
 	userGroupClient, err := hcsConfig.VdcClient(hcsConfig.GetRegion(d))
 
 	if err != nil {
-		return fmtp.DiagErrorf("Unable to create HuaweiCloudStack vdc user group client : %s", err)
+		return fmtp.DiagErrorf("Unable to create HuaweiCloudStack VDC user group client : %s", err)
 	}
 
 	err = group.Delete(userGroupClient, d.Id()).ExtractErr()
 	if err != nil {
-		return diag.Errorf("error deleting vdc user group %s: %s", d.Id(), err)
+		return diag.Errorf("error deleting VDC user group %s: %s", d.Id(), err)
 	}
 
 	d.SetId("")
@@ -148,12 +148,12 @@ func resourceVdcUserGroupInstanceImportState(_ context.Context, d *schema.Resour
 	region := hcsConfig.GetRegion(d)
 	userGroupClient, err := hcsConfig.VdcClient(region)
 	if err != nil {
-		return nil, fmt.Errorf("error creating vdc user group client: %s", err)
+		return nil, fmt.Errorf("error creating VDC user group client: %s", err)
 	}
 
 	userGroupDetail, err := group.Get(userGroupClient, d.Id()).ToExtract()
 	if err != nil {
-		return nil, common.CheckDeleted(d, err, "vdc user group instance")
+		return nil, common.CheckDeleted(d, err, "VDC user group instance")
 	}
 
 	mErr := multierror.Append(nil,
@@ -163,7 +163,7 @@ func resourceVdcUserGroupInstanceImportState(_ context.Context, d *schema.Resour
 	)
 
 	if err := mErr.ErrorOrNil(); err != nil {
-		return nil, fmtp.Errorf("error setting HuaweiCloudStack vdc user group fields: %s", err)
+		return nil, fmtp.Errorf("error setting HuaweiCloudStack VDC user group fields: %s", err)
 	}
 
 	return []*schema.ResourceData{d}, nil
