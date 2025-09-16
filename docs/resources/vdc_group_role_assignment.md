@@ -4,7 +4,7 @@ subcategory: "VDC"
 
 # hcs_vdc_group_role_assignment
 
-Manages a vdc user group role assignment within Huawei Cloud Stack.
+Manages a VDC user group role assignment within Huawei Cloud Stack.
 
 ## Example Usage
 
@@ -110,7 +110,7 @@ In addition to all arguments above, the following attributes are exported:
 
 ## Import
 
-vdc user group role assignment can be imported using the `id`, e.g.
+VDC user group role assignment can be imported using the `id`, e.g.
 
 ```
 $ terraform import hcs_vdc_group_role_assignment.vdc_group_role_assignment 3b002f5e4aae407082630a00d2ac0f40
