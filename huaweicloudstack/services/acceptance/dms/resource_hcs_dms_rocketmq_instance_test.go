@@ -71,6 +71,20 @@ func TestAccDmsRocketMQInstance_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "engine_version", "5.x"),
 					resource.TestCheckResourceAttr(resourceName, "enable_acl", "true"),
 					resource.TestCheckResourceAttr(resourceName, "enterprise_project_id", "0"),
+					resource.TestCheckResourceAttrSet(resourceName, "vpc_name"),
+					resource.TestCheckResourceAttrSet(resourceName, "subnet_name"),
+					resource.TestCheckResourceAttrSet(resourceName, "security_group_name"),
+					resource.TestCheckResourceAttrSet(resourceName, "user_id"),
+					resource.TestCheckResourceAttrSet(resourceName, "user_name"),
+					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
+					resource.TestCheckResourceAttrSet(resourceName, "enable_log_collection"),
+					resource.TestCheckResourceAttrSet(resourceName, "storage_resource_id"),
+					resource.TestCheckResourceAttrSet(resourceName, "service_type"),
+					resource.TestCheckResourceAttrSet(resourceName, "storage_type"),
+					resource.TestCheckResourceAttrSet(resourceName, "extend_times"),
+					resource.TestCheckResourceAttrSet(resourceName, "support_features"),
+					resource.TestCheckResourceAttrSet(resourceName, "disk_encrypted"),
+					resource.TestCheckResourceAttrSet(resourceName, "ces_version"),
 				),
 			},
 			{
@@ -531,11 +545,6 @@ resource "hcs_dms_rocketmq_instance" "test" {
   storage_spec_code = "dms.physical.storage.high.v2"
   broker_num        = 1
   enable_acl        = true
-
-  tags = {
-    key1 = "value1"
-    key2 = "value2"
-  }
 }`, common.TestBaseNetwork(name), name, epsId)
 }
 
