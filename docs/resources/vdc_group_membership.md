@@ -6,6 +6,10 @@ subcategory: "VDC"
 
 Manages VDC user group membership within Huawei Cloud Stack.
 
+> [!NOTE]
+>
+> Supported from ManageOne version 8.5.1 onwards.
+
 ## Example Usage
 
 ```hcl

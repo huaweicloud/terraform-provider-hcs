@@ -6,6 +6,10 @@ subcategory: "Enterprise Projects (EPS)"
 
 Manages an EPS resource within HuaweiCloudStack.
 
+> [!NOTE]
+>
+> Supported from ManageOne version 8.5.0 onwards.
+
 ## Example Usage
 
 ```hcl

@@ -11,9 +11,11 @@ Manages a VDC user group within Huawei Cloud Stack.
 ```hcl
 variable "vdc_id" {}
 
+variable "group_name" {}
+
 resource "hcs_vdc_group" "group01" {
   vdc_id      = var.vdc_id
-  name        = ""
+  name        = var.group_name
   description = "Description"
 }
 ```
@@ -26,8 +28,7 @@ The following arguments are supported:
   digits, and hyphens (-). Once set, the value cannot be modified.
 
 * `name` - (Required, String) User group name. Enter 1 to 64 characters. Only letters, digits, hyphens (-), and
-  underscores (_) are allowed. The value cannot start with a digit or be `admin`, `power_user`, or `guest`. Once set,
-  the value cannot be modified.
+  underscores (_) are allowed. The value cannot start with a digit or be `admin`, `power_user`, or `guest`.
 
 * `description` - (Optional, String) Description. The value cannot contain the following characters: >< The value can
   contain 0 to 255 characters.
