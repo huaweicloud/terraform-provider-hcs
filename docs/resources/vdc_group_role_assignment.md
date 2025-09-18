@@ -6,6 +6,10 @@ subcategory: "VDC"
 
 Manages a VDC user group role assignment within Huawei Cloud Stack.
 
+> [!NOTE]
+>
+> Supported from ManageOne version 8.5.1 onwards.
+
 ## Example Usage
 
 ```hcl
