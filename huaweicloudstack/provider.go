@@ -439,6 +439,10 @@ func Provider() *schema.Provider {
 			"hcs_waf_dedicated_instances": waf.DataSourceWafDedicatedInstancesV1(),
 			"hcs_waf_policies":            waf.DataSourceWafPoliciesV1(),
 			"hcs_waf_reference_tables":    waf.DataSourceWafReferenceTablesV1(),
+
+			"hcs_direct_connect":    vpc.DataSourceDirectConnect(),
+			"hcs_virtual_gateway":   vpc.DataSourceVirtualGateway(),
+			"hcs_virtual_interface": vpc.DataSourceVirtualInterface(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -648,6 +652,10 @@ func Provider() *schema.Provider {
 			"hcs_vpc_flow_log":             vpc.ResourceVpcFlowLog(),
 			"hcs_network_acl":              ResourceNetworkACL(),
 			"hcs_network_acl_rule":         ResourceNetworkACLRule(),
+
+			"hcs_direct_connect":    vpc.ResourceDirectConnect(),
+			"hcs_virtual_gateway":   vpc.ResourceVirtualGateway(),
+			"hcs_virtual_interface": vpc.ResourceVirtualInterface(),
 
 			// Deprecated
 			"hcs_networking_port":    deprecated.ResourceNetworkingPortV2(),
