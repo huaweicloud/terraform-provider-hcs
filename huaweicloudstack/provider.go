@@ -479,7 +479,8 @@ func Provider() *schema.Provider {
 			"hcs_dms_kafka_topic":          dms.ResourceDmsKafkaTopic(),
 			"hcs_dms_kafka_user":           dms.ResourceDmsKafkaUser(),
 
-			"hcs_dms_rocketmq_instance": hcsDms.ResourceDmsRocketMQInstance(),
+			"hcs_dms_rocketmq_instance":       hcsDms.ResourceDmsRocketMQInstance(),
+			"hcs_dms_rocketmq_consumer_group": hcsDms.ResourceDmsRocketMQConsumerGroup(),
 
 			"hcs_dns_recordset": dns.ResourceDNSRecordset(),
 			"hcs_dns_zone":      dns.ResourceDNSZone(),
