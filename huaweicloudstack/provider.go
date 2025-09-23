@@ -483,6 +483,7 @@ func Provider() *schema.Provider {
 
 			"hcs_dms_rocketmq_instance":       hcsDms.ResourceDmsRocketMQInstance(),
 			"hcs_dms_rocketmq_consumer_group": hcsDms.ResourceDmsRocketMQConsumerGroup(),
+			"hcs_dms_rocketmq_topic":          hcsDms.ResourceDmsRocketMQTopic(),
 
 			"hcs_dns_recordset": dns.ResourceDNSRecordset(),
 			"hcs_dns_zone":      dns.ResourceDNSZone(),
