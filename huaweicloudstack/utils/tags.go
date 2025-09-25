@@ -224,3 +224,35 @@ func BuildSysTags(enterpriseProjectID string) (enterpriseProjectTags []tags.Reso
 	}
 	return
 }
+
+// DeleteEnterpriseProjectIdFromTags deletes the SysTagKeyEnterpriseProjectId from tags.
+// The input parameter can be one of the following types:
+// 1. interface{}: which can be a map[string]interface{} or []map[string]interface{}
+// 2. map[string]interface{}: a map containing tags
+// 3. []map[string]interface{}: a slice of maps containing tags
+func DeleteEnterpriseProjectIdFromTags(tags interface{}) interface{} {
+	switch v := tags.(type) {
+	case map[string]interface{}:
+		delete(v, SysTagKeyEnterpriseProjectId)
+		return v
+	case []map[string]interface{}:
+		for _, tagMap := range v {
+			delete(tagMap, SysTagKeyEnterpriseProjectId)
+		}
+		return v
+	default:
+		// If tags is an interface{} that contains a map or slice of maps
+		if tagMap, ok := v.(map[string]interface{}); ok {
+			delete(tagMap, SysTagKeyEnterpriseProjectId)
+			return tagMap
+		}
+		if tagSlice, ok := v.([]map[string]interface{}); ok {
+			for _, tagMap := range tagSlice {
+				delete(tagMap, SysTagKeyEnterpriseProjectId)
+			}
+			return tagSlice
+		}
+		// Return the original value if type is not supported
+		return tags
+	}
+}
