@@ -396,7 +396,8 @@ func Provider() *schema.Provider {
 
 			"hcs_ims_images": ims.DataSourceImagesImages(),
 
-			"hcs_lts_groups": hcsLts.DataSourceLogGroups(),
+			"hcs_lts_groups":  hcsLts.DataSourceLogGroups(),
+			"hcs_lts_streams": hcsLts.DataSourceLogStreams(),
 
 			"hcs_mrs_versions": mrs.DataSourceMrsVersions(),
 			"hcs_mrs_clusters": mrs.DataSourceMrsClusters(),
