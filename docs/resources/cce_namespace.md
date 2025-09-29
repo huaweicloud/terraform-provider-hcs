@@ -2,7 +2,8 @@
 subcategory: "Cloud Container Engine (CCE)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_cce_namespace"
-description: ""
+description: |-
+  Manages a CCE namespace resource within HuaweiCloudStack
 ---
 
 # hcs_cce_namespace

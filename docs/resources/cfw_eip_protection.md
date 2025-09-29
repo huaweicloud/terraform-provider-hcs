@@ -1,5 +1,9 @@
 ---
 subcategory: "Cloud Firewall (CFW)"
+layout: "huaweicloudstack"
+page_title: "HuaweiCloudStack: hcs_cfw_eip_protection"
+description: |-
+  Manages the protected EIPs under the protect object for CFW service within HuaweiCloudStack
 ---
 
 # hcs_cfw_eip_protection
@@ -39,13 +43,16 @@ resource "hcs_cfw_eip_protection" "test" {
 The following arguments are supported:
 
 * `region` - (Optional, String, ForceNew) Specifies the region in which to create the resource.
-  If omitted, the provider-level region will be used. Changing this parameter will create a new resource.
+  If omitted, the provider-level region will be used.
+
+  Changing this parameter will create a new resource.
 
 * `object_id` - (Required, String, ForceNew) The protected object ID.
   Changing this parameter will create a new resource.
 
 * `protected_eip` - (Required, List) The protected EIP configurations.
-  The [object](#cfw_protected_eip) structure is documented below.
+
+  The [protected_eip](#cfw_protected_eip) structure is documented below.
 
 <a name="cfw_protected_eip"></a>
 The `protected_eip` block supports:
@@ -69,7 +76,9 @@ In addition to all arguments above, the following attributes are exported:
 This resource provides the following timeouts configuration options:
 
 * `create` - Default is 5 minutes.
+
 * `update` - Default is 5 minutes.
+
 * `delete` - Default is 5 minutes.
 
 ## Import

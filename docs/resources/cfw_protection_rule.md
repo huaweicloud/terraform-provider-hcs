@@ -2,7 +2,8 @@
 subcategory: "Cloud Firewall (CFW)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_cfw_protection_rule"
-description: ""
+description: |-
+  Manages a CFW protection rule resource within HuaweiCloudStack
 ---
 
 # hcs_cfw_protection_rule
@@ -156,7 +157,9 @@ resource "hcs_cfw_protection_rule" "test" {
 The following arguments are supported:
 
 * `region` - (Optional, String, ForceNew) Specifies the region in which to create the resource.
-  If omitted, the provider-level region will be used. Changing this parameter will create a new resource.
+  If omitted, the provider-level region will be used.
+  
+  Changing this parameter will create a new resource.
 
 * `name` - (Required, String) The rule name.
 
@@ -164,33 +167,42 @@ The following arguments are supported:
 
   Changing this parameter will create a new resource.
 
-* `type` - (Required, Int) The rule type.
-  The value can be **0** (Internet rule), **1** (VPC rule), or **2** (NAT rule).
+* `type` - (Required, Int) The rule type. The valid values are as follows:
+  + **0**: Internet rule
+  + **1**: VPC rule
+  + **2**: NAT rule
 
-* `action_type` - (Required, Int) The action type.
-  The value can be **0** (allow) **1** (deny).
+* `action_type` - (Required, Int) The action type. The valid values are as follows:
+  + **0**: allow
+  + **1**: deny
 
-* `address_type` - (Required, Int) The address type.
-  The value can be **0** (IPv4), **1** (IPv6), or **2** (domain).
+* `address_type` - (Required, Int) The address type. The valid values are as follows:
+  + **0**: IPv4
+  + **1**: IPv6
+  + **2**: domain
 
 * `sequence` - (Required, List) The sequence configuration.
-  The [Order Rule](#ProtectionRule_OrderRuleAcl) structure is documented below.
+
+  The [sequence](#rule_sequence) object structure is documented below.
 
 * `service` - (Required, List) The service configuration.
-  The [Rule Service](#ProtectionRule_RuleService) structure is documented below.
+
+  The [service](#rule_service) object structure is documented below.
 
 * `source` - (Required, List) The source configuration.
-  The [Rule Source Address](#ProtectionRule_RuleSourceAddress) structure is documented below.
+
+  The [source](#rule_source) object structure is documented below.
 
 * `destination` - (Required, List) The destination configuration.
-  The [Rule Destination Address](#ProtectionRule_RuleDestinationAddress) structure is documented below.
 
-* `status` - (Required, Int) The rule status. The options are as follows:
+  The [destination](#rule_destination) object structure is documented below.
+
+* `status` - (Required, Int) The rule status. The valid values are as follows:
   + **0**: disabled;
   + **1**: enabled;
 
 * `long_connect_enable` - (Required, Int) Whether to support persistent connections.
-  The options are as follows:
+  The valid values are as follows:
   + **0**: supported;
   + **1**: not supported;
 
@@ -202,7 +214,7 @@ The following arguments are supported:
 
 * `description` - (Optional, String) The description.
 
-* `direction` - (Optional, Int) The direction. The options are as follows:
+* `direction` - (Optional, Int) The direction. The valid values are as follows:
   + **0**: inbound;
   + **1**: outbound;
 
@@ -212,28 +224,26 @@ The following arguments are supported:
 * `tags` - (Optional, Map) Specifies the key/value pairs to associate with the protection rule.
   Tags should have only one key/value pair.
 
-<a name="ProtectionRule_OrderRuleAcl"></a>
+<a name="rule_sequence"></a>
 The `sequence` block supports:
 
 * `dest_rule_id` - (Optional, String) The ID of the rule that the added rule will follow.
   This parameter cannot be left blank if the rule is not pinned on top, and is empty when the added rule is pinned on top.
 
-* `top` - (Optional, Int) Whether to pin on top.
-  The options are as follows:
+* `top` - (Optional, Int) Whether to pin on top. The valid values are as follows:
   + **0**: no;
   + **1**: yes;
 
-<a name="ProtectionRule_RuleService"></a>
+<a name="rule_service"></a>
 The `service` block supports:
 
-* `type` - (Required, Int) The service input type.
-  The options are as follows:
+* `type` - (Required, Int) The service input type. The valid values are as follows:
   + **0**: manual input;
   + **1**: automatic input;
 
 * `dest_port` - (Optional, String) The destination port.
 
-* `protocol` - (Optional, Int) The protocol type. The options are as follows:
+* `protocol` - (Optional, Int) The protocol type. The valid values are as follows:
   + **6**: TCP;
   + **17**: UDP;
   + **1**: ICMP;
@@ -250,14 +260,15 @@ The `service` block supports:
 * `source_port` - (Optional, String) The source port.
 
 * `custom_service` - (Optional, List) The custom service list.
-  The [custom_service](#ProtectionRule_RuleCustomService) structure is documented below.
+
+  The [custom_service](#rule_custom_service) object structure is documented below.
 
 * `service_group` - (Optional, List) The service group list.
 
-<a name="ProtectionRule_RuleSourceAddress"></a>
+<a name="rule_source"></a>
 The `source` block supports:
 
-* `type` - (Required, Int) The source type. The options are as follows:
+* `type` - (Required, Int) The source type. The valid values are as follows:
   + **0**: manual input;
   + **1**: associated IP address group;
   + **2**: domain name;
@@ -274,7 +285,7 @@ The `source` block supports:
 
 * `address_set_name` - (Optional, String) The IP address group name.
 
-* `address_type` - (Optional, Int) The address type. The options are as follows:
+* `address_type` - (Optional, Int) The address type. The valid values are as follows:
   + **0**: IPv4;
   + **1**: IPv6;
 
@@ -282,16 +293,16 @@ The `source` block supports:
   This parameter cannot be left empty for the domain name type, and is empty for the manual or automatic type.
 
 * `region_list` - (Optional, List) The region list.
-  The [region_list](#ProtectionRule_RuleRegionList) structure is documented below.
+  The [region_list](#rule_region_list) object structure is documented below.
 
 * `ip_address` - (Optional, List) The IP address list.
 
 * `address_group` - (Optional, List) The address group list.
 
-<a name="ProtectionRule_RuleDestinationAddress"></a>
+<a name="rule_destination"></a>
 The `destination` block supports:
 
-* `type` - (Required, Int) The destination type. The options are as follows:
+* `type` - (Required, Int) The destination type. The valid values are as follows:
   + **0**: manual input;
   + **1**: associated IP address group;
   + **2**: domain name;
@@ -308,7 +319,7 @@ The `destination` block supports:
 
 * `address_set_name` - (Optional, String) The IP address group name.
 
-* `address_type` - (Optional, Int) The address type. The options are as follows:
+* `address_type` - (Optional, Int) The address type. The valid values are as follows:
   + **0**: IPv4;
   + **1**: IPv6;
 
@@ -316,7 +327,7 @@ The `destination` block supports:
   This parameter cannot be left empty for the domain name type, and is empty for the manual or automatic type.
 
 * `region_list` - (Optional, List) The region list.
-  The [region_list](#ProtectionRule_RuleRegionList) structure is documented below.
+  The [region_list](#rule_region_list) object structure is documented below.
 
 * `ip_address` - (Optional, List) The IP address list.
 
@@ -326,10 +337,10 @@ The `destination` block supports:
 
 * `address_group` - (Optional, List) The address group list.
 
-<a name="ProtectionRule_RuleCustomService"></a>
+<a name="rule_custom_service"></a>
 The `custom_service` block supports:
 
-* `protocol` - (Required, Int) The protocol type. The options are as follows:
+* `protocol` - (Required, Int) The protocol type. The valid values are as follows:
   + **6**: TCP;
   + **17**: UDP;
   + **1**: ICMP;
@@ -340,12 +351,12 @@ The `custom_service` block supports:
 
 * `dest_port` - (Required, String) The destination port.
 
-<a name="ProtectionRule_RuleRegionList"></a>
+<a name="rule_region_list"></a>
 The `region_list` block supports:
 
 * `region_id` - (Required, String) The region ID.
 
-* `region_type` - (Required, Int) The region type. The options are as follows:
+* `region_type` - (Required, Int) The region type. The valid values are as follows:
   + **0**: country;
   + **1**: province;
   + **2**：continent;

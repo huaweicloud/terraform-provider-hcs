@@ -2,7 +2,8 @@
 subcategory: "Cloud Container Engine (CCE)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_cce_node"
-description: ""
+description: |-
+  Add a node to a CCE cluster
 ---
 
 # hcs_cce_node

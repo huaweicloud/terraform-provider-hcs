@@ -2,12 +2,13 @@
 subcategory: "Cloud Container Engine (CCE)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_cce_node_pool"
-description: ""
+description: |-
+  Manages a CCE node pool resource within HuaweiCloudStack
 ---
 
 # hcs_cce_node_pool
 
-Add a node pool to a container cluster.
+Manages a CCE node pool resource within HuaweiCloudStack.
 
 ## Example Usage
 
@@ -248,6 +249,13 @@ The following arguments are supported:
 
   Changing this parameter will create a new resource.
 
+* `storage` - (Optional, List, ForceNew) Specifies the disk initialization management parameter.
+  If omitted, disks are managed based on the DockerLVMConfigOverride parameter in extendParam.
+  This parameter is supported for clusters of v1.15.11 and later.
+  The [object](#cce_storage) structure is documented below.
+
+  Changing this parameter will create a new resource.
+
 * `runtime` - (Optional, String, ForceNew) Specifies the runtime of the CCE node pool. Valid values are as follows:
   - **docker**. If the cluster version is below v1.25, `runtime` is default to **docker**.
   - **containerd**. For clusters v1.25 and later, the default container runtime varies with the operating system.
@@ -287,13 +295,6 @@ The `data_volumes` block supports:
   Changing this parameter will create a new resource.
 
   -> You need to create an agency (EVSAccessKMS) when disk encryption is used in the current project for the first time ever.
-
-* `storage` - (Optional, List, ForceNew) Specifies the disk initialization management parameter.
-  If omitted, disks are managed based on the DockerLVMConfigOverride parameter in extendParam.
-  This parameter is supported for clusters of v1.15.11 and later.
-  The [object](#cce_storage) structure is documented below. 
-  
-  Changing this parameter will create a new resource.
 
 <a name="cce_storage"></a>
 The `storage` block supports:

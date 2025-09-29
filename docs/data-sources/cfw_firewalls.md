@@ -1,5 +1,9 @@
 ---
 subcategory: "Cloud Firewall (CFW)"
+layout: "huaweicloudstack"
+page_title: "HuaweiCloudStack: hcs_cfw_firewalls"
+description: |-
+  Use this data source to get the list of CFW firewalls
 ---
 
 # hcs_cfw_firewalls
@@ -35,7 +39,8 @@ In addition to all arguments above, the following attributes are exported:
 * `id` - The resource ID.
 
 * `records` - The firewall instance records.
-  The [records object](#firewalls_records) structure is documented below.
+
+  The [records](#firewalls_records) object structure is documented below.
 
 <a name="firewalls_records"></a>
 The `records` block supports:
@@ -59,29 +64,31 @@ The `records` block supports:
 * `support_ipv6` - Whether IPv6 is supported.
 
 * `status` - The firewall status. The options are as follows:
-    + **-1**: waiting for payment;
-    + **0**: creating;
-    + **1**: deleting;
-    + **2**: running;
-    + **3**: upgrading;
-    + **4**: deletion completed;
-    + **5**: freezing;
-    + **6**: creation failed;
-    + **7**: deletion failed;
-    + **8**: freezing failed;
-    + **9**: storage in progress;
-    + **10**: storage failed;
-    + **11**: upgrade failed;
+  + **-1**: waiting for payment;
+  + **0**: creating;
+  + **1**: deleting;
+  + **2**: running;
+  + **3**: upgrading;
+  + **4**: deletion completed;
+  + **5**: freezing;
+  + **6**: creation failed;
+  + **7**: deletion failed;
+  + **8**: freezing failed;
+  + **9**: storage in progress;
+  + **10**: storage failed;
+  + **11**: upgrade failed;
 
 * `flavor` - The flavor of the firewall.
-  The [Flavor](#firewalls_flavor) structure is documented below.
+
+  The [flavor](#firewalls_flavor) structure is documented below.
 
 * `protect_objects` - The project list.
-  The [Protect Object](#firewalls_protect_objects) structure is documented below.
+
+  The [protect_objects](#firewalls_protect_objects) structure is documented below.
 
 * `resources` - The firewall instance resources.
-  The [Firewall Instance Resource](#firewalls_resources) structure is
-  documented below.
+
+  The [resources](#firewalls_resources) structure is documented below.
 
 <a name="firewalls_flavor"></a>
 The `flavor` block supports:
@@ -105,8 +112,8 @@ The `protect_objects` block supports:
 * `object_name` - The protected object name.
 
 * `type` - The project type. The options are as follows:
-    + **0**: north-south;
-    + **1**: east-west;
+  + **0**: north-south;
+  + **1**: east-west;
 
 <a name="firewalls_resources"></a>
 The `resources` block supports:
@@ -122,8 +129,8 @@ The `resources` block supports:
 * `resource_spec_code` - Inventory unit code.
 
 * `resource_type` - Resource type. The options are as follows:
-    + **CFW**: hws.resource.type.cfw;
-    + **EIP**: hws.resource.type.cfw.exp.eip;
-    + **Bandwidth**: hws.resource.type.cfw.exp.bandwidth;
-    + **VPC**: hws.resource.type.cfw.exp.vpc;
-    + **Log storage**: hws.resource.type.cfw.exp.logaudit;
+  + **CFW**: hws.resource.type.cfw;
+  + **EIP**: hws.resource.type.cfw.exp.eip;
+  + **Bandwidth**: hws.resource.type.cfw.exp.bandwidth;
+  + **VPC**: hws.resource.type.cfw.exp.vpc;
+  + **Log storage**: hws.resource.type.cfw.exp.logaudit;

@@ -2,7 +2,8 @@
 subcategory: "Cloud Container Engine (CCE)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_cce_cluster"
-description: ""
+description: |-
+  Manages a CCE cluster resource within HuaweiCloudStack
 ---
 
 # hcs_cce_cluster
