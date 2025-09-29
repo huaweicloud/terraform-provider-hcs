@@ -3,7 +3,6 @@ package huaweicloudstack
 import (
 	"context"
 	"fmt"
-	hcsMrs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/mrs"
 	"log"
 	"strings"
 	"sync"
@@ -36,6 +35,7 @@ import (
 	hcsCsms "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/csms"
 	hcsDcs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dcs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/deprecated"
+	hcsDms "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dms"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dns"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ecs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eip"
@@ -46,16 +46,17 @@ import (
 	hcsHss "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/hss"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ims"
 	hcsLts "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/lts"
+	hcsMrs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/mrs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/nat"
 	hcsObs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/obs"
 	hcsRomaConnect "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/romaconnect"
 	hcsSecmaster "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/secmaster"
 	hcsSfsturbo "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/sfsturbo"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/smn"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vdc"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpc"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vpcep"
-
-	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vdc"
+	hcsWaf "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/waf"
 )
 
 // Provider returns a schema.Provider for HuaweiCloudStack.
@@ -395,6 +396,9 @@ func Provider() *schema.Provider {
 
 			"hcs_ims_images": ims.DataSourceImagesImages(),
 
+			"hcs_lts_groups":  hcsLts.DataSourceLogGroups(),
+			"hcs_lts_streams": hcsLts.DataSourceLogStreams(),
+
 			"hcs_mrs_versions": mrs.DataSourceMrsVersions(),
 			"hcs_mrs_clusters": mrs.DataSourceMrsClusters(),
 			"hcs_mrs_cluster":  hcsMrs.DataSourceMrsCluster(),
@@ -438,6 +442,10 @@ func Provider() *schema.Provider {
 			"hcs_waf_dedicated_instances": waf.DataSourceWafDedicatedInstancesV1(),
 			"hcs_waf_policies":            waf.DataSourceWafPoliciesV1(),
 			"hcs_waf_reference_tables":    waf.DataSourceWafReferenceTablesV1(),
+
+			"hcs_direct_connect":    vpc.DataSourceDirectConnect(),
+			"hcs_virtual_gateway":   vpc.DataSourceVirtualGateway(),
+			"hcs_virtual_interface": vpc.DataSourceVirtualInterface(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -468,11 +476,16 @@ func Provider() *schema.Provider {
 			"hcs_kms_key":   dew.ResourceKmsKey(),
 			"hcs_kms_grant": dew.ResourceKmsGrant(),
 
-			"hcs_dms_kafka_instance":       dms.ResourceDmsKafkaInstance(),
+			"hcs_dms_kafka_instance":       hcsDms.ResourceDmsKafkaInstance(),
 			"hcs_dms_kafka_consumer_group": dms.ResourceDmsKafkaConsumerGroup(),
 			"hcs_dms_kafka_permissions":    dms.ResourceDmsKafkaPermissions(),
 			"hcs_dms_kafka_topic":          dms.ResourceDmsKafkaTopic(),
 			"hcs_dms_kafka_user":           dms.ResourceDmsKafkaUser(),
+
+			"hcs_dms_rocketmq_instance":       hcsDms.ResourceDmsRocketMQInstance(),
+			"hcs_dms_rocketmq_consumer_group": hcsDms.ResourceDmsRocketMQConsumerGroup(),
+			"hcs_dms_rocketmq_topic":          hcsDms.ResourceDmsRocketMQTopic(),
+			"hcs_dms_rocketmq_user":           dms.ResourceDmsRocketMQUser(),
 
 			"hcs_dns_recordset": dns.ResourceDNSRecordset(),
 			"hcs_dns_zone":      dns.ResourceDNSZone(),
@@ -529,7 +542,7 @@ func Provider() *schema.Provider {
 			"hcs_lts_structuring_configuration": lts.ResourceStructConfig(),
 			"hcs_lts_transfer":                  lts.ResourceLtsTransfer(),
 
-			"hcs_mrs_cluster": mrs.ResourceMRSClusterV2(),
+			"hcs_mrs_cluster": hcsMrs.ResourceMRSClusterV2(),
 			"hcs_mrs_job":     mrs.ResourceMRSJobV2(),
 
 			"hcs_obs_bucket":            hcsObs.ResourceObsBucket(),
@@ -583,10 +596,10 @@ func Provider() *schema.Provider {
 			"hcs_vpcep_endpoint": vpcep.ResourceVPCEndpoint(),
 			"hcs_vpcep_service":  vpcep.ResourceVPCEndpointService(),
 
+			"hcs_waf_dedicated_instance":                  hcsWaf.ResourceWafDedicatedInstance(),
 			"hcs_waf_address_group":                       waf.ResourceWafAddressGroup(),
 			"hcs_waf_certificate":                         waf.ResourceWafCertificateV1(),
 			"hcs_waf_dedicated_domain":                    waf.ResourceWafDedicatedDomain(),
-			"hcs_waf_dedicated_instance":                  waf.ResourceWafDedicatedInstance(),
 			"hcs_waf_policy":                              waf.ResourceWafPolicyV1(),
 			"hcs_waf_reference_table":                     waf.ResourceWafReferenceTableV1(),
 			"hcs_waf_rule_blacklist":                      waf.ResourceWafRuleBlackListV1(),
@@ -645,6 +658,10 @@ func Provider() *schema.Provider {
 			"hcs_vpc_flow_log":             vpc.ResourceVpcFlowLog(),
 			"hcs_network_acl":              ResourceNetworkACL(),
 			"hcs_network_acl_rule":         ResourceNetworkACLRule(),
+
+			"hcs_direct_connect":    vpc.ResourceDirectConnect(),
+			"hcs_virtual_gateway":   vpc.ResourceVirtualGateway(),
+			"hcs_virtual_interface": vpc.ResourceVirtualInterface(),
 
 			// Deprecated
 			"hcs_networking_port":    deprecated.ResourceNetworkingPortV2(),

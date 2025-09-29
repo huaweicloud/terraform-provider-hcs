@@ -79,14 +79,24 @@ func CreateWithEpsId(c *golangsdk.ServiceClient, opts CreateInstanceOpts, epsId 
 	return nil, err
 }
 
-// GetInstance get the waf instance detail.
-func GetInstance(c *golangsdk.ServiceClient, id string) (*DedicatedInstance, error) {
-	return GetWithEpsId(c, id, "")
-}
-
 func GetWithEpsId(c *golangsdk.ServiceClient, id string, epsId string) (*DedicatedInstance, error) {
 	var rst golangsdk.Result
 	_, err := c.Get(resourceURL(c, id)+generateEpsIdQuery(epsId), &rst.Body, &golangsdk.RequestOpts{
+		MoreHeaders: requestOpts.MoreHeaders,
+	})
+
+	if err == nil {
+		var r DedicatedInstance
+		if err = rst.ExtractInto(&r); err == nil {
+			return &r, nil
+		}
+	}
+	return nil, err
+}
+
+func GetInstanceDetail(c *golangsdk.ServiceClient, id string) (*DedicatedInstance, error) {
+	var rst golangsdk.Result
+	_, err := c.Get(resourceURL(c, id), &rst.Body, &golangsdk.RequestOpts{
 		MoreHeaders: requestOpts.MoreHeaders,
 	})
 
@@ -158,6 +168,23 @@ func Delete(c *golangsdk.ServiceClient, id string) (*DedicatedInstance, error) {
 func DeleteWithEpsId(c *golangsdk.ServiceClient, id string, epsId string) (*DedicatedInstance, error) {
 	var rst golangsdk.Result
 	_, err := c.DeleteWithResponse(resourceURL(c, id)+generateEpsIdQuery(epsId), &rst.Body, &golangsdk.RequestOpts{
+		OkCodes:     []int{200},
+		MoreHeaders: requestOpts.MoreHeaders},
+	)
+
+	if err == nil {
+		var r DedicatedInstance
+		if err = rst.ExtractInto(&r); err == nil {
+			return &r, nil
+		}
+	}
+	return nil, err
+}
+
+// DeleteInstance used to delete a running WAF instance
+func DeleteInstance(c *golangsdk.ServiceClient, id string) (*DedicatedInstance, error) {
+	var rst golangsdk.Result
+	_, err := c.DeleteWithResponse(deleteURL(c, id), &rst.Body, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: requestOpts.MoreHeaders},
 	)

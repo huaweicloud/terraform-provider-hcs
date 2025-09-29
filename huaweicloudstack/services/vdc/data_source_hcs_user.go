@@ -85,7 +85,7 @@ func dataResourceVdcUserRead(_ context.Context, d *schema.ResourceData, meta int
 	region := hcsConfig.GetRegion(d)
 	vdcUserClient, err := hcsConfig.VdcClient(region)
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating Huaweicloud vdc user client %s", err)
+		return fmtp.DiagErrorf("Error creating Huaweicloud VDC user client %s", err)
 	}
 
 	vdcId := d.Get("vdc_id").(string)
@@ -99,7 +99,7 @@ func dataResourceVdcUserRead(_ context.Context, d *schema.ResourceData, meta int
 	}
 	res, err := user.List(vdcUserClient, vdcId, listOpts).Extract()
 	if err != nil {
-		return fmtp.DiagErrorf("Error retrieving vdc user %s", err)
+		return fmtp.DiagErrorf("Error retrieving VDC user %s", err)
 	}
 
 	if len(res.Users) == 0 {
@@ -132,7 +132,7 @@ func dataResourceVdcUserRead(_ context.Context, d *schema.ResourceData, meta int
 					listOpts.Start = listOpts.Start + user.Limit
 					res, err = user.List(vdcUserClient, vdcId, listOpts).Extract()
 					if err != nil {
-						return fmtp.DiagErrorf("Error retrieving vdc user %s", err)
+						return fmtp.DiagErrorf("Error retrieving VDC user %s", err)
 					}
 					allUsers = append(allUsers, res.Users...)
 				} else {
