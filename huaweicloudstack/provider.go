@@ -7,8 +7,6 @@ import (
 	"strings"
 	"sync"
 
-	hcsMrs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/mrs"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
