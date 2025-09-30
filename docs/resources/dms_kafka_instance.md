@@ -109,17 +109,18 @@ The following arguments are supported:
 
   ~> The parameter behavior of `availability_zones` has been changed from `list` to `set`.
 
-* `arch_type` - (Optional, String, ForceNew) Specifies the CPU architecture. Valid value is **X86**.
-  Changing this creates a new instance resource.
-
 * `manager_user` - (Optional, String, ForceNew) Specifies the username for logging in to the Kafka Manager. The username
-  consists of 4 to 64 characters and can contain letters, digits, hyphens (-), and underscores (_). Changing this
-  creates a new instance resource.
+  consists of 4 to 64 characters and can contain letters, digits, hyphens (-), and underscores (_). This parameter will
+  be **Deprecated** in HCS 8.5.0 and later version.
+
+  Changing this creates a new instance resource.
 
 * `manager_password` - (Optional, String, ForceNew) Specifies the password for logging in to the Kafka Manager. The
   password must meet the following complexity requirements: Must be 8 to 32 characters long. Must contain at least 2 of
   the following character types: lowercase letters, uppercase letters, digits, and special characters (`~!@#$%^&*()-_
-  =+\\|[{}]:'",<.>/?). Changing this creates a new instance resource.
+  =+\\|[{}]:'",<.>/?). This parameter will be **Deprecated** in HCS 8.5.0 and later version.
+
+  Changing this creates a new instance resource.
 
 * `storage_space` - (Optional, Int) Specifies the message storage capacity, the unit is GB.
   The storage spaces corresponding to the product IDs are as follows:
@@ -139,6 +140,12 @@ The following arguments are supported:
 * `password` - (Optional, String) Specifies the password of SASL_SSL user. A password must meet the following
   complexity requirements: Must be 8 to 32 characters long. Must contain at least 2 of the following character types:
   lowercase letters, uppercase letters, digits, and special characters (`~!@#$%^&*()-_=+\\|[{}]:'",<.>/?).
+
+* `arch_type` - (Optional, String, ForceNew) Specifies the CPU architecture. The valid values are as follows:
+  + **X86**
+  + **ARM**
+
+  -> The default value depends on the HCS environment.
 
 * `security_protocol` - (Optional, String, ForceNew) Specifies the protocol to use after SASL is enabled. Value options:
   + **SASL_SSL**: Data is encrypted with SSL certificates for high-security transmission.

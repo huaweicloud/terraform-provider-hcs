@@ -146,8 +146,16 @@ func ExpandResourceTagsString(tagMap map[string]interface{}) []interface{} {
 
 	tagList := make([]interface{}, 0, len(tagMap))
 	for k, v := range tagMap {
-		str := fmt.Sprintf("%s.%s", k, v)
-		tagList = append(tagList, str)
+		if k == "" && v == "" {
+			return nil
+		} else if k == "" {
+			tagList = append(tagList, v)
+		} else if v == "" {
+			tagList = append(tagList, k)
+		} else {
+			str := fmt.Sprintf("%s.%s", k, v)
+			tagList = append(tagList, str)
+		}
 	}
 
 	return tagList
@@ -215,4 +223,36 @@ func BuildSysTags(enterpriseProjectID string) (enterpriseProjectTags []tags.Reso
 		enterpriseProjectTags = append(enterpriseProjectTags, t)
 	}
 	return
+}
+
+// DeleteEnterpriseProjectIdFromTags deletes the SysTagKeyEnterpriseProjectId from tags.
+// The input parameter can be one of the following types:
+// 1. interface{}: which can be a map[string]interface{} or []map[string]interface{}
+// 2. map[string]interface{}: a map containing tags
+// 3. []map[string]interface{}: a slice of maps containing tags
+func DeleteEnterpriseProjectIdFromTags(tags interface{}) interface{} {
+	switch v := tags.(type) {
+	case map[string]interface{}:
+		delete(v, SysTagKeyEnterpriseProjectId)
+		return v
+	case []map[string]interface{}:
+		for _, tagMap := range v {
+			delete(tagMap, SysTagKeyEnterpriseProjectId)
+		}
+		return v
+	default:
+		// If tags is an interface{} that contains a map or slice of maps
+		if tagMap, ok := v.(map[string]interface{}); ok {
+			delete(tagMap, SysTagKeyEnterpriseProjectId)
+			return tagMap
+		}
+		if tagSlice, ok := v.([]map[string]interface{}); ok {
+			for _, tagMap := range tagSlice {
+				delete(tagMap, SysTagKeyEnterpriseProjectId)
+			}
+			return tagSlice
+		}
+		// Return the original value if type is not supported
+		return tags
+	}
 }

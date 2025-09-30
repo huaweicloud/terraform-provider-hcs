@@ -125,6 +125,10 @@ type CreateOpts struct {
 	// The OBS path to which cluster logs are dumped.
 	// This parameter is available only for cluster versions that support dumping cluster logs to OBS.
 	LogURI string `json:"log_uri,omitempty"`
+
+	MultiAzDeployment bool   `json:"multi_az_deployment,omitempty"`
+	OmmPassword       string `json:"omm_password,omitempty"`
+	NodeDomainPrefix  string `json:"node_domain_prefix,omitempty"`
 }
 
 type ExternalDatasource struct {
@@ -195,6 +199,9 @@ type NodeGroupOpts struct {
 	//     Some roles support multi-instance deployment (that is, multiple instances of the same role are deployed on a
 	//         node): <role name>[<instance count>], for example, EsNode[9].
 	AssignedRoles []string `json:"assigned_roles,omitempty"`
+
+	NodeType              string `json:"node_type,omitempty"`
+	AzPlacementExpression string `json:"az_placement_expression,omitempty"`
 }
 
 // Volume is a structure representing node volume configurations.
@@ -298,6 +305,7 @@ type ScriptOpts struct {
 	// Time when the bootstrap action script is executed. Currently, the following two options are available: Before component start and After component start
 	// The default value is false, indicating that the bootstrap action script is executed after the component is started.
 	BeforeComponentStart *bool `json:"before_component_start,omitempty"`
+	ExecuteNeedSudoRoot  *bool `json:"execute_need_sudo_root,omitempty"`
 }
 
 type ComponentConfigOpts struct {

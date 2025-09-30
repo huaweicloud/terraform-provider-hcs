@@ -131,7 +131,7 @@ func resourceVdcUserCreate(ctx context.Context, d *schema.ResourceData, meta int
 	hcsConfig := config.GetHcsConfig(meta)
 	userClient, err := hcsConfig.VdcClient(hcsConfig.GetRegion(d))
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating Huaweicloud vdc user client %s", err)
+		return fmtp.DiagErrorf("Error creating Huaweicloud VDC user client %s", err)
 	}
 
 	vdcId := d.Get("vdc_id").(string)
@@ -148,7 +148,7 @@ func resourceVdcUserCreate(ctx context.Context, d *schema.ResourceData, meta int
 	addUser, err := user.Create(userClient, vdcId, createOpts).ToExtract()
 
 	if err != nil {
-		return fmtp.DiagErrorf("Error creating HuaweiCloudStack vdc user: %s", err)
+		return fmtp.DiagErrorf("Error creating HuaweiCloudStack VDC user: %s", err)
 	}
 
 	d.SetId(addUser.ID)
@@ -161,12 +161,12 @@ func resourceVdcUserRead(_ context.Context, d *schema.ResourceData, meta interfa
 	userClient, err := hcsConfig.VdcClient(hcsConfig.GetRegion(d))
 
 	if err != nil {
-		return fmtp.DiagErrorf("Unable to create HuaweiCloudStack vdc user client : %s", err)
+		return fmtp.DiagErrorf("Unable to create HuaweiCloudStack VDC user client : %s", err)
 	}
 
 	userDetail, err := user.Get(userClient, d.Id()).ToExtract()
 	if err != nil {
-		return common.CheckDeletedDiag(d, err, "Error retrieving HuaweiCloudStack vdc user")
+		return common.CheckDeletedDiag(d, err, "Error retrieving HuaweiCloudStack VDC user")
 	}
 
 	typeVal := user.AuthType[userDetail.AuthType]
@@ -182,7 +182,7 @@ func resourceVdcUserRead(_ context.Context, d *schema.ResourceData, meta interfa
 	)
 
 	if err := mErr.ErrorOrNil(); err != nil {
-		return fmtp.DiagErrorf("error setting HuaweiCloudStack vdc user fields: %w", err)
+		return fmtp.DiagErrorf("error setting HuaweiCloudStack VDC user fields: %w", err)
 	}
 
 	return nil
@@ -225,7 +225,7 @@ func resourceVdcUserUpdate(ctx context.Context, d *schema.ResourceData, meta int
 	hcsConfig := config.GetHcsConfig(meta)
 	userClient, err := hcsConfig.VdcClient(hcsConfig.GetRegion(d))
 	if err != nil {
-		return fmtp.DiagErrorf("Unable to create HuaweiCloudStack vdc user client : %s", err)
+		return fmtp.DiagErrorf("Unable to create HuaweiCloudStack VDC user client : %s", err)
 	}
 
 	if d.HasChanges("password") {
@@ -248,7 +248,7 @@ func resourceVdcUserUpdate(ctx context.Context, d *schema.ResourceData, meta int
 
 		_, err = user.UpPwd(userClient, updatePwdOpts, d.Id()).ToExtract()
 		if err != nil {
-			return fmtp.DiagErrorf("Error updating HuaweiCloudStack vdc user password: %s", err)
+			return fmtp.DiagErrorf("Error updating HuaweiCloudStack VDC user password: %s", err)
 		}
 	}
 
@@ -266,7 +266,7 @@ func resourceVdcUserUpdate(ctx context.Context, d *schema.ResourceData, meta int
 
 		_, err = user.Update(userClient, updateOpts, d.Id(), false).ToExtract()
 		if err != nil {
-			return fmtp.DiagErrorf("Error updating HuaweiCloudStack vdc user: %s", err)
+			return fmtp.DiagErrorf("Error updating HuaweiCloudStack VDC user: %s", err)
 		}
 	}
 
@@ -278,12 +278,12 @@ func resourceVdcUserDelete(_ context.Context, d *schema.ResourceData, meta inter
 	userClient, err := hcsConfig.VdcClient(hcsConfig.GetRegion(d))
 
 	if err != nil {
-		return fmtp.DiagErrorf("Unable to create HuaweiCloudStack vdc user client : %s", err)
+		return fmtp.DiagErrorf("Unable to create HuaweiCloudStack VDC user client : %s", err)
 	}
 
 	err = user.Delete(userClient, d.Id()).ExtractErr()
 	if err != nil {
-		return diag.Errorf("error deleting vdc user %s: %s", d.Id(), err)
+		return diag.Errorf("error deleting VDC user %s: %s", d.Id(), err)
 	}
 
 	d.SetId("")
@@ -296,12 +296,12 @@ func resourceVdcUserInstanceImportState(_ context.Context, d *schema.ResourceDat
 	region := hcsConfig.GetRegion(d)
 	userClient, err := hcsConfig.VdcClient(region)
 	if err != nil {
-		return nil, fmt.Errorf("error creating vdc user client: %s", err)
+		return nil, fmt.Errorf("error creating VDC user client: %s", err)
 	}
 
 	userDetail, err := user.Get(userClient, d.Id()).ToExtract()
 	if err != nil {
-		return nil, common.CheckDeleted(d, err, "vdc user instance")
+		return nil, common.CheckDeleted(d, err, "VDC user instance")
 	}
 
 	typeVal := user.AuthType[userDetail.AuthType]
@@ -318,7 +318,7 @@ func resourceVdcUserInstanceImportState(_ context.Context, d *schema.ResourceDat
 	)
 
 	if err := mErr.ErrorOrNil(); err != nil {
-		return nil, fmtp.Errorf("error setting HuaweiCloudStack vdc user fields: %s", err)
+		return nil, fmtp.Errorf("error setting HuaweiCloudStack VDC user fields: %s", err)
 	}
 
 	return []*schema.ResourceData{d}, nil

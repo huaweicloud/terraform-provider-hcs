@@ -84,6 +84,7 @@ type NodeGroup struct {
 	NodeSize                   string   `json:"nodeSize"`
 	NodeSpecId                 string   `json:"nodeSpecId"`
 	NodeProductId              string   `json:"nodeProductId"`
+	NodeType                   string   `json:"nodeType"`
 	VMProductId                string   `json:"vmProductId"`
 	VMSpecCode                 string   `json:"vmSpecCode"`
 	RootVolumeSize             int      `json:"rootVolumeSize"`
@@ -96,6 +97,7 @@ type NodeGroup struct {
 	DataVolumeResourceSpecCode string   `json:"dataVolumeResourceSpecCode"`
 	DataVolumeResourceType     string   `json:"dataVolumeResourceType"`
 	AssignedRoles              []string `json:"assignedRoles"`
+	AzPlacementExpression      string   `json:"az_placement_expression"`
 }
 
 type BootStrapScript struct {
@@ -106,8 +108,9 @@ type BootStrapScript struct {
 	ActiveMaster         bool     `json:"active_master"`
 	BeforeComponentStart bool     `json:"before_component_start"`
 	FailAction           string   `json:"fail_action"`
-	StartTime            string   `json:"start_time"`
+	StartTime            int      `json:"start_time"`
 	State                string   `json:"state"`
+	ExecuteNeedSudoRoot  bool     `json:"execute_need_sudo_root"`
 }
 
 type ClusterResult struct {
