@@ -55,9 +55,8 @@ func ResourceVirtualInterface() *schema.Resource {
 				ValidateFunc: validation.IntBetween(1, 4063),
 			},
 			"bgp_asn": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				ValidateFunc: validation.IntBetween(1, 4294967295),
+				Type:     schema.TypeInt,
+				Optional: true,
 			},
 			"bgp_asn_dot": {
 				Type:     schema.TypeString,
