@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## 2.4.17 (September 30, 2025)
+
+* **New Resource Source:**
+  + `hcs_direct_connect`
+  + `hcs_dms_rocketmq_consumer_group`
+  + `hcs_dms_rocketmq_instance`
+  + `hcs_dms_rocketmq_topic`
+  + `hcs_dms_rocketmq_user`
+  + `hcs_virtual_gateway`
+  + `hcs_virtual_interface`
+
+* **New Data Source:**
+  + `hcs_direct_connect`
+  + `hcs_lts_groups`
+  + `hcs_lts_streams`
+  + `hcs_virtual_gateway`
+  + `hcs_virtual_interface`
+
 ## 2.4.16 (Aug 4, 2025)
 
 * **New Data Sources:**
