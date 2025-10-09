@@ -533,7 +533,8 @@ func Provider() *schema.Provider {
 
 			"hcs_fgs_function": hcsFgs.ResourceFgsFunction(),
 
-			"hcs_gaussdb_opengauss_instance": hcsGaussdb.ResourceOpenGaussInstance(),
+			"hcs_gaussdb_opengauss_instance":           hcsGaussdb.ResourceOpenGaussInstance(),
+			"hcs_gaussdb_opengauss_parameter_template": hcsGaussdb.ResourceOpenGaussParameterTemplate(),
 
 			"hcs_hss_host_group": hcsHss.ResourceHostGroup(),
 
