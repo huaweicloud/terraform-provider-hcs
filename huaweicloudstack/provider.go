@@ -392,8 +392,9 @@ func Provider() *schema.Provider {
 			"hcs_evs_volume_types": evs.DataSourceEvsVolumeTypesV2(),
 			"hcs_evs_snapshots":    evs.DataSourceEvsSnapshots(),
 
-			"hcs_gaussdb_opengauss_instance":  hcsGaussdb.DataSourceOpenGaussInstance(),
-			"hcs_gaussdb_opengauss_instances": hcsGaussdb.DataSourceOpenGaussInstances(),
+			"hcs_gaussdb_opengauss_instance":            hcsGaussdb.DataSourceOpenGaussInstance(),
+			"hcs_gaussdb_opengauss_instances":           hcsGaussdb.DataSourceOpenGaussInstances(),
+			"hcs_gaussdb_opengauss_parameter_template": hcsGaussdb.DataSourceConfiguration(),
 
 			"hcs_ims_images": ims.DataSourceImagesImages(),
 

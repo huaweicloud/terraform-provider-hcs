@@ -907,6 +907,13 @@ func TestAccPreCheckOpengaussKmsProjectName(t *testing.T) {
 }
 
 // lintignore:AT003
+func TestAccPreCheckOpengaussConfiguration(t *testing.T) {
+	if OPENGAUSS_PARAMETER_TEMPLATE_ID == "" {
+		t.Skip("OPENGAUSS_CONFIGURATION_ID must be set for OpenGauss acceptance tests.")
+	}
+}
+
+// lintignore:AT003
 func TestAccPreCheckFgsAgency(t *testing.T) {
 	// The agency should be FunctionGraph and authorize these roles:
 	// For the acceptance tests of the async invoke configuration:
