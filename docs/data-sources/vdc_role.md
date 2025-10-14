@@ -1,5 +1,5 @@
 ---
-subcategory: "VDC"
+subcategory: "Virtual Data Center (VDC)"
 ---
 
 # hcs_vdc_role
@@ -20,18 +20,20 @@ data "hcs_vdc_role" "test" {
 
 The following arguments are supported:
 
-* `display_name` - (Optional, String)  Specifies the display name of the role displayed on the console. It is recommended to use this parameter instead of name and required if `name` is not specified.
+* `display_name` - (Optional, String)  Specifies the display name of the role displayed on the console. It is
+  recommended to use this parameter instead of name and required if `name` is not specified.
 
-* `name` - (Optional, String) Specifies the name of the role for internal use. It's required if `display_name` is not specified. The name must meet the following requirements:
+* `name` - (Optional, String) Specifies the name of the role for internal use. It's required if `display_name` is not
+  specified. The name must meet the following requirements:
 
-  * If you query a system policy, the name can be `system_all_xxx`.
-  * If you query a system role, the name can be `te_agency` or `te_admin`.
-  * If you query a custom role, the name can be `custom_xxx`.
+    * If you query a system policy, the name can be `system_all_xxx`.
+    * If you query a system role, the name can be `te_agency` or `te_admin`.
+    * If you query a custom role, the name can be `custom_xxx`.
 
 * `role_type` - (Optional, String) Role type. Valid options are as follows:
 
-  * system: System-defined role and System-defined policy
-  * custom: Custom role
+    * system: System-defined role and System-defined policy
+    * custom: Custom role
 
 ## Attributes Reference
 

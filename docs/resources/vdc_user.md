@@ -1,5 +1,5 @@
 ---
-subcategory: "VDC"
+subcategory: "Virtual Data Center (VDC)"
 ---
 
 # hcs_vdc_user
@@ -43,11 +43,10 @@ The following arguments are supported:
 * `auth_type` - (Optional, String) User type. The value can be `LOCAL_AUTH` (default value), `SAML_AUTH`, `LDAP_AUTH`,
   or `MACHINE_USER`. The parameter value cannot be changed. Exception: If access_mode is set to `programmatic`,
   auth_type must be set to `MACHINE_USER`.
-  > [!NOTE]
-  >
-  > * When auth_type is set to `MACHINE_USER`, access_mode must be set to `programmatic`.
-  > * When auth_type is set to `LOCAL_AUTH` or `MACHINE_USER`, you need to specify a value for password.
-  > * When auth_type is set to `SAML_AUTH` or `LDAP_AUTH`, do not specify password.
+    - When auth_type is set to `MACHINE_USER`, access_mode must be set to `programmatic`.
+    - When auth_type is set to `LOCAL_AUTH` or `MACHINE_USER`, you need to specify a value for password.
+    - When auth_type is set to `SAML_AUTH` or `LDAP_AUTH`, do not specify password.
+
 
 * `enabled` - (Optional, Boolean) Whether a user is enabled. The value can be `true` (default value) or `false`. If the
   value is `false`, the user is disabled.
@@ -57,10 +56,8 @@ The following arguments are supported:
 
 * `access_mode` - (Optional, String) Access mode. The value can be `default` (default value. It indicates console access
   or programming access), `console` (console access), or `programmatic` (programming access).
-  > [!NOTE]
-  >
-  > * When access_mode is set to `programmatic`, auth_type must be set to `MACHINE_USER`.
-  > * If access_mode is set to `programmatic`, it cannot be changed.
+    - When access_mode is set to `programmatic`, auth_type must be set to `MACHINE_USER`.
+    - If access_mode is set to `programmatic`, it cannot be changed.
 
 ## Attributes Reference
 
@@ -72,6 +69,6 @@ In addition to all arguments above, the following attributes are exported:
 
 Users can be imported using the id, e.g.
 
-```
-terraform import hcs_vdc_user.user02 ed35bb2dada543d5977069780e98b2c3
+```bash
+$ terraform import hcs_vdc_user.user02 ed35bb2dada543d5977069780e98b2c3
 ```

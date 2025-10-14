@@ -1,5 +1,5 @@
 ---
-subcategory: "VDC"
+subcategory: "Virtual Data Center (VDC)"
 ---
 
 # hcs_vdc_group
@@ -43,6 +43,6 @@ In addition to all arguments above, the following attributes are exported:
 
 Groups can be imported using the id, e.g.
 
-```
-terraform import hcs_vdc_group.group02 1ff4536fb0a44faba80450f9da0bf47a
+```bash
+$ terraform import hcs_vdc_group.group02 1ff4536fb0a44faba80450f9da0bf47a
 ```
