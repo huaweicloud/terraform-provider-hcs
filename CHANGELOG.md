@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.4.18 (October 15, 2025)
+ - [VPC] Fix bugs in l3gw resources and docs.
+
 ## 2.4.17 (September 30, 2025)
 
 * **New Resource Source:**
