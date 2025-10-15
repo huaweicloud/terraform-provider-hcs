@@ -1,5 +1,5 @@
 ---
-subcategory: "VDC"
+subcategory: "Virtual Data Center (VDC)"
 ---
 
 # hcs_vdc_group
@@ -14,7 +14,7 @@ variable "vdc_id" {}
 
 data "hcs_vdc_group" "group_1" {
   vdc_id = var.vdc_id
-  name = var.group_name
+  name   = var.group_name
 }
 ```
 

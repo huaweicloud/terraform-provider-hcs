@@ -41,8 +41,6 @@ The following arguments are supported:
 
 * `peer_location` - (Optional, String) Specifies the user network location of the Direct Connect.
 
-* `tenancy` - (Optional, String) Specifies the lease period of the Direct Connect.
-
 ## Attribute Reference
 
 * `id` - The resource ID in UUID format.
@@ -50,17 +48,11 @@ The following arguments are supported:
 * `status` - Whether the Direct Connect is available. The value can be ACTIVE, DOWN, BUILD, ERROR,
   PENDING_DELETE, DELETED, APPLY, DENY, PENDING_PAY, PAID, ORDERING, ACCEPT, or REJECTED.
 
-* `dc_provider` - Direct Connect type. The value can be "ce" or "vpc-gw".
+* `dc_provider` - Direct Connect type. The value can be "ce".
 
 * `group` - Egress of the Direct Connect.
 
 ## Timeouts
-
-This resource provides the following timeouts configuration options:
-
-* `create` - Default is 10 minutes.
-* `update` - Default is 10 minutes.
-* `delete` - Default is 10 minutes.
 
 ## Import
 

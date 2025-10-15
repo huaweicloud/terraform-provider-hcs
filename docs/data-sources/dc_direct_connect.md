@@ -29,7 +29,7 @@ The given filters must match exactly one Direct Connect whose data will be expor
 
 * `id` - (Optional, String) Specifies the id of the Direct Connect to retrieve.
 
-* `dc_provider` - (Optional, String) Specifies the dc_provider desired Direct Connect. The value can be "ce" or "vpc-gw".
+* `dc_provider` - (Optional, String) Specifies the dc_provider desired Direct Connect. The value can be "ce".
 
 ## Attributes Reference
 
@@ -45,7 +45,5 @@ In addition to all arguments above, the following attributes are exported:
 * `type` - The type of the Direct Connect. the value can be "hosted".
 
 * `peer_location` - The user network location of the Direct Connect.
-
-* `tenancy` - The lease period of the Direct Connect.
 
 * `group` - Egress of the Direct Connect.

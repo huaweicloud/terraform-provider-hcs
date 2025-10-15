@@ -64,10 +64,6 @@ func ResourceDirectConnect() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"tenancy": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
 		},
 	}
 }
@@ -86,7 +82,6 @@ func resourceDirectConnectCreate(ctx context.Context, d *schema.ResourceData, me
 		HostingId:    d.Get("hosting_id").(string),
 		PeerLocation: d.Get("peer_location").(string),
 		Description:  d.Get("description").(string),
-		Tenancy:      d.Get("tenancy").(string),
 	}
 
 	n, err := direct_connects.Create(dcClient, createOpts).Extract()
@@ -122,7 +117,6 @@ func resourceDirectConnectRead(ctx context.Context, d *schema.ResourceData, meta
 		d.Set("type", n.Type),
 		d.Set("peer_location", n.PeerLocation),
 		d.Set("group", n.Group),
-		d.Set("tenancy", n.Tenancy),
 	)
 
 	if err := mErr.ErrorOrNil(); err != nil {
@@ -143,7 +137,6 @@ func resourceDirectConnectUpdate(ctx context.Context, d *schema.ResourceData, me
 	updateOpts := direct_connects.UpdateOpts{
 		Name:        d.Get("name").(string),
 		Description: d.Get("description").(string),
-		Tenancy:     d.Get("tenancy").(string),
 	}
 
 	_, err = direct_connects.Update(dcClient, d.Id(), updateOpts).Extract()

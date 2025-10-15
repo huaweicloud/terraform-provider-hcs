@@ -11,13 +11,12 @@ Manages a Virtual Gateway resource within hcs.
 ```hcl
 variable "vpc_id" {}
 
-variable "vpc_group" {
-  type = set(object({
-    vpc_id = string
-    local_ep_group = set(string)
-  }))
-  default = [
-    { vpc_id = var.vpc_id, local_ep_group = ["192.168.1.0/24","fc00:1::/64"] },
+locals {
+  vpc_group = [
+    {
+      vpc_id = var.vpc_id,
+      local_ep_group = ["192.168.1.0/24","fc00:1::/64"]
+    },
   ]
 }
 
@@ -25,7 +24,7 @@ resource "hcs_virtual_gateway" "demo" {
     name = "demo"
     description = "a Virtual Gateway demo"
     dynamic "vpc_group" {
-        for_each = var.vpc_group
+        for_each = local.vpc_group
         content {
             vpc_id = vpc_group.value.vpc_id
             local_ep_group = vpc_group.value.local_ep_group

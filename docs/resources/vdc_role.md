@@ -1,14 +1,12 @@
 ---
-subcategory: "VDC"
+subcategory: "Virtual Data Center (VDC)"
 ---
 
 # hcs_vdc_role
 
 Manages a VDC role resource within Huawei Cloud Stack.
 
-> [!NOTE]
->
-> Supported from ManageOne version 8.6.0 onwards.
+-> **NOTE:** Supported from ManageOne version 8.6.0 onwards.
 
 ## Example Usage
 
@@ -16,8 +14,8 @@ Manages a VDC role resource within Huawei Cloud Stack.
 variable "role_name" {}
 
 resource "hcs_vdc_role" "test" {
-  name = var.role_name
-  type = "AX"
+  name   = var.role_name
+  type   = "AX"
   policy = <<EOF
     {
       "Depends": [],
@@ -47,14 +45,14 @@ resource "hcs_vdc_role" "test" {
 
 The following arguments are supported:
 
-* `name` - (Required, string) Specifies the name of the VDC custom role. 
+* `name` - (Required, string) Specifies the name of the VDC custom role.
 
 * `description` - (Optional, string) Specifies the description of the VDC custom role.
 
 * `type` - (Optional, string, ForceNew) Specifies the display mode of the VDC custom role. Valid options are as follows:
 
-  * AX: Global services.
-  * XA: Regional services.
+    * AX: Global services.
+    * XA: Regional services.
 
 * `policy` - (Required, String) Specifies the content of the VDC custom role in JSON format.
 
@@ -68,6 +66,6 @@ In addition to all arguments above, the following attributes are exported:
 
 VDC roles can be imported using the `id`, e.g.
 
-```hcl
-  terraform import hcs_vdc_role.role1 fa163eebcccbe1c10baa324fc930c75a
+```bash
+$ terraform import hcs_vdc_role.role1 fa163eebcccbe1c10baa324fc930c75a
 ```
