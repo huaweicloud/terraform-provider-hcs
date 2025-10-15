@@ -14,18 +14,9 @@ variable "virtual_gateway_id" {}
 variable "hosting_direct_connect_id" {}
 variable "interface_group_id1" {}
 variable "interface_group_id2" {}
-variable "link_infos" {
-  type = set(object({
-    interface_group_id = string
-    hosting_id = string
-    local_gateway_v4_ip = string
-    local_gateway_v6_ip = string
-    remote_gateway_v4_ip = string
-    remote_gateway_v6_ip = string
-    vlan = number
-    bgp_asn = number
-  }))
-  default = [
+
+locals {
+  link_infos = [
     {
         interface_group_id = var.interface_group_id1
         hosting_id = var.hosting_direct_connect_id
@@ -56,7 +47,7 @@ resource "hcs_virtual_interface" "demo" {
     vgw_id = var.virtual_gateway_id
     remote_ep_group = ["192.168.0.0/24","fc00::/64"]
     dynamic "link_infos" {
-        for_each = var.link_infos
+        for_each = local.link_infos
         content {
             interface_group_id = link_infos.value.interface_group_id
             hosting_id = link_infos.value.hosting_id
@@ -91,45 +82,52 @@ The following arguments are supported:
 
 * `remote_ep_group` - (Optional, Set) Specifies an Array of one or more remote network CIDR.
 
-* `link_infos` - (Optional, Set) Specifies Interconnection information object between the L3GW and the PE.
+* `link_infos` - (Optional, Set, ForceNew) Specifies Interconnection information object between the L3GW and the PE.
   If automatic allocation of interconnection information is configured for the L3GW, this field is not required.
   If this parameter is set, hosting_id, vlan, interface_group_id, remote_gateway_v4_ip and local_gateway_v4_ip are mandatory.
+  Changing this creates a new Virtual Interface resource.
   The [link_info object](#link_info_object).
 
 <a name="link_info_object"></a>
 the `link_infos` block supports:
 
-* `interface_group_id` - (Required, String) Interface group ID. If link_infos is set, this parameter is mandatory
-  and the corresponding preconfiguration must exist.
+* `interface_group_id` - (Required, String, ForceNew) Interface group ID. If link_infos is set, this parameter is mandatory
+  and the corresponding preconfiguration must exist. Changing this creates a new Virtual Interface resource.
 
-* `hosting_id` - (Required, String) ID of the hosting connection. If link_infos is set, this parameter is mandatory
-  and the corresponding preconfiguration must exist.
+* `hosting_id` - (Required, String, ForceNew) ID of the hosting connection. If link_infos is set, this parameter is mandatory
+  and the corresponding preconfiguration must exist. Changing this creates a new Virtual Interface resource.
 
-* `local_gateway_v4_ip` - (Required, String) IPv4 address of the local gateway. If link_infos is set,
-  this parameter is mandatory and the corresponding preconfiguration must exist.
+* `local_gateway_v4_ip` - (Required, String, ForceNew) IPv4 address of the local gateway. If link_infos is set,
+  this parameter is mandatory and the corresponding preconfiguration must exist. Changing this creates a new
+  Virtual Interface resource.
 
-* `local_gateway_v6_ip` - (Optional, String) IPv6 address of the local gateway. If this parameter is set,
+* `local_gateway_v6_ip` - (Optional, String, ForceNew) IPv6 address of the local gateway. If this parameter is set,
   the value must be the same as that in the corresponding preconfiguration. Otherwise, an error is reported.
+  Changing this creates a new Virtual Interface resource.
 
-* `remote_gateway_v4_ip` - (Required, String) IPv4 address of the remote gateway. If link_infos is set,
-  this parameter is mandatory and the corresponding preconfiguration must exist.
+* `remote_gateway_v4_ip` - (Required, String, ForceNew) IPv4 address of the remote gateway. If link_infos is set,
+  this parameter is mandatory and the corresponding preconfiguration must exist. Changing this creates a new
+  Virtual Interface resource.
 
-* `remote_gateway_v6_ip` - (Optional, String) IPv6 address of the remote gateway. If this parameter is set,
+* `remote_gateway_v6_ip` - (Optional, String, ForceNew) IPv6 address of the remote gateway. If this parameter is set,
   the value must be the same as that in the corresponding preconfiguration. Otherwise, an error is reported.
+  Changing this creates a new Virtual Interface resource.
 
-* `vlan` - (Required, Int) Interconnection VLAN between the L3GW TOR and the off-cloud device. If link_infos is set,
+* `vlan` - (Required, Int, ForceNew) Interconnection VLAN between the L3GW TOR and the off-cloud device. If link_infos is set,
   this parameter is mandatory and the corresponding preconfiguration must exist. The value ranges from 1 to 4063.
+  Changing this creates a new Virtual Interface resource.
 
-* `bgp_asn` - (Optional, Int) AS number of the BGP peer of the off-cloud device. The value is an integer.
+* `bgp_asn` - (Optional, Int, ForceNew) AS number of the BGP peer of the off-cloud device. The value is an integer.
   The value can range from 0 to 4294967295, where 1 to 4294967295 indicate valid AS numbers and 0 indicates that
   the AS number is not specified. This parameter and bgp_asn_dot cannot be specified at the same time.
   If you set this parameter, the value must be the same as that in the corresponding preconfiguration.
-  Otherwise, an error will be reported.
+  Otherwise, an error will be reported. Changing this creates a new Virtual Interface resource.
 
-* `bgp_asn_dot` - (Optional, String) AS number of the BGP peer of the off-cloud device, in X.Y format.
+* `bgp_asn_dot` - (Optional, String, ForceNew) AS number of the BGP peer of the off-cloud device, in X.Y format.
   The value of X can range from 1 to 65535, and that of Y can range from 0 to 65535.
   The value null indicates that the parameter is not specified. If you set this parameter,
   the value must be the same as that in the corresponding preconfiguration. Otherwise, an error will be reported.
+  Changing this creates a new Virtual Interface resource.
 
 ## Attribute Reference
 
@@ -141,6 +139,12 @@ the `link_infos` block supports:
 * `remote_ep_group_id` - Endpoint group ID. The endpoint group contains the CIDR of the remote network.
 
 ## Timeouts
+
+This resource provides the following timeouts configuration options:
+
+* `create` - Default is 20 minutes.
+* `update` - Default is 20 minutes.
+* `delete` - Default is 20 minutes.
 
 ## Import
 

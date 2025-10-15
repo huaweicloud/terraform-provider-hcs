@@ -1,14 +1,12 @@
 ---
-subcategory: "VDC"
+subcategory: "Virtual Data Center (VDC)"
 ---
 
 # hcs_vdc_group_membership
 
 Manages VDC user group membership within Huawei Cloud Stack.
 
-> [!NOTE]
->
-> Supported from ManageOne version 8.5.1 onwards.
+-> **NOTE:** Supported from ManageOne version 8.5.1 onwards.
 
 ## Example Usage
 
@@ -18,20 +16,20 @@ variable "vdc_id" {
   default = "a18c2ce0-5379-4b34-8a12-eee47f5cfa89"
 }
 resource "hcs_vdc_user" "user01" {
-  vdc_id = var.vdc_id
-  name = "Username1"
+  vdc_id   = var.vdc_id
+  name     = "Username1"
   password = var.user_password
 }
 
 resource "hcs_vdc_user" "user02" {
-  vdc_id = var.vdc_id
-  name = "Username2"
+  vdc_id   = var.vdc_id
+  name     = "Username2"
   password = var.user_password
 }
 
 resource "hcs_vdc_group" "group01" {
-  vdc_id       = var.vdc_id
-  name         = "Usergroup1"
+  vdc_id = var.vdc_id
+  name   = "Usergroup1"
 }
 
 resource "hcs_vdc_group_membership" "group_membership_1" {
@@ -59,6 +57,6 @@ In addition to all arguments above, the following attributes are exported:
 
 VDC user group membership can be imported using the `id`, e.g.
 
-```
+```bash
 $ terraform import hcs_vdc_group_membership.vdc_group_membership1 3b002f5e4aae407082630a00d2ac0f40
 ```

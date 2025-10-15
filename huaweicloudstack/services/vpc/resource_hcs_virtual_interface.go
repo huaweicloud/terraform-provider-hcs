@@ -24,44 +24,52 @@ func ResourceVirtualInterface() *schema.Resource {
 			"interface_group_id": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 			"hosting_id": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 			"local_gateway_v4_ip": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IsCIDR,
 			},
 			"local_gateway_v6_ip": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IsCIDR,
 			},
 			"remote_gateway_v4_ip": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IsCIDR,
 			},
 			"remote_gateway_v6_ip": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IsCIDR,
 			},
 			"vlan": {
 				Type:         schema.TypeInt,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.IntBetween(1, 4063),
 			},
 			"bgp_asn": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				ValidateFunc: validation.IntBetween(1, 4294967295),
+				Type:     schema.TypeInt,
+				Optional: true,
+				ForceNew: true,
 			},
 			"bgp_asn_dot": {
 				Type:     schema.TypeString,
 				Optional: true,
+				ForceNew: true,
 			},
 		},
 	}
@@ -123,7 +131,6 @@ func ResourceVirtualInterface() *schema.Resource {
 				Computed: true,
 				ForceNew: true,
 				Elem:     linkInfo,
-				Set:      schema.HashResource(linkInfo),
 			},
 		},
 	}
