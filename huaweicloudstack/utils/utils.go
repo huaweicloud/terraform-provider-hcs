@@ -160,6 +160,17 @@ func NormalizeJsonString(jsonString interface{}) (string, error) {
 	return string(bytes[:]), nil
 }
 
+// SliceContains checks if a target object is present in a slice (the type of the elemetes which same as the target
+// object).
+func SliceContains(slice []interface{}, target interface{}) bool {
+	for _, v := range slice {
+		if reflect.DeepEqual(v, target) {
+			return true
+		}
+	}
+	return false
+}
+
 // StrSliceContains checks if a given string is contained in a slice
 // When anybody asks why Go needs generics, here you go.
 func StrSliceContains(haystack []string, needle string) bool {
@@ -466,4 +477,27 @@ func JSONStringsEqual(s1, s2 string) bool {
 	}
 
 	return jsonBytesEqual(b1.Bytes(), b2.Bytes())
+}
+
+type SchemaDescInput struct {
+	Internal   bool     `json:"Internal,omitempty"`
+	Deprecated bool     `json:"Deprecated,omitempty"`
+	Required   bool     `json:"Required,omitempty"`
+	Computed   bool     `json:"Computed,omitempty"`
+	ForceNew   bool     `json:"ForceNew,omitempty"`
+	Unscope    []string `json:"Unscope,omitempty"`
+	UsedBy     []string `json:"UsedBy,omitempty"`
+}
+
+func SchemaDesc(description string, schemaDescInput SchemaDescInput) string {
+	if os.Getenv("HCS_SCHEMA") == "" {
+		return description
+	}
+
+	b, err := json.Marshal(schemaDescInput)
+	if err == nil && string(b) != "" {
+		return "schema:" + string(b) + ";" + description
+	}
+
+	return description
 }
