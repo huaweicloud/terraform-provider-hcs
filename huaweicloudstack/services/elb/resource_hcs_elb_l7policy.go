@@ -80,27 +80,32 @@ func ResourceL7PolicyV3() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"status_code": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Required: true,
 						},
 						"protocol": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Default:  "${protocol}",
 						},
 						"host": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Default:  "${host}",
 						},
 						"port": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Default:  "${port}",
 						},
 						"path": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Default:  "${path}",
 						},
 						"query": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Default:  "${query}",
 						},
 					},
 				},
@@ -144,11 +149,6 @@ func resourceL7PolicyV3Create(ctx context.Context, d *schema.ResourceData, meta 
 		}
 
 		log.Printf("[DEBUG] redirect_url_config: %#v", vv)
-
-		statusCode := vv["status_code"].(string)
-		if statusCode == "" {
-			return diag.Errorf(`The argument "status_code" is required, but no definition was found.`)
-		}
 
 		createOpts.RedirectUrlConfig = &l7policies.RedirectUrlConfig{
 			StatusCode: vv["status_code"].(string),
