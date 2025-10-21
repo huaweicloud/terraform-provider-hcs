@@ -12,7 +12,9 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils/fmtp"
 )
 
-// DataSourceVdcRole @API VDC GET /rest/vdc/v3.0/OS-ROLE/roles/third-party/roles
+// DataSourceVdcRole
+// @API VDC GET /rest/vdc/v3.0/OS-ROLE/roles/third-party/roles
+// @API VDC GET /rest/vdc/v3.0/vdcs
 func DataSourceVdcRole() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceVdcRoleRead,
@@ -72,6 +74,15 @@ func dataSourceVdcRoleRead(_ context.Context, schemaResourceData *schema.Resourc
 	}
 
 	domainId := configContext.DomainID // 从全局配置中获取domain_id
+	if configContext.AssumeRoleDomain != "" {
+		// 如果是委托，则根据委托租户名查找doamin_id
+		searchName := configContext.AssumeRoleDomain
+		assumeDomainId, err := getDomainIdByAssumeDomainName(searchName, vdcRoleClient)
+		if err != nil {
+			return fmtp.DiagErrorf("Your query returned no results. please change your search criteria and try again.")
+		}
+		domainId = *assumeDomainId
+	}
 
 	var isSystem string
 	//role_type 用户传入查询类型参数，根据类型过滤, system, custom
