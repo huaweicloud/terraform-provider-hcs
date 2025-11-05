@@ -53,6 +53,7 @@ import (
 	hcsObs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/obs"
 	hcsRomaConnect "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/romaconnect"
 	hcsSecmaster "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/secmaster"
+	hcsSfs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/sfs"
 	hcsSfsturbo "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/sfsturbo"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/smn"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vdc"
@@ -576,7 +577,7 @@ func Provider() *schema.Provider {
 			"hcs_secmaster_playbook_version": secmaster.ResourcePlaybookVersion(),
 			"hcs_secmaster_playbook_rule":    secmaster.ResourcePlaybookRule(),
 
-			"hcs_sfs_access_rule": sfs.ResourceSFSAccessRuleV2(),
+			"hcs_sfs_access_rule": hcsSfs.ResourceSFSAccessRuleV2(),
 			"hcs_sfs_file_system": sfs.ResourceSFSFileSystemV2(),
 
 			"hcs_sfs_turbo":           hcsSfsturbo.ResourceSFSTurbo(),
