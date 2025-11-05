@@ -402,9 +402,9 @@ func Provider() *schema.Provider {
 			"hcs_lts_groups":  hcsLts.DataSourceLogGroups(),
 			"hcs_lts_streams": hcsLts.DataSourceLogStreams(),
 
-			"hcs_mrs_versions": mrs.DataSourceMrsVersions(),
-			"hcs_mrs_clusters": mrs.DataSourceMrsClusters(),
 			"hcs_mrs_cluster":  hcsMrs.DataSourceMrsCluster(),
+			"hcs_mrs_clusters": mrs.DataSourceMrsClusters(),
+			"hcs_mrs_versions": mrs.DataSourceMrsVersions(),
 
 			"hcs_nat_gateway": nat.DataSourcePublicGateway(),
 
@@ -542,9 +542,9 @@ func Provider() *schema.Provider {
 
 			"hcs_hss_host_group": hcsHss.ResourceHostGroup(),
 
+			"hcs_lts_group":                     hcsLts.ResourceLTSGroup(),
 			"hcs_lts_host_access":               lts.ResourceHostAccessConfig(),
 			"hcs_lts_host_group":                lts.ResourceHostGroup(),
-			"hcs_lts_group":                     hcsLts.ResourceLTSGroup(),
 			"hcs_lts_search_criteria":           lts.ResourceSearchCriteria(),
 			"hcs_lts_stream":                    lts.ResourceLTSStream(),
 			"hcs_lts_structuring_configuration": lts.ResourceStructConfig(),
@@ -583,11 +583,12 @@ func Provider() *schema.Provider {
 			"hcs_sfs_turbo_dir":       sfs.ResourceSfsTurboDir(),
 			"hcs_sfs_turbo_dir_quota": sfs.ResourceSfsTurboDirQuota(),
 
-			"hcs_swr_organization":           swr.ResourceSWROrganization(),
-			"hcs_swr_repository":             swr.ResourceSWRRepository(),
-			"hcs_swr_repository_sharing":     swr.ResourceSWRRepositorySharing(),
-			"hcs_swr_image_retention_policy": swr.ResourceSwrImageRetentionPolicy(),
-			"hcs_swr_image_trigger":          swr.ResourceSwrImageTrigger(),
+			"hcs_swr_image_retention_policy":   swr.ResourceSwrImageRetentionPolicy(),
+			"hcs_swr_image_trigger":            swr.ResourceSwrImageTrigger(),
+			"hcs_swr_organization":             swr.ResourceSWROrganization(),
+			"hcs_swr_organization_permissions": swr.ResourceSWROrganizationPermissions(),
+			"hcs_swr_repository":               swr.ResourceSWRRepository(),
+			"hcs_swr_repository_sharing":       swr.ResourceSWRRepositorySharing(),
 
 			"hcs_ucs_cluster": ucs.ResourceCluster(),
 			"hcs_ucs_fleet":   ucs.ResourceFleet(),

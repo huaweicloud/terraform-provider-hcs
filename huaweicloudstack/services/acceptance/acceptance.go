@@ -189,8 +189,11 @@ var (
 	HCS_RDS_INSTANCE_ID = os.Getenv("HCS_RDS_INSTANCE_ID")
 	HCS_RDS_BACKUP_ID   = os.Getenv("HCS_RDS_BACKUP_ID")
 
-	HCS_IAM_USER1_ID = os.Getenv("HCS_IAM_USER1_ID")
-	HCS_IAM_USER2_ID = os.Getenv("HCS_IAM_USER2_ID")
+	HCS_IAM_USER1_ID   = os.Getenv("HCS_IAM_USER1_ID")
+	HCS_IAM_USER2_ID   = os.Getenv("HCS_IAM_USER2_ID")
+	HCS_IAM_USER3_ID   = os.Getenv("HCS_IAM_USER3_ID")
+	HCS_IAM_USER1_name = os.Getenv("HCS_IAM_USER1_name")
+	HCS_IAM_USER2_name = os.Getenv("HCS_IAM_USER2_name")
 
 	// OpenGauss
 	DORADO_STORAGE_POOL_ID          = os.Getenv("dorado_storage_pool_id")
@@ -886,6 +889,13 @@ func TestAccPreCheckRdsInstance(t *testing.T) {
 func TestAccPreCheckUcs(t *testing.T) {
 	if HCS_IAM_USER1_ID == "" || HCS_IAM_USER2_ID == "" {
 		t.Skip("HCS_IAM_USER1_ID and HCS_IAM_USER2_ID must be set for UCS acceptance tests.")
+	}
+}
+// lintignore:AT003
+func TestAccPreCheckSwrOrgPermissions(t *testing.T) {
+	if HCS_IAM_USER3_ID == ""  || HCS_IAM_USER1_name == "" || HCS_IAM_USER2_name == "" {
+		t.Skip("HCS_IAM_USER3_ID, HCS_IAM_USER1_name and HCS_IAM_USER2_name must be set for " +
+			"SWR acceptance tests.")
 	}
 }
 
