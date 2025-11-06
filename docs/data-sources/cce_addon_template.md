@@ -1,5 +1,9 @@
 ---
 subcategory: "Cloud Container Engine (CCE)"
+layout: "huaweicloudstack"
+page_title: "HuaweiCloudStack: hcs_cce_addon_template"
+description: |-
+  Use this data source to get available HuaweiCloudStack CCE add-on template
 ---
 
 # hcs_cce_addon_template

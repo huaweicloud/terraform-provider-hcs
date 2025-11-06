@@ -2,12 +2,13 @@
 subcategory: "Data Encryption Workshop (DEW)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_csms_secret_version"
-description: ""
+description: |-
+  Use this data source to query the version and plaintext of the CSMS secret
 ---
 
 # hcs_csms_secret_version
 
-Use this data source to query the version and plaintext of the CSMS(Cloud Secret Management Service) secret.
+Use this data source to query the version and plaintext of the CSMS secret.
 
 ## Example Usage
 

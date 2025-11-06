@@ -2,7 +2,8 @@
 subcategory: "Cloud Container Engine (CCE)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_cce_pvc"
-description: ""
+description: |-
+  Manages a CCE Persistent Volume Claim resource within HuaweiCloudStack
 ---
 
 # hcs_cce_pvc

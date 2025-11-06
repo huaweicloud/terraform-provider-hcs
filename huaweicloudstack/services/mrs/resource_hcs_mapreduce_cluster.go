@@ -921,7 +921,6 @@ func setMrsClusterNodeGroups(d *schema.ResourceData, mrsV1Client *golangsdk.Serv
 			value = "custom_nodes"
 			isCustomNode = true
 		}
-		log.Printf("[DEBUG wzp] node is %v", node)
 		groupMap := map[string]interface{}{
 			"node_number":      node.NodeNum,
 			"flavor":           node.NodeSize,

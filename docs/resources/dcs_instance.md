@@ -196,6 +196,10 @@ The following arguments are supported:
   to set this parameter. The username starts with a letter, consists of 1 to 64 characters, and supports only letters,
   digits, and hyphens (-). Changing this creates a new instance.
 
+* `enterprise_project_id` - (Optional, String, ForceNew) The enterprise project id of the dcs instance.
+
+  Changing this creates a new instance.
+
 * `description` - (Optional, String) Specifies the description of an instance.
   It is a string that contains a maximum of 1024 characters.
 

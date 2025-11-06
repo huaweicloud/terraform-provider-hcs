@@ -76,19 +76,6 @@ func (c *HcsConfig) LoadAndValidate() error {
 		return fmt.Errorf("cloud or endpoints should be provided")
 	}
 
-	// Assume role
-	if c.AssumeRoleAgency != "" {
-		err = buildClientByAgency(c)
-		if err != nil {
-			return err
-		}
-	}
-
-	if c.HwClient != nil && c.HwClient.ProjectID != "" {
-		c.RegionProjectIDMap[c.Region] = c.HwClient.ProjectID
-	}
-	log.Printf("[DEBUG] init region and project map: %#v", c.RegionProjectIDMap)
-
 	// set DomainID for IAM resource
 	if c.DomainID == "" {
 		if domainID, err := c.getDomainID(); err == nil {
@@ -102,6 +89,19 @@ func (c *HcsConfig) LoadAndValidate() error {
 			log.Printf("[WARN] get domain id failed: %s", err)
 		}
 	}
+
+	// Assume role
+	if c.AssumeRoleAgency != "" {
+		err = buildClientByAgency(c)
+		if err != nil {
+			return err
+		}
+	}
+
+	if c.HwClient != nil && c.HwClient.ProjectID != "" {
+		c.RegionProjectIDMap[c.Region] = c.HwClient.ProjectID
+	}
+	log.Printf("[DEBUG] init region and project map: %#v", c.RegionProjectIDMap)
 
 	if c.UserID == "" && c.Username != "" {
 		if userID, err := c.getUserIDbyName(c.Username); err == nil {

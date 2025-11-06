@@ -62,6 +62,8 @@ type CreateOpts struct {
 	// Only valid if action is REDIRECT_TO_LISTENER.
 	RedirectListenerID string `json:"redirect_listener_id,omitempty"`
 
+	RedirectUrlConfig *RedirectUrlConfig `json:"redirect_url_config,omitempty"`
+
 	// The administrative state of the Loadbalancer. A valid value is true (UP)
 	// or false (DOWN).
 	AdminStateUp *bool `json:"admin_state_up,omitempty"`
@@ -174,6 +176,8 @@ type UpdateOpts struct {
 	// Requests matching this policy will be redirected to this LISTENER.
 	// Only valid if action is REDIRECT_TO_LISTENER.
 	RedirectListenerID *string `json:"redirect_listener_id,omitempty"`
+
+	RedirectUrlConfig *RedirectUrlConfig `json:"redirect_url_config,omitempty"`
 
 	// The administrative state of the Loadbalancer. A valid value is true (UP)
 	// or false (DOWN).

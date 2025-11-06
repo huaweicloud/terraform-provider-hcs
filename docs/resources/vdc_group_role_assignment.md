@@ -26,10 +26,10 @@ variable "enterprise_project_id" {
 }
 
 resource "hcs_vdc_role" "role1" {
-  domain_id = var.domain_id
   name      = "roleName1"
   type      = "AX"
-  policy = {
+  policy = <<EOF
+  {
     "Depends" : [],
     "Statement" : [
       {
@@ -42,6 +42,7 @@ resource "hcs_vdc_role" "role1" {
     ],
     "Version" : "1.1"
   }
+  EOF
 }
 
 resource "hcs_vdc_group" "group01" {

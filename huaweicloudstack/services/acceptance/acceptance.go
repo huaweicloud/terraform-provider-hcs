@@ -118,7 +118,11 @@ var (
 	HCS_WORKSPACE_AD_VPC_ID      = os.Getenv("HCS_WORKSPACE_AD_VPC_ID")      // The VPC ID to which the AD server and desktops belongs.
 	HCS_WORKSPACE_AD_NETWORK_ID  = os.Getenv("HCS_WORKSPACE_AD_NETWORK_ID")  // The network ID to which the AD server belongs.
 
-	HCS_FGS_TRIGGER_LTS_AGENCY = os.Getenv("HCS_FGS_TRIGGER_LTS_AGENCY")
+	HCS_FGS_TRIGGER_LTS_AGENCY    = os.Getenv("HCS_FGS_TRIGGER_LTS_AGENCY")
+	HCS_FGS_AGENCY_NAME           = os.Getenv("HCS_FGS_AGENCY_NAME")
+	HCS_FGS_APP_AGENCY_NAME       = os.Getenv("HCS_FGS_APP_AGENCY_NAME")
+	HCS_FGS_GPU_TYPE              = os.Getenv("HCS_FGS_GPU_TYPE")
+	HCS_FGS_DEPENDENCY_VERSION_ID = os.Getenv("HCS_FGS_DEPENDENCY_VERSION_ID")
 
 	HCS_KMS_ENVIRONMENT    = os.Getenv("HCS_KMS_ENVIRONMENT")
 	HCS_KMS_KEY_ID         = os.Getenv("HCS_KMS_KEY_ID")
@@ -834,7 +838,7 @@ func TestAccPreCheckCnEast3(t *testing.T) {
 // lintignore:AT003
 func TestAccPreCheckBms(t *testing.T) {
 	if HCS_USER_ID == "" {
-		t.Skip("HW_USER_ID must be set for BMS acceptance tests")
+		t.Skip("HCS_USER_ID must be set for BMS acceptance tests")
 	}
 }
 
@@ -899,5 +903,49 @@ func TestAccPreCheckOpengaussDoradoPool(t *testing.T) {
 func TestAccPreCheckOpengaussKmsProjectName(t *testing.T) {
 	if OPENGAUSS_KMS_PROJECT_NAME == "" {
 		t.Skip("OPENGAUSS_KMS_PROJECT_NAME must be set for OpenGauss KMS acceptance tests.")
+	}
+}
+
+// lintignore:AT003
+func TestAccPreCheckOpengaussConfiguration(t *testing.T) {
+	if OPENGAUSS_PARAMETER_TEMPLATE_ID == "" {
+		t.Skip("OPENGAUSS_CONFIGURATION_ID must be set for OpenGauss acceptance tests.")
+	}
+}
+
+// lintignore:AT003
+func TestAccPreCheckFgsAgency(t *testing.T) {
+	// The agency should be FunctionGraph and authorize these roles:
+	// For the acceptance tests of the async invoke configuration:
+	// + FunctionGraph FullAccess
+	// + DIS Operator
+	// + OBS Administrator
+	// + SMN Administrator
+	// For the acceptance tests of the function trigger and the application:
+	// + LTS Administrator
+	// + SWR Administrator
+	if HCS_FGS_AGENCY_NAME == "" {
+		t.Skip("HCS_FGS_AGENCY_NAME must be set for FGS acceptance tests")
+	}
+}
+
+// lintignore:AT003
+func TestAccPreCheckFgsAppAgency(t *testing.T) {
+	if HCS_FGS_APP_AGENCY_NAME == "" {
+		t.Skip("HCS_FGS_APP_AGENCY_NAME must be set for FGS acceptance tests")
+	}
+}
+
+// lintignore:AT003
+func TestAccPreCheckFgsGpuType(t *testing.T) {
+	if HCS_FGS_GPU_TYPE == "" {
+		t.Skip("HCS_FGS_GPU_TYPE must be set for FGS acceptance tests")
+	}
+}
+
+// lintignore:AT003
+func TestAccPreCheckFgsDependencyVersionId(t *testing.T) {
+	if HCS_FGS_DEPENDENCY_VERSION_ID == "" {
+		t.Skip("HCS_FGS_DEPENDENCY_VERSION_ID must be set for FGS acceptance tests")
 	}
 }

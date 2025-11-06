@@ -1,5 +1,9 @@
 ---
 subcategory: "Cloud Container Engine (CCE)"
+layout: "huaweicloudstack"
+page_title: "HuaweiCloudStack: hcs_cce_nodes"
+description: |-
+  Use this data source to get a list of CCE nodes
 ---
 
 # hcs_cce_nodes
@@ -41,8 +45,11 @@ In addition to all arguments above, the following attributes are exported:
 
 * `ids` - Indicates a list of IDs of all CCE nodes found.
 
-* `nodes` - Indicates a list of CCE nodes found. Structure is documented below.
+* `nodes` - Indicates a list of CCE nodes found.
 
+  The [nodes](#cce_nodes) object structure is documented below.
+
+<a name="cce_nodes"></a>
 The `nodes` block supports:
 
 * `name` - The name of the node.
@@ -73,10 +80,15 @@ The `nodes` block supports:
 
 * `private_ip` - The private IP of the node.
 
-* `root_volume` - The system disk related configuration. Structure is documented below.
+* `root_volume` - The information of node system disk.
 
-* `data_volumes` - The data related configuration. Structure is documented below.
+  The [root_volume](#cce_volumes) object structure is documented below.
 
+* `data_volumes` - The information of node data disk.
+
+  The [data_volumes](#cce_volumes) object structure is documented below.
+
+<a name="cce_volumes"></a>
 The `root_volume` and `data_volumes` blocks support:
 
 * `size` - Disk size in GB.

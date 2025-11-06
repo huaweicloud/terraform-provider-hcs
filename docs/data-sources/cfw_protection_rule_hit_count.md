@@ -2,7 +2,8 @@
 subcategory: "Cloud Firewall (CFW)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_cfw_protection_rule_hit_count"
-description: ""
+description: |-
+  Use this data source to get cfw protection rule hit count
 ---
 
 # hcs_cfw_protection_rule_hit_count
@@ -41,12 +42,13 @@ In addition to all arguments above, the following attributes are exported:
 * `id` - The resource ID.
 
 * `records` - The firewall instance records.
-  The [records object](#records) structure is documented below.
 
-<a name="records"></a>
+  The [records](#hit_count_records) object structure is documented below.
+
+<a name="hit_count_records"></a>
 The `records` block supports:
 
 * `rule_id` - The rule id.
 
-* `rule_hit_count` - Number of times that an ACL rule is hit. When an ACL rule is triggered,
+* `rule_hit_count` -The number of times that an ACL rule is hit. When an ACL rule is triggered,
   the number of times that the rule ID is hit is added.

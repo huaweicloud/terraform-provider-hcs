@@ -3,12 +3,12 @@ subcategory: "Data Encryption Workshop (DEW)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_csms_secret"
 description: |
-  Manages CSMS(Cloud Secret Management Service) secrets within HuaweiCloudStack.
+  Manages CSMS secrets within HuaweiCloudStack
 ---
 
 # hcs_csms_secret
 
-Manages CSMS(Cloud Secret Management Service) secrets within HuaweiCloudStack.
+Manages CSMS secrets within HuaweiCloudStack.
 
 ## Example Usage
 
@@ -83,9 +83,13 @@ In addition to all arguments above, the following attributes are exported:
 
 * `latest_version` - The latest version id.
 
-* `status` - The CSMS secret status. Values can be: **ENABLED**, **DISABLED**, **PENDING_DELETE** and **FROZEN**.
+* `status` - The CSMS secret status. The values are:
+  + **ENABLED**
+  + **DISABLED**
+  + **PENDING_DELETE**
+  + **FROZEN**
 
-* `create_time` - Time when the CSMS secrets created, in UTC format.
+* `create_time` - The time when the CSMS secrets created, in UTC format.
 
 ## Import
 
