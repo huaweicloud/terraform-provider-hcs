@@ -2,7 +2,8 @@
 subcategory: "Cloud Container Engine (CCE)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_cce_cluster_certificate"
-description: ""
+description: |-
+  Use this data source to get the certificate of a CCE cluster within HuaweiCloudStack
 ---
 
 # hcs_cce_cluster_certificate
@@ -43,15 +44,18 @@ In addition to all arguments above, the following attributes are exported:
 * `current_context` - The current context of the cluster certificate.
 
 * `clusters` - The clusters information of the cluster certificate.
-  The [clusters](#CCECluster_clusters) structure is documented below.
+
+  The [clusters](#certificate_clusters) object structure is documented below.
 
 * `users` - The users information of cluster the certificate.
-  The [users](#CCECluster_users) structure is documented below.
+
+  The [users](#certificate_users) object structure is documented below.
 
 * `contexts` - The contexts information of the cluster certificate.
-  The [contexts](#CCECluster_contexts) structure is documented below.
 
-<a name="CCECluster_clusters"></a>
+  The [contexts](#certificate_contexts) object structure is documented below.
+
+<a name="certificate_clusters"></a>
 The `clusters` block supports:
 
 * `name` - The cluster name of the cluster certificate.
@@ -62,7 +66,7 @@ The `clusters` block supports:
 
 * `insecure_skip_tls_verify` - Whether insecure skip tls verify of the cluster certificate.
 
-<a name="CCECluster_users"></a>
+<a name="certificate_users"></a>
 The `users` block supports:
 
 * `name` - The username of the cluster certificate. The value is fixed to `user`.
@@ -71,7 +75,7 @@ The `users` block supports:
 
 * `client_key_data` - The client key data of the cluster certificate.
 
-<a name="CCECluster_contexts"></a>
+<a name="certificate_contexts"></a>
 The `contexts` block supports:
 
 * `name` - The context name of the cluster certificate.

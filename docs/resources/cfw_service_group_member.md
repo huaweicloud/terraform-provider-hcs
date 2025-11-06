@@ -1,5 +1,9 @@
 ---
 subcategory: "Cloud Firewall (CFW)"
+layout: "huaweicloudstack"
+page_title: "HuaweiCloudStack: hcs_cfw_service_group_member"
+description: |-
+  Manages a CFW service group member resource within HuaweiCloudStack
 ---
 
 # hcs_cfw_service_group_member
@@ -27,7 +31,9 @@ resource "hcs_cfw_service_group" "test" {
 The following arguments are supported:
 
 * `region` - (Optional, String, ForceNew) Specifies the region in which to create the resource.
-  If omitted, the provider-level region will be used. Changing this parameter will create a new resource.
+  If omitted, the provider-level region will be used.
+
+  Changing this parameter will create a new resource.
 
 * `group_id` - (Required, String, ForceNew) Specifies the ID of the service group.
 

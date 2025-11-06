@@ -42,6 +42,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/elb"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eps"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/evs"
+	hcsFgs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/fgs"
 	hcsGaussdb "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/gaussdb"
 	hcsHss "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/hss"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ims"
@@ -391,8 +392,9 @@ func Provider() *schema.Provider {
 			"hcs_evs_volume_types": evs.DataSourceEvsVolumeTypesV2(),
 			"hcs_evs_snapshots":    evs.DataSourceEvsSnapshots(),
 
-			"hcs_gaussdb_opengauss_instance":  hcsGaussdb.DataSourceOpenGaussInstance(),
-			"hcs_gaussdb_opengauss_instances": hcsGaussdb.DataSourceOpenGaussInstances(),
+			"hcs_gaussdb_opengauss_instance":            hcsGaussdb.DataSourceOpenGaussInstance(),
+			"hcs_gaussdb_opengauss_instances":           hcsGaussdb.DataSourceOpenGaussInstances(),
+			"hcs_gaussdb_opengauss_parameter_template": hcsGaussdb.DataSourceConfiguration(),
 
 			"hcs_ims_images": ims.DataSourceImagesImages(),
 
@@ -530,7 +532,10 @@ func Provider() *schema.Provider {
 			"hcs_evs_volume":   evs.ResourceEvsVolume(),
 			"hcs_evs_snapshot": evs.ResourceEvsSnapshotV2(),
 
-			"hcs_gaussdb_opengauss_instance": hcsGaussdb.ResourceOpenGaussInstance(),
+			"hcs_fgs_function": hcsFgs.ResourceFgsFunction(),
+
+			"hcs_gaussdb_opengauss_instance":           hcsGaussdb.ResourceOpenGaussInstance(),
+			"hcs_gaussdb_opengauss_parameter_template": hcsGaussdb.ResourceOpenGaussParameterTemplate(),
 
 			"hcs_hss_host_group": hcsHss.ResourceHostGroup(),
 

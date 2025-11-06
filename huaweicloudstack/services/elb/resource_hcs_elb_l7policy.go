@@ -64,13 +64,51 @@ func ResourceL7PolicyV3() *schema.Resource {
 			"redirect_listener_id": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ExactlyOneOf: []string{"redirect_listener_id", "redirect_pool_id"},
+				ExactlyOneOf: []string{"redirect_listener_id", "redirect_pool_id", "redirect_url_config"},
 				Computed:     true,
 			},
 			"redirect_pool_id": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Computed: true,
+			},
+			"redirect_url_config": {
+				Type:     schema.TypeList,
+				Optional: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"status_code": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"protocol": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "${protocol}",
+						},
+						"host": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "${host}",
+						},
+						"port": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "${port}",
+						},
+						"path": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "${path}",
+						},
+						"query": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "${query}",
+						},
+					},
+				},
 			},
 		},
 	}
@@ -92,6 +130,34 @@ func resourceL7PolicyV3Create(ctx context.Context, d *schema.ResourceData, meta 
 	}
 	if action == "REDIRECT_TO_POOL" {
 		createOpts.RedirectPoolID = d.Get("redirect_pool_id").(string)
+	} else if action == "REDIRECT_TO_URL" {
+		v, ok := d.Get("redirect_url_config").([]interface{})
+		if !ok {
+			return diag.Errorf("redirect_url_config list type must be []interface{}, "+
+				"currently is %T", d.Get("redirect_url_config"))
+		}
+
+		if len(v) != 1 {
+			return diag.Errorf("redirect_url_config list length must be 1, "+
+				"currently is %d", len(v))
+		}
+
+		vv, ok := v[0].(map[string]interface{})
+		if !ok {
+			return diag.Errorf("redirect_url_config type must be map[string]interface{}, "+
+				"currently is %T", d.Get("redirect_url_config"))
+		}
+
+		log.Printf("[DEBUG] redirect_url_config: %#v", vv)
+
+		createOpts.RedirectUrlConfig = &l7policies.RedirectUrlConfig{
+			StatusCode: vv["status_code"].(string),
+			Protocol:   vv["protocol"].(string),
+			Host:       vv["host"].(string),
+			Port:       vv["port"].(string),
+			Path:       vv["path"].(string),
+			Query:      vv["query"].(string),
+		}
 	} else {
 		createOpts.RedirectListenerID = d.Get("redirect_listener_id").(string)
 	}
@@ -128,6 +194,18 @@ func resourceL7PolicyV3Read(_ context.Context, d *schema.ResourceData, meta inte
 
 	log.Printf("[DEBUG] Retrieved L7 Policy %s: %#v", d.Id(), l7Policy)
 
+	var redirectUrlConfigs []interface{}
+	if l7Policy.RedirectUrlConfig != nil {
+		redirectUrlConfigs = append(redirectUrlConfigs, map[string]interface{}{
+			"status_code": l7Policy.RedirectUrlConfig.StatusCode,
+			"protocol":    l7Policy.RedirectUrlConfig.Protocol,
+			"host":        l7Policy.RedirectUrlConfig.Host,
+			"port":        l7Policy.RedirectUrlConfig.Port,
+			"path":        l7Policy.RedirectUrlConfig.Path,
+			"query":       l7Policy.RedirectUrlConfig.Query,
+		})
+	}
+
 	mErr := multierror.Append(nil,
 		d.Set("description", l7Policy.Description),
 		d.Set("name", l7Policy.Name),
@@ -136,6 +214,7 @@ func resourceL7PolicyV3Read(_ context.Context, d *schema.ResourceData, meta inte
 		d.Set("redirect_pool_id", l7Policy.RedirectPoolID),
 		d.Set("redirect_listener_id", l7Policy.RedirectListenerID),
 		d.Set("region", cfg.GetRegion(d)),
+		d.Set("redirect_url_config", redirectUrlConfigs),
 	)
 	if err := mErr.ErrorOrNil(); err != nil {
 		return diag.Errorf("error setting Dedicated ELB l7policy fields: %s", err)
@@ -168,6 +247,33 @@ func resourceL7PolicyV3Update(ctx context.Context, d *schema.ResourceData, meta 
 	if d.HasChange("redirect_listener_id") {
 		redirectListenerID := d.Get("redirect_listener_id").(string)
 		updateOpts.RedirectListenerID = &redirectListenerID
+	}
+	if d.HasChange("redirect_url_config") {
+		v, ok := d.Get("redirect_url_config").([]interface{})
+		if !ok {
+			return diag.Errorf("redirect_url_config list type must be []interface{}, "+
+				"currently is %T", d.Get("redirect_url_config"))
+		}
+
+		if len(v) != 1 {
+			return diag.Errorf("redirect_url_config list length must be 1, "+
+				"currently is %d", len(v))
+		}
+
+		vv, ok := v[0].(map[string]interface{})
+		if !ok {
+			return diag.Errorf("redirect_url_config type must be map[string]interface{}, "+
+				"currently is %T", d.Get("redirect_url_config"))
+		}
+
+		updateOpts.RedirectUrlConfig = &l7policies.RedirectUrlConfig{
+			StatusCode: vv["status_code"].(string),
+			Protocol:   vv["protocol"].(string),
+			Host:       vv["host"].(string),
+			Port:       vv["port"].(string),
+			Path:       vv["path"].(string),
+			Query:      vv["query"].(string),
+		}
 	}
 
 	log.Printf("[DEBUG] Updating L7 Policy %s with options: %#v", d.Id(), updateOpts)

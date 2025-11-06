@@ -2,7 +2,8 @@
 subcategory: "Cloud Container Engine (CCE)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_cce_node_attach"
-description: ""
+description: |-
+  Add a node from an existing ECS server to a CCE cluster
 ---
 
 # hcs_cce_node_attach

@@ -1,5 +1,9 @@
 ---
 subcategory: "Cloud Container Engine (CCE)"
+layout: "huaweicloudstack"
+page_title: "HuaweiCloudStack: hcs_cce_node"
+description: |-
+  To get the specified node in a cluster
 ---
 
 # hcs_cce_node
@@ -61,10 +65,15 @@ In addition to all arguments above, the following attributes are exported:
 
 * `private_ip` - Private IP of the node.
 
-* `root_volume` - It corresponds to the system disk related configuration. Structure is documented below.
+* `root_volume` - The information of node system disk.
 
-* `data_volumes` - Represents the data disk to be created. Structure is documented below.
+  The [root_volume](#cce_volumes) object structure is documented below.
 
+* `data_volumes` - The information of node data disk.
+
+  The [data_volumes](#cce_volumes) object structure is documented below.
+
+<a name="cce_volumes"></a>
 The `root_volume` and `data_volumes` blocks support:
 
 * `size` - Disk size in GB.

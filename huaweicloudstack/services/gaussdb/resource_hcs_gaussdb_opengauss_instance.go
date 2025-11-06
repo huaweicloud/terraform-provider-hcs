@@ -111,12 +111,9 @@ func ResourceOpenGaussInstance() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"mode": {
-							Type:     schema.TypeString,
-							Required: true,
-							ForceNew: true,
-							ValidateFunc: validation.StringInSlice([]string{
-								string(HaModeDistributed), string(HAModeCentralized),
-							}, true),
+							Type:             schema.TypeString,
+							Required:         true,
+							ForceNew:         true,
 							DiffSuppressFunc: utils.SuppressCaseDiffs,
 						},
 						"replication_mode": {
@@ -175,10 +172,7 @@ func ResourceOpenGaussInstance() *schema.Resource {
 				Type:     schema.TypeInt,
 				Optional: true,
 				ForceNew: true,
-				ValidateFunc: validation.IntInSlice([]int{
-					2, 3,
-				}),
-				Default: 3,
+				Default:  3,
 			},
 			"security_group_id": {
 				Type:     schema.TypeString,
@@ -467,26 +461,16 @@ func buildOpenGaussInstanceCreateOpts(d *schema.ResourceData,
 		ConsistencyProtocol: ha["consistency_protocol"].(string),
 	}
 
-	// build volume
-	var dn_num int = 1
-	if mode == string(HaModeDistributed) {
-		dn_num = d.Get("sharding_num").(int)
-	}
-	if mode == string(HAModeCentralized) {
-		dn_num = d.Get("replica_num").(int) + 1
-	}
-
 	volumeRaw := d.Get("volume").([]interface{})
 	if len(volumeRaw) > 0 {
 		log.Printf("[DEBUG] The volume structure is: %#v", volumeRaw)
 		volume := volumeRaw[0].(map[string]interface{})
-		dn_size := volume["size"].(int)
-		volume_size := dn_size * dn_num
 		createOpts.Volume = instances.VolumeOpt{
 			Type: volume["type"].(string),
-			Size: volume_size,
+			Size: volume["size"].(int),
 		}
 	}
+
 	log.Printf("[DEBUG] The createOpts object is: %#v", createOpts)
 	// Add password here so it wouldn't go in the above log entry
 	createOpts.Password = d.Get("password").(string)
@@ -607,7 +591,7 @@ func flattenOpenGaussBackupStrategy(backupStrategy instances.BackupStrategyOpt) 
 	}
 }
 
-func flattenOpenGaussVolume(volume instances.VolumeOpt, dnNum int) []map[string]interface{} {
+func flattenOpenGaussVolume(volume instances.VolumeOpt) []map[string]interface{} {
 	if volume == (instances.VolumeOpt{}) {
 		return nil
 	}
@@ -615,7 +599,7 @@ func flattenOpenGaussVolume(volume instances.VolumeOpt, dnNum int) []map[string]
 	return []map[string]interface{}{
 		{
 			"type": volume.Type,
-			"size": volume.Size / dnNum,
+			"size": volume.Size,
 		},
 	}
 }
@@ -726,7 +710,7 @@ func resourceOpenGaussInstanceRead(_ context.Context, d *schema.ResourceData, me
 		d.Set("datastore", flattenOpenGaussDataStore(instance.DataStore)),
 		d.Set("backup_strategy", flattenOpenGaussBackupStrategy(instance.BackupStrategy)),
 		setOpenGaussNodesAndRelatedNumbers(d, instance, &dnNum),
-		d.Set("volume", flattenOpenGaussVolume(instance.Volume, dnNum)),
+		d.Set("volume", flattenOpenGaussVolume(instance.Volume)),
 		setOpenGaussPrivateIpsAndEndpoints(d, instance.PrivateIps, instance.Port),
 		d.Set("kms_tde_key_id", instance.KmsTdeKeyId),
 		d.Set("kms_project_name", instance.KmsProjectName),
@@ -786,17 +770,9 @@ func expandOpenGaussCoordinatorNumber(ctx context.Context, config *config.HcsCon
 func updateOpenGaussVolumeSize(ctx context.Context, config *config.HcsConfig, client *golangsdk.ServiceClient,
 	d *schema.ResourceData) error {
 	volumeRaw := d.Get("volume").([]interface{})
-	dnSize := volumeRaw[0].(map[string]interface{})["size"].(int)
-	dnNum := 1
-	if d.Get("ha.0.mode").(string) == string(HaModeDistributed) {
-		dnNum = d.Get("sharding_num").(int)
-	}
-	if d.Get("ha.0.mode").(string) == string(HAModeCentralized) {
-		dnNum = d.Get("replica_num").(int) + 1
-	}
 	opts := instances.UpdateOpts{
 		EnlargeVolume: &instances.UpdateVolumeOpts{
-			Size: dnSize * dnNum,
+			Size: volumeRaw[0].(map[string]interface{})["size"].(int),
 		},
 		IsAutoPay: "true",
 	}

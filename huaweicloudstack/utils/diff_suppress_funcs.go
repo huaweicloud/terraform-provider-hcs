@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"log"
 	"reflect"
 	"regexp"
@@ -136,4 +137,42 @@ func CompareJsonTemplateAreEquivalent(tem1, tem2 string) (bool, error) {
 			canonicalJson1, canonicalJson2)
 	}
 	return equal, nil
+}
+
+func SuppressMapDiffs() schema.SchemaDiffSuppressFunc {
+	return func(paramKey, o, n string, d *schema.ResourceData) bool {
+		if strings.HasSuffix(paramKey, ".%") {
+			// Ignore the length judgment, because this method will judge each changed key one by one.
+			return true
+		}
+		if n != "" {
+			log.Printf("[DEBUG] The new value is found and report this change directly, the value is: %s", n)
+			// When the new value is not empty and the key is in the *terraform.InstanceDiff.Attributes list, it means
+			// that the value has been modified compared to the value returned by the console, report this change
+			// directly.
+			return false
+		}
+
+		var (
+			// The absolute path of the current key.
+			categories        = strings.Split(paramKey, ".")
+			mapCategory       = strings.Join(categories[:len(categories)-1], ".")
+			originMapCategory = fmt.Sprintf("%s_origin", mapCategory)
+			keyName           = categories[len(categories)-1]
+		)
+
+		originMap, ok := d.Get(originMapCategory).(map[string]interface{})
+		if !ok {
+			log.Printf("[WARN] Unable to find corresponding origin parameter (%s) in current category, please check your schema definition",
+				originMapCategory)
+			return true
+		}
+
+		if _, ok := originMap[keyName]; ok {
+			// The key is found in the origin parameter value and report this change directly.
+			return false
+		}
+		// The relevant value is not configured locally, and the change is ignored.
+		return true
+	}
 }

@@ -1,5 +1,9 @@
 ---
 subcategory: "GaussDB"
+layout: "huaweicloudstack"
+page_title: "HuaweiCloudStack: hcs_gaussdb_opengauss_instance"
+description: |-
+  GaussDB OpenGauss instance management within HuaweiCouldStack.
 ---
 
 # hcs_gaussdb_opengauss_instance
@@ -72,7 +76,7 @@ resource "hcs_gaussdb_opengauss_instance" "instance_acc" {
   name              = var.instance_name
   password          = var.instance_password
   flavor            = "gaussdb.opengauss.ee.m6.2xlarge.x868.ha"
-  availability_zone = join(",", slice(data.hcs_availability_zones.myaz.names, 0, 3))
+  availability_zone = join(",", slice(data.hcs_availability_zones.test.names, 0, 3))
 
   replica_num = 3
 
@@ -107,7 +111,7 @@ resource "hcs_gaussdb_opengauss_instance" "instance_acc" {
   name              = "terraform-test"
   password          = var.instance_password
   flavor            = "gaussdb.opengauss.ee.m6.2xlarge.x868.ha"
-  availability_zone = join(",", slice(data.hcs_availability_zones.myaz.names, 0, 3))
+  availability_zone = join(",", slice(data.hcs_availability_zones.test.names, 0, 3))
 
   sharding_num      = 1
   coordinator_num   = 2
@@ -128,38 +132,95 @@ resource "hcs_gaussdb_opengauss_instance" "instance_acc" {
 }
 ```
 
+### Create a distributed instance
+
+```hcl
+variable "vpc_id" {}
+variable "subnet_network_id" {}
+variable "security_group_id" {}
+variable "flavor_id" {}
+variable "instance_name" {}
+variable "instance_password" {}
+
+data "hcs_availability_zones" "test" {}
+
+resource "hcs_gaussdb_opengauss_instance" "test" {
+  vpc_id            = var.vpc_id
+  subnet_id         = var.subnet_network_id
+  security_group_id = var.security_group_id
+  flavor            = var.flavor_id
+  name              = var.instance_name
+  password          = var.instance_password
+  availability_zone = join(",", slice(data.hcs_availability_zones.test.names, 0, 3))
+
+  solution     = "hcs2"
+  sharding_num = 0
+
+  ha {
+    mode             = "combined"
+    replication_mode = "sync"
+    consistency      = "strong"
+  }
+
+  volume {
+    type = "ULTRAHIGH"
+    size = 480
+  }
+
+  datastore {
+    engine  = "GaussDB(for openGauss)"
+    version = "8.202"
+  }
+}
+```
 ## Argument Reference
 
 The following arguments are supported:
 
 * `region` - (Optional, String, ForceNew) Specifies the region in which to create the instance.
-  If omitted, the provider-level region will be used. Changing this parameter will create a new resource.
+  If omitted, the provider-level region will be used.
+
+  Changing this parameter will create a new resource.
 
 * `name` - (Required, String) Specifies the instance name, which can be the same as an existing instance name.
   The value must be `4` to `64` characters in length and start with a letter. It is case-sensitive and can contain only
   letters, digits, hyphens (-), and underscores (_).
 
 * `flavor` - (Required, String, ForceNew) Specifies the instance specifications. Please reference the API docs for valid
-  options. Changing this parameter will create a new resource.
+  options.
+
+  Changing this parameter will create a new resource.
 
 * `password` - (Required, String) Specifies the database password. The value must be `8` to `32` characters in length,
   including uppercase and lowercase letters, digits, and special characters, such as **~!@#%^*-_=+?**. You are advised
   to enter a strong password to improve security, preventing security risks such as brute force cracking.
 
-* `availability_zone` - (Required, String, ForceNew) Specifies the availability zone information, can be three same or
-  different az like **cn-north-4a,cn-north-4a,cn-north-4a**. Changing this parameter will create a new resource.
+* `availability_zone` - (Required, String, ForceNew) Specifies the availability zone information.
+  - When `solution` is **double**, it only supports deploy in two different availability zones. For example: `az1,az2`.
+  - When `solution` is **single**, it only supports deploy in one availability zone. For example: `az1`.
+  - When `solution` is **hcs1**, **quadruset** or **hcs4**, it only supports deploy in three different availability
+    zones. For example: "az1,az2,az3".
+  - When `solution` is other than the above, it supports deploy in either `3 identical availability zones` or 
+    `3 different availability zones`.
+    + To deploy in three identical availability zones, input `az1,az1,az1`. 
+    + To deploy in three different availability zones, input `az1,az2,az3`.
+
+  Changing this parameter will create a new resource.
 
 * `ha` - (Required, List, ForceNew) Specifies the HA information.
   The [ha](#opengauss_ha) structure is documented below.
+
   Changing this parameter will create a new resource.
 
 * `volume` - (Required, List) Specifies the volume storage information.
   The [volume](#opengauss_volume) structure is documented below.
 
 * `vpc_id` - (Required, String, ForceNew) Specifies the VPC ID to which the subnet belongs.
+
   Changing this parameter will create a new resource.
 
 * `subnet_id` - (Required, String, ForceNew) Specifies the network ID of VPC subnet to which the instance belongs.
+
   Changing this parameter will create a new resource.
 
 * `security_group_id` - (Optional, String, ForceNew) Specifies the security group ID to which the instance belongs.
@@ -183,28 +244,34 @@ The following arguments are supported:
   Changing this parameter will create a new resource.
 
 * `configuration_id` - (Optional, String, ForceNew) Specifies the parameter template ID.
+
   Changing this parameter will create a new resource.
 
 * `os_type` - (Optional, String, ForceNew) Specifies the OS type. The value is case sensitive. The GaussDB version
-  matching the Hce operating system must be 8.102 or later. The valid values are **Hce**, **Euler** and **Kylin**.
-  Default to **Hce**.
+  matching the Hce operating system must be 8.102 or later. The valid values are as follows:
+  - **Hce**. The Huawei Cloud EulerOS 2.0 type.(default)
+  - **Euler**. The euler type.
+  - **Kylin**. The kylin type.
 
   Changing this parameter will create a new resource.
 
-* `sharding_num` - (Optional, Int) Specifies the sharding number. The valid value is range form `1` to `9`.
-  The default value is 3.
+* `sharding_num` - (Optional, Int) Specifies the sharding number. The valid value is range form **1** to **9**.
+  The default value is **3**.
 
-* `coordinator_num` - (Optional, Int) Specifies the coordinator number. Values: 1~9. The default value is 3.
-  The value must not be greater than twice value of `sharding_num`.
+* `coordinator_num` - (Optional, Int) Specifies the coordinator number. The valid value is range form **1** to **9**.
+  The default value is **3**. The value must not be greater than twice value of `sharding_num`.
 
 * `replica_num` - (Optional, Int, ForceNew) The replica number. The valid values are **2** and **3**, defaults to **3**.
   Double replicas are only available for specific users and supports only instance versions are v1.3.0 or later.
+
   Changing this parameter will create a new resource.
 
 * `enterprise_project_id` - (Optional, String, ForceNew) Specifies the enterprise project ID.
+
   Changing this parameter will create a new resource.
 
 * `time_zone` - (Optional, String, ForceNew) Specifies the time zone. Defaults to **UTC+08:00**.
+
   Changing this parameter will create a new resource.
 
 * `force_import` - (Optional, Bool) Specifies whether to import the instance with the given configuration instead of
@@ -227,7 +294,7 @@ The following arguments are supported:
 -> **NOTE:** Only version active/standby instances with version 3.206 and above are supported `enable_single_float_ip`.
 
 * `solution` - (Optional, String, ForceNew) Specifies the deployment modes supported by GaussDB.
-  When `ha.mode` is **centralization_standard**, the valid values are as follows.
+  When `ha.mode` is **centralization_standard**, the valid values are as follows:
   - **triset**. Active/standby version: 1 active node and 2 standby nodes.
   - **quadruset**. Active/standby version: 1 active node and 3 standby nodes.
   - **double**. Active/standby version: 1 active and 1 standby node. Only 3.220 and later versions are supported.
@@ -236,22 +303,34 @@ The following arguments are supported:
     are supported.
   - **loggerdorado**. Active/standby version: 1 active node, 1 standby node, 1 log node(shared storage).
 
+  When `ha.mode` is **combined**, the valid values are as follows:
+  - **hcs1**. Distributed edition financial version (Standard Type).
+  - **hcs2**. Distributed edition enterprise version.
+  - **hcs3**. Distributed Edition Financial version (Standard Type) Disaster Recovery Form.
+  - **hcs4**. Distributed Edition Financial version (Data Computing Type).
+  - **hcs5**. Distributed Edition Financial version (Data Computing Type) Disaster Recovery Form.
+  - **hcs6**. Distributed Enterprise Edition Disaster Recovery form, only supports version **3.209** and **above**.
+  - **hcs7**. Distributed Enterprise Edition (Enhanced), only supports version **8.1** and **above**.
+
   Changing this parameter will create a new resource.
 
 * `kms_tde_key_id` - (Optional, String) Specifies the KMS master ID for transparent encryption of GaussDB instance. Enter
   the ID means to enable transparent encryption.
-  It is **Required** when `kms_project_name` is not empty.
+  
+  -> It is **Required** when `kms_project_name` is not empty.
 
 * `kms_project_name` - (Optional, String) Specifies the resource space name where the KMS master ID is located.
-  It is **Required** when `kms_tde_key_id` is not empty.
 
-* `kms_tde_status` - (Optional, String) The encryption statement that needs to be switched. The vaild value is **on**.
+  -> It is **Required** when `kms_tde_key_id` is not empty.
+
+* `kms_tde_status` - (Optional, String) The encryption statement that needs to be switched. The valid value is **on**.
   It is **Required** when **Updating** `kms_tde_key_id` or `kms_project_name`.
 
 -> **NOTE:** Only when the database version greater than or equal to **3.300** are supported to change KMS.
 
 * `datastore` - (Optional, List, ForceNew) Specifies the datastore information.
   The [datastore](#opengauss_datastore) structure is documented below.
+
   Changing this parameter will create a new resource.
 
 * `backup_strategy` - (Optional, List) Specifies the advanced backup policy.
@@ -261,14 +340,20 @@ The following arguments are supported:
 The `ha` block supports:
 
 * `mode` - (Required, String, ForceNew) Specifies the database mode.
-  The valid values is **centralization_standard**.
+  - **centralization_standard**. Active/standby Mode.
+  - **combined**. Distributed hybrid deployment.
+
   Changing this parameter will create a new resource.
 
 * `replication_mode` - (Required, String, ForceNew) Specifies the database replication mode.
-  Only **sync** is supported now. Changing this parameter will create a new resource.
+  Only **sync** is supported now.
 
-* `consistency` - (Optional, String, ForceNew) Specifies the database consistency mode.
-  The valid values are **strong** and **eventual**, not case sensitive.
+  Changing this parameter will create a new resource.
+
+* `consistency` - (Optional, String, ForceNew) Specifies the database consistency mode, it is not case sensitive.
+  - **strong**. Strong consistency.
+  - **eventual**. Eventual Consistency.
+
   Changing this parameter will create a new resource.
 
 * `consistency_protocol` - (Optional, String, ForceNew) Specifies the replica consistency protocol type, which is case
@@ -307,18 +392,27 @@ whose Disk Type is Flash Storage.
 -> **NOTE:** If your HCS version is 8.5.0 and above, when creating a flash storage instance, ensure that the flash
 storage license has been imported to the current region. Reference [document](https://support.huawei.com/enterprise/zh/cloud-computing/huawei-cloud-stack-pid-23864287).
 
-* `size` - (Required, Int) Specifies the volume size (in gigabytes). The valid value is range form `40` to `4,000`.
+* `size` - (Required, Int) Specifies the volume size (in gigabytes).
   - **ECS deployment scheme**: The value ranges from (Number of shards x 40 GB) to (Number of shards x 24 TB). The size
     must be an integer multiple of (Number of shards x 40). The upper limit of disk usage varies according to the CPU
     size.
-  - **BMS Deployment Scheme**: This parameter is automatically calculated based on the selected flavor and cannot be
+  - **MCS deployment scheme**: The value ranges from (Number of shards x 40 GB) to (Number of shards x 24 TB). The size
+    must be an integer multiple of (Number of shards x 40). The upper limit of disk usage varies according to the CPU
+    size.
+  - **BMS deployment Scheme**: This parameter is automatically calculated based on the selected flavor and cannot be
     specified. Even if this parameter is set, it does not take effect.
+
+  -> **NOTE:** If `ha.mode` is **centralization_standard**, the valid value of size if range from **160** to **2000**.
+
+  -> **NOTE:** If `ha.mode` is **combined**, the valid value of size if range from **480** to **6000**.
 
 <a name="opengauss_datastore"></a>
 The `datastore` block supports:
 
 * `engine` - (Required, String, ForceNew) Specifies the database engine. Only **GaussDB(for openGauss)** is supported
-  now. Changing this parameter will create a new resource.
+  now.
+
+  Changing this parameter will create a new resource.
 
 * `version` - (Optional, String, ForceNew) Specifies the database version. Defaults to the latest version. Please
   reference to the API docs for valid options. Changing this parameter will create a new resource.
@@ -368,8 +462,8 @@ The `nodes` block contains:
 * `name` - Indicates the node name.
 
 * `role` - Indicates the node role.
-    + **master**.
-    + **slave**.
+  + **master**.
+  + **slave**.
 
 * `status` - Indicates the node status.
 
@@ -395,7 +489,9 @@ The `nodes` block contains:
 This resource provides the following timeouts configuration options:
 
 * `create` - Default is 120 minutes.
+
 * `update` - Default is 90 minutes.
+
 * `delete` - Default is 45 minutes.
 
 ## Import

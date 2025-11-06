@@ -1,5 +1,9 @@
 ---
 subcategory: "Cloud Container Engine (CCE)"
+layout: "huaweicloudstack"
+page_title: "HuaweiCloudStack: hcs_cce_node_pool"
+description: |-
+  To get the specified node pool in a cluster
 ---
 
 # hcs_cce_node_pool
@@ -73,10 +77,15 @@ In addition to all arguments above, the following attributes are exported:
 
 * `tags` - Tags of a VM node, key/value pair format.
 
-* `root_volume` - It corresponds to the system disk related configuration. Structure is documented below.
+* `root_volume` - The information of node system disk.
 
-* `data_volumes` - Represents the data disk to be created. Structure is documented below.
+  The [root_volume](#cce_volumes) object structure is documented below.
 
+* `data_volumes` - The information of node data disk.
+
+  The [data_volumes](#cce_volumes) object structure is documented below.
+
+<a name="cce_volumes"></a>
 The `root_volume` and `data_volumes` blocks support:
 
 * `size` - Disk size in GB.

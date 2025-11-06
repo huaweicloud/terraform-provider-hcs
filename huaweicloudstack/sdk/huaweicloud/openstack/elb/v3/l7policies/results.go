@@ -38,6 +38,8 @@ type L7Policy struct {
 	// Only valid if action is REDIRECT_TO_LISTENER.
 	RedirectListenerID string `json:"redirect_listener_id"`
 
+	RedirectUrlConfig *RedirectUrlConfig `json:"redirect_url_config"`
+
 	// The administrative state of the L7 policy, which is up (true) or down (false).
 	AdminStateUp bool `json:"admin_state_up"`
 

@@ -121,7 +121,15 @@ The following arguments are supported:
 * `enterprise_project_id` - (Optional) Default Enterprise Project ID for supported resources. If omitted, the
   `HCS_ENTERPRISE_PROJECT_ID` environment variable is used.
 
-* `domain_name` - (Required) The name of the agency domain for assume role.
+* `domain_name` - (Optional) The tenant name of user account.
+  If omitted, the `HCS_DOMAIN_NAME` environment variable is used.
+
+* `assume_role` - (Optional) Configuration block for an assumed role.
+
+  The `assume_role` block supports:
+  * `agency_name` - (Required) The name of the agency for assume role. 
+  If omitted, the `HCS_ASSUME_ROLE_AGENCY_NAME` environment variable is used.
+  * `domain_name` - (Required) The name of the agency domain for assume role. 
   If omitted, the `HCS_ASSUME_ROLE_DOMAIN_NAME` environment variable is used.
 
 * `endpoints` - (Optional) Configuration block in key/value pairs for customizing service endpoints.

@@ -9,7 +9,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/common"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 	roleSDK "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/vdc/v3/role"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/openstack/vdc/v3/vdc"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils/fmtp"
 )
@@ -19,6 +21,7 @@ import (
 // @API VDC GET    /rest/vdc/v3.0/OS-ROLE/roles/{role_id}
 // @API VDC PUT    /rest/vdc/v3.0/OS-ROLE/roles/{role_id}
 // @API VDC DELETE /rest/vdc/v3.0/OS-ROLE/roles/{role_id}
+// @API VDC GET    /rest/vdc/v3.0/vdcs
 func ResourceVdcRole() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceVdcRoleCreate,
@@ -65,6 +68,14 @@ func resourceVdcRoleCreate(ctx context.Context, schemaResourceData *schema.Resou
 	}
 
 	domainId := configContext.DomainID
+	if configContext.AssumeRoleDomain != "" {
+		searchName := configContext.AssumeRoleDomain
+		assumeDomainId, err := getDomainIdByAssumeDomainName(searchName, vdcRoleClient)
+		if err != nil {
+			return fmtp.DiagErrorf("Your query returned no results. please change your search criteria and try again.")
+		}
+		domainId = *assumeDomainId
+	}
 
 	policy := roleSDK.PolicyBase{}
 	policyDoc := schemaResourceData.Get("policy").(string)
@@ -129,6 +140,14 @@ func resourceVdcRoleUpdate(ctx context.Context, schemaResourceData *schema.Resou
 	}
 
 	domainId := configContext.DomainID
+	if configContext.AssumeRoleDomain != "" {
+		searchName := configContext.AssumeRoleDomain
+		assumeDomainId, err := getDomainIdByAssumeDomainName(searchName, vdcRoleClient)
+		if err != nil {
+			return fmtp.DiagErrorf("Your query returned no results. please change your search criteria and try again.")
+		}
+		domainId = *assumeDomainId
+	}
 
 	policy := roleSDK.PolicyBase{}
 	policyDoc := schemaResourceData.Get("policy").(string)
@@ -170,4 +189,29 @@ func resourceVdcRoleDelete(_ context.Context, schemaResourceData *schema.Resourc
 	}
 
 	return nil
+}
+
+func getDomainIdByAssumeDomainName(searchName string, vdcRoleClient *golangsdk.ServiceClient) (*string, error) {
+	listOpts := vdc.ListOpts{
+		Name:       searchName,
+		QueryName:  "domainName",
+		UpperVdcId: "0",
+	}
+	res, err := vdc.List(vdcRoleClient, listOpts).Extract()
+	if err != nil {
+		return nil, fmtp.Errorf("Error get vdc list: %s", err)
+	}
+	if len(res.Vdcs) == 0 {
+		return nil, fmtp.Errorf("Error get vdc list is empty! name: %s", searchName)
+	}
+	return findDomainIdByName(res.Vdcs, searchName)
+}
+
+func findDomainIdByName(vdcs []vdc.VdcModel, searchName string) (*string, error) {
+	for _, val := range vdcs {
+		if val.DomainName == searchName {
+			return &val.DomainId, nil
+		}
+	}
+	return nil, fmtp.Errorf("Error find domainId by name: %s", searchName)
 }

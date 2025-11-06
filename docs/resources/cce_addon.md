@@ -2,7 +2,8 @@
 subcategory: "Cloud Container Engine (CCE)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_cce_addon"
-description: ""
+description: |-
+  Manages a CCE add-on resource within HuaweiCloudStack
 ---
 
 # hcs_cce_addon

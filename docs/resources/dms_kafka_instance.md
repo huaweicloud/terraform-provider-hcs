@@ -202,6 +202,8 @@ The following arguments are supported:
   produced to or consumed from a topic that does not exist.
   The default value is false.
 
+* `enterprise_project_id` - (Optional, String) Specifies the enterprise project ID of the Kafka instance.
+
 * `tags` - (Optional, Map) The key/value pairs to associate with the DMS Kafka instance.
 
 * `cross_vpc_accesses` - (Optional, List) Specifies the cross-VPC access information.
