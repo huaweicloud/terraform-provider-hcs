@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2.4.19 (November 6, 2025)
+
+* **New Resource Source:**
+  + `hcs_fgs_function`
+  + `hcs_gaussdb_opengauss_parameter_template`
+
+* **New Data Source:**
+  + `hcs_gaussdb_opengauss_parameter_template`
+
 ## 2.4.18 (October 15, 2025)
  - [VPC] Fix bugs in l3gw resources and docs.
 
