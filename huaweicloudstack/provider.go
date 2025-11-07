@@ -461,8 +461,8 @@ func Provider() *schema.Provider {
 			"hcs_cce_namespace":   cce.ResourceCCENamespaceV1(),
 			"hcs_cce_node":        cce.ResourceNode(),
 			"hcs_cce_node_attach": cce.ResourceNodeAttach(),
-			"hcs_cce_node_pool":   cce.ResourceNodePool(),
 			"hcs_cce_pvc":         cce.ResourceCcePersistentVolumeClaimsV1(),
+			"hcs_cce_node_pool":   hcsCce.ResourceNodePool(),
 
 			"hcs_cfw_address_group":        cfw.ResourceAddressGroup(),
 			"hcs_cfw_black_white_list":     cfw.ResourceBlackWhiteList(),
