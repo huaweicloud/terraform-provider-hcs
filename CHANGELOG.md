@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 2.4.22 (November 11, 2025)
+## 2.4.20 (November 11, 2025)
 
 - [FGS] fix a tags bug on `hcs_fgs_function`.
 
