@@ -778,10 +778,18 @@ var allServiceCatalog = map[string]ServiceCatalog{
 		Product: "CodeHub",
 	},
 
+	// HC codearts req
 	"projectman": {
 		Name:    "projectman-ext",
 		Version: "v4",
 		Product: "ProjectMan",
+	},
+
+	// HCS codearts req
+	"codeartsreq": {
+		Name:    "codeartsreq",
+		Version: "v4",
+		Product: "codeartsreq",
 	},
 
 	// catalog for Data Security Center

@@ -193,11 +193,15 @@ var (
 	HCS_IAM_USER2_ID = os.Getenv("HCS_IAM_USER2_ID")
 
 	// OpenGauss
-	DORADO_STORAGE_POOL_ID     = os.Getenv("dorado_storage_pool_id")
-	OPENGAUSS_KMS_PROJECT_NAME = os.Getenv("kms_project_name")
+	DORADO_STORAGE_POOL_ID          = os.Getenv("dorado_storage_pool_id")
+	OPENGAUSS_KMS_PROJECT_NAME      = os.Getenv("kms_project_name")
+	OPENGAUSS_PARAMETER_TEMPLATE_ID = os.Getenv("OPENGAUSS_PARAMETER_TEMPLATE_ID ")
 
 	// vdc project
 	HCS_VDC_PROJECT_VDC_ID = os.Getenv("hcs_vdc_project_vdc_id")
+
+	// codearts
+	HCS_CODEARTSREQ_TEMPLATE_ID = os.Getenv("HCS_CODEARTSREQ_TEMPLATE_ID")
 )
 
 // TestAccProviders is a static map containing only the main provider instance.
@@ -947,5 +951,11 @@ func TestAccPreCheckFgsGpuType(t *testing.T) {
 func TestAccPreCheckFgsDependencyVersionId(t *testing.T) {
 	if HCS_FGS_DEPENDENCY_VERSION_ID == "" {
 		t.Skip("HCS_FGS_DEPENDENCY_VERSION_ID must be set for FGS acceptance tests")
+	}
+}
+
+func TestAccPreCheckCodeartsReqTempalteId(t *testing.T) {
+	if HCS_CODEARTSREQ_TEMPLATE_ID == "" {
+		t.Skip("HCS_CODEARTSREQ_TEMPLATE_ID must be set for codeartsReq acceptance tests")
 	}
 }
