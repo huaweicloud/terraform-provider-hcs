@@ -337,9 +337,7 @@ func ResourceFgsFunction() *schema.Resource {
 				},
 				Description: `The versions management of the function.`,
 			},
-			"tags": common.TagsSchema(
-				`The key/value pairs to associate with the function.`,
-			),
+			"tags": common.TagsSchema(),
 			"lts_custom_tag": {
 				Type:             schema.TypeMap,
 				Optional:         true,
