@@ -472,7 +472,8 @@ func Provider() *schema.Provider {
 			"hcs_cfw_address_group_member": hcsCfw.ResourceAddressGroupMember(),
 			"hcs_cfw_protection_rule":      hcsCfw.ResourceProtectionRule(),
 
-			"hcs_codearts_project": hcsCodearts.ResourceProject(),
+			"hcs_codearts_project":    hcsCodearts.ResourceProject(),
+			"hcs_codearts_repository": hcsCodearts.ResourceRepository(),
 
 			"hcs_dcs_instance": hcsDcs.ResourceDcsInstance(),
 			"hcs_dcs_backup":   dcs.ResourceDcsBackup(),
