@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2.4.22 (November 11, 2025)
+
+- [FGS] fix a tags bug on `hcs_fgs_function`.
+
+* **New Resource Source:**
+  + `hcs_codearts_project`
+
 ## 2.4.19 (November 6, 2025)
 
 * **New Resource Source:**
