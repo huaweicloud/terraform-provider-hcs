@@ -23,6 +23,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/obs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/rds"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/secmaster"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/servicestage"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/sfs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/swr"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/ucs"
@@ -55,6 +56,7 @@ import (
 	hcsObs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/obs"
 	hcsRomaConnect "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/romaconnect"
 	hcsSecmaster "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/secmaster"
+	hcsServicestage "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/servicestage"
 	hcsSfs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/sfs"
 	hcsSfsturbo "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/sfsturbo"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/smn"
@@ -374,7 +376,7 @@ func Provider() *schema.Provider {
 			"hcs_dms_kafka_flavors":   dms.DataSourceKafkaFlavors(),
 			"hcs_dms_maintainwindow":  dms.DataSourceDmsMaintainWindow(),
 
-			"hcs_drs_availability_zones":  hcsDrs.DataSourceAvailabilityZones(),
+			"hcs_drs_availability_zones": hcsDrs.DataSourceAvailabilityZones(),
 
 			"hcs_dws_flavors": dws.DataSourceDwsFlavors(),
 
@@ -581,6 +583,9 @@ func Provider() *schema.Provider {
 			"hcs_secmaster_playbook_action":  secmaster.ResourcePlaybookAction(),
 			"hcs_secmaster_playbook_version": secmaster.ResourcePlaybookVersion(),
 			"hcs_secmaster_playbook_rule":    secmaster.ResourcePlaybookRule(),
+
+			"hcs_servicestage_application": servicestage.ResourceApplication(),
+			"hcs_servicestage_environment": hcsServicestage.ResourceEnvironment(),
 
 			"hcs_sfs_access_rule": hcsSfs.ResourceSFSAccessRuleV2(),
 			"hcs_sfs_file_system": sfs.ResourceSFSFileSystemV2(),

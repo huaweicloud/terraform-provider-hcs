@@ -5,7 +5,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud/pagination"
 )
 
-// UpdateOpts is the structure required by the Create method to create a new environment.
+// CreateOpts is the structure required by the Create method to create a new environment.
 type CreateOpts struct {
 	// Specified the environment name with 2 to 64 characters long.
 	// It consists of English letters, numbers, underscores (-), and underscores (_).
@@ -16,6 +16,8 @@ type CreateOpts struct {
 	// Specified the environment alias.
 	// The alias can contain a maximum of 96 characters.
 	Alias string `json:"alias,omitempty"`
+	// Specified the environment type.
+	DeployMode string `json:"deploy_mode,omitempty"`
 	// Specified the environment description.
 	// The description can contain a maximum of 96 characters.
 	Description *string `json:"description,omitempty"`
