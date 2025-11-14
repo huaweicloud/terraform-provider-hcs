@@ -304,6 +304,10 @@ func ResourceComputeInstance() *schema.Resource {
 				// just stash the hash for state & diff comparisons
 				StateFunc: utils.HashAndHexEncode,
 			},
+			"config_drive": {
+				Type:     schema.TypeBool,
+				Optional: true,
+			},
 			"enterprise_project_id": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -519,6 +523,7 @@ func resourceComputeInstanceCreate(ctx context.Context, d *schema.ResourceData, 
 		Nics:             buildInstanceNicsRequest(d),
 		PublicIp:         buildInstancePublicIPRequest(d),
 		UserData:         []byte(d.Get("user_data").(string)),
+		ConfigDrive:      d.Get("config_drive").(bool),
 	}
 
 	if tags, ok := d.GetOk("tags"); ok {
