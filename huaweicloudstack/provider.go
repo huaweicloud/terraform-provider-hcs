@@ -38,6 +38,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/deprecated"
 	hcsDms "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dms"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dns"
+	hcsDrs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/drs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ecs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eip"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/elb"
@@ -371,6 +372,8 @@ func Provider() *schema.Provider {
 			"hcs_dms_kafka_instances": dms.DataSourceDmsKafkaInstances(),
 			"hcs_dms_kafka_flavors":   dms.DataSourceKafkaFlavors(),
 			"hcs_dms_maintainwindow":  dms.DataSourceDmsMaintainWindow(),
+
+			"hcs_drs_availability_zones":  hcsDrs.DataSourceAvailabilityZones(),
 
 			"hcs_dws_flavors": dws.DataSourceDwsFlavors(),
 
