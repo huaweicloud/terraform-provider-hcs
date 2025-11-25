@@ -21,7 +21,7 @@ terraform {
 
 # Configure the Huawei Cloud Stack Provider
 provider "hcs" {
-  region       = "cn-north-4"
+  region       = "my-region-name"
   project_name = "my-project-name"
   cloud        = "mycloud.com"
   access_key   = "my-access-key"
@@ -55,7 +55,7 @@ Usage:
 
 ```hcl
 provider "hcs" {
-  region       = "cn-north-4"
+  region       = "my-region-name"
   project_name = "my-project-name"
   cloud        = "mycloud.com"
   access_key   = "my-access-key"
@@ -81,6 +81,31 @@ $ export HCS_REGION_NAME="cn-north-4"
 $ export HCS_PROJECT_NAME="my-project-name"
 $ export HCS_CLOUD="mycloud.com"
 $ terraform plan
+```
+
+### Assume role
+
+If provided with an agency, Terraform will attempt to assume this role using the supplied credentials.
+
+-> **Note** It only can use one `assume_role` block, this means it can only be delegated to one user.
+Usage:
+
+```hcl
+provider "hcs" {
+  auth_url     = "https://iam-apigateway-proxy.my-cloud-name/v3"
+  region       = "my-region-name"
+  project_name = "my-project-name"
+  cloud        = "my-cloud-name"
+  insecure     = true
+
+  access_key = "my-access-key"
+  secret_key = "my-secret-key"
+
+  assume_role {
+    agency_name = "agency"
+    domain_name = "agency_domain"
+  }
+}
 ```
 
 ## Configuration Reference

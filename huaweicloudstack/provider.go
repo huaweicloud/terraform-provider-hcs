@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"strings"
 	"sync"
 
@@ -559,7 +560,7 @@ func Provider() *schema.Provider {
 			"hcs_mrs_job":     mrs.ResourceMRSJobV2(),
 
 			"hcs_obs_bucket":            hcsObs.ResourceObsBucket(),
-			"hcs_obs_bucket_acl":        obs.ResourceOBSBucketAcl(),
+			"hcs_obs_bucket_acl":        hcsObs.ResourceOBSBucketAcl(),
 			"hcs_obs_bucket_object":     obs.ResourceObsBucketObject(),
 			"hcs_obs_bucket_object_acl": obs.ResourceOBSBucketObjectAcl(),
 			"hcs_obs_bucket_policy":     obs.ResourceObsBucketPolicy(),
@@ -843,8 +844,18 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 	hcsConfig.Metadata = &hcsConfig
 
 	// get assume role
+	// This config version does not support []config.AssumeRole, so only the length is 1 of assume_role can be supported
 	assumeRoleList := d.Get("assume_role").([]interface{})
-	if len(assumeRoleList) == 1 {
+	if len(assumeRoleList) == 0 {
+		// without assume_role block in provider
+		delegatedAgencyName := os.Getenv("HCS_ASSUME_ROLE_AGENCY_NAME")
+		delegatedDomainName := os.Getenv("HCS_ASSUME_ROLE_DOMAIN_NAME")
+
+		if delegatedAgencyName != "" && delegatedDomainName != "" {
+			hcsConfig.AssumeRoleAgency = delegatedAgencyName
+			hcsConfig.AssumeRoleDomain = delegatedDomainName
+		}
+	} else if len(assumeRoleList) == 1 {
 		assumeRole := assumeRoleList[0].(map[string]interface{})
 		hcsConfig.AssumeRoleAgency = assumeRole["agency_name"].(string)
 		hcsConfig.AssumeRoleDomain = assumeRole["domain_name"].(string)
