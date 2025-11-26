@@ -797,6 +797,13 @@ var allServiceCatalog = map[string]ServiceCatalog{
 		Product: "codeartsrepo",
 	},
 
+	// HCS codearts pipline
+	"codeartspipeline": {
+		Name:    "codeartspipeline",
+		Version: "v5",
+		Product: "codeartspipeline",
+	},
+
 	// catalog for Data Security Center
 	"dsc": {
 		Name:    "sdg",

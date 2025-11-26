@@ -176,6 +176,15 @@ The `endpoints` block supports:
 
 * `cfw` - (Optional) Use this to override the default endpoint URL. It's used to customize **CFW** endpoints.
 
+* `codeartsreq` - (Optional) Use this to override the default endpoint URL. It's used to customize 
+  **codearts req** endpoints.
+
+* `codeartsrepo` - (Optional) Use this to override the default endpoint URL. It's used to customize
+  **codearts repo** endpoints.
+
+* `codeartspipeline` - (Optional) Use this to override the default endpoint URL. It's used to customize
+  **codearts pipeline** endpoints.
+
 * `csms` - (Optional) Use this to override the default endpoint URL. It's used to customize **CSMS** endpoints.
 
 * `dcs` - (Optional) Use this to override the default endpoint URL. It's used to customize **DCS** endpoints.
@@ -219,6 +228,9 @@ The `endpoints` block supports:
 * `rds` - (Optional) Use this to override the default endpoint URL. It's used to customize **RDS** endpoints.
 
 * `secmaster` - (Optional) Use this to override the default endpoint URL. It's used to customize **SecMaster** endpoints.
+
+* `servicestage` - (Optional) Use this to override the default endpoint URL. It's used to customize
+  **servicestage** endpoints.
 
 * `sfs` - (Optional) Use this to override the default endpoint URL. It's used to customize **SFS** endpoints.
 
