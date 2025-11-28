@@ -21,7 +21,7 @@ terraform {
 
 # Configure the Huawei Cloud Stack Provider
 provider "hcs" {
-  region       = "cn-north-4"
+  region       = "my-region-name"
   project_name = "my-project-name"
   cloud        = "mycloud.com"
   access_key   = "my-access-key"
@@ -55,7 +55,7 @@ Usage:
 
 ```hcl
 provider "hcs" {
-  region       = "cn-north-4"
+  region       = "my-region-name"
   project_name = "my-project-name"
   cloud        = "mycloud.com"
   access_key   = "my-access-key"
@@ -81,6 +81,31 @@ $ export HCS_REGION_NAME="cn-north-4"
 $ export HCS_PROJECT_NAME="my-project-name"
 $ export HCS_CLOUD="mycloud.com"
 $ terraform plan
+```
+
+### Assume role
+
+If provided with an agency, Terraform will attempt to assume this role using the supplied credentials.
+
+-> **Note** It only can use one `assume_role` block, this means it can only be delegated to one user.
+Usage:
+
+```hcl
+provider "hcs" {
+  auth_url     = "https://iam-apigateway-proxy.my-cloud-name/v3"
+  region       = "my-region-name"
+  project_name = "my-project-name"
+  cloud        = "my-cloud-name"
+  insecure     = true
+
+  access_key = "my-access-key"
+  secret_key = "my-secret-key"
+
+  assume_role {
+    agency_name = "agency"
+    domain_name = "agency_domain"
+  }
+}
 ```
 
 ## Configuration Reference
@@ -151,6 +176,15 @@ The `endpoints` block supports:
 
 * `cfw` - (Optional) Use this to override the default endpoint URL. It's used to customize **CFW** endpoints.
 
+* `codeartsreq` - (Optional) Use this to override the default endpoint URL. It's used to customize 
+  **codearts req** endpoints.
+
+* `codeartsrepo` - (Optional) Use this to override the default endpoint URL. It's used to customize
+  **codearts repo** endpoints.
+
+* `codeartspipeline` - (Optional) Use this to override the default endpoint URL. It's used to customize
+  **codearts pipeline** endpoints.
+
 * `csms` - (Optional) Use this to override the default endpoint URL. It's used to customize **CSMS** endpoints.
 
 * `dcs` - (Optional) Use this to override the default endpoint URL. It's used to customize **DCS** endpoints.
@@ -194,6 +228,9 @@ The `endpoints` block supports:
 * `rds` - (Optional) Use this to override the default endpoint URL. It's used to customize **RDS** endpoints.
 
 * `secmaster` - (Optional) Use this to override the default endpoint URL. It's used to customize **SecMaster** endpoints.
+
+* `servicestage` - (Optional) Use this to override the default endpoint URL. It's used to customize
+  **servicestage** endpoints.
 
 * `sfs` - (Optional) Use this to override the default endpoint URL. It's used to customize **SFS** endpoints.
 

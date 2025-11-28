@@ -106,6 +106,9 @@ type ProviderClient struct {
 	// reauthmut is a mutex for reauthentication it attempts to ensure that only one reauthentication
 	// attempt happens at one time.
 	reauthmut *reauthlock
+
+	// HCS unique fields
+	DelegatedDomainId string
 }
 
 // reauthlock represents a set of attributes used to help in the reauthentication process.

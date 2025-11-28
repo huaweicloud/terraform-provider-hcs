@@ -268,6 +268,30 @@ func getProjectID(client *golangsdk.ServiceClient, name string) (string, error) 
 	return projects[0].ID, nil
 }
 
+// getProjectInfo used to get project id and project domain id
+func getProjectInfo(client *golangsdk.ServiceClient, name string) (string, string, error) {
+	opts := projects.ListOpts{
+		Name: name,
+	}
+
+	allPages, err := projects.List(client, opts).AllPages()
+	if err != nil {
+		return "", "", err
+	}
+
+	allProjects, err := projects.ExtractProjects(allPages)
+	if err != nil {
+		return "", "", err
+	}
+
+	if len(allProjects) == 0 {
+		return "", "", fmt.Errorf("project not found: %s", name)
+	}
+
+	p := allProjects[0]
+	return p.ID, p.DomainID, nil
+}
+
 func v3AKSKAuth(client *golangsdk.ProviderClient, endpoint string, options golangsdk.AKSKAuthOptions, eo golangsdk.EndpointOpts) error {
 	v3Client, err := NewIdentityV3(client, eo)
 	if err != nil {
@@ -314,6 +338,14 @@ func v3AKSKAuth(client *golangsdk.ProviderClient, endpoint string, options golan
 		options.BssDomainID = id
 	}
 
+	if options.AssumeRoleUsed && options.SecurityToken != "" {
+		_, domainId, err := getProjectInfo(v3Client, options.ProjectName)
+		if err != nil {
+			return err
+		}
+		client.DelegatedDomainId = domainId
+	}
+
 	client.ProjectID = options.ProjectId
 	client.DomainID = options.BssDomainID
 
@@ -331,7 +363,6 @@ func v3AKSKAuth(client *golangsdk.ProviderClient, endpoint string, options golan
 }
 
 func authWithAgencyByAKSK(client *golangsdk.ProviderClient, endpoint string, opts golangsdk.AKSKAuthOptions, eo golangsdk.EndpointOpts) error {
-
 	err := v3AKSKAuth(client, endpoint, opts, eo)
 	if err != nil {
 		return err

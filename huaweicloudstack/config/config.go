@@ -37,6 +37,9 @@ type HcsConfig struct {
 	Config
 	HcsHwClient     *golangsdk.ProviderClient
 	HcsDomainClient *golangsdk.ProviderClient
+	
+	// HCS unique fields
+	DelegatedDomainId string
 }
 
 func GetHcsConfig(meta interface{}) *HcsConfig {
