@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"strings"
 	"sync"
 
@@ -22,6 +23,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/obs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/rds"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/secmaster"
+	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/servicestage"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/sfs"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/swr"
 	"github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/ucs"
@@ -33,11 +35,13 @@ import (
 	hcsCce "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/cce"
 	hcsCfw "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/cfw"
 	hcsCodearts "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/codearts"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/codeartspipeline"
 	hcsCsms "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/csms"
 	hcsDcs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dcs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/deprecated"
 	hcsDms "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dms"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dns"
+	hcsDrs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/drs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ecs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/eip"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/elb"
@@ -53,6 +57,8 @@ import (
 	hcsObs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/obs"
 	hcsRomaConnect "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/romaconnect"
 	hcsSecmaster "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/secmaster"
+	hcsServicestage "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/servicestage"
+	hcsSfs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/sfs"
 	hcsSfsturbo "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/sfsturbo"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/smn"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/vdc"
@@ -371,6 +377,8 @@ func Provider() *schema.Provider {
 			"hcs_dms_kafka_flavors":   dms.DataSourceKafkaFlavors(),
 			"hcs_dms_maintainwindow":  dms.DataSourceDmsMaintainWindow(),
 
+			"hcs_drs_availability_zones": hcsDrs.DataSourceAvailabilityZones(),
+
 			"hcs_dws_flavors": dws.DataSourceDwsFlavors(),
 
 			"hcs_availability_zones":       ecs.DataSourceAvailabilityZones(),
@@ -402,9 +410,9 @@ func Provider() *schema.Provider {
 			"hcs_lts_groups":  hcsLts.DataSourceLogGroups(),
 			"hcs_lts_streams": hcsLts.DataSourceLogStreams(),
 
-			"hcs_mrs_versions": mrs.DataSourceMrsVersions(),
-			"hcs_mrs_clusters": mrs.DataSourceMrsClusters(),
 			"hcs_mrs_cluster":  hcsMrs.DataSourceMrsCluster(),
+			"hcs_mrs_clusters": mrs.DataSourceMrsClusters(),
+			"hcs_mrs_versions": mrs.DataSourceMrsVersions(),
 
 			"hcs_nat_gateway": nat.DataSourcePublicGateway(),
 
@@ -460,8 +468,8 @@ func Provider() *schema.Provider {
 			"hcs_cce_namespace":   cce.ResourceCCENamespaceV1(),
 			"hcs_cce_node":        cce.ResourceNode(),
 			"hcs_cce_node_attach": cce.ResourceNodeAttach(),
-			"hcs_cce_node_pool":   cce.ResourceNodePool(),
 			"hcs_cce_pvc":         cce.ResourceCcePersistentVolumeClaimsV1(),
+			"hcs_cce_node_pool":   hcsCce.ResourceNodePool(),
 
 			"hcs_cfw_address_group":        cfw.ResourceAddressGroup(),
 			"hcs_cfw_black_white_list":     cfw.ResourceBlackWhiteList(),
@@ -471,7 +479,10 @@ func Provider() *schema.Provider {
 			"hcs_cfw_address_group_member": hcsCfw.ResourceAddressGroupMember(),
 			"hcs_cfw_protection_rule":      hcsCfw.ResourceProtectionRule(),
 
-			"hcs_codearts_project": hcsCodearts.ResourceProject(),
+			"hcs_codearts_project":    hcsCodearts.ResourceProject(),
+			"hcs_codearts_repository": hcsCodearts.ResourceRepository(),
+
+			"hcs_codearts_pipeline_group": codeartspipeline.ResourceCodeArtsPipelineGroup(),
 
 			"hcs_dcs_instance": hcsDcs.ResourceDcsInstance(),
 			"hcs_dcs_backup":   dcs.ResourceDcsBackup(),
@@ -542,9 +553,9 @@ func Provider() *schema.Provider {
 
 			"hcs_hss_host_group": hcsHss.ResourceHostGroup(),
 
+			"hcs_lts_group":                     hcsLts.ResourceLTSGroup(),
 			"hcs_lts_host_access":               lts.ResourceHostAccessConfig(),
 			"hcs_lts_host_group":                lts.ResourceHostGroup(),
-			"hcs_lts_group":                     hcsLts.ResourceLTSGroup(),
 			"hcs_lts_search_criteria":           lts.ResourceSearchCriteria(),
 			"hcs_lts_stream":                    lts.ResourceLTSStream(),
 			"hcs_lts_structuring_configuration": lts.ResourceStructConfig(),
@@ -554,7 +565,7 @@ func Provider() *schema.Provider {
 			"hcs_mrs_job":     mrs.ResourceMRSJobV2(),
 
 			"hcs_obs_bucket":            hcsObs.ResourceObsBucket(),
-			"hcs_obs_bucket_acl":        obs.ResourceOBSBucketAcl(),
+			"hcs_obs_bucket_acl":        hcsObs.ResourceOBSBucketAcl(),
 			"hcs_obs_bucket_object":     obs.ResourceObsBucketObject(),
 			"hcs_obs_bucket_object_acl": obs.ResourceOBSBucketObjectAcl(),
 			"hcs_obs_bucket_policy":     obs.ResourceObsBucketPolicy(),
@@ -576,18 +587,22 @@ func Provider() *schema.Provider {
 			"hcs_secmaster_playbook_version": secmaster.ResourcePlaybookVersion(),
 			"hcs_secmaster_playbook_rule":    secmaster.ResourcePlaybookRule(),
 
-			"hcs_sfs_access_rule": sfs.ResourceSFSAccessRuleV2(),
+			"hcs_servicestage_application": servicestage.ResourceApplication(),
+			"hcs_servicestage_environment": hcsServicestage.ResourceEnvironment(),
+
+			"hcs_sfs_access_rule": hcsSfs.ResourceSFSAccessRuleV2(),
 			"hcs_sfs_file_system": sfs.ResourceSFSFileSystemV2(),
 
 			"hcs_sfs_turbo":           hcsSfsturbo.ResourceSFSTurbo(),
 			"hcs_sfs_turbo_dir":       sfs.ResourceSfsTurboDir(),
 			"hcs_sfs_turbo_dir_quota": sfs.ResourceSfsTurboDirQuota(),
 
-			"hcs_swr_organization":           swr.ResourceSWROrganization(),
-			"hcs_swr_repository":             swr.ResourceSWRRepository(),
-			"hcs_swr_repository_sharing":     swr.ResourceSWRRepositorySharing(),
-			"hcs_swr_image_retention_policy": swr.ResourceSwrImageRetentionPolicy(),
-			"hcs_swr_image_trigger":          swr.ResourceSwrImageTrigger(),
+			"hcs_swr_image_retention_policy":   swr.ResourceSwrImageRetentionPolicy(),
+			"hcs_swr_image_trigger":            swr.ResourceSwrImageTrigger(),
+			"hcs_swr_organization":             swr.ResourceSWROrganization(),
+			"hcs_swr_organization_permissions": swr.ResourceSWROrganizationPermissions(),
+			"hcs_swr_repository":               swr.ResourceSWRRepository(),
+			"hcs_swr_repository_sharing":       swr.ResourceSWRRepositorySharing(),
 
 			"hcs_ucs_cluster": ucs.ResourceCluster(),
 			"hcs_ucs_fleet":   ucs.ResourceFleet(),
@@ -837,8 +852,18 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 	hcsConfig.Metadata = &hcsConfig
 
 	// get assume role
+	// This config version does not support []config.AssumeRole, so only the length is 1 of assume_role can be supported
 	assumeRoleList := d.Get("assume_role").([]interface{})
-	if len(assumeRoleList) == 1 {
+	if len(assumeRoleList) == 0 {
+		// without assume_role block in provider
+		delegatedAgencyName := os.Getenv("HCS_ASSUME_ROLE_AGENCY_NAME")
+		delegatedDomainName := os.Getenv("HCS_ASSUME_ROLE_DOMAIN_NAME")
+
+		if delegatedAgencyName != "" && delegatedDomainName != "" {
+			hcsConfig.AssumeRoleAgency = delegatedAgencyName
+			hcsConfig.AssumeRoleDomain = delegatedDomainName
+		}
+	} else if len(assumeRoleList) == 1 {
 		assumeRole := assumeRoleList[0].(map[string]interface{})
 		hcsConfig.AssumeRoleAgency = assumeRole["agency_name"].(string)
 		hcsConfig.AssumeRoleDomain = assumeRole["domain_name"].(string)

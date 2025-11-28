@@ -30,7 +30,7 @@ type AKSKAuthOptions struct {
 	SecretKey     string //Secret key
 	SecurityToken string //Security Token for temporary Access Key
 
-	// AgencyNmae is the name of agnecy
+	// AgencyName is the name of agency
 	AgencyName string
 
 	// AgencyDomainName is the name of domain who created the agency
@@ -41,6 +41,9 @@ type AKSKAuthOptions struct {
 
 	// whether using the customer catalog, defaults to false
 	WithUserCatalog bool
+
+	// whether using the AssumeRole, defaults to false
+	AssumeRoleUsed bool
 }
 
 // GetIdentityEndpoint implements the method of AuthOptionsProvider

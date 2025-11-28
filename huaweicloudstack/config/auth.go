@@ -235,6 +235,10 @@ func genClients(c *HcsConfig, projectAuthOptions, domainAuthOptions golangsdk.Au
 		c.DomainClient = convertHCSClientToHWClient(client)
 	}
 
+	if c.AssumeRoleAgency != "" {
+		c.DelegatedDomainId = client.DelegatedDomainId
+	}
+
 	return err
 }
 
@@ -295,9 +299,11 @@ func buildClientByAKSK(c *HcsConfig) error {
 	} else {
 		if c.AssumeRoleAgency == "" || (c.AssumeRoleAgency != "" && c.SecurityToken != "") {
 			projectAuthOptions = golangsdk.AKSKAuthOptions{
-				ProjectName: c.TenantName,
-				ProjectId:   c.TenantID,
+				ProjectName:    c.TenantName,
+				ProjectId:      c.TenantID,
+				AssumeRoleUsed: true,
 			}
+			domainAuthOptions.AssumeRoleUsed = true
 		}
 
 		domainAuthOptions = golangsdk.AKSKAuthOptions{
@@ -428,7 +434,7 @@ func buildClientByPassword(c *HcsConfig) error {
 func buildClientByAgency(c *HcsConfig) error {
 	client, err := c.HcIamV3Client(c.Region)
 	if err != nil {
-		return fmt.Errorf("Error creating Huaweicloud IAM client: %s", err)
+		return fmt.Errorf("Error creating HuaweiCloudStack IAM client: %s", err)
 	}
 
 	request := &iam_model.CreateTemporaryAccessKeyByAgencyRequest{}
