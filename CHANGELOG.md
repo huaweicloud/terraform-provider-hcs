@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2.4.21 (November 28, 2025)
+
+* **New Resource Source:**
+  + `hcs_codearts_pipeline_group`
+  + `hcs_codearts_repository`
+  + `hcs_servicestage_application`
+  + `hcs_servicestage_environment`
+  + `hcs_swr_organization_permissions`
+
+* **New Data Source:**
+  + `hcs_drs_availability_zones`
+
 ## 2.4.20 (November 11, 2025)
 
 - [FGS] fix a tags bug on `hcs_fgs_function`.
