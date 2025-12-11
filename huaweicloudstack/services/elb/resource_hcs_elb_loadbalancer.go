@@ -205,6 +205,12 @@ func ResourceLoadBalancerV3() *schema.Resource {
 					"l7_flavor_id",
 				},
 			},
+			"enterprise_project_id": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "0",
+				ForceNew: true,
+			},
 		},
 	}
 }
