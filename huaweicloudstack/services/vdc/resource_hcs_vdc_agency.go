@@ -24,7 +24,7 @@ import (
 // @API VDC POST /rest/vdc/v3.0/vdc-agencies
 // @API VDC GET /rest/vdc/v3.0/tenant-agencies/agency-detail?agency_id={agency_id}
 // @API VDC GET /rest/vdc/v3.0/vdc-agencies/{agency_id}/roles
-// @API VDC GET /rest/vdc/v3.1/vdcs/{vdc_id}/projects
+// @API VDC GET /v3/projects
 // @API VDC GET /rest/vdc/v3.0/OS-ROLE/roles/third-party/roles
 // @API VDC PUT /rest/vdc/v3.0/vdc-agencies/{agency_id}/projects/{project_id}/roles/{role_id}
 // @API VDC PUT /rest/vdc/v3.0/vdc-agencies/{agency_id}/domains/{domain_id}/roles/{role_id}/inherited_to_projects
@@ -126,14 +126,14 @@ func resourceVdcAgencyCreate(ctx context.Context, d *schema.ResourceData, meta i
 			Duration:        "FOREVER",
 		},
 	}
-	log.Printf("[DEBUG] The createOpt of ServiceStage environment is: %v", opts)
+	log.Printf("[DEBUG] The createOpt of Vdc agency is: %v", opts)
 
 	vdcClient, err := hcsConfig.VdcClient(hcsConfig.GetRegion(d))
 	if err != nil {
 		return fmtp.DiagErrorf("error creating VDC client : %s", err)
 	}
 
-	// create agency first
+	// create agency
 	r, err := agency.CreateAgency(vdcClient, opts)
 	if err != nil {
 		return fmtp.DiagErrorf("error creating agency : %s", err)
@@ -222,7 +222,7 @@ func updateAgencyRole(cfg *config.Config, hcsConfig *config.HcsConfig, c *golang
 	if err != nil {
 		return fmtp.Errorf("error listing projects: %s", err)
 	}
-	rom, err := getRoleMap(c, role.ListOpts{DomainId: cfg.DomainID, Limit: 100})
+	rom, err := getRoleMap(c, role.ListOpts{DomainId: cfg.DomainID, IsSystem: "false", FineGrained: true, Limit: 100})
 	if err != nil {
 		return fmtp.Errorf("error listing roles: %s", err)
 	}
@@ -236,7 +236,7 @@ func updateAgencyRole(cfg *config.Config, hcsConfig *config.HcsConfig, c *golang
 		pr[i].itemId = v
 		v, ok = rom[e.roleName]
 		if !ok {
-			return fmtp.Errorf("role not found : %s", e.roleName)
+			return fmtp.Errorf("project role not found : %s", e.roleName)
 		}
 		pr[i].roleId = v
 	}
@@ -244,7 +244,7 @@ func updateAgencyRole(cfg *config.Config, hcsConfig *config.HcsConfig, c *golang
 	for i, e := range dr {
 		v, ok := rom[e.roleName]
 		if !ok {
-			return fmtp.Errorf("role not found : %s", e.roleName)
+			return fmtp.Errorf("domain role not found : %s", e.roleName)
 		}
 		dr[i].roleId = v
 	}
@@ -252,7 +252,7 @@ func updateAgencyRole(cfg *config.Config, hcsConfig *config.HcsConfig, c *golang
 	for i, e := range dri {
 		v, ok := rom[e.roleName]
 		if !ok {
-			return fmtp.Errorf("role not found : %s", e.roleName)
+			return fmtp.Errorf("inherite role not found : %s", e.roleName)
 		}
 		dri[i].roleId = v
 	}
@@ -261,7 +261,7 @@ func updateAgencyRole(cfg *config.Config, hcsConfig *config.HcsConfig, c *golang
 	agencyId := newRoles.Id()
 	toCreate, toDelete := calcDiff(epr, pr)
 	log.Printf("[DEBUG] projects toCreate: %v, toDelete: %v", toCreate, toDelete)
-	if err := createAgencyRole(c, newRoles.Id(), toCreate, agency.CreateAgencyProjectRole); err != nil {
+	if err := createAgencyRole(c, agencyId, toCreate, agency.CreateAgencyProjectRole); err != nil {
 		return err
 	}
 	if err := deleteAgencyRole(c, agencyId, toCreate, agency.DeleteAgencyProjectRole); err != nil {
