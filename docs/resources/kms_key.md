@@ -2,10 +2,13 @@
 subcategory: "Data Encryption Workshop (DEW)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_kms_key"
-description: ""
+description: |-
+  Manages a KMS key resource within HuaweiCloudStack.
 ---
 
 # hcs_kms_key
+
+-> **NOTE:** This resource can only be used in HCS **8.5.0** and **later** version.
 
 Manages a KMS key resource within HuaweiCloudStack.
 
@@ -32,16 +35,27 @@ The following arguments are supported:
   provider-level region will be used. Changing this creates a new KMS key resource.
 
 * `key_alias` - (Required, String) The alias in which to create the key. It is required when we create a new key.
+
   Changing this updates the alias of key.
 
 * `key_description` - (Optional, String) The description of the key as viewed in Huawei console. Changing this updates
   the description of key.
 
-* `key_algorithm` - (Optional, String, ForceNew) The algorithm of the key. Valid values are AES_256, SM4, RSA_2048, RSA_3072,
-  RSA_4096, EC_P256, EC_P384, SM2. Changing this creates a new key.
+* `key_algorithm` - (Optional, String, ForceNew) The algorithm of the key. 
+  The valid values are as follows:
+  + **AES_256**
+  + **SM4**
+  + **RSA_2048**
+  + **RSA_3072**
+  + **RSA_4096**
+  + **EC_P256**
+  + **EC_P384**
+  + **SM2**
+
+  Changing this updates the alias of key.
 
 * `pending_days` - (Optional, String) Duration in days after which the key is deleted after destruction of the resource,
-  must be between 7 and 1096 days. It doesn't have default value. It only be used when delete a key.
+  must be between `7` and `1096` days. It doesn't have default value. It only be used when delete a key.
 
 * `is_enabled` - (Optional, Bool) Specifies whether the key is enabled. Defaults to true. This field is not supported
   when creating an external import key for the first time. This field only takes effect when the value
@@ -50,13 +64,19 @@ The following arguments are supported:
 * `rotation_enabled` - (Optional, Bool) Specifies whether the key rotation is enabled. Defaults to false.
   This field is supported when the origin of the key is **kms**.
 
-* `rotation_interval` - (Optional, Int) Specifies the key rotation interval. The valid value is range from 30 to 365,
-  defaults to 365. This field is supported when the source of the key is **kms**.
+* `rotation_interval` - (Optional, Int) Specifies the key rotation interval. The valid value is range from `30` to `365`,
+  defaults to `365`. This field is supported when the source of the key is **kms**.
 
-* `key_usage` - (Optional, String, ForceNew) Specifies the key usage. The value can be **ENCRYPT_DECRYPT** or **SIGN_VERIFY**.
+* `key_usage` - (Optional, String, ForceNew) Specifies the key usage.
+  The valid values are as follows:
+  + **ENCRYPT_DECRYPT** 
+  + **SIGN_VERIFY**
 
-* `enterprise_project_id` - (Optional, String, ForceNew) The enterprise project id of the kms key. Changing this creates
-  a new key.
+  Changing this updates the alias of key.
+
+* `enterprise_project_id` - (Optional, String, ForceNew) The enterprise project id of the kms key.
+
+  Changing this updates the alias of key.
 
 * `tags` - (Optional, Map) Specifies the key/value pairs to associate with the kms key.
 
@@ -64,20 +84,21 @@ The following arguments are supported:
 
 In addition to all arguments above, the following attributes are exported:
 
-* `id` - Specifies a resource ID in UUID format.
+* `id` - The resource ID in UUID format.
 
 * `key_id` - The globally unique identifier for the key.
 
-* `default_key_flag` - Identification of a Master Key. The value 1 indicates a Default Master Key, and the value 0
-  indicates a key.
+* `default_key_flag` - The identification of a Master Key.
+  + **1**: default Master Key
+  + **0**: a key
 
-* `scheduled_deletion_date` - Scheduled deletion time (time stamp) of a key.
+* `scheduled_deletion_date` - The scheduled deletion time (time stamp) of a key.
 
-* `domain_id` - ID of a user domain for the key.
+* `domain_id` - The ID of a user domain for the key.
 
-* `expiration_time` - Expiration time.
+* `expiration_time` - The expiration time.
 
-* `creation_date` - Creation time (time stamp) of a key.
+* `creation_date` - The creation time (time stamp) of a key.
 
 * `rotation_number` - The total number of key rotations.
 

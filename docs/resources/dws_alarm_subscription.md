@@ -1,5 +1,9 @@
 ---
 subcategory: "Data Warehouse Service (DWS)"
+layout: "huaweicloudstack"
+page_title: "HuaweiCloudStack: hcs_dws_alarm_subscription"
+description: |-
+  Manages a DWS alarm subscription resource within HuaweiCloudStack.  
 ---
 
 # hcs_dws_alarm_subscription
@@ -33,9 +37,9 @@ The following arguments are supported:
 * `name` - (Required, String) The name of the alarm subscription.
 
 * `enable` - (Required, Int) Whether the alarm subscription is enabled.  
-  The options are as follows:
-    + **1**: enable.
-    + **0**: closed.
+  The valid values are as follows:
+  + **1**: enable.
+  + **0**: closed.
 
 * `notification_target` - (Required, String) The notification target.  
 
@@ -47,8 +51,12 @@ The following arguments are supported:
 
   Changing this parameter will create a new resource.
 
-* `alarm_level` - (Optional, String) The level of alarm. separate multiple alarm levels with commas (,).
-  The valid values are **urgent**, **important**, **minor**, and **prompt**.
+* `alarm_level` - (Optional, String) The level of alarm. separate multiple alarm levels with commas (,).  
+  The valid values are as follows:
+  + **urgent**
+  + **important**
+  + **minor**
+  + **prompt**
 
 ## Attribute Reference
 

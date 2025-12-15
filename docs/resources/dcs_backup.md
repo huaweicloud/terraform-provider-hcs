@@ -2,7 +2,8 @@
 subcategory: "Distributed Cache Service (DCS)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_dcs_backup"
-description: ""
+description: |-
+  Manages a DCS backup resource within HuaweiCloudStack.
 ---
 
 # hcs_dcs_backup
@@ -34,8 +35,10 @@ The following arguments are supported:
 
   Changing this parameter will create a new resource.
 
-* `backup_format` - (Optional, String, ForceNew) Specifies the format of the DCS instance backup.
-  Value options: **aof**, **rdb**. Default to rdb.
+* `backup_format` - (Optional, String, ForceNew) Specifies the format of the DCS instance backup. Defaults to **rdb**.  
+  The valid values are as follows:
+  + **aof**
+  + **rdb**
 
   Changing this parameter will create a new resource.
 
@@ -49,17 +52,17 @@ In addition to all arguments above, the following attributes are exported:
 
 * `size` - Indicates the size of the backup file (byte).
 
-* `type` - Indicates the backup type. Valid value:
+* `type` - Indicates the backup type. The valid values are as follows:
   + **manual**: indicates manual backup.
   + **auto**: indicates automatic backup.
 
-* `begin_time` - Indicates the time when the backup task is created. The format is yyyy-mm-dd hh:mm:ss.
-  The value is in UTC format.
+* `begin_time` - Indicates the time when the backup task is created. The format is **yyyy-mm-dd hh:mm:ss**,
+  in UTC format.
 
-* `end_time` - Indicates the time at which DCS instance backup is completed. The format is yyyy-mm-dd hh:mm:ss.
-  The value is in UTC format.
+* `end_time` - Indicates the time at which DCS instance backup is completed. The format is **yyyy-mm-dd hh:mm:ss**,
+  in UTC format.
 
-* `status` - Indicates the backup status. Valid value:
+* `status` - Indicates the backup status. The valid values are as follows:
   + **waiting**: The task is waiting to begin.
   + **backuping**: DCS instance backup is in progress.
   + **succeed**: DCS instance backup succeeded.
@@ -67,13 +70,16 @@ In addition to all arguments above, the following attributes are exported:
   + **expired**: The backup file has expired.
   + **deleted**: The backup file has been deleted manually.
 
-* `is_support_restore` - Indicates whether restoration is supported. Value Options: **TRUE**, **FALSE**.
+* `is_support_restore` - Indicates whether restoration is supported. 
+  + **TRUE**
+  + **FALSE**
 
 ## Timeouts
 
 This resource provides the following timeouts configuration options:
 
 * `create` - Default is 30 minutes.
+
 * `delete` - Default is 10 minutes.
 
 ## Import

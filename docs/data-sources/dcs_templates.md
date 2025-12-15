@@ -2,7 +2,8 @@
 subcategory: "Distributed Cache Service (DCS)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_dcs_templates"
-description: ""
+description: |-
+  Use this data source to get the list of DCS templates.
 ---
 
 # hcs_dcs_templates
@@ -25,7 +26,7 @@ The following arguments are supported:
 * `region` - (Optional, String) Specifies the region in which to query the data source.
   If omitted, the provider-level region will be used.
 
-* `type` - (Required, String) Specifies the type of the template. Value options:
+* `type` - (Required, String) Specifies the type of the template. The valid values are as follows:
   + **sys**: system template.
   + **user**: custom template.
 
@@ -33,22 +34,28 @@ The following arguments are supported:
 
 * `name` - (Optional, String) Specifies the name of the template.
 
-* `engine` - (Optional, String) Specifies the cache engine. Value options: **Redis**.
+* `engine` - (Optional, String) Specifies the cache engine. The valid value is **Redis**.
 
-* `engine_version` - (Optional, String) Specifies the cache engine version. Value options: **4.0**, **5.0**, **6.0**.
+* `engine_version` - (Optional, String) Specifies the cache engine version. The valid values are as follows:
+  + **3.0**
+  + **4.0**
+  + **5.0**
+  + **6.0**
 
-* `cache_mode` - (Optional, String) Specifies the DCS instance type. Value options:
+* `cache_mode` - (Optional, String) Specifies the DCS instance type. The valid values are as follows:
   + **single**: single-node.
   + **ha**: master/standby.
   + **cluster**: Redis Cluster.
   + **proxy**: Proxy Cluster.
   + **ha_rw_split**: read/write splitting.
 
-* `product_type` - (Optional, String) Specifies the product edition. Value options:
+* `product_type` - (Optional, String) Specifies the product edition. The valid values are as follows:
   + **generic**: standard edition.
   + **enterprise**: professional edition.
 
-* `storage_type` - (Optional, String) Specifies the storage type. Value options: **DRAM**, **SSD**.
+* `storage_type` - (Optional, String) Specifies the storage type. The valid values are as follows:
+  + **DRAM**
+  + **SSD**
 
 ## Attribute Reference
 
@@ -57,9 +64,9 @@ In addition to all arguments above, the following attributes are exported:
 * `id` - The data source ID.
 
 * `templates` - Indicates the list of DCS templates.
-  The [templates](#Templates_Template) structure is documented below.
+  The [templates](#rds_templates_templates_attr) structure is documented below.
 
-<a name="Templates_Template"></a>
+<a name="rds_templates_templates_attr"></a>
 The `templates` block supports:
 
 * `template_id` - Indicates the ID of the template.

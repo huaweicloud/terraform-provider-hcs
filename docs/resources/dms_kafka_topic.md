@@ -2,7 +2,8 @@
 subcategory: "Distributed Message Service (DMS)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_dms_kafka_topic"
-description: ""
+description: |-
+  Manages a DMS kafka topic resource within HuaweiCloudStack.
 ---
 
 # hcs_dms_kafka_topic
@@ -29,22 +30,27 @@ The following arguments are supported:
   provider-level region will be used. Changing this creates a new resource.
 
 * `instance_id` - (Required, String, ForceNew) Specifies the ID of the DMS kafka instance to which the topic belongs.
+
   Changing this creates a new resource.
 
-* `name` - (Required, String, ForceNew) Specifies the name of the topic. The name starts with a letter, consists of 4 to
-  64 characters, and supports only letters, digits, hyphens (-) and underscores (_). Changing this creates a new
-  resource.
+* `name` - (Required, String, ForceNew) Specifies the name of the topic. The name starts with a letter, consists of `4`
+  to `64` characters, and supports only letters, digits, hyphens (-) and underscores (_).
+  
+  Changing this creates a new resource.
 
 * `partitions` - (Required, Int) Specifies the partition number. The value ranges from 1 to 200.
 
-* `replicas` - (Optional, Int, ForceNew) Specifies the replica number. The value ranges from 1 to 3 and defaults to 3.
+* `replicas` - (Optional, Int, ForceNew) Specifies the replica number. The value ranges from `1` to `3`.
+  Defaults to `3`.
+
   Changing this creates a new resource.
 
-* `aging_time` - (Optional, Int) Specifies the aging time in hours. The value ranges from 1 to 720 and defaults to 72.
+* `aging_time` - (Optional, Int) Specifies the aging time in hours. The value ranges from `1` to `720`.
+  Defaults to `72`.
 
-* `sync_replication` - (Optional, Bool) Whether or not to enable synchronous replication.
+* `sync_replication` - (Optional, Bool) Whether to enable synchronous replication.
 
-* `sync_flushing` - (Optional, Bool) Whether or not to enable synchronous flushing.
+* `sync_flushing` - (Optional, Bool) Whether to enable synchronous flushing.
 
 ## Attribute Reference
 

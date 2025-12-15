@@ -30,7 +30,7 @@ The following arguments are supported:
 * `region` - (Optional, String) Specifies the region in which to query the data source.
   If omitted, the provider-level region will be used.
 
-* `engine_type` - (Required, String) Specifies the DRS job engine type. The options are as follows:
+* `engine_type` - (Required, String) Specifies the DRS job engine type. The valid values are as follows:
   + **mysql**: Used for data migration and data synchronization from MySQL to MySQL.
   + **mongodb**: Used for data migration from MongoDB to DDS.
   + **redis-to-gaussredis**: Used for data migration from Redis to GeminiDB Redis.
@@ -43,17 +43,17 @@ The following arguments are supported:
   + **postgresql**: Used from data synchronization from PostgreSQL to PostgreSQL.
   + **oracle-to-gaussdbv5**: Used for data synchronization from Oracle to GaussDB Distributed.
 
-* `type` - (Required, String) Specifies the job type. The options are as follows:
+* `type` - (Required, String) Specifies the job type. The valid values are as follows:
   + **migration**: Online Migration.
   + **sync**: Data Synchronization.
   + **cloudDataGuard**: Disaster Recovery.
 
-* `direction` - (Required, String) Specifies the direction of data flow. The options are as follows:
+* `direction` - (Required, String) Specifies the direction of data flow. The valid values are as follows:
   + **up**: To the cloud. The destination database must be a database in the current cloud.
   + **down**: Out of the cloud. The source database must be a database in the current cloud.
   + **non-dbs**: Self-built database.
 
-* `node_type` - (Required, String) Specifies the node type of the job instance. The options are as follows:
+* `node_type` - (Required, String) Specifies the node type of the job instance. The valid values are as follows:
   + **micro**: extremely small specification.
   + **small**: small specification.
   + **medium**: medium specification.

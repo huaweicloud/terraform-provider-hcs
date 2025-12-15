@@ -47,9 +47,9 @@ In addition to all arguments above, the following attributes are exported:
 * `updated_at` - Indicates the update time.
 
 * `parameters` - Indicates the list of configuration parameters.
-  The [parameters](#configuration_parameters) structure is documented below.
+  The [parameters](#opengauss_parameter_templates_parameters_attr) structure is documented below.
 
-<a name="configuration_parameters"></a>
+<a name="opengauss_parameter_templates_parameters_attr"></a>
 The `parameters` block supports:
 
 * `name` - Indicates the name of the parameter.

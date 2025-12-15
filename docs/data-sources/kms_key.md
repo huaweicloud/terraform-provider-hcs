@@ -2,17 +2,20 @@
 subcategory: "Data Encryption Workshop (DEW)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_kms_key"
-description: ""
+description: |-
+  Use this data source to get the ID of an available HuaweiCloudStack KMS key.
 ---
 
 # hcs_kms_key
+
+-> **NOTE:** This data source can only be used in HCS **8.5.0** and **later** version.
 
 Use this data source to get the ID of an available HuaweiCloudStack KMS key.
 
 ## Example Usage
 
 ```hcl
-data "hcs_kms_key" "key_1" {
+data "hcs_kms_key" "test" {
   key_alias        = "test_key"
   key_description  = "test key description"
   key_state        = "2"
@@ -35,12 +38,16 @@ data "hcs_kms_key" "key_1" {
 
 * `key_id` - (Optional, String) The globally unique identifier for the key. Changing this gets the new key.
 
-* `default_key_flag` - (Optional, String) Identification of a Master Key. The value "1" indicates a Default Master Key,
-  and the value "0" indicates a key. Changing this gets a new key.
+* `default_key_flag` - (Optional, String) Identification of a Master Key. The valid values are as follows:
+  + **1**: Default master key
+  + **0**: A key
 
-* `key_state` - (Optional, String) The state of a key. "1" indicates that the key is waiting to be activated.
-  "2" indicates that the key is enabled. "3" indicates that the key is disabled. "4" indicates that the key is scheduled
-  for deletion. Changing this gets a new key.
+* `key_state` - (Optional, String) The state of a key. The valid values are as follows:
+  + **1**: Pending activation
+  + **2**: Enabled
+  + **3**: Disabled
+  + **4**: Scheduled for deletion
+  + **5**: Pending import
 
 * `domain_id` - (Optional, String) The ID of a user domain for the key. Changing this gets a new key.
 
@@ -50,17 +57,17 @@ data "hcs_kms_key" "key_1" {
 
 In addition to all arguments above, the following attributes are exported:
 
-* `id` - Specifies a data source ID in UUID format.
+* `id` - The data source ID in UUID format.
 
-* `scheduled_deletion_date` - Scheduled deletion time (time stamp) of a key.
+* `scheduled_deletion_date` - The scheduled deletion time (time stamp) of a key.
 
-* `expiration_time` - Expiration time.
+* `expiration_time` - The expiration time.
 
-* `creation_date` - Creation time (time stamp) of a key.
+* `creation_date` - The creation time (time stamp) of a key.
 
 * `tags` - The key/value pairs to associate with the kms key.
 
-* `rotation_enabled` - Indicates whether the key rotation is enabled or not.
+* `rotation_enabled` - Whether the key rotation is enabled or not.
 
 * `rotation_interval` - The key rotation interval. It's valid when rotation is enabled.
 

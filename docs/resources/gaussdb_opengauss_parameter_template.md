@@ -87,7 +87,7 @@ The following arguments are supported:
   is specified.
 
 * `parameters` - (Optional, List, ForceNew) Specifies the list of the template parameters.
-  The [parameters](#opengauss_parameters) structure is documented below.
+  The [parameters](#opengauss_parameters_arg) structure is documented below.
 
   Changing this parameter will create a new resource.
 
@@ -101,7 +101,7 @@ The following arguments are supported:
 
   -> **NOTE:** Exactly one of `engine_version` and `source_configuration_id` must be provided.
 
-<a name="opengauss_parameters"></a>
+<a name="opengauss_parameters_arg"></a>
 The `parameters` block supports:
 
 * `name` - (Required, String, ForceNew) Specifies the name of a specific parameter.
@@ -123,9 +123,9 @@ In addition to all arguments above, the following attributes are exported:
 * `updated_at` - Indicates the modification time in the **yyyy-mm-ddThh:mm:ssZ** format.
 
 * `parameters` - Indicates the list of the template parameters.
-  The [parameters](#parameters_struct) structure is documented below.
+  The [parameters](#opengauss_parameters_attr) structure is documented below.
 
-<a name="parameters_struct"></a>
+<a name="opengauss_parameters_attr"></a>
 The `parameters` block supports:
 
 * `need_restart` - Indicates whether the instance needs to be rebooted.
