@@ -485,6 +485,7 @@ func Provider() *schema.Provider {
 			"hcs_codearts_pipeline_group": codeartspipeline.ResourceCodeArtsPipelineGroup(),
 
 			"hcs_dcs_instance": hcsDcs.ResourceDcsInstance(),
+			"hcs_dcs_account":  hcsDcs.ResourceDcsAccount(),
 			"hcs_dcs_backup":   dcs.ResourceDcsBackup(),
 
 			"hcs_csms_secret": hcsCsms.ResourceCsmsSecret(),
