@@ -55,6 +55,7 @@ import (
 	hcsMrs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/mrs"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/nat"
 	hcsObs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/obs"
+	hcsRds "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/rds"
 	hcsRomaConnect "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/romaconnect"
 	hcsSecmaster "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/secmaster"
 	hcsServicestage "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/servicestage"
@@ -344,6 +345,13 @@ func Provider() *schema.Provider {
 				Description: descriptions["max_retries"],
 				DefaultFunc: schema.EnvDefaultFunc("HCS_MAX_RETRIES", 5),
 			},
+
+			"enable_force_new": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: descriptions["enable_force_new"],
+				DefaultFunc: schema.EnvDefaultFunc("HCS_ENABLE_FORCE_NEW", false),
+			},
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
@@ -576,9 +584,10 @@ func Provider() *schema.Provider {
 			"hcs_rds_sql_audit": rds.ResourceSQLAudit(),
 
 			// rds PostgreSQL
-			"hcs_rds_pg_account":  rds.ResourcePgAccount(),
-			"hcs_rds_pg_database": rds.ResourcePgDatabase(),
-			"hcs_rds_pg_plugin":   rds.ResourceRdsPgPlugin(),
+			"hcs_rds_pg_account":            rds.ResourcePgAccount(),
+			"hcs_rds_pg_database":           rds.ResourcePgDatabase(),
+			"hcs_rds_pg_plugin":             rds.ResourceRdsPgPlugin(),
+			"hcs_rds_pg_database_privilege": hcsRds.ResourcePgDatabasePrivilege(),
 
 			// rds MySQL
 			"hcs_rds_mysql_account":            rds.ResourceMysqlAccount(),
@@ -779,6 +788,8 @@ func init() {
 		"max_retries": "How many times HTTP connection should be retried until giving up.",
 
 		"enterprise_project_id": "enterprise project id",
+
+		"enable_force_new": "Whether to enable ForceNew",
 	}
 }
 
@@ -855,6 +866,8 @@ func configureProvider(_ context.Context, d *schema.ResourceData, terraformVersi
 			RPLock:              new(sync.Mutex),
 			SecurityKeyLock:     new(sync.Mutex),
 		},
+
+		EnableForceNew: d.Get("enable_force_new").(bool),
 	}
 
 	// Save hcsConfig to config.Config for extend

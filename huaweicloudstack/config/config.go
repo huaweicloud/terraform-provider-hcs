@@ -6,6 +6,7 @@ import (
 	"log"
 	"math"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -37,9 +38,26 @@ type HcsConfig struct {
 	Config
 	HcsHwClient     *golangsdk.ProviderClient
 	HcsDomainClient *golangsdk.ProviderClient
-	
+
 	// HCS unique fields
 	DelegatedDomainId string
+
+	EnableForceNew bool
+}
+
+// GetForceNew returns the enable_force_new that was specified in the resource.
+// If it was not set, the provider-level value is checked. The provider-level value can
+// either be set by the `enable_force_new` argument or by HCS_ENABLE_FORCE_NEW.
+func (c *HcsConfig) GetForceNew(d *schema.ResourceDiff) bool {
+	if v, ok := d.GetOk("enable_force_new"); ok {
+		res, err := strconv.ParseBool(v.(string))
+		if err != nil {
+			return false
+		}
+		return res
+	}
+
+	return c.EnableForceNew
 }
 
 func GetHcsConfig(meta interface{}) *HcsConfig {
