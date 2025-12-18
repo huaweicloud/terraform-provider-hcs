@@ -113,7 +113,7 @@ func ResourceVdcAgency() *schema.Resource {
 func resourceVdcAgencyCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	name := d.Get("name").(string)
 	desc := d.Get("description").(string)
-	domainName := d.Get("delegated_domain_name").(string)
+	deleDomainName := d.Get("delegated_domain_name").(string)
 	cfg := meta.(*config.Config)
 	hcsConfig := config.GetHcsConfig(meta)
 
@@ -122,7 +122,7 @@ func resourceVdcAgencyCreate(ctx context.Context, d *schema.ResourceData, meta i
 			Name:            name,
 			Description:     desc,
 			DomainID:        cfg.DomainID,
-			TrustDomainName: domainName,
+			TrustDomainName: deleDomainName,
 			Duration:        "FOREVER",
 		},
 	}
@@ -218,13 +218,29 @@ func updateAgencyRole(cfg *config.Config, hcsConfig *config.HcsConfig, c *golang
 	epr, edr, edri := buildAgencyRoleFromResponse(cfg.DomainID, existingRoles)
 	pr, dr, dri := buildAgencyRoleFromSchema(cfg, newRoles)
 
+	if existingRoles == nil && len(pr) == 0 && len(dr) == 0 && len(dri) == 0 {
+		log.Printf("[INFO] No agency roles to update")
+		return nil
+	}
+
 	pjm, err := getProjectMap(cfg, hcsConfig, projects.ListOpts{DomainID: cfg.DomainID})
 	if err != nil {
 		return fmtp.Errorf("error listing projects: %s", err)
 	}
-	rom, err := getRoleMap(c, role.ListOpts{DomainId: cfg.DomainID, IsSystem: "false", FineGrained: true, Limit: 100})
+
+	// query system roles
+	rom, err := getRoleMap(c, role.ListOpts{DomainId: cfg.DomainID, Limit: 100})
 	if err != nil {
-		return fmtp.Errorf("error listing roles: %s", err)
+		return fmtp.Errorf("error listing system roles: %s", err)
+	}
+	// query custom roles
+	romTemp, err := getRoleMap(c, role.ListOpts{DomainId: cfg.DomainID, IsSystem: "false", FineGrained: true, Limit: 100})
+	if err != nil {
+		return fmtp.Errorf("error listing custom roles: %s", err)
+	}
+	// merge into one map
+	for n, i := range romTemp {
+		rom[n] = i
 	}
 
 	// set project name and role name
@@ -260,7 +276,7 @@ func updateAgencyRole(cfg *config.Config, hcsConfig *config.HcsConfig, c *golang
 	// update project role
 	agencyId := newRoles.Id()
 	toCreate, toDelete := calcDiff(epr, pr)
-	log.Printf("[DEBUG] projects toCreate: %v, toDelete: %v", toCreate, toDelete)
+	log.Printf("[DEBUG] project roles toCreate: %v, toDelete: %v", toCreate, toDelete)
 	if err := createAgencyRole(c, agencyId, toCreate, agency.CreateAgencyProjectRole); err != nil {
 		return err
 	}
@@ -270,7 +286,7 @@ func updateAgencyRole(cfg *config.Config, hcsConfig *config.HcsConfig, c *golang
 
 	// update domain role
 	toCreate, toDelete = calcDiff(edr, dr)
-	log.Printf("[DEBUG] projects toCreate: %v, toDelete: %v", toCreate, toDelete)
+	log.Printf("[DEBUG] domain roles toCreate: %v, toDelete: %v", toCreate, toDelete)
 	if err := createAgencyRole(c, agencyId, toCreate, agency.CreateAgencyDomainRole); err != nil {
 		return err
 	}
@@ -280,7 +296,7 @@ func updateAgencyRole(cfg *config.Config, hcsConfig *config.HcsConfig, c *golang
 
 	// update all resources role
 	toCreate, toDelete = calcDiff(edri, dri)
-	log.Printf("[DEBUG] projects toCreate: %v, toDelete: %v", toCreate, toDelete)
+	log.Printf("[DEBUG] inheritate roles toCreate: %v, toDelete: %v", toCreate, toDelete)
 	if err := createAgencyRole(c, agencyId, toCreate, agency.CreateAgencyDomainInheritedRole); err != nil {
 		return err
 	}
@@ -303,11 +319,6 @@ func createAgencyRole(c *golangsdk.ServiceClient, agencyId string, roles []RoleI
 }
 
 func deleteAgencyRole(c *golangsdk.ServiceClient, agencyId string, roles []RoleItem, fun func(*golangsdk.ServiceClient, string, string, string) error) error {
-	//for _, r := range roles {
-	//	if err := fun(c, agencyId, r.itemId, r.roleId); err != nil {
-	//		return err
-	//	}
-	//}
 	return nil
 }
 
@@ -387,32 +398,15 @@ func calcDiff(existingRoles []RoleItem, newRoles []RoleItem) (toCreate []RoleIte
 func setAgencyRole(cfg *config.Config, d *schema.ResourceData, roles []agency.AgencyRole) error {
 	epr, edr, edri := buildAgencyRoleFromResponse(cfg.DomainID, roles)
 
-	// construct project_role list according to provided configuration, including:
-	// 1. duplicate project name in different blocks
-	// 2. duplicate role name in different blocks
-	dpr := make([]interface{}, 0)
-	if d.Get("project_role") != nil {
-		dpr = d.Get("project_role").(*schema.Set).List()
-	}
-	eprs := make(map[string]map[string]bool, len(epr))
+	// construct project_role:
+	eprs := make(map[string][]string, len(epr))
 	for _, i := range epr {
-		if eprs[i.itemName] == nil {
-			eprs[i.itemName] = make(map[string]bool)
-		}
-		eprs[i.itemName][i.roleName] = true
+		eprs[i.itemName] = append(eprs[i.itemName], i.roleName)
 	}
 	prd := make([]map[string]interface{}, 0, len(eprs))
-	for _, r := range dpr {
-		m := r.(map[string]interface{})
-		p := m["project"].(string)
-		s := make([]string, 0)
-		for _, i := range m["roles"].(*schema.Set).List() {
-			if eprs[p][i.(string)] {
-				s = append(s, i.(string))
-			}
-		}
-		slices.Sort(s)
-		prd = append(prd, map[string]interface{}{"project": p, "roles": s})
+	for p, r := range eprs {
+		slices.Sort(r)
+		prd = append(prd, map[string]interface{}{"project": p, "roles": r})
 	}
 	slices.SortFunc(prd, func(a, b map[string]interface{}) int {
 		return strings.Compare(a["project"].(string), b["project"].(string))
