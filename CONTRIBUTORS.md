@@ -4,7 +4,11 @@
 1. 只写姓名，请填写拼音，不必填写工号。
 2. 顺序没有特别含义，按照字母顺序排序即可。
 
-格式：
+Example：
+- Name
+
+-->
+
 - Zhanglin
 - Niuzhenguo
 - Chengxiangdong
@@ -21,6 +25,4 @@
 - Qinzhanming
 - Zhaokeke
 - Tanyong
--->
-
-- 
+- Wenbin
