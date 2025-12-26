@@ -15,7 +15,7 @@ type CreateOpts struct {
 
 	Name string `json:"name" required:"true"`
 
-	UserData []byte `json:"-"`
+	UserData         []byte             `json:"user_data,omitempty"`
 
 	// AdminPass sets the root user password. If not set, a randomly-generated
 	// password will be created and returned in the response.
@@ -78,6 +78,7 @@ func (opts CreateOpts) ToServerCreateMap() (map[string]interface{}, error) {
 			userData = string(opts.UserData)
 		}
 		b["user_data"] = &userData
+		b["config_drive"] = true
 	}
 
 	return map[string]interface{}{"server": b}, nil
