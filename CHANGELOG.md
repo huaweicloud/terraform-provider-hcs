@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2.4.22 (December 29, 2025)
+
+* **New Resource Source:**
+  + `hcs_dcs_account`
+  + `hcs_rds_mysql_account`
+  + `hcs_rds_mysql_database_privilege`
+  + `hcs_rds_mysql_database`
+  + `hcs_rds_pg_database_privilege`
+
 ## 2.4.21 (November 28, 2025)
 
 * **New Resource Source:**
