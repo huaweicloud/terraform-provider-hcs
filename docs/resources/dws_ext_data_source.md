@@ -1,5 +1,9 @@
 ---
 subcategory: "Data Warehouse Service (DWS)"
+layout: "huaweicloudstack"
+page_title: "HuaweiCloudStack: hcs_dws_ext_data_source"
+description: |-
+  Manages a DWS external data source resource within HuaweiCloudStack.  
 ---
 
 # hcs_dws_ext_data_source
@@ -62,7 +66,8 @@ The following arguments are supported:
   Changing this parameter will create a new resource.
 
 * `type` - (Required, String, ForceNew) The type of the external data source.  
-  The valid values are **OBS**, and **MRS**.
+  The valid values are **OBS** and **MRS**.
+
   Changing this parameter will create a new resource.
 
   -> The OBS data source is supported only in version 8.2.0 or later of cluster.
@@ -70,16 +75,18 @@ The following arguments are supported:
 * `user_name` - (Required, String) The user name of the external data source.  
   It is OBS agency-name when **type** is **MRS**.
 
-* `data_source_id` - (Optional, String, ForceNew) ID of the external data source. It is mandatory when **type** is **MRS**.
+* `data_source_id` - (Optional, String, ForceNew) ID of the external data source. This parameter is mandatory
+  when **type** is **MRS**.
 
   Changing this parameter will create a new resource.
 
-* `user_pwd` - (Optional, String, ForceNew) The password of the external data source. It is mandatory when **type** is **MRS**.
+* `user_pwd` - (Optional, String, ForceNew) The password of the external data source. This parameter is mandatory
+  when **type** is **MRS**.
 
   Changing this parameter will create a new resource.
 
 * `connect_info` - (Optional, String, ForceNew) The connection information of the external data source.
-  It is mandatory when **type** is **OBS**.
+  This parameter is mandatory when **type** is **OBS**.
   The value is the **database** where the OBS data source connection is to be created.
 
   Changing this parameter will create a new resource.
@@ -109,7 +116,9 @@ In addition to all arguments above, the following attributes are exported:
 This resource provides the following timeouts configuration options:
 
 * `create` - Default is 60 minutes.
+
 * `update` - Default is 60 minutes.
+
 * `delete` - Default is 60 minutes.
 
 ## Import

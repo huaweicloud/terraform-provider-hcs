@@ -2,7 +2,8 @@
 subcategory: "Distributed Message Service (DMS)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_dms_kafka_instances"
-description: ""
+description: |-
+  Use this data source to query the available instances within HuaweiCloudStack DMS service.
 ---
 
 # hcs_dms_kafka_instances
@@ -54,8 +55,10 @@ In addition to all arguments above, the following attributes are exported:
 
 * `id` - The data source ID.
 
-* `instances` - The result of the query's list of kafka instances. The structure is documented below.
+* `instances` - The result of the query's list of kafka instances.
+  The [instances](#dms_kafka_instances_attr) object structure is documented below.
 
+<a name="dms_kafka_instances_attr"></a>
 The `instances` block supports:
 
 * `id` - The instance ID.
@@ -131,8 +134,10 @@ The `instances` block supports:
 
 * `tags` - The key/value pairs to associate with the instance.
 
-* `cross_vpc_accesses` - Indicates the Access information of cross-VPC. The structure is documented below.
+* `cross_vpc_accesses` - Indicates the Access information of cross-VPC.
+  The [cross_vpc_accesses](#dms_kafka_cross_vpc_accesses_attr) object structure is documented below.
 
+<a name="dms_kafka_cross_vpc_accesses_attr"></a>
 The `cross_vpc_accesses` block supports:
 
 * `listener_ip` - The listener IP address.

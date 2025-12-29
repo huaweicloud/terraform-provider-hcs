@@ -148,6 +148,48 @@ func TestAccRdsInstance_restore_pg(t *testing.T) {
 	})
 }
 
+func TestAccRdsMysqlInstance_basic(t *testing.T) {
+	var instance instances.RdsInstanceResponse
+	name := acceptance.RandomAccResourceName()
+	updatedName := fmt.Sprintf("%s-update", name)
+	resourceType := "hcs_rds_instance"
+	resourceName := "hcs_rds_instance.test"
+	password := acceptance.RandomPassword()
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:          func() { acceptance.TestAccPreCheck(t) },
+		ProviderFactories: acceptance.TestAccProviderFactories,
+		CheckDestroy:      testAccCheckRdsInstanceDestroy(resourceType),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccRdsMysqlInstance_basic(name, password),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckRdsInstanceExists(resourceName, &instance),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test_description"),
+					resource.TestCheckResourceAttr(resourceName, "flavor", "rds.mysql.xlarge.arm4.single"),
+					resource.TestCheckResourceAttr(resourceName, "volume.0.size", "100"),
+					resource.TestCheckResourceAttr(resourceName, "tags.key", "value"),
+					resource.TestCheckResourceAttr(resourceName, "tags.foo", "bar"),
+					resource.TestCheckResourceAttr(resourceName, "db.0.port", "3306"),
+				),
+			},
+			{
+				Config: testAccRdsMysqlInstance_update(updatedName, password),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckRdsInstanceExists(resourceName, &instance),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("%s-update", name)),
+					resource.TestCheckResourceAttr(resourceName, "description", ""),
+					resource.TestCheckResourceAttr(resourceName, "flavor", "rds.mysql.xlarge.arm4.single"),
+					resource.TestCheckResourceAttr(resourceName, "volume.0.size", "100"),
+					resource.TestCheckResourceAttr(resourceName, "tags.key1", "value"),
+					resource.TestCheckResourceAttr(resourceName, "tags.foo", "bar_updated"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckRdsInstanceDestroy(rsType string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		config := acceptance.TestAccProvider.Meta().(*config.HcsConfig)
@@ -388,4 +430,67 @@ resource "hcs_rds_instance" "test_backup" {
   }
 }
 `, common.TestBaseNetwork(name), name, acceptance.HCS_RDS_INSTANCE_ID, acceptance.HCS_RDS_BACKUP_ID, password)
+}
+
+func testAccRdsMysqlInstance_basic(name, password string) string {
+	return fmt.Sprintf(`
+%[1]s
+
+resource "hcs_rds_instance" "instance" {
+  name              = "%[2]s"
+  flavor            = "rds.mysql.xlarge.arm4.single"
+  vpc_id            = hcs_vpc.test.id
+  subnet_id         = hcs_vpc_subnet.test.id
+  security_group_id = hcs_networking_secgroup.test.id
+  availability_zone = ["az0.dc0"]
+  description       = "test_description"  
+
+  db {
+    type     = "MySQL"
+    version  = "5.7"
+    password = "%[3]s"
+  }
+
+  volume {
+    type = "ULTRAHIGH"
+    size = 100
+  }
+
+  tags = {
+    key = "value"
+    foo = "bar"
+  }
+}
+`, common.TestBaseNetwork(name), name, password)
+}
+
+func testAccRdsMysqlInstance_update(name, password string) string {
+	return fmt.Sprintf(`
+%[1]s
+
+resource "hcs_rds_instance" "instance" {
+  name              = "%[2]s-update"
+  flavor            = "rds.mysql.xlarge.arm4.single"
+  vpc_id            = hcs_vpc.test.id
+  subnet_id         = hcs_vpc_subnet.test.id
+  security_group_id = hcs_networking_secgroup.test.id
+  availability_zone = ["az0.dc0"]
+
+  db {
+    type     = "MySQL"
+    version  = "5.7"
+    password = "%[3]s"
+  }
+
+  volume {
+    type = "ULTRAHIGH"
+    size = 100
+  }
+
+  tags = {
+    key = "value1"
+    foo = "bar"
+  }
+}
+`, common.TestBaseNetwork(name), name, password)
 }

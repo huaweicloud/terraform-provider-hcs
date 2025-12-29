@@ -2,7 +2,8 @@
 subcategory: "Log Tank Service (LTS)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_lts_search_criteria"
-description: ""
+description: |-
+  Manages an LTS search criteria resource within HuaweiCloudStack.
 ---
 
 # hcs_lts_search_criteria
@@ -30,24 +31,35 @@ resource "hcs_lts_search_criteria" "test" {
 The following arguments are supported:
 
 * `region` - (Optional, String, ForceNew) Specifies the region in which to create the resource.
-  If omitted, the provider-level region will be used. Changing this parameter will create a new resource.
+  If omitted, the provider-level region will be used.
 
-* `log_group_id` - (Required, String, ForceNew) Specifies the ID of a log group. Changing this parameter will create
-  a new resource.
+  Changing this parameter will create a new resource.
 
-* `log_stream_id` - (Required, String, ForceNew) Specifies the ID of a log stream. Changing this parameter will create
-  a new resource.
+* `log_group_id` - (Required, String, ForceNew) Specifies the ID of a log group.
 
-* `criteria` - (Required, String, ForceNew) Specifies the content of search criteria. Changing this parameter will create
-  a new resource.
+  Changing this parameter will create a new resource.
+
+* `log_stream_id` - (Required, String, ForceNew) Specifies the ID of a log stream.
+
+  Changing this parameter will create a new resource.
+
+* `criteria` - (Required, String, ForceNew) Specifies the content of search criteria.
+
+  Changing this parameter will create a new resource.
 
 * `name` - (Required, String, ForceNew) Specifies the name of the search criteria. The name can only contain English
   letters, numbers, Chinese characters, hyphens, underscores, and periods. It cannot start with a period or underscore
-  or end with a period.Changing this parameter will create a new resource.
+  or end with a period.
 
-* `type` - (Required, String, ForceNew) Specifies the type of the search criteria. Available type is
-  **ORIGINALLOG** (for raw logs). Changing this parameter will create a new
-  resource.
+  Changing this parameter will create a new resource.
+
+* `type` - (Required, String, ForceNew) Specifies the type of the search criteria. The valid values are as follows:
+  + **ORIGINALLOG**
+  + **VISUALIZATION**
+
+  Changing this parameter will create a new resource.
+
+  !> **WARNING:** The parameter `type` will be **Deprecated**.
 
 * `enterprise_project_id` - (Optional, String, ForceNew) Specifies the enterprise project ID. Changing this parameter
   will create a new resource.

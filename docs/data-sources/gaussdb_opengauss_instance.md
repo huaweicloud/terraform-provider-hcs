@@ -1,5 +1,9 @@
 ---
 subcategory: "GaussDB"
+layout: "huaweicloudstack"
+page_title: "HuaweiCloudStack: hcs_gaussdb_opengauss_instance"
+description: |-
+  Use this data source to get available HuaweiCloudStack gaussdb opengauss instance.
 ---
 
 # hcs_gaussdb_opengauss_instance

@@ -2,7 +2,8 @@
 subcategory: "Log Tank Service (LTS)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_lts_transfer"
-description: ""
+description: |-
+  Manages an LTS transfer task resource within HuaweiCloudStack.  
 ---
 
 # hcs_lts_transfer
@@ -153,146 +154,143 @@ The following arguments are supported:
 * `region` - (Optional, String, ForceNew) Specifies the region in which to create the resource.
   If omitted, the provider-level region will be used. Changing this parameter will create a new resource.
 
-* `log_group_id` - (Required, String, ForceNew) Log group ID.  
+* `log_group_id` - (Required, String, ForceNew) Specifies the ID of log group.  
 
   Changing this parameter will create a new resource.
 
-* `log_streams` - (Required, List, ForceNew) The list of log streams.  
+* `log_streams` - (Required, List, ForceNew) Specifies the list of log streams.  
+  The [log_streams](#lts_transfer_log_streams) structure is documented below.
 
   Changing this parameter will create a new resource.
-  The [log_streams](#LtsTransfer_LogStreams) structure is documented below.
 
-* `log_transfer_info` - (Required, List) Log transfer information.
-  The [log_transfer_info](#LtsTransfer_LogTransferInfo) structure is documented below.
+* `log_transfer_info` - (Required, List) Specifies the information of log transfer.  
+  The [log_transfer_info](#lts_transfer_log_transfer_info) structure is documented below.
 
 <a name="LtsTransfer_LogStreams"></a>
 The `log_streams` block supports:
 
-* `log_stream_id` - (Required, String, ForceNew) Log stream ID.
+* `log_stream_id` - (Required, String, ForceNew) Specifies the id of log stream.
 
   Changing this parameter will create a new resource.
 
-* `log_stream_name` - (Optional, String, ForceNew) Log stream name.
+* `log_stream_name` - (Optional, String, ForceNew) Specifies the name of log stream.
 
   Changing this parameter will create a new resource.
 
-<a name="LtsTransfer_LogTransferInfo"></a>
+<a name="lts_transfer_log_transfer_info"></a>
 The `log_transfer_info` block supports:
 
-* `log_transfer_type` - (Required, String, ForceNew) Log transfer type.  
+* `log_transfer_type` - (Required, String, ForceNew) Specifies the type of log transfer.  
   The valid values is **OBS**.
 
   Changing this parameter will create a new resource.
 
-* `log_transfer_mode` - (Required, String, ForceNew) Log transfer mode.  
-  Value option is as follows:
-    + **cycle**: Periodical transfer, which is available to OBS transfer tasks.
+* `log_transfer_mode` - (Required, String, ForceNew) Specifies the mode of log transfer.  
+  The valid values are as follows:
+  + **cycle**: Periodical transfer, which is available to OBS transfer tasks.
 
   Changing this parameter will create a new resource.
 
-* `log_storage_format` - (Required, String) Log transfer format.  
-  Value options are as follows:
-    + **JSON**: JSON format, which is available to OBS transfer tasks.
-    + **RAW**: Raw log format, which is available to OBS transfer tasks.
+* `log_storage_format` - (Required, String) Specifies the format of log transfer.  
+  The valid values are as follows:
+  + **JSON**: JSON format, which is available to OBS transfer tasks.
+  + **RAW**: Raw log format, which is available to OBS transfer tasks.
 
-* `log_transfer_status` - (Required, String) Log transfer status.  
-  Value options are as follows:
-    + **ENABLE**: Log transfer is enabled.
-    + **DISABLE**: Log transfer is disabled
+* `log_transfer_status` - (Required, String) Specifies the status of log transfer.  
+  The valid values are as follows:
+  + **ENABLE**: Log transfer is enabled.
+  + **DISABLE**: Log transfer is disabled.
 
-* `log_agency_transfer` - (Optional, List, ForceNew) Information about agency which lets an account delegate resource management
-   to other accounts.
-  This parameter is mandatory if you transfer logs for another account.
-  The [log_agency_transfer](#LtsTransfer_LogAgency) structure is documented below.
+* `log_agency_transfer` - (Optional, List, ForceNew) Specifies the agency which lets an account delegate resource
+  management to other accounts of log transfer.
+  This parameter is **Required** if you transfer logs for another account.
+  The [log_agency_transfer](#lts_transfer_log_agency_transfer) structure is documented below.
 
   Changing this parameter will create a new resource.
 
-* `log_transfer_detail` - (Required, List) Log transfer details.  
-  The [log_transfer_detail](#LtsTransfer_LogTransferDetail) structure is documented below.
+* `log_transfer_detail` - (Required, List) Specifies the detail of log transfer.
+  The [log_transfer_detail](#lts_transfer_log_transfer_detail) structure is documented below.
 
-<a name="LtsTransfer_LogAgency"></a>
+<a name="lts_transfer_log_agency_transfer"></a>
 The `log_agency_transfer` block supports:
 
-* `agency_domain_id` - (Required, String, ForceNew) Delegator account ID.
+* `agency_domain_id` - (Required, String, ForceNew) Specifies the domain id of agency.
 
   Changing this parameter will create a new resource.
 
-* `agency_domain_name` - (Required, String, ForceNew) Delegator account name.
+* `agency_domain_name` - (Required, String, ForceNew) Specifies the domain name of agency.
 
   Changing this parameter will create a new resource.
 
-* `agency_name` - (Required, String, ForceNew) The agency name created by the delegator.
+* `agency_name` - (Required, String, ForceNew) Specifies the name of agency.
 
   Changing this parameter will create a new resource.
 
-* `agency_project_id` - (Required, String, ForceNew) Project ID of the delegator.
+* `agency_project_id` - (Required, String, ForceNew) Specifies the project id of agency.
 
   Changing this parameter will create a new resource.
 
-<a name="LtsTransfer_LogTransferDetail"></a>
+<a name="lts_transfer_log_transfer_detail"></a>
 The `log_transfer_detail` block supports:
 
-* `obs_period` - (Optional, Int) Length of the transfer interval for an OBS transfer task.  
-  This parameter is mandatory when you create an OBS transfer task.  
-  The log transfer interval is specified by the combination of the values of **obs_period** and **obs_period_unit**,
-  and must be set to one of the following: 2 min, 5 min, 30 min, 1 hour, 3 hours, 6 hours, and 12 hours.
-  Value options are as follows:
-    + **2**: 2 minutes, the **obs_period_unit** must be **min**.
-    + **5**: 5 minutes, the **obs_period_unit** must be **min**.
-    + **30**: 30 minutes, the **obs_period_unit** must be **min**.
-    + **1**: 1 hour, the **obs_period_unit** must be **hour**.
-    + **3**: 3 hours, the **obs_period_unit** must be **hour**.
-    + **6**: 6 hours, the **obs_period_unit** must be **hour**.
-    + **12**: 12 hours, the **obs_period_unit** must be **hour**.
+* `obs_period` - (Optional, Int) Specifies the length of the transfer interval for an OBS transfer task.  
+  This parameter is **Required** when you create an OBS transfer task.  
+  The log transfer interval is specified by the combination of the values of **obs_period** and **obs_period_unit**.  
+  The valid values are as follows:
+  + **2**: 2 minutes, the **obs_period_unit** must be **min**.
+  + **5**: 5 minutes, the **obs_period_unit** must be **min**.
+  + **30**: 30 minutes, the **obs_period_unit** must be **min**.
+  + **1**: 1 hour, the **obs_period_unit** must be **hour**.
+  + **3**: 3 hours, the **obs_period_unit** must be **hour**.
+  + **6**: 6 hours, the **obs_period_unit** must be **hour**.
+  + **12**: 12 hours, the **obs_period_unit** must be **hour**.
 
-* `obs_period_unit` - (Optional, String) Unit of the transfer interval for an OBS transfer task.  
-  This parameter is mandatory when you create an OBS transfer task.
-  The log transfer interval is specified by the combination of the values of **obs_period** and **obs_period_unit**,
-  and must be set to one of the following: 2 min, 5 min, 30 min, 1 hour, 3 hours, 6 hours, and 12 hours.
-  Value options are as follows:
-    + **min**: minute.
-    + **hour**: hour.
+* `obs_period_unit` - (Optional, String) Specifies the unit of the transfer interval for an OBS transfer task.  
+  This parameter is **Required** when you create an OBS transfer task.
+  The log transfer interval is specified by the combination of the values of **obs_period** and **obs_period_unit**.  
+  The valid values are as follows:
+  + **min**
+  + **hour**
 
-* `obs_bucket_name` - (Optional, String) OBS bucket name.  
-  This parameter is mandatory when you create an OBS transfer task.
+* `obs_bucket_name` - (Optional, String) Specifies the OBS bucket name.  
+  This parameter is **Required** when you create an OBS transfer task.
 
-* `obs_transfer_path` - (Optional, String) OBS bucket path, which is the log transfer destination.  
+* `obs_transfer_path` - (Optional, String) Specifies the OBS bucket path, which is the log transfer destination.  
 
-* `obs_dir_prefix_name` - (Optional, String) Custom transfer path of an OBS transfer task.  
+* `obs_dir_prefix_name` - (Optional, String) Specifies the custom transfer path of an OBS transfer task.  
 
-* `obs_prefix_name` - (Optional, String) Transfer file prefix of an OBS transfer task.  
+* `obs_prefix_name` - (Optional, String) Specifies the transfer file prefix of an OBS transfer task.  
 
-* `obs_eps_id` - (Optional, String) Enterprise project ID of an OBS transfer task.  
+* `obs_eps_id` - (Optional, String) Specifies the enterprise project ID of an OBS transfer task.  
 
 * `obs_encrypted_enable` - (Optional, Bool) Whether OBS bucket encryption is enabled.  
 
-* `obs_encrypted_id` - (Optional, String) KMS key ID for an OBS transfer task.  
-  This parameter is mandatory if encryption is enabled for the target OBS bucket.  
+* `obs_encrypted_id` - (Optional, String) Specifies the KMS key ID for an OBS transfer task.  
+  This parameter is **Required** if encryption is enabled for the target OBS bucket.  
 
-* `obs_time_zone` - (Optional, String) Time zone for an OBS transfer task.  
+* `obs_time_zone` - (Optional, String) Specifies the time zone for an OBS transfer task.  
   If this parameter is specified, **obs_time_zone_id** must also be specified.
 
-* `obs_time_zone_id` - (Optional, String) ID of the time zone for an OBS transfer task.  
+* `obs_time_zone_id` - (Optional, String) Specifies the ID of the time zone for an OBS transfer task.  
   If this parameter is specified, **obs_time_zone** must also be specified.
 
-* `dis_id` - (Optional, String) DIS stream ID.  
-  This parameter is mandatory when you create a DIS transfer task.
+* `dis_id` - (Optional, String) Specifies the DIS stream ID.  
+  This parameter is **Required** when you create a DIS transfer task.
 
-* `dis_name` - (Optional, String) DIS stream name.  
-  This parameter is mandatory when you create a DIS transfer task.
+* `dis_name` - (Optional, String) Specifies the DIS stream name.  
+  This parameter is **Required** when you create a DIS transfer task.
 
-* `kafka_id` - (Optional, String) Kafka ID.  
-  This parameter is mandatory when you create a DMS transfer task.
+* `kafka_id` - (Optional, String) Specifies the Kafka instance ID.  
+  This parameter is **Required** when you create a DMS transfer task.
 
-* `kafka_topic` - (Optional, String) Kafka topic.  
-  This parameter is mandatory when you create a DMS transfer task.
+* `kafka_topic` - (Optional, String) Specifies the Kafka topic.  
+  This parameter is **Required** when you create a DMS transfer task.
 
-  -> Before creating a DMS transfer task, register your Kafka instance with Kafka ID and Kafka topic first.
+  ->**Note** Before creating a DMS transfer task, register your Kafka instance with Kafka ID and Kafka topic first.
 
-* `delivery_tags` - (Optional, List) The list of tag fields will be delivered when transferring.
+* `delivery_tags` - (Optional, List) Specifies the list of tag fields will be delivered when transferring.
   This field must contain the following host information: **regionName**, **projectId**, **logStreamName** and 
   **logGroupName**.
-
 
 ## Attribute Reference
 

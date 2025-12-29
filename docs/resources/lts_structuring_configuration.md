@@ -2,7 +2,8 @@
 subcategory: "Log Tank Service (LTS)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_lts_structuring_configuration"
-description: ""
+description: |-
+  Manages an LTS structuring configuration resource within HuaweiCloudStack.
 ---
 
 # hcs_lts_structuring_configuration
@@ -47,23 +48,27 @@ resource "hcs_lts_structuring_configuration" "test" {
 The following arguments are supported:
 
 * `region` - (Optional, String, ForceNew) Specifies the region in which to create the resource.
-  If omitted, the provider-level region will be used. Changing this parameter will create a new resource.
+  If omitted, the provider-level region will be used.
+
+  Changing this parameter will create a new resource.
 
 * `log_group_id` - (Required, String, ForceNew) Specifies the log group ID.
+
   Changing this parameter will create a new resource.
 
 * `log_stream_id` - (Required, String, ForceNew) Specifies the log stream ID.
+
   Changing this parameter will create a new resource.
 
 * `template_type` - (Required, String) Specifies the type of the template. The valid values are as follows:
   + **built_in**: System templates.
-  + **custom**:   Custom templates.
+  + **custom**: Custom templates.
 
 * `template_name` - (Required, String) Specifies the template name. When `template_type` is set to **built_in**,
-  valid values are:
+  the valid values are:
   + **ELB**
   + **VPC**
-  + **DCS_AUDIT**: DCS audit log.
+  + **DCS_AUDIT**: DCS audit log
   + **TOMCAT**
   + **NGINX**
 
@@ -72,11 +77,11 @@ The following arguments are supported:
 
 * `demo_fields` - (Optional, List) Specifies the example fields. Use to set quick analysis configurations for fields.
   Only need to enter the fields whose status is different from that of `is_analysis` in the template.
-  The [demo_fields](#StructConfig_fields) structure is documented below.
+  The [demo_fields](#lts_structing_conf_fields_) structure is documented below.
 
 * `tag_fields` - (Optional, List) Specifies the tag fields. Use to set quick analysis configurations for fields.
   Only need to enter the fields whose status is different from that of `is_analysis` in the template.
-  The [tag_fields](#StructConfig_fields) structure is documented below.
+  The [tag_fields](#lts_structing_conf_fields) structure is documented below.
 
 * `quick_analysis` - (Optional, Bool) Specifies whether to enable `demo_fields` and `tag_fields` quick analysis.
   + If this parameter is set to **true**, quick analysis is enabled for all `demo_fields` and `tag_fields`.
@@ -85,7 +90,9 @@ The following arguments are supported:
 
   Defaults to **false**.
 
-<a name="StructConfig_fields"></a>
+!> **WARNING:** `demo_fields`, `tag_fields` and `quick_analysis` will be **deprecated** in later version.
+
+<a name="lts_structing_conf_fields"></a>
 The `demo_fields` and `tag_fields` block supports:
 
 * `is_analysis` - (Optional, Bool) Specifies whether quick analysis is enabled. Defaults to **false**.

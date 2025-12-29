@@ -2,7 +2,8 @@
 subcategory: "Distributed Message Service (DMS)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_dms_kafka_user"
-description: ""
+description: |-
+  Manages a DMS kafka user resource within HuaweiCloudStack.
 ---
 
 # hcs_dms_kafka_user
@@ -30,11 +31,14 @@ The following arguments are supported:
   provider-level region will be used. Changing this creates a new resource.
 
 * `instance_id` - (Required, String, ForceNew) Specifies the ID of the DMS kafka instance to which the user belongs.
+
   Changing this creates a new resource.
 
-* `name` - (Required, String, ForceNew) Specifies the name of the user. Changing this creates a new resource.
+* `name` - (Required, String, ForceNew) Specifies the name of the user.
 
-* `password` - (Required, String) Specifies the password of the user. The parameter must be 8 to 32 characters
+  Changing this creates a new resource.
+
+* `password` - (Required, String) Specifies the password of the user. The parameter must be `8` to `32` characters
   long and contain only letters(case-sensitive), digits, and special characters(`~!@#$%^&*()-_=+|[{}]:'",<.>/?).
   The value must be different from name.
 

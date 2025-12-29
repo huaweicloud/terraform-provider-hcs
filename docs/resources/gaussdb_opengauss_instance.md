@@ -502,7 +502,6 @@ OpenGaussDB instance can be imported using the `id`, e.g.
 $ terraform import hcs_gaussdb_opengauss_instance.test 1f2c4f48adea4ae684c8edd8818fa349in14
 ```
 
-
 Note that the imported state may not be identical to your resource definition, due to some attributes missing from the
 API response, security or some other reason. The missing attributes include:
 `password`, `availability_zone` and `ha.mode`.

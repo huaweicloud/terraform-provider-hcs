@@ -90,9 +90,6 @@ func buildLogStreamsQueryParams(d *schema.ResourceData) string {
 	if logStreamName, ok := d.GetOk("log_stream_name"); ok {
 		res += "&log_stream_name=" + logStreamName.(string)
 	}
-	if res != "" {
-		res = "?" + res[1:]
-	}
 
 	return res
 }

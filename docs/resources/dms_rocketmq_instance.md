@@ -48,12 +48,13 @@ The following arguments are supported:
   An instance name starts with a letter, consists of 4 to 64 characters, and can contain only letters,
   digits, underscores (_), and hyphens (-).
 
-* `engine_version` - (Required, String, ForceNew) Specifies the version of the RocketMQ engine. Value: **5.x**.
+* `engine_version` - (Required, String, ForceNew) Specifies the version of the RocketMQ engine.
+  The valid value is: **5.x**.
 
   Changing this parameter will create a new resource.
 
 * `storage_space` - (Required, Int, ForceNew) Specifies the message storage capacity, Unit: GB.
-  Value range: 300-3000.
+  The valid range is from `300` to `3000`.
 
   Changing this parameter will create a new resource.
 
@@ -73,16 +74,16 @@ The following arguments are supported:
   Changing this parameter will create a new resource.
 
 * `flavor_id` - (Required, String, ForceNew) Specifies a product ID. The options are as follows:
-  + **c6.2u8g.single.x86** or **c6.2u8g.single.arm**. maximum number of topics on each broker: 50;
-    maximum number of consumer groups on each broker: 100.
-  + **c6.4u16g.single.x86** or **c6.4u16g.single.arm**. maximum number of topics on each broker: 100;
-    maximum number of consumer groups on each broker: 200.
-  + **c6.8u32g.single.x86** or **c6.8u32g.single.arm**. maximum number of topics on each broker: 200;
-    maximum number of consumer groups on each broker: 400.
-  + **c6.16u64g.single.x86** or **c6.16u64g.single.arm**. maximum number of topics on each broker: 300;
-    maximum number of consumer groups on each broker: 600.
-  + **c6.32u128g.single.x86** or **c6.32u128g.single.arm**. maximum number of topics on each broker: 400;
-    maximum number of consumer groups on each broker: 800.
+  + **c6.2u8g.single.x86** or **c6.2u8g.single.arm**. maximum number of topics on each broker: `50`;
+    maximum number of consumer groups on each broker: `100`.
+  + **c6.4u16g.single.x86** or **c6.4u16g.single.arm**. maximum number of topics on each broker: `100`;
+    maximum number of consumer groups on each broker: `200`.
+  + **c6.8u32g.single.x86** or **c6.8u32g.single.arm**. maximum number of topics on each broker: `200`;
+    maximum number of consumer groups on each broker: `400`.
+  + **c6.16u64g.single.x86** or **c6.16u64g.single.arm**. maximum number of topics on each broker: `300`;
+    maximum number of consumer groups on each broker: `600`.
+  + **c6.32u128g.single.x86** or **c6.32u128g.single.arm**. maximum number of topics on each broker: `400`;
+    maximum number of consumer groups on each broker: `800`.
 
   Changing this parameter will create a new resource.
 
@@ -192,15 +193,15 @@ In addition to all arguments above, the following attributes are exported:
 
 * `ces_version` - Indicates the version of CES.
 
-* `grpc_address` - Indicates the gRPC connection address (this field is only displayed for RocketMQ version 5.x).
+* `grpc_address` - Indicates the gRPC connection address (this field is only displayed for RocketMQ version **5.x**).
 
 * `public_grpc_address` - Indicates Public network gRPC connection address (this field is only displayed for
   RocketMQ version 5.x).
 
 * `cross_vpc_accesses` - Indicates the Access information of cross-VPC.
-  The [cross_vpc_accesses](#rocketmq_instance) structure is documented below.
+  The [cross_vpc_accesses](#rocketmq_instance_cross_vpc_accesses_attr) structure is documented below.
 
-<a name="rocketmq_instance"></a>
+<a name="rocketmq_instance_cross_vpc_accesses_attr"></a>
 The `cross_vpc_accesses` block supports:
 
 * `advertised_ip` - The advertised IP Address or domain name.
