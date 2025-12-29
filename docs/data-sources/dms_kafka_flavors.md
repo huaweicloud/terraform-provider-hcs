@@ -2,7 +2,8 @@
 subcategory: "Distributed Message Service (DMS)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_dms_kafka_flavors"
-description: ""
+description: |-
+  Use this data source to get the list of available flavor details within HuaweiCloudStack.
 ---
 
 # hcs_dms_kafka_flavors
@@ -48,11 +49,13 @@ data "hcs_dms_kafka_flavors" "test" {
 
 * `flavor_id` - (Optional, String) Specifies the DMS flavor ID, e.g. **c6.2u4g.cluster**.
 
-* `storage_spec_code` - (Optional, String) Specifies the disk IO encoding.
+* `storage_spec_code` - (Optional, String) Specifies the disk IO encoding. The valid values are as follows:
   + **dms.physical.storage.high.v2**: Type of the disk that uses high I/O.
   + **dms.physical.storage.ultra.v2**: Type of the disk that uses ultra-high I/O.
 
-* `type` - (Optional, String) Specifies flavor type. The valid values are **single** and **cluster**.
+* `type` - (Optional, String) Specifies flavor type. The valid values are as follows:
+  + **single**
+  + **cluster**
 
 * `arch_type` - (Optional, String) Specifies the type of CPU architecture, e.g. **X86**.
 
@@ -67,7 +70,7 @@ In addition to all arguments above, the following attributes are exported:
 * `versions` - The supported flavor versions.
 
 * `flavors` - The list of flavor details.
-  The [object](#dms_kafka_flavors) structure is documented below.
+  The [flavors](#dms_kafka_flavors) object structure is documented below.
 
 <a name="dms_kafka_flavors"></a>
 The `flavors` block supports:
@@ -80,14 +83,14 @@ The `flavors` block supports:
 
 * `arch_types` - The list of supported CPU architectures.
 
-* `ios` - The list of supported disk IO types.
-  The [object](#dms_kafka_flavor_ios) structure is documented below.
+* `ios` - The list of supported disk IO types.  
+  The [ios](#dms_kafka_flavor_ios) structure is documented below.
 
-* `support_features` - The list of features supported by the current specification.
-  The [object](#dms_kafka_flavor_support_features) structure is documented below.
+* `support_features` - The list of features supported by the current specification.  
+  The [support_features](#dms_kafka_flavor_support_features) structure is documented below.
 
-* `properties` - The properties of the current specification.
-  The [object](#dms_kafka_flavor_properties) structure is documented below.
+* `properties` - The properties of the current specification.  
+  The [properties](#dms_kafka_flavor_properties) structure is documented below.
 
 <a name="dms_kafka_flavor_ios"></a>
 The `ios` block supports:
@@ -106,7 +109,7 @@ The `support_features` block supports:
 * `name` - The function name, e.g. **connector_obs**.
 
 * `properties` - The function property details.
-  The [object](#dms_kafka_flavor_support_feature_properties) structure is documented below.
+  The [properties](#dms_kafka_flavor_support_feature_properties) structure is documented below.
 
 <a name="dms_kafka_flavor_support_feature_properties"></a>
 The `properties` block supports:

@@ -95,6 +95,11 @@ type ErrDefault408 struct {
 	ErrUnexpectedResponseCode
 }
 
+// ErrDefault409 is the default error type returned on a 409 HTTP response code.
+type ErrDefault409 struct {
+	ErrUnexpectedResponseCode
+}
+
 // ErrDefault429 is the default error type returned on a 429 HTTP response code.
 type ErrDefault429 struct {
 	ErrUnexpectedResponseCode

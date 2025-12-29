@@ -68,10 +68,18 @@ The following arguments are supported:
 * `admin` - (Optional, Bool) Specifies whether the user is an administrator.
 
 * `default_topic_perm` - (Optional, String) Specifies the default topic permissions.  
-  Value options: **PUB|SUB**, **PUB**, **SUB**, **DENY**.
+  The valid values are as follows:
+  + **PUB|SUB**
+  + **PUB**
+  + **SUB**
+  + **DENY**
 
 * `default_group_perm` - (Optional, String) Specifies the default consumer group permissions.  
-  Value options: **PUB|SUB**, **PUB**, **SUB**, **DENY**.
+  The valid values are as follows:
+  + **PUB|SUB**
+  + **PUB**
+  + **SUB**
+  + **DENY**
 
 * `topic_perms` - (Optional, List) Specifies the special topic permissions.
   The [topic_perms](#rocketmq_user_perms) object structure is documented below.
@@ -85,7 +93,11 @@ The `topic_perms` and `group_perms` block supports:
 * `name` - (Optional, String) Indicates the name of a topic or consumer group.
 
 * `perm` - (Optional, String) Indicates the permissions of the topic or consumer group.  
-  Value options: **PUB|SUB**, **PUB**, **SUB**, **DENY**.
+  The valid values are as follows:
+  + **PUB|SUB**
+  + **PUB**
+  + **SUB**
+  + **DENY**
 
 ## Attribute Reference
 

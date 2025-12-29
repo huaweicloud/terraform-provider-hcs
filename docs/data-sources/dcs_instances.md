@@ -2,7 +2,8 @@
 subcategory: "Distributed Cache Service (DCS)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_dcs_instances"
-description: ""
+description: |-
+  Use this data source to get the list of DCS instances.
 ---
 
 # hcs_dcs_instances
@@ -27,8 +28,16 @@ The following arguments are supported:
 
 * `name` - (Optional, String) Specifies the name of an instance.
 
-* `status` - (Optional, String) Specifies the cache instance status. The valid values are **RUNNING**, **ERROR**,
-  **RESTARTING**, **EXTENDING**, **RESTORING**, **FLUSHING**.
+* `status` - (Optional, String) Specifies the cache instance status. The valid values are as follows:
+  + **CREATING**
+  + **CREATEFAILED**
+  + **RUNNING**
+  + **ERROR**
+  + **RESTARTING**
+  + **EXTENDING**
+  + **RESTORING**
+  + **FROZEN**. This value is only supported by HCS **8.6.0** and **later** version.
+  + **FLUSHING**. This value is only supported by HCS **8.6.0** and **later** version.
 
 * `private_ip` - (Optional, String) Specifies the subnet Network ID.
 
@@ -41,10 +50,10 @@ In addition to all arguments above, the following attributes are exported:
 * `id` - The data source ID.
 
 * `instances` - Indicates the list of DCS instances.
-  The [Instance](#DcsInstance_Instance) structure is documented below.
+  The [instances](#dcs_instances_attr) structure is documented below.
 
-<a name="DcsInstance_Instance"></a>
-The `Instance` block supports:
+<a name="dcs_instances_attr"></a>
+The `instances` block supports:
 
 * `id` - Indicates the ID of the instance.
 

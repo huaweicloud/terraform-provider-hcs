@@ -2,7 +2,8 @@
 subcategory: "Log Tank Service (LTS)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_lts_host_group"
-description: ""
+description: |-
+  Manages an LTS host group resource within HuaweiCloudStack.
 ---
 
 # hcs_lts_host_group
@@ -35,12 +36,15 @@ resource "hcs_lts_host_group" "test" {
 The following arguments are supported:
 
 * `region` - (Optional, String, ForceNew) Specifies the region in which to create the resource.
-  If omitted, the provider-level region will be used. Changing this parameter will create a new resource.
+  If omitted, the provider-level region will be used.
+
+  Changing this parameter will create a new resource.
 
 * `name` - (Required, String) Specifies the name of the host group.
 
 * `type` - (Required, String, ForceNew) Specifies the type of the host group.
   The value can be **linux**.
+
   Changing this parameter will create a new resource.
 
 * `host_ids` - (Optional, List) Specifies the ID list of hosts to join the host group.

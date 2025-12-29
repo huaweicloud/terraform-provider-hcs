@@ -1,5 +1,9 @@
 ---
 subcategory: "Data Warehouse Service (DWS)"
+layout: "huaweicloudstack"
+page_title: "HuaweiCloudStack: hcs_dws_flavors"
+description: |-
+  Use this data source to get available flavors of DWS cluster node.
 ---
 
 # hcs_dws_flavors
@@ -27,12 +31,11 @@ The following arguments are supported:
 
 * `memory` - (Optional, Int) The ram of the dws node flavor in GB.
 
-* `datastore_type` - (Optional, String) The type of datastore.  
-  The options are as follows:
-    - **dws**: OLAP, elastic scaling, unlimited scaling of compute and storage capacity.
-    - **hybrid**: a single data warehouse used for transaction and analytics workloads,
-       in single-node or cluster mode.
-    - **stream**: built-in time series operators; up to 40:1 compression ratio; applicable to IoT services.
+* `datastore_type` - (Optional, String) The type of datastore.    
+  The valid values are as follows:
+  + **dws**: OLAP, elastic scaling, unlimited scaling of compute and storage capacity.
+  + **hybrid**: a single data warehouse used for transaction and analytics workloads, in single-node or cluster mode.
+  + **stream**: built-in time series operators; up to 40:1 compression ratio; applicable to IoT services.
 
 ## Attribute Reference
 
@@ -41,9 +44,9 @@ In addition to all arguments above, the following attributes are exported:
 * `id` - The resource ID.
 
 * `flavors` - The list of flavor detail.
-  The [flavors](#dwsFlavors_Flavors) structure is documented below.
+  The [flavors](#dws_flavors_attr) structure is documented below.
 
-<a name="dwsFlavors_Flavors"></a>
+<a name="dws_flavors_attr"></a>
 The `flavors` block supports:
 
 * `flavor_id` - The name of the dws node flavor.  
@@ -51,28 +54,30 @@ The `flavors` block supports:
 
 * `datastore_type` - The type of datastore.  
   The options are as follows:
-    - **dws**: OLAP, elastic scaling, unlimited scaling of compute and storage capacity.
-    - **hybrid**: a single data warehouse used for transaction and analytics workloads,
-       in single-node or cluster mode.
-    - **stream**: built-in time series operators; up to 40:1 compression ratio; applicable to IoT services.
+  + **dws**: OLAP, elastic scaling, unlimited scaling of compute and storage capacity.
+  + **hybrid**: a single data warehouse used for transaction and analytics workloads, in single-node or cluster mode.
+  + **stream**: built-in time series operators; up to 40:1 compression ratio; applicable to IoT services.
 
 * `vcpus` - The vcpus of the dws node flavor.
 
 * `memory` - The ram of the dws node flavor in GB.
 
-* `volumetype` - Disk type.  
-  The options are as follows:
-    - **LOCAL_DISK**:common I/O disk.
-    - **SSD**: ultra-high I/O disk.
+* `volumetype` - Disk type. The valid values are as follows:
+  + **LOCAL_DISK**: common I/O disk.
+  + **SSD**: ultra-high I/O disk.
 
 * `size` - The default disk size in GB.
 
 * `availability_zones` - The list of availability zones.
 
-* `elastic_volume_specs` - The [elastic_volume_specs](#dwsFlavors_FlavorsElasticVolumeSpec) structure is
-  documented below.
+* `elastic_volume_specs` - The elastic volume specs. If the specification is an elastic capacity specification,
+  this attribute contains the elastic capacity information of the specification, including storage type,
+  minimum capacity, maximum capacity, and step size information.
+  If it is a fixed storage specification, this attribute is **null**.
 
-<a name="dwsFlavors_FlavorsElasticVolumeSpec"></a>
+  The [elastic_volume_specs](#dws_flavors_attr) object structure is documented below.
+
+<a name="dws_flavors_attr"></a>
 The `elastic_volume_specs` block supports:
 
 * `step` - Disk size increment step.

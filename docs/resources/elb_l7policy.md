@@ -78,7 +78,7 @@ The following arguments are supported:
 
 The following arguments are supported:
 
-* `status_code` - (Required during creation | Optional during update, String) Return code after redirection. The value can be 301, 302, 303, 307, or 308.
+* `status_code` - (Required, String) Return code after redirection. The value can be 301, 302, 303, 307, or 308.
   The value consists of 1 to 16 characters. 
 
 * `protocol` - (Optional, String) Redirection protocol. The value can be HTTP, HTTPS, or `${protocol}`. The default 

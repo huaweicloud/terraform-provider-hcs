@@ -2,7 +2,8 @@
 subcategory: "Distributed Message Service (DMS)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_dms_kafka_permissions"
-description: ""
+description: |-
+  Use the resource to grant user permissions of a kafka topic within HuaweiCloudStack.
 ---
 
 # hcs_dms_kafka_permissions
@@ -36,24 +37,27 @@ resource "hcs_dms_kafka_permissions" "test" {
 
 The following arguments are supported:
 
-* `region` - (Optional, String, ForceNew) The region in which to create the DMS kafka permissions resource. If omitted, the
-  provider-level region will be used. Changing this creates a new resource.
+* `region` - (Optional, String, ForceNew) The region in which to create the DMS kafka permissions resource. If omitted,
+  the provider-level region will be used. Changing this creates a new resource.
 
-* `instance_id` - (Required, String, ForceNew) Specifies the ID of the DMS kafka instance to which the permissions belongs.
+* `instance_id` - (Required, String, ForceNew) Specifies the ID of the DMS kafka instance to which the permissions
+  belong.
+
   Changing this creates a new resource.
 
 * `topic_name` - (Required, String, ForceNew) Specifies the name of the topic to which the permissions belongs.
+
   Changing this creates a new resource.
 
-* `policies` - (Required, List) Specifies the permissions policies. The [object](#dms_kafka_policies) structure is
-  documented below.
+* `policies` - (Required, List) Specifies the permissions policies.  
+  The [policies](#dms_kafka_policies) object structure is documented below.
 
 <a name="dms_kafka_policies"></a>
 The `policies` block supports:
 
 * `user_name` - (Required, String) Specifies the username.
 
-* `access_policy` - (Required, String) Specifies the permissions type. The value can be:
+* `access_policy` - (Required, String) Specifies the permissions type. The valid values are as follows:
   + **all**: publish and subscribe permissions.
   + **pub**: publish permissions.
   + **sub**: subscribe permissions.
@@ -69,6 +73,7 @@ In addition to all arguments above, the following attributes are exported:
 This resource provides the following timeouts configuration options:
 
 * `create` - Default is 5 minutes.
+
 * `delete` - Default is 5 minutes.
 
 ## Import

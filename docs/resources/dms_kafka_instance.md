@@ -2,7 +2,8 @@
 subcategory: "Distributed Message Service (DMS)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_dms_kafka_instance"
-description: ""
+description: |-
+  Manage DMS Kafka instance resources within HuaweiCloudStack.
 ---
 
 # hcs_dms_kafka_instance
@@ -78,8 +79,12 @@ The following arguments are supported:
   broker changes may cause storage capacity changes. So, if you specify the value of `storage_space`, you need to
   manually modify the value of `storage_space` after changing the `product_id`.
 
-* `engine_version` - (Required, String, ForceNew) Specifies the version of the Kafka engine,
-  such as 2.7 or other supported versions. Changing this creates a new instance resource.
+* `engine_version` - (Required, String, ForceNew) Specifies the version of the Kafka engine.  
+  The valid values are as follows:
+  + **2.7**
+  + **3.x**
+
+  Changing this creates a new instance resource.
 
 * `storage_spec_code` - (Required, String, ForceNew) Specifies the storage I/O specification.
   If the instance is created with `flavor_id`, the valid values are as follows:
@@ -94,15 +99,20 @@ The following arguments are supported:
 
   Changing this creates a new instance resource.
 
-* `vpc_id` - (Required, String, ForceNew) Specifies the ID of a VPC. Changing this creates a new instance resource.
+* `vpc_id` - (Required, String, ForceNew) Specifies the ID of a VPC.
 
-* `network_id` - (Required, String, ForceNew) Specifies the ID of a subnet. Changing this creates a new instance
-  resource.
+  Changing this creates a new instance resource.
+
+* `network_id` - (Required, String, ForceNew) Specifies the ID of a subnet.
+
+  Changing this creates a new instance resource.
 
 * `security_group_id` - (Required, String) Specifies the ID of a security group.
 
 * `availability_zones` - (Required, List, ForceNew) The names of the AZ where the Kafka instances reside.
-  The parameter value can not be left blank or an empty array. Changing this creates a new instance resource.
+  The parameter value can not be left blank or an empty array.
+
+  Changing this creates a new instance resource.
 
   -> **NOTE:** Deploy one availability zone or at least three availability zones. Do not select two availability zones.
   Deploy to more availability zones, the better the reliability and SLA coverage.
@@ -110,24 +120,28 @@ The following arguments are supported:
   ~> The parameter behavior of `availability_zones` has been changed from `list` to `set`.
 
 * `manager_user` - (Optional, String, ForceNew) Specifies the username for logging in to the Kafka Manager. The username
-  consists of 4 to 64 characters and can contain letters, digits, hyphens (-), and underscores (_). This parameter will
-  be **Deprecated** in HCS 8.5.0 and later version.
+  consists of 4 to 64 characters and can contain letters, digits, hyphens (-), and underscores (_).
 
   Changing this creates a new instance resource.
+
+  -> **Note** This parameter will be **Deprecated** in HCS **8.5.0** and **later** version.
 
 * `manager_password` - (Optional, String, ForceNew) Specifies the password for logging in to the Kafka Manager. The
   password must meet the following complexity requirements: Must be 8 to 32 characters long. Must contain at least 2 of
   the following character types: lowercase letters, uppercase letters, digits, and special characters (`~!@#$%^&*()-_
-  =+\\|[{}]:'",<.>/?). This parameter will be **Deprecated** in HCS 8.5.0 and later version.
+  =+\\|[{}]:'",<.>/?).
 
   Changing this creates a new instance resource.
 
+  -> **Note** This parameter will be **Deprecated** in HCS **8.5.0** and **later** version.
+
 * `storage_space` - (Optional, Int) Specifies the message storage capacity, the unit is GB.
   The storage spaces corresponding to the product IDs are as follows:
-  + **c6.4u16g.cluster**.
-  + **c6.8u32g.cluster**.
-  + **c6.16u64g.cluster**.
-  + **c6.32u128g.cluster**.
+  + **kafka.2u8g.single**. This value is only supported by HCS **8.3.1**.
+  + **kafka.4u16g.cluster**.
+  + **kafka.8u32g.cluster**.
+  + **kafka.16u64g.cluster**.
+  + **kafka.32u128g.cluster**.
 
   It is required when creating an instance with `flavor_id`.
 
@@ -135,7 +149,9 @@ The following arguments are supported:
   It is required when creating an instance with `flavor_id`.
 
 * `access_user` - (Optional, String, ForceNew) Specifies the username of SASL_SSL user. A username consists of 4
-  to 64 characters and supports only letters, digits, and hyphens (-). Changing this creates a new instance resource.
+  to 64 characters and supports only letters, digits, and hyphens (-).
+
+  Changing this creates a new instance resource.
 
 * `password` - (Optional, String) Specifies the password of SASL_SSL user. A password must meet the following
   complexity requirements: Must be 8 to 32 characters long. Must contain at least 2 of the following character types:
@@ -145,7 +161,9 @@ The following arguments are supported:
   + **X86**
   + **ARM**
 
-  -> The default value depends on the HCS environment.
+  Changing this creates a new instance resource.
+
+  ->**Note** The default `arch_type` depends on the HCS environment.
 
 * `security_protocol` - (Optional, String, ForceNew) Specifies the protocol to use after SASL is enabled. Value options:
   + **SASL_SSL**: Data is encrypted with SSL certificates for high-security transmission.
@@ -159,23 +177,24 @@ The following arguments are supported:
   + **PLAIN**: Simple username and password verification.
   + **SCRAM-SHA-512**: User credential verification, which is more secure than **PLAIN**.
   
-  Defaults to [**PLAIN**]. Changing this creates a new instance resource.
+  Defaults to **PLAIN**. Changing this creates a new instance resource.
 
 * `description` - (Optional, String) Specifies the description of the DMS Kafka instance. It is a character string
   containing not more than 1,024 characters.
 
-* `maintain_begin` - (Optional, String) Specifies the time at which a maintenance time window starts. Format: HH:mm. The
-  start time and end time of a maintenance time window must indicate the time segment of a supported maintenance time
-  window. The start time must be set to 22:00, 02:00, 06:00, 10:00, 14:00, or 18:00. Parameters `maintain_begin`
-  and `maintain_end` must be set in pairs. If parameter `maintain_begin` is left blank, parameter `maintain_end` is also
-  blank. In this case, the system automatically allocates the default start time 02:00.
+* `maintain_begin` - (Optional, String) Specifies the time at which a maintenance time window starts. Format:
+  **HH:mm:ss**. The start time must be set to **22:00**, **02:00**, **06:00**, **10:00**, **14:00**, or **18:00**.
+  Defaults to **02:00**.
 
-* `maintain_end` - (Optional, String) Specifies the time at which a maintenance time window ends. Format: HH:mm. The
-  start time and end time of a maintenance time window must indicate the time segment of a supported maintenance time
-  window. The end time is four hours later than the start time. For example, if the start time is 22:00, the end time is
-  02:00. Parameters `maintain_begin`
-  and `maintain_end` must be set in pairs. If parameter `maintain_end` is left blank, parameter
-  `maintain_begin` is also blank. In this case, the system automatically allocates the default end time 06:00.
+* `maintain_end` - (Optional, String) Specifies the time at which a maintenance time window ends. Format: **HH:mm:ss**.
+  The end time is four hours later than the start time. For example, if the start time is **22:00**, the end time is
+  **02:00**. Defaults to **06:00**.
+  
+-> **Note** The start time and end time of a maintenance time window must indicate the time segment of a supported
+  maintenance time window.
+
+-> **Note** The parameters `maintain_begin` and `maintain_end` must be set in pairs. If parameter `maintain_begin` is
+  left blank, parameter `maintain_end` is also blank.
 
 * `public_ip_ids` - (Optional, List, ForceNew) Specifies the IDs of the elastic IP address (EIP)
   bound to the DMS Kafka instance. Changing this creates a new instance resource.
@@ -195,21 +214,22 @@ The following arguments are supported:
   + **produce_reject**: Stop producing new messages.
 
 * `dumping` - (Optional, Bool, ForceNew) Specifies whether to enable  message dumping(smart connect).
+
   Changing this creates a new instance resource.
 
 * `enable_auto_topic` - (Optional, Bool) Specifies whether to enable automatic topic creation. If automatic
-  topic creation is enabled, a topic will be automatically created with 3 partitions and 3 replicas when a message is
-  produced to or consumed from a topic that does not exist.
-  The default value is false.
+  topic creation is enabled, a topic will be automatically created with `3` partitions and `3` replicas when a message
+  is produced to or consumed from a topic that does not exist.
+  The default value is **false**.
 
 * `enterprise_project_id` - (Optional, String) Specifies the enterprise project ID of the Kafka instance.
 
 * `tags` - (Optional, Map) The key/value pairs to associate with the DMS Kafka instance.
 
 * `cross_vpc_accesses` - (Optional, List) Specifies the cross-VPC access information.
-  The [object](#dms_cross_vpc_accesses) structure is documented below.
+  The [cross_vpc_accesses](#dms_cross_vpc_accesses_arg) structure is documented below.
 
-<a name="dms_cross_vpc_accesses"></a>
+<a name="dms_cross_vpc_accesses_arg"></a>
 The `cross_vpc_accesses` block supports:
 
 * `advertised_ip` - (Optional, String) The advertised IP Address or domain name.
@@ -218,7 +238,7 @@ The `cross_vpc_accesses` block supports:
 
 In addition to all arguments above, the following attributes are exported:
 
-* `id` - Specifies a resource ID in UUID format.
+* `id` - Indicates the resource ID in UUID format.
 
 * `engine` - Indicates the message engine.
 
@@ -244,14 +264,18 @@ In addition to all arguments above, the following attributes are exported:
 
 * `management_connect_address` - Indicates the Kafka Manager connection address of a Kafka instance.
 
-* `cross_vpc_accesses` - Indicates the Access information of cross-VPC. The structure is documented below.
+* `cross_vpc_accesses` - Indicates the Access information of cross-VPC.
+  The [cross_vpc_accesses](#dms_cross_vpc_accesses_attr) object structure is documented below.
 
 * `charging_mode` - Indicates the charging mode of the instance.
 
+<a name="dms_cross_vpc_accesses_attr"></a>
 The `cross_vpc_accesses` block supports:
 
 * `listener_ip` - The listener IP address.
+
 * `port` - The port number.
+
 * `port_id` - The port ID associated with the address.
 
 ## Timeouts
@@ -259,7 +283,9 @@ The `cross_vpc_accesses` block supports:
 This resource provides the following timeouts configuration options:
 
 * `create` - Default is 50 minutes.
+
 * `update` - Default is 50 minutes.
+
 * `delete` - Default is 15 minutes.
 
 ## Import

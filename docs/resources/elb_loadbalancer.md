@@ -128,6 +128,11 @@ The following arguments are supported:
 * `min_l7_flavor_id` - (Optional, String) Specifies the ID of the minimum Layer-7 flavor for elastic scaling.
   This parameter cannot be left blank if there are HTTP or HTTPS listeners.
 
+* `enterprise_project_id` - (Optional, String) ID of the enterprise project that is associated with the load balancer. 
+  Constraints: The value cannot be "" or an unavailable enterprise project ID. If you do not specify this parameter 
+  or set it to 0 during resource creation, the resource belongs to the default enterprise project, 
+  and "0" will be returned by default.
+
 ## Attributes Reference
 
 In addition to all arguments above, the following attributes are exported:

@@ -1,5 +1,9 @@
 ---
 subcategory: "Data Warehouse Service (DWS)"
+layout: "huaweicloudstack"
+page_title: "HuaweiCloudStack: hcs_dws_snapshot_policy"
+description: |-
+  Manages a DWS automated snapshot policy resource within HuaweiCloudStack.
 ---
 
 # hcs_dws_snapshot_policy
@@ -63,9 +67,9 @@ The following arguments are supported:
   Changing this parameter will create a new resource.
 
 * `type` - (Required, String, ForceNew) The type of the automated snapshot policy.  
-  The options are as follows:
-    + **full**: A full snapshot backs up the data of an entire cluster.
-    + **increment**: An incremental snapshot records the changes made after the previous snapshot was created.
+  The valid values are as follows:
+  + **full**: A full snapshot backs up the data of an entire cluster.
+  + **increment**: An incremental snapshot records the changes made after the previous snapshot was created.
 
   Changing this parameter will create a new resource.
 

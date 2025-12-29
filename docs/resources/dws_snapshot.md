@@ -1,5 +1,9 @@
 ---
 subcategory: "Data Warehouse Service (DWS)"
+layout: "huaweicloudstack"
+page_title: "HuaweiCloudStack: hcs_dws_snapshot"
+description: |-
+  Manages a DWS snapshot resource within HuaweiCloudStack.  
 ---
 
 # hcs_dws_snapshot
@@ -25,15 +29,15 @@ The following arguments are supported:
 * `region` - (Optional, String, ForceNew) Specifies the region in which to create the resource.
   If omitted, the provider-level region will be used. Changing this parameter will create a new resource.
 
-* `name` - (Required, String, ForceNew) Snapshot name.
+* `name` - (Required, String, ForceNew) Specifies the name of snapshot.
 
   Changing this parameter will create a new resource.
 
-* `cluster_id` - (Required, String, ForceNew) ID of the cluster for which you want to create a snapshot.
+* `cluster_id` - (Required, String, ForceNew) Specifies the ID of the cluster for which you want to create a snapshot.
 
   Changing this parameter will create a new resource.
 
-* `description` - (Optional, String, ForceNew) Snapshot description.
+* `description` - (Optional, String, ForceNew) Specifies the description of snapshot.
 
   Changing this parameter will create a new resource.
 
@@ -43,19 +47,24 @@ In addition to all arguments above, the following attributes are exported:
 
 * `id` - The resource ID.
 
-* `started_at` - Time when a snapshot starts to be created.  
-  Format: ISO8601: **YYYY-MM-DDThh:mm:ssZ**.
+* `started_at` - The time when a snapshot starts to be created.  
+  The format is **ISO8601**: **YYYY-MM-DDThh:mm:ssZ**.
 
-* `finished_at` - Time when a snapshot is complete.  
-  Format: ISO8601: **YYYY-MM-DDThh:mm:ssZ**.
+* `finished_at` - The time when a snapshot is complete.  
+  The format is **ISO8601**: **YYYY-MM-DDThh:mm:ssZ**.
 
-* `size` - Snapshot size, in GB.
+* `size` - The snapshot size, in GB.
 
-* `status` - Snapshot status.  
-  The valid values are **CREATING**, **AVAILABLE**, and **UNAVAILABLE**.
+* `status` - The snapshot status.  
+  The valid values are as follows:
+  + **CREATING**
+  + **AVAILABLE**
+  + **UNAVAILABLE**
 
-* `type` - Snapshot type.  
-  The valid values are **MANUAL**, and **AUTOMATED**.
+* `type` - The snapshot type.  
+  The valid values are as follows:
+  + **MANUAL**
+  + **AUTOMATED**
 
 ## Timeouts
 

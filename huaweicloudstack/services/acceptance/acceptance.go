@@ -23,6 +23,7 @@ var (
 	HCS_SECRET_KEY                         = os.Getenv("HCS_SECRET_KEY")
 	HCS_USER_ID                            = os.Getenv("HCS_USER_ID")
 	HCS_USER_NAME                          = os.Getenv("HCS_USER_NAME")
+	HCS_PROJECT_NAME                       = os.Getenv("HCS_PROJECT_NAME")
 	HCS_PROJECT_ID                         = os.Getenv("HCS_PROJECT_ID")
 	HCS_DOMAIN_ID                          = os.Getenv("HCS_DOMAIN_ID")
 	HCS_DOMAIN_NAME                        = os.Getenv("HCS_DOMAIN_NAME")
@@ -202,6 +203,7 @@ var (
 
 	// vdc project
 	HCS_VDC_PROJECT_VDC_ID = os.Getenv("hcs_vdc_project_vdc_id")
+	HCS_AGENCY_DOMAIN_NAME = os.Getenv("HCS_AGENCY_DOMAIN_NAME")
 
 	// codearts
 	HCS_CODEARTSREQ_TEMPLATE_ID = os.Getenv("HCS_CODEARTSREQ_TEMPLATE_ID")
@@ -891,9 +893,10 @@ func TestAccPreCheckUcs(t *testing.T) {
 		t.Skip("HCS_IAM_USER1_ID and HCS_IAM_USER2_ID must be set for UCS acceptance tests.")
 	}
 }
+
 // lintignore:AT003
 func TestAccPreCheckSwrOrgPermissions(t *testing.T) {
-	if HCS_IAM_USER3_ID == ""  || HCS_IAM_USER1_name == "" || HCS_IAM_USER2_name == "" {
+	if HCS_IAM_USER3_ID == "" || HCS_IAM_USER1_name == "" || HCS_IAM_USER2_name == "" {
 		t.Skip("HCS_IAM_USER3_ID, HCS_IAM_USER1_name and HCS_IAM_USER2_name must be set for " +
 			"SWR acceptance tests.")
 	}

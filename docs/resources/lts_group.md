@@ -2,7 +2,8 @@
 subcategory: "Log Tank Service (LTS)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_lts_group"
-description: ""
+description: |-
+  Manages a log group resource within HuaweiCloudStack.
 ---
 
 # hcs_lts_group
@@ -25,10 +26,11 @@ The following arguments are supported:
 * `region` - (Optional, String, ForceNew) Specifies the region in which to create the log group resource. If omitted, the
   provider-level region will be used. Changing this creates a new log group resource.
 
-* `group_name` - (Required, String, ForceNew) Specifies the log group name. Changing this parameter will create a new
-  resource.
+* `group_name` - (Required, String, ForceNew) Specifies the log group name.
+  
+  Changing this parameter will create a new resource.
 
-* `ttl_in_days` - (Required, Int) Specifies the log expiration time(days), value range: 1-7.
+* `ttl_in_days` - (Required, Int) Specifies the log expiration time(days), the valid value is range from `1` to `7`.
 
 * `tags` - (Optional, Map) Specifies the key/value pairs to associate with the log group.
 

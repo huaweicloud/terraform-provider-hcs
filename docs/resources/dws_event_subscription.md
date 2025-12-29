@@ -1,5 +1,9 @@
 ---
 subcategory: "Data Warehouse Service (DWS)"
+layout: "huaweicloudstack"
+page_title: "HuaweiCloudStack: hcs_dws_event_subscription"
+description: |-
+  Manages a DWS event subscription resource within HuaweiCloudStack.  
 ---
 
 # hcs_dws_event_subscription
@@ -35,9 +39,9 @@ The following arguments are supported:
 * `name` - (Required, String) The name of the event subscription.
 
 * `enable` - (Required, String) Whether the event subscription is enabled.  
-  The options are as follows:
-    + **1**: open.
-    + **0**: closed.
+  The valid values are as follows:
+  + **1**: open.
+  + **0**: closed.
 
 * `notification_target` - (Required, String) The notification target.  
 
@@ -48,13 +52,22 @@ The following arguments are supported:
 * `source_id` - (Optional, String) ID of source event.
 
 * `source_type` - (Optional, String) The type of source event.  
-  The valid values are **cluster**, **backup**, and **disaster-recovery**.
+  The valid values are as follows:
+  + **cluster**
+  + **backup**
+  + **disaster-recovery**
 
 * `category` - (Optional, String) The category of source event.  
-  The valid values are **management**, **monitor**, **security** and **system alarm**.
+  The valid values are as follows:
+  + **management**
+  + **monitor**
+  + **security**
+  + **system alarm**
 
 * `severity` - (Optional, String) The severity of source event.  
-  The valid values are **normal**, and **warning**.
+  The valid values are as follows:
+  + **normal**
+  + **warning**
 
 * `time_zone` - (Optional, String, ForceNew) The time_zone of the event subscription.  
 
