@@ -207,6 +207,10 @@ var (
 
 	// codearts
 	HCS_CODEARTSREQ_TEMPLATE_ID = os.Getenv("HCS_CODEARTSREQ_TEMPLATE_ID")
+
+	// DDM
+	HCS_DDM_FLAVOR_ID = os.Getenv("HCS_DDM_FLAVOR_ID")
+	HCS_DDM_ENGINE_ID = os.Getenv("HCS_DDM_ENGINE_ID")
 )
 
 // TestAccProviders is a static map containing only the main provider instance.
@@ -967,8 +971,23 @@ func TestAccPreCheckFgsDependencyVersionId(t *testing.T) {
 	}
 }
 
+// lintignore:AT003
 func TestAccPreCheckCodeartsReqTempalteId(t *testing.T) {
 	if HCS_CODEARTSREQ_TEMPLATE_ID == "" {
 		t.Skip("HCS_CODEARTSREQ_TEMPLATE_ID must be set for codeartsReq acceptance tests")
+	}
+}
+
+// lintignore:AT003
+func TestAccPreCheckDdmFlavorId(t *testing.T) {
+	if HCS_DDM_FLAVOR_ID == "" {
+		t.Skip("HCS_DDM_FLAVOR_ID must be set for DDM acceptance tests")
+	}
+}
+
+// lintignore:AT003
+func TestAccPreCheckDdmEngineId(t *testing.T) {
+	if HCS_DDM_ENGINE_ID == "" {
+		t.Skip("HCS_DDM_ENGINE_ID must be set for DDM acceptance tests")
 	}
 }
