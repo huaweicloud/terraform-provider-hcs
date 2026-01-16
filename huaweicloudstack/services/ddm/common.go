@@ -3,9 +3,8 @@ package ddm
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
-
 	"github.com/jmespath/go-jmespath"
+	"strings"
 
 	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
 )
@@ -59,3 +58,24 @@ func updatePathOffset(path string, offset int) string {
 	return fmt.Sprintf("%soffset=%v", path[:index], offset)
 }
 
+type ddmError struct {
+	ErrorCode string `json:"errCode"`
+	ErrorMsg  string `json:"externalMessage"`
+}
+
+func handleOperationError(err error, operateType string, operateObj string) (bool, error) {
+	if err == nil {
+		return false, nil
+	}
+	if errCode, ok := err.(golangsdk.ErrDefault409); ok {
+		var apiError ddmError
+		if jsonErr := json.Unmarshal(errCode.Body, &apiError); jsonErr != nil {
+			return false, fmt.Errorf("error %s DDM %s: error format error: %s", operateType,
+				operateObj, jsonErr)
+		}
+		if apiError.ErrorCode == "DBS.200019" {
+			return true, err
+		}
+	}
+	return false, err
+}

@@ -499,7 +499,10 @@ func Provider() *schema.Provider {
 
 			"hcs_csms_secret": hcsCsms.ResourceCsmsSecret(),
 
-			"hcs_ddm_instance": hcsDdm.ResourceDdmInstance(),
+			"hcs_ddm_account":                hcsDdm.ResourceDdmAccount(),
+			"hcs_ddm_instance":               hcsDdm.ResourceDdmInstance(),
+			"hcs_ddm_instance_read_strategy": hcsDdm.ResourceDdmInstanceReadStrategy(),
+			"hcs_ddm_schema":                 hcsDdm.ResourceDdmSchema(),
 
 			"hcs_kms_key":   dew.ResourceKmsKey(),
 			"hcs_kms_grant": dew.ResourceKmsGrant(),
