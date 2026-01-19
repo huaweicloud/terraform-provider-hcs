@@ -632,6 +632,7 @@ func Provider() *schema.Provider {
 			"hcs_ucs_fleet":   ucs.ResourceFleet(),
 			"hcs_ucs_policy":  ucs.ResourcePolicy(),
 
+			"hcs_vdc_agency":                vdc.ResourceVdcAgency(),
 			"hcs_vdc_group":                 vdc.ResourceVdcUserGroup(),
 			"hcs_vdc_group_membership":      vdc.ResourceVdcGroupMembership(),
 			"hcs_vdc_user":                  vdc.ResourceVdcUser(),
