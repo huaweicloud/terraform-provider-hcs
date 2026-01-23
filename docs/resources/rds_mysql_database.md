@@ -27,9 +27,13 @@ resource "hcs_rds_mysql_database" "test" {
 The following arguments are supported:
 
 * `region` - (Optional, String, ForceNew) The region in which to create the RDS database resource. If omitted, the
-  provider-level region will be used. Changing this creates a new resource.
+  provider-level region will be used.
 
-* `instance_id` - (Required, String, ForceNew) Specifies the RDS instance ID. Changing this will create a new resource.
+  Changing this creates a new resource.
+
+* `instance_id` - (Required, String, ForceNew) Specifies the RDS instance ID.
+
+  Changing this will create a new resource.
 
 * `name` - (Required, String, ForceNew) Specifies the database name. The database name contains **1** to **64**
   characters. The name can only consist of lowercase letters, digits, hyphens (-), underscores (_) and dollar signs
@@ -37,13 +41,15 @@ The following arguments are supported:
   support dollar signs ($). Changing this will create a new resource.
 
 * `character_set` - (Required, String, ForceNew) Specifies the character set used by the database, For example **utf8**,
-  **gbk**, **ascii**, etc. Changing this will create a new resource.
+  **gbk**, **ascii**, etc.
+
+  Changing this will create a new resource.
 
 * `description` - (Optional, String) Specifies the database description. The value can contain **0** to **512**
   characters.
   
-  -> This parameter takes effect only for DB instances whose kernel versions are at least **5.6.51.3**, **5.7.33.1**,
-  or **8.0.25.1**.
+  ->**Note** This parameter takes effect only for DB instances whose kernel versions are at least **5.6.51.3**,
+  **5.7.33.1** or **8.0.25.1**.
 
 ## Attribute Reference
 
@@ -56,7 +62,9 @@ In addition to all arguments above, the following attributes are exported:
 This resource provides the following timeouts configuration options:
 
 * `create` - Default is 30 minutes.
+
 * `update` - Default is 30 minutes.
+
 * `delete` - Default is 30 minutes.
 
 ## Import
@@ -64,5 +72,5 @@ This resource provides the following timeouts configuration options:
 RDS database can be imported using the `instance id` and `name` separated by slash, e.g.
 
 ```bash
-$ terraform import hcs_rds_mysql_database.database_1 <instance_id>/<name>
+$ terraform import hcs_rds_mysql_database.test <instance_id>/<name>
 ```

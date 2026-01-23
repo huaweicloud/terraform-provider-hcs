@@ -124,7 +124,7 @@ The following arguments are supported:
 
   Changing this creates a new instance resource.
 
-  -> **Note** This parameter will be **Deprecated** in HCS **8.5.0** and **later** version.
+  ~> **WARNING: **The `manager_user` will be **Deprecated** in HCS **8.5.0** and **later** version.
 
 * `manager_password` - (Optional, String, ForceNew) Specifies the password for logging in to the Kafka Manager. The
   password must meet the following complexity requirements: Must be 8 to 32 characters long. Must contain at least 2 of
@@ -133,7 +133,7 @@ The following arguments are supported:
 
   Changing this creates a new instance resource.
 
-  -> **Note** This parameter will be **Deprecated** in HCS **8.5.0** and **later** version.
+  ~> **WARNING:** The `manager_password` will be **Deprecated** in HCS **8.5.0** and **later** version.
 
 * `storage_space` - (Optional, Int) Specifies the message storage capacity, the unit is GB.
   The storage spaces corresponding to the product IDs are as follows:

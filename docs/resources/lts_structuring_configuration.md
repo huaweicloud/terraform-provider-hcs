@@ -90,7 +90,7 @@ The following arguments are supported:
 
   Defaults to **false**.
 
-!> **WARNING:** `demo_fields`, `tag_fields` and `quick_analysis` will be **deprecated** in later version.
+~> **WARNING:** The `demo_fields`, `tag_fields` and `quick_analysis` will be **Deprecated** in later version.
 
 <a name="lts_structing_conf_fields"></a>
 The `demo_fields` and `tag_fields` block supports:
