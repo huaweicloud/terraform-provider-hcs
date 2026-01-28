@@ -14,11 +14,13 @@ Manages RDS Mysql account resource within HuaweiCloudStack.
 
 ```hcl
 variable "instance_id" {}
+variable "password" {}
+
 
 resource "hcs_rds_mysql_account" "test" {
   instance_id = var.instance_id
   name        = "test"
-  password    = "Test@12345678"
+  password    = var.password
 }
 ```
 
@@ -38,14 +40,14 @@ The following arguments are supported:
   + If the database version is **MySQL 5.6**, the username consists of `1 to 16` characters.
   + If the database version is **MySQL 5.7 or 8.0**, the username consists of `1 to 32` characters.
 
-* `password` - (Required, String) Specifies the password of the db account. The parameter must be 8 to 32 characters
+* `password` - (Required, String) Specifies the password of the db account. The parameter must be `8` to `32` characters
   long and contain only letters(case-sensitive), digits, and special characters(~!@#$%^*-_=+?,()&). The value must be
   different from `name` or `name` spelled backwards.
 
-* `hosts` - (Optional, List, ForceNew) Specifies the IP addresses that are allowed to access your DB instance.
+* `hosts` - (Optional, List, ForceNew) Specifies the IP addresses that are allowed to access your DB instance.  
   The valid values are as follows:
   + **%**. All IP addresses are allowed to access your instance.
-  + **10.10.10.%**. All IP addresses in the subnet 10.10.10.X are allowed to access your instance.
+  + **10.10.10.%**. All IP addresses in the subnet `10.10.10.X` are allowed to access your instance.
 
   Changing this parameter will create a new resource.
 
@@ -65,7 +67,9 @@ In addition to all arguments above, the following attributes are exported:
 This resource provides the following timeouts configuration options:
 
 * `create` - Default is 30 minutes.
+
 * `update` - Default is 30 minutes.
+
 * `delete` - Default is 30 minutes.
 
 ## Import

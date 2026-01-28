@@ -1,10 +1,14 @@
 ---
 subcategory: "Object Storage Service (OBS)"
+layout: "huaweicloudstack"
+page_title: "HuaweiCloudStack: hcs_obs_bucket_object_acl"
+description: |-
+  Manages an OBS bucket object ACL resource within HuaweiCloudStack. 
 ---
 
 # hcs_obs_bucket_object_acl
 
-Manages an OBS bucket object ACL resource within HuaweiCloudStack(hcs).
+Manages an OBS bucket object ACL resource within HuaweiCloudStack.
 
 -> **NOTE:** When creating or updating the OBS bucket object acl, the original object ACL will be overwritten. When
 deleting the OBS bucket object acl, only the owner permissions will be retained, and the other permissions will be
@@ -58,27 +62,34 @@ The following arguments are supported:
   Changing this parameter will create a new resource.
 
 * `public_permission` - (Optional, List) Specifies the object public permission.
-  The [permission_struct](#OBSBucketObjectAcl_permission_struct) structure is documented below.
+
+  The [public_permission](#obs_bucket_object_acl_public_permission) structure is documented below.
 
 * `account_permission` - (Optional, List) Specifies the object account permissions.
-  The [account_permission_struct](#OBSBucketObjectAcl_account_permission_struct) structure is documented below.
 
-<a name="OBSBucketObjectAcl_permission_struct"></a>
-The `permission_struct` block supports:
+  The [account_permission](#obs_bucket_object_acl_account_permission) structure is documented below.
+
+<a name="obs_bucket_object_acl_public_permission"></a>
+The `public_permission` block supports:
 
 * `access_to_object` - (Optional, List) Specifies the access to object. Only **READ** supported.
 
-* `access_to_acl` - (Optional, List) Specifies the access to acl. Valid values are **READ_ACP** and **WRITE_ACP**.
+* `access_to_acl` - (Optional, List) Specifies the access to acl.
+  The valid values are as follows:
+  + **READ_ACP**
+  + **WRITE_ACP**
 
-<a name="OBSBucketObjectAcl_account_permission_struct"></a>
-The `account_permission_struct` block supports:
+<a name="obs_bucket_object_acl_account_permission"></a>
+The `account_permission` block supports:
 
 * `account_id` - (Required, String) Specifies the account id to authorize. The account id cannot be the object owner,
   and must be unique.
 
 * `access_to_object` - (Optional, List) Specifies the access to object. Only **READ** supported.
 
-* `access_to_acl` - (Optional, List) Specifies the access to acl. Valid values are **READ_ACP** and **WRITE_ACP**.
+* `access_to_acl` - (Optional, List) Specifies the access to acl.
+  + **READ_ACP**. Allows the grantee to read the object's ACL property.
+  + **WRITE_ACP**. Allows the grantee to update the object's ACL property.
 
 ## Attribute Reference
 
@@ -87,10 +98,11 @@ In addition to all arguments above, the following attributes are exported:
 * `id` - The name of the bucket object key.
 
 * `owner_permission` - The object owner permission information.
-  The [owner_permission_struct](#OBSBucketObjectAcl_owner_permission_struct) structure is documented below.
 
-<a name="OBSBucketObjectAcl_owner_permission_struct"></a>
-The `owner_permission_struct` block supports:
+  The [owner_permission](#obs_bucket_object_acl_owner_permission) structure is documented below.
+
+<a name="obs_bucket_object_acl_owner_permission"></a>
+The `owner_permission` block supports:
 
 * `access_to_object` - The owner object permissions.
 

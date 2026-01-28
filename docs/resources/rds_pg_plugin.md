@@ -2,10 +2,13 @@
 subcategory: "Relational Database Service (RDS)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_rds_pg_plugin"
-description: ""
+description: |-
+  Manages RDS for PostgreSQL plugin on the databases within HuaweiCloudStack.
 ---
 
 # hcs_rds_pg_plugin
+
+-> **NOTE:** This resource can only be used in HCS **8.5.0** and **later** version.
 
 Manages RDS for PostgreSQL plugin on the databases within HuaweiCloudStack.
 
@@ -27,15 +30,20 @@ resource "hcs_rds_pg_plugin" "test" {
 The following arguments are supported:
 
 * `region` - (Optional, String, ForceNew) Specifies the region in which to create the resource.
-  If omitted, the provider-level region will be used. Changing this parameter will create a new resource.
+  If omitted, the provider-level region will be used.
+
+  Changing this parameter will create a new resource.
 
 * `instance_id` - (Required, String, ForceNew) Specifies the PostgreSQL instance ID.
+
   Changing this parameter will create a new resource.
 
 * `name` - (Required, String, ForceNew) Specifies the plugin name.
+
   Changing this parameter will create a new resource.
 
 * `database_name` - (Required, String, ForceNew) Specifies the database name.
+
   Changing this parameter will create a new resource.
 
 ## Attribute Reference
@@ -55,6 +63,7 @@ In addition to all arguments above, the following attributes are exported:
 This resource provides the following timeouts configuration options:
 
 * `create` - Default is 30 minutes.
+
 * `delete` - Default is 30 minutes.
 
 ## Import

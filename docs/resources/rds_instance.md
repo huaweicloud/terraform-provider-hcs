@@ -2,7 +2,8 @@
 subcategory: "Relational Database Service (RDS)"
 layout: "huaweicloudStack"
 page_title: "HuaweiCloudStack: hcs_rds_instance"
-description: ""
+description: |-
+  Manage RDS instance resource within HuaweiCloudStack.
 ---
 
 # hcs_rds_instance
@@ -65,17 +66,20 @@ resource "hcs_rds_instance" "instance" {
   security_group_id   = var.secgroup_id
   availability_zone   = [
     var.availability_zone_1,
-    var.availability_zone_2]
+    var.availability_zone_2
+  ]
 
   db {
     type     = "PostgreSQL"
     version  = "12"
     password = var.postgreSQL_password
   }
+  
   volume {
     type = "ULTRAHIGH"
     size = 100
   }
+  
   backup_strategy {
     start_time = "08:00-09:00"
     keep_days  = 1
@@ -163,9 +167,11 @@ resource "hcs_rds_instance" "instance" {
 The following arguments are supported:
 
 * `region` - (Optional, String, ForceNew) The region in which to create the rds instance resource. If omitted, the
-  provider-level region will be used. Changing this creates a new rds instance resource.
+  provider-level region will be used.
 
-* `availability_zone` - (Required, List, ForceNew) Specifies the list of AZ name. 
+  Changing this creates a new rds instance resource.
+
+* `availability_zone` - (Required, List, ForceNew) Specifies the list of availability zone name. 
   + For database instances that are not single instances, you need to specify the availability zones for all nodes
     of the instance separately, separated by commas.
   + **RDS** supports cross-AZ high availability. Choose primary and standby availability zones that are not in the same
@@ -183,8 +189,8 @@ The following arguments are supported:
   is changed, a temporary instance will be generated. This temporary instance will occupy the association of the VPC
   security group and cannot be deleted for 12 hours.
 
-* `db` - (Required, List, ForceNew) Specifies the database information.
-  The [db](#rds_db) structure is documented below.
+* `db` - (Required, List, ForceNew) Specifies the database information.  
+  The [db](#rds_db_arg) structure is documented below.
 
   Changing this parameter will create a new resource.
 
@@ -199,16 +205,19 @@ The following arguments are supported:
 * `security_group_id` - (Required, String) Specifies the security group which the RDS DB instance belongs to.
 
 * `volume` - (Required, List) Specifies the volume information.
+
   The [volume](#rds_volume) structure is documented below.
 
 * `restore` - (Optional, List, ForceNew) Specifies the restoration information. It only supported restore to postpaid
-  instance. The [restore](#rds_restore) structure is documented below.
+  instance.  
+  The [restore](#rds_restore) structure is documented below.
 
   Changing this parameter will create a new resource.
 
 * `fixed_ip` - (Optional, String) Specifies an intranet floating IP address of RDS DB instance.
 
 * `backup_strategy` - (Optional, List) Specifies the advanced backup policy.
+
   The [backup_strategy](#rds_backup_strategy) structure is documented below.
 
 * `ha_replication_mode` - (Optional, String) Specifies the replication mode for the standby DB instance.
@@ -218,17 +227,17 @@ The following arguments are supported:
   -> **NOTE:** **async** indicates the asynchronous replication mode. **semisync** indicates the semi-synchronous
   replication mode. **sync** indicates the synchronous replication mode.
 
-* `lower_case_table_names` - (Optional, String, ForceNew) Specifies the case-sensitive state of the database table name,
-  the default value is "1".
-    + 0: Table names are stored as fixed and table names are case-sensitive.
-    + 1: Table names will be stored in lower case and table names are not case-sensitive.
+* `lower_case_table_names` - (Optional, String, ForceNew) Specifies the case-sensitive state of the database table name.
+  Defaults to `1`.
+  + `0`: Table names are stored as fixed and table names are case-sensitive.
+  + `1`: Table names will be stored in lower case and table names are not case-sensitive.
 
   Changing this parameter will create a new resource.
 
 * `param_group_id` - (Optional, String) Specifies the parameter group ID.
 
 * `time_zone` - (Optional, String, ForceNew) Specifies the UTC time zone. For MySQL and PostgreSQL Chinese mainland site
-  and international site use UTC by default. The value ranges from UTC-12:00 to UTC+12:00 at the full hour.
+  and international site use UTC by default. The value ranges from `UTC-12:00` to `UTC+12:00` at the full hour.
 
   Changing this parameter will create a new resource.
 
@@ -246,6 +255,7 @@ The following arguments are supported:
 
 * `parameters` - (Optional, List) Specify an array of one or more parameters to be set to the RDS instance after
   launched. You can check on console to see which parameters supported.
+
   The [parameters](#rds_parameters) structure is documented below.
 
 <a name="rds_db"></a>
@@ -261,20 +271,20 @@ The `db` block supports:
 
   Changing this parameter will create a new resource.
 
-* `password` - (Optional, String) Specifies the database password. The value should contain 8 to 32 characters,
+* `password` - (Optional, String) Specifies the database password. The value should contain `8` to `32` characters,
   including uppercase and lowercase letters, digits, and the following special characters: ~!@#%^*-_=+? You are advised
   to enter a strong password to improve security, preventing security risks such as brute force cracking.
 
 * `port` - (Optional, Int) Specifies the database port.
-  + The **MySQL** database port ranges `from 1024 to 65535` (excluding 12017 and 33071, which are occupied by the RDS
-    system and cannot be used). The default value is **3306**.
-  + The **PostgreSQL** database port ranges `from 2100 to 9500`. The default value is **5432**.
+  + The **MySQL** database port ranges from `1024` to `65535` (excluding `12017` and `33071`, which are occupied
+    by the RDS system and cannot be used). The default value is `3306`.
+  + The **PostgreSQL** database port ranges from `2100` to `9500`. The default value is `5432`.
 
 <a name="rds_volume"></a>
 The `volume` block supports:
 
-* `size` - (Required, Int) Specifies the volume size. Its value range is from 40 GB to 4000 GB. The value must be a
-  multiple of 10 and greater than the original size.
+* `size` - (Required, Int) Specifies the volume size. Its value range is from `40 GB` to `4000 GB`. The value must be a
+  multiple of `10` and **greater than** the original size.
 
 * `type` - (Required, String, ForceNew) Specifies the volume type. Its value can be any of the following and is
   case-sensitive:
@@ -317,15 +327,22 @@ The `backup_strategy` block supports:
   The value range is from **0** to **732**.
 
 * `start_time` - (Required, String) Specifies the backup time window. Automated backups will be triggered during the
-  backup time window. It must be a valid value in the **hh:mm-HH:MM**
-  format. The current time is in the UTC format. The HH value must be 1 greater than the hh value. The values of mm and
-  MM must be the same and must be set to any of the following: 00, 15, 30, or 45. Example value: 08:15-09:15 23:00-00:
-  00.
+  backup time window. It must be a valid value in the **hh:mm-HH:MM** format. The current time is in the UTC format.
+  + The **HH** value must be `1` greater than the hh value.
+  + The values of **mm** and **MM** must be the same and must be set to any of the following: `00`, `15`, `30`, or `45`.
+    Example value: **08:15-09:15 23:00-00:00**.
 
 * `period` - (Optional, String) Specifies the backup cycle. Automatic backups will be performed on the specified days of
   the week, except when disabling the automatic backup policy. The value range is a comma-separated number, where each
-  number represents a day of the week. For example, a value of 1,2,3,4 would set the backup cycle to Monday, Tuesday,
-  Wednesday, and Thursday. The default value is 1,2,3,4,5,6,7.
+  number represents a day of the week. For example, a value of 1,2,3,4 would set the backup cycle to **Monday**,
+  **Tuesday**, **Wednesday** and **Thursday**. The default value is **1,2,3,4,5,6,7**.
+  + **1**. Monday
+  + **2**. Tuesday
+  + **3**. Wednesday
+  + **4**. Thursday
+  + **5**. Friday
+  + **6**. Saturday
+  + **7**. Sunday
 
 <a name="rds_parameters"></a>
 The `parameters` block supports:
@@ -343,11 +360,15 @@ In addition to all arguments above, the following attributes are exported:
 
 * `status` - Indicates the DB instance status.
 
-* `db/user_name` - Indicates the default username of database.
+* `db` - Indicates the database information.
+
+  The [db](#rds_db_attr) structure is documented below.
 
 * `created` - Indicates the creation time.
 
-* `nodes` - Indicates the instance nodes information. The [nodes](#rds_attr_nodes) structure is documented below.
+* `nodes` - Indicates the instance nodes information.
+
+  The [nodes](#rds_nodes_attr) structure is documented below.
 
 * `private_ips` - Indicates the private IP address list. It is a blank string until an ECS is created.
 
@@ -355,7 +376,12 @@ In addition to all arguments above, the following attributes are exported:
 
 * `public_ips` - Indicates the public IP address list.
 
-<a name="rds_attr_nodes"></a>
+<a name="rds_db_attr"></a>
+The `db` block supports:
+
+* `user_name` - Indicates the default username of database.
+
+<a name="rds_nodes_attr"></a>
 The `nodes` block contains:
 
 * `availability_zone` - Indicates the AZ.
@@ -388,7 +414,7 @@ $ terraform import hcs_rds_instance.instance_1 <id>
 ```
 
 Note that the imported state may not be identical to your resource definition, due to some attributes missing from the
-API response, security or some other reason. The missing attributes include: `db`, `restore`,`param_group_id`,
+API response, security or some other reason. The missing attributes include: `db`, `restore`, `param_group_id`,
 , `availability_zone`. It is generally recommended running `terraform plan` after importing a RDS instance. You can
 then decide if changes should be applied to the instance, or the resource definition should be updated to align with the
 instance. Also, you can ignore changes as below.

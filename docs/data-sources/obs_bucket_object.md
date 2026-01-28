@@ -1,15 +1,21 @@
 ---
 subcategory: "Object Storage Service (OBS)"
+layout: "huaweicloudstack"
+page_title: "HuaweiCloudStack: hcs_obs_bucket_object"
+description: |-
+  Use this data source to get info of special HuaweiCloudStack obs object. 
 ---
-
 # hcs_obs_bucket_object
 
-Use this data source to get info of special HuaweiCloudStack(hcs) obs object.
+Use this data source to get info of special HuaweiCloudStack obs object.
 
 ```hcl
+variable "bucket_name" {}
+variable "key_name" {}
+
 data "hcs_obs_bucket_object" "object" {
-  bucket = "my-test-bucket"
-  key    = "new-key"
+  bucket = var.bucket_name
+  key    = var.key_name
 }
 ```
 
@@ -28,19 +34,19 @@ The following arguments are supported:
 
 In addition to all arguments above, the following attributes are exported:
 
-* `id` - the `key` of the resource supplied above.
+* `id` - The `key` of the resource supplied above.
 
-* `etag` - the ETag generated for the object (an MD5 sum of the object content). When the object is encrypted on the
+* `etag` - The ETag generated for the object (an MD5 sum of the object content). When the object is encrypted on the
   server side, the ETag value is not the MD5 value of the object, but the unique identifier calculated through the
   server-side encryption.
 
-* `size` - the size of the object in bytes.
+* `size` - The size of the object in bytes.
 
-* `version_id` - a unique version ID value for the object, if bucket versioning is enabled.
+* `version_id` - The unique version ID value for the object, if bucket versioning is enabled.
 
-* `storage_class` - specifies the storage class of the object.
+* `storage_class` - The storage class of the object.
 
-* `content_type` - a standard MIME type describing the format of the object data, e.g. application/octet-stream. All
+* `content_type` - The standard MIME type describing the format of the object data, e.g. application/octet-stream. All
   Valid MIME Types are valid for this input.
 
 * `body` - The content of an object which is available only for objects which have a human-readable Content-Type

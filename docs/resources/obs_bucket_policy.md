@@ -1,10 +1,14 @@
 ---
 subcategory: "Object Storage Service (OBS)"
+layout: "huaweicloudstack"
+page_title: "HuaweiCloudStack: hcs_obs_bucket_policy"
+description: |-
+  Manages an OBS bucket policy resource within HuaweiCloudStack. 
 ---
 
 # hcs_obs_bucket_policy
 
-Attaches a policy to an OBS bucket resource.
+Manages an OBS bucket policy resource within HuaweiCloudStack.
 
 -> **NOTE:** When creating or updating the OBS bucket policy, the original policy will be overwritten.
 
@@ -13,8 +17,10 @@ Attaches a policy to an OBS bucket resource.
 ### Policy with OBS format
 
 ```hcl
+variable "bucket_name" {}
+
 resource "hcs_obs_bucket" "bucket" {
-  bucket = "my-test-bucket"
+  bucket = var.bucket_name
 }
 
 resource "hcs_obs_bucket_policy" "policy" {
@@ -38,8 +44,10 @@ POLICY
 ### Policy with S3 format
 
 ```hcl
+variable "bucket_name" {}
+
 resource "hcs_obs_bucket" "bucket" {
-  bucket = "my-test-bucket"
+  bucket = var.bucket_name
 }
 
 resource "hcs_obs_bucket_policy" "s3_policy" {

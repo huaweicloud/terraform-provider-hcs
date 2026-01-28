@@ -2,10 +2,13 @@
 subcategory: "Relational Database Service (RDS)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_rds_pg_database"
-description: ""
+description: |-
+  Manages RDS PostgreSQL database resource within HuaweiCloudStack.
 ---
 
 # hcs_rds_pg_database
+
+-> **NOTE:** This resource can only be used in HCS **8.5.0** and **later** version.
 
 Manages RDS PostgreSQL database resource within HuaweiCloudStack.
 
@@ -25,24 +28,39 @@ resource "hcs_rds_pg_database" "test" {
 The following arguments are supported:
 
 * `region` - (Optional, String, ForceNew) Specifies the region in which to create the resource.
-  If omitted, the provider-level region will be used. Changing this parameter will create a new resource.
+  If omitted, the provider-level region will be used.
+
+  Changing this parameter will create a new resource.
 
 * `instance_id` - (Required, String, ForceNew) Specifies the ID of the RDS PostgreSQL instance.
 
   Changing this parameter will create a new resource.
 
-* `name` - (Required, String, ForceNew) Specifies the database name. The value contains 1 to 63 characters, including
-  letters, digits, and underscores (_). It cannot start with pg or a digit, and must be different from RDS for
-  PostgreSQL template library names. RDS for PostgreSQL template libraries include **postgres**, **template0**, and
-  **template1**.
+* `name` - (Required, String, ForceNew) Specifies the database name. The value contains `1` to `63` characters,
+  including letters, digits, and underscores (_). It cannot start with pg or a digit, and **must be different from**
+  RDS for PostgreSQL template library names.  
+  RDS for PostgreSQL template libraries include:
+  + **postgres**
+  + **template0** 
+  + **template1**
 
   Changing this parameter will create a new resource.
 
-* `owner` - (Optional, String) Specifies the database user. The value must be an existing username and must be different
-  from system usernames. Defaults to **root**.
+* `owner` - (Optional, String) Specifies the database user. The value must be an existing username and **must be
+  different from** system usernames. Defaults to **root**.  
+  The other system username includes:
+  + **rdsAdmin**
+  + **rdsMetric**
+  + **rdsBackup**
+  + **rdsRepl**
+  + **rdsProxy**
+  + **rdsDdm**
+  + **rdsDisaster**. This value is only valid in HCS **8.6.1** and **later** version.
 
-* `template` - (Optional, String, ForceNew) Specifies the name of the database template. Value options: **template0**,
-  **template1**. Defaults to **template1**.
+* `template` - (Optional, String, ForceNew) Specifies the name of the database template. Defaults to **template1**.  
+  The valid values are as follows:
+  + **template0**
+  + **template1**
 
   Changing this parameter will create a new resource.
 
@@ -68,15 +86,15 @@ The following arguments are supported:
   Changing this parameter will create a new resource.
 
 * `is_revoke_public_privilege` - (Optional, Bool, ForceNew) Specifies whether to revoke the PUBLIC CREATE permission of
-  the public schema.
+  the public schema. Defaults to **false**.  
   + **true**: indicates that the permission will be revoked.
   + **false**: indicates that the permission will not be revoked.
-
-  Defaults to **false**.
 
   Changing this parameter will create a new resource.
 
 * `description` - (Optional, String) Specifies the database description. The value contains 0 to 512 characters.
+
+~> **WARNING:** The `is_revoke_public_privilege` and `description` will be **Deprecated** in later version.
 
 ## Attribute Reference
 
@@ -91,7 +109,9 @@ In addition to all arguments above, the following attributes are exported:
 This resource provides the following timeouts configuration options:
 
 * `create` - Default is 30 minutes.
+
 * `update` - Default is 30 minutes.
+
 * `delete` - Default is 30 minutes.
 
 ## Import
