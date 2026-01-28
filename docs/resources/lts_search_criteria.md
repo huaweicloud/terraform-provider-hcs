@@ -59,7 +59,7 @@ The following arguments are supported:
 
   Changing this parameter will create a new resource.
 
-  !> **WARNING:** The parameter `type` will be **Deprecated**.
+  ~> **WARNING:** The `type` will be **Deprecated** in later version.
 
 * `enterprise_project_id` - (Optional, String, ForceNew) Specifies the enterprise project ID. Changing this parameter
   will create a new resource.

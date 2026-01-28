@@ -141,7 +141,7 @@ func resourceVdcAgencyCreate(ctx context.Context, d *schema.ResourceData, meta i
 	d.SetId(r.ID)
 
 	// add agency roles
-	if err = updateAgencyRole(cfg, hcsConfig, vdcClient, nil, d); err != nil {
+	if err = updateAgencyRole(cfg, hcsConfig, nil, d); err != nil {
 		return fmtp.DiagErrorf("error creating agency authrization : %s", err)
 	}
 
@@ -192,7 +192,7 @@ func resourceVdcAgencyUpdate(ctx context.Context, d *schema.ResourceData, meta i
 		return fmtp.DiagErrorf("error querying agency role : %s", err)
 	}
 
-	if err = updateAgencyRole(cfg, hcsConfig, vdcClient, roles, d); err != nil {
+	if err = updateAgencyRole(cfg, hcsConfig, roles, d); err != nil {
 		return fmtp.DiagErrorf("error creating agency authrization : %s", err)
 	}
 
@@ -214,7 +214,12 @@ func resourceVdcAgencyDelete(_ context.Context, d *schema.ResourceData, meta int
 	return nil
 }
 
-func updateAgencyRole(cfg *config.Config, hcsConfig *config.HcsConfig, c *golangsdk.ServiceClient, existingRoles []agency.AgencyRole, newRoles *schema.ResourceData) error {
+func updateAgencyRole(cfg *config.Config, hcsConfig *config.HcsConfig, existingRoles []agency.AgencyRole, newRoles *schema.ResourceData) error {
+	c, err := hcsConfig.VdcClient(hcsConfig.GetRegion(newRoles))
+	if err != nil {
+		return fmtp.Errorf("error creating VDC client : %s", err)
+	}
+
 	epr, edr, edri := buildAgencyRoleFromResponse(cfg.DomainID, existingRoles)
 	pr, dr, dri := buildAgencyRoleFromSchema(cfg, newRoles)
 
@@ -252,7 +257,7 @@ func updateAgencyRole(cfg *config.Config, hcsConfig *config.HcsConfig, c *golang
 		pr[i].itemId = v
 		v, ok = rom[e.roleName]
 		if !ok {
-			return fmtp.Errorf("project role not found : %s", e.roleName)
+			return fmtp.Errorf(" role not found : %s", e.roleName)
 		}
 		pr[i].roleId = v
 	}
@@ -280,7 +285,7 @@ func updateAgencyRole(cfg *config.Config, hcsConfig *config.HcsConfig, c *golang
 	if err := createAgencyRole(c, agencyId, toCreate, agency.CreateAgencyProjectRole); err != nil {
 		return err
 	}
-	if err := deleteAgencyRole(c, agencyId, toCreate, agency.DeleteAgencyProjectRole); err != nil {
+	if err := deleteAgencyRole(c, agencyId, toDelete, agency.DeleteAgencyProjectRole); err != nil {
 		return err
 	}
 
@@ -290,17 +295,17 @@ func updateAgencyRole(cfg *config.Config, hcsConfig *config.HcsConfig, c *golang
 	if err := createAgencyRole(c, agencyId, toCreate, agency.CreateAgencyDomainRole); err != nil {
 		return err
 	}
-	if err := deleteAgencyRole(c, agencyId, toCreate, agency.DeleteAgencyDomainRole); err != nil {
+	if err := deleteAgencyRole(c, agencyId, toDelete, agency.DeleteAgencyDomainRole); err != nil {
 		return err
 	}
 
 	// update all resources role
 	toCreate, toDelete = calcDiff(edri, dri)
-	log.Printf("[DEBUG] inheritate roles toCreate: %v, toDelete: %v", toCreate, toDelete)
+	log.Printf("[DEBUG] inherite roles toCreate: %v, toDelete: %v", toCreate, toDelete)
 	if err := createAgencyRole(c, agencyId, toCreate, agency.CreateAgencyDomainInheritedRole); err != nil {
 		return err
 	}
-	if err := deleteAgencyRole(c, agencyId, toCreate, agency.DeleteAgencyDomainInheritedRole); err != nil {
+	if err := deleteAgencyRole(c, agencyId, toDelete, agency.DeleteAgencyDomainInheritedRole); err != nil {
 		return err
 	}
 	return nil
@@ -319,6 +324,14 @@ func createAgencyRole(c *golangsdk.ServiceClient, agencyId string, roles []RoleI
 }
 
 func deleteAgencyRole(c *golangsdk.ServiceClient, agencyId string, roles []RoleItem, fun func(*golangsdk.ServiceClient, string, string, string) error) error {
+	if len(roles) == 0 {
+		return nil
+	}
+	for _, r := range roles {
+		if err := fun(c, agencyId, r.itemId, r.roleId); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
@@ -437,7 +450,11 @@ func buildAgencyRoleFromResponse(domainId string, roles []agency.AgencyRole) (pr
 	for _, r := range roles {
 		for _, p := range r.Projects {
 			if p.ID == domainId {
-				domainRole = append(domainRole, RoleItem{roleId: r.ID, roleName: r.DisplayName, itemId: "", itemName: ""})
+				if r.Inherit {
+					domainRoleInherited = append(domainRoleInherited, RoleItem{roleId: r.ID, roleName: r.DisplayName, itemId: domainId, itemName: ""})
+				} else {
+					domainRole = append(domainRole, RoleItem{roleId: r.ID, roleName: r.DisplayName, itemId: domainId, itemName: ""})
+				}
 			} else {
 				projectRole = append(projectRole, RoleItem{roleId: r.ID, roleName: r.DisplayName, itemId: p.ID, itemName: p.Name})
 			}
@@ -449,7 +466,6 @@ func buildAgencyRoleFromResponse(domainId string, roles []agency.AgencyRole) (pr
 
 func buildAgencyRoleFromSchema(cfg *config.Config, d *schema.ResourceData) (projectRole []RoleItem, domainRole []RoleItem, domainRoleInherited []RoleItem) {
 	domainId := cfg.DomainID
-	domainName := cfg.DomainName
 
 	if d.Get("project_role") != nil {
 		pr := d.Get("project_role").(*schema.Set)
@@ -466,14 +482,14 @@ func buildAgencyRoleFromSchema(cfg *config.Config, d *schema.ResourceData) (proj
 	if d.Get("domain_roles") != nil {
 		dr := d.Get("domain_roles").(*schema.Set)
 		for _, i := range dr.List() {
-			domainRole = append(domainRole, RoleItem{roleId: "", roleName: i.(string), itemId: domainId, itemName: domainName})
+			domainRole = append(domainRole, RoleItem{roleId: "", roleName: i.(string), itemId: domainId, itemName: ""})
 		}
 	}
 
 	if d.Get("all_resources_roles") != nil {
 		dri := d.Get("all_resources_roles").(*schema.Set)
 		for _, i := range dri.List() {
-			domainRoleInherited = append(domainRoleInherited, RoleItem{roleId: "", roleName: i.(string), itemId: domainId, itemName: domainName})
+			domainRoleInherited = append(domainRoleInherited, RoleItem{roleId: "", roleName: i.(string), itemId: domainId, itemName: ""})
 		}
 	}
 

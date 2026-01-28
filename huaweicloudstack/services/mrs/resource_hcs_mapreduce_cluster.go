@@ -246,18 +246,23 @@ func ResourceMRSClusterV2() *schema.Resource {
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
-			"external_datasources": {
-				Type:     schema.TypeList,
-				Optional: true,
-				Elem:     externalDatasourceSchema(),
-				ForceNew: true,
-			},
 			"bootstrap_scripts": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     bootstrapScriptsSchema(),
 				ForceNew: true,
 			},
+
+			// deprecated
+			"external_datasources": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem:     externalDatasourceSchema(),
+				ForceNew: true,
+				Description: `schema: deprecated`,
+			},
+
+			// Attribute
 			"total_node_number": {
 				Type:     schema.TypeInt,
 				Computed: true,

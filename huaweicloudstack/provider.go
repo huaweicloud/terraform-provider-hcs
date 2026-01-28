@@ -38,6 +38,7 @@ import (
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/codeartspipeline"
 	hcsCsms "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/csms"
 	hcsDcs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dcs"
+	hcsDdm "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ddm"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/deprecated"
 	hcsDms "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dms"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dns"
@@ -497,6 +498,11 @@ func Provider() *schema.Provider {
 			"hcs_dcs_backup":   dcs.ResourceDcsBackup(),
 
 			"hcs_csms_secret": hcsCsms.ResourceCsmsSecret(),
+
+			"hcs_ddm_account":                hcsDdm.ResourceDdmAccount(),
+			"hcs_ddm_instance":               hcsDdm.ResourceDdmInstance(),
+			"hcs_ddm_instance_read_strategy": hcsDdm.ResourceDdmInstanceReadStrategy(),
+			"hcs_ddm_schema":                 hcsDdm.ResourceDdmSchema(),
 
 			"hcs_kms_key":   dew.ResourceKmsKey(),
 			"hcs_kms_grant": dew.ResourceKmsGrant(),

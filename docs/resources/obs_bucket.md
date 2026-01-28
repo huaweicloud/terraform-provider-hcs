@@ -1,17 +1,21 @@
 ---
 subcategory: "Object Storage Service (OBS)"
+layout: "huaweicloudstack"
+page_title: "HuaweiCloudStack: hcs_obs_bucket"
+description: |-
+  Manages an OBS bucket resource within HuaweiCloudStack. 
 ---
 
 # hcs_obs_bucket
 
-Provides an OBS bucket resource.
+Manages an OBS bucket resource within HuaweiCloudStack.
 
 ## Example Usage
 
 ### Private Bucket with Tags
 
 ```hcl
-resource "hcs_obs_bucket" "b" {
+resource "hcs_obs_bucket" "test" {
   bucket = "my-tf-test-bucket"
   acl    = "private"
 
@@ -25,7 +29,7 @@ resource "hcs_obs_bucket" "b" {
 ### Enable versioning
 
 ```hcl
-resource "hcs_obs_bucket" "b" {
+resource "hcs_obs_bucket" "test" {
   bucket     = "my-tf-test-bucket"
   acl        = "private"
   versioning = true
@@ -40,7 +44,7 @@ resource "hcs_obs_bucket" "log_bucket" {
   acl    = "log-delivery-write"
 }
 
-resource "hcs_obs_bucket" "b" {
+resource "hcs_obs_bucket" "test" {
   bucket = "my-tf-test-bucket"
   acl    = "private"
 
@@ -54,7 +58,7 @@ resource "hcs_obs_bucket" "b" {
 ### Static Website Hosting
 
 ```hcl
-resource "hcs_obs_bucket" "b" {
+resource "hcs_obs_bucket" "test" {
   bucket = "obs-website-test.hashicorp.com"
   acl    = "public-read"
 
@@ -78,7 +82,7 @@ EOF
 ### Using CORS
 
 ```hcl
-resource "hcs_obs_bucket" "b" {
+resource "hcs_obs_bucket" "test" {
   bucket = "obs-website-test.hashicorp.com"
   acl    = "public-read"
 
@@ -95,7 +99,7 @@ resource "hcs_obs_bucket" "b" {
 ### Using object lifecycle
 
 ```hcl
-resource "hcs_obs_bucket" "bucket" {
+resource "hcs_obs_bucket" "test" {
   bucket     = "my-bucket"
   acl        = "private"
   versioning = true
@@ -130,8 +134,8 @@ resource "hcs_obs_bucket" "bucket" {
 
 The following arguments are supported:
 
-* `bucket` - (Required, String, ForceNew) Specifies the name of the bucket. Changing this parameter will create a new
-  resource. A bucket must be named according to the globally applied DNS naming regulations as follows:
+* `bucket` - (Required, String, ForceNew) Specifies the name of the bucket. A bucket must be named according to the
+  globally applied DNS naming regulations as follows:
   + The name must be globally unique in OBS.
   + The name must contain 3 to 63 characters. Only lowercase letters, digits, hyphens (-), and periods (.) are
     allowed.
@@ -141,11 +145,34 @@ The following arguments are supported:
   + If the name contains any periods (.), a security certificate verification message may appear when you access the
     bucket or its objects by entering a domain name.
 
-* `storage_class` - (Optional, String) Specifies the storage class of the bucket. OBS provides three storage classes:
-  "STANDARD", "WARM" (Infrequent Access) and "COLD" (Archive). Defaults to `STANDARD`.
+  Changing this parameter will create a new resource.
 
-* `acl` - (Optional, String) Specifies the ACL policy for a bucket. The predefined common policies are as follows:
-  "private", "public-read", "public-read-write" and "log-delivery-write". Defaults to `private`.
+* `storage_class` - (Optional, String) Specifies the storage class of the bucket. Defaults to **STANDARD**.  
+  The valid values are as follows:
+  + **STANDARD**
+  + **WARM**. Infrequent Access
+  + **COLD**. Archive
+
+  ~> **WARNING:** The `storage_class` will be **deprecated** in the later version.
+
+* `acl` - (Optional, String) Specifies the ACL policy for a bucket. Defaults to **private**.  
+  The valid values are as follows:
+  + **private**. The owner of the bucket or object has full control over the object, and no one else has
+    access permissions.
+  + **public-read**. When set on a bucket, all users can access the list of objects in the bucket, multipart
+    tasks in the bucket, and the bucket's metadata.
+  + **public-read-write**. When set on a bucket, all users can access the list of objects in the bucket,
+    multipart tasks in the bucket, the bucket's metadata, upload objects, delete objects, initiate multipart tasks,
+    upload parts, complete multipart uploads, copy parts, and abort multipart uploads.
+  + **public-read-delivered**. When set on a bucket, all users can access the list of objects in the bucket,
+    multipart tasks in the bucket, the bucket's metadata, and can also access the content and metadata of objects
+    in the bucket.
+  + **public-read-write-delivered**. When set on a bucket, all users can access the list of objects in the bucket,
+    multipart tasks in the bucket, the bucket's metadata, upload objects, delete objects, initiate multipart tasks,
+    upload parts, complete multipart uploads, copy parts, and abort multipart uploads, and can also access the
+    content and metadata of objects in the bucket.
+  + **bucket-owner-full-control**. When set on an object, the owner of the bucket and object has full control over the
+    object, and no one else has access permissions.
 
 * `policy` - (Optional, String) Specifies the text of the bucket policy in JSON format.
 
@@ -154,14 +181,15 @@ The following arguments are supported:
 
 * `tags` - (Optional, Map) A mapping of tags to assign to the bucket. Each tag is represented by one key-value pair.
 
-* `versioning` - (Optional, Bool) Whether enable versioning. Once you version-enable a bucket, it can never return to an
+* `versioning` - (Optional, Bool) Whether enable versioning. Once you version-enable a bucket, it can never return to a
   versionless state. You can, however, suspend versioning on that bucket.
 
 * `cluster_group_id` - (Optional, String, ForceNew) Specifies which cluster group is used to create the bucket.
 
   Changing this parameter will create a new bucket.
 
-* `logging` - (Optional, List) A settings of bucket logging.
+* `logging` - (Optional, List) Specifies the logging object configuration.
+
   The [logging](#bucket_logging_args) structure is documented below.
 
 <!-- markdownlint-disable MD033 -->
@@ -172,25 +200,31 @@ The following arguments are supported:
 
 <!-- markdownlint-enable MD033 -->
 
-* `website` - (Optional, List) A website object (documented below).
+* `website` - (Optional, List) Specifies the website object configuration.
+
   The [website](#bucket_website_args) structure is documented below.
 
-* `cors_rule` - (Optional, List) A rule of Cross-Origin Resource Sharing (documented below).
+* `cors_rule` - (Optional, List) Specifies the rule of **Cross-Origin Resource Sharing** configuration.
+
   The [cors_rule](#bucket_cors_rule_args) structure is documented below.
 
-* `lifecycle_rule` - (Optional, List) A configuration of object lifecycle management (documented below).
+* `lifecycle_rule` - (Optional, List) Specifies the lifecycle object configuration.
+
   The [lifecycle_rule](#bucket_lifecycle_rule_args) structure is documented below.
 
-* `force_destroy` - (Optional, Bool) A boolean that indicates all objects should be deleted from the bucket, so that the
-  bucket can be destroyed without error. Default to `false`.
+* `force_destroy` - (Optional, Bool) Specifies all objects should be deleted from the bucket, so that the
+  bucket can be destroyed without error. Default to **false**.
 
 * `region` - (Optional, String, ForceNew) Specifies the region where this bucket will be created. If not specified, used
-  the region by the provider. Changing this will create a new bucket.
+  the region by the provider.
 
-* `parallel_fs` - (Optional, Bool, ForceNew) Whether enable a bucket as a parallel file system. Changing this will
-  create a new bucket.
+  Changing this will create a new bucket.
 
-* `encryption` - (Optional, Bool) Whether enable default server-side encryption of the bucket in SSE-KMS mode.
+* `parallel_fs` - (Optional, Bool, ForceNew) Whether enable a bucket as a parallel file system.
+
+  Changing this will create a new bucket.
+
+* `encryption` - (Optional, Bool) Whether enable default server-side encryption of the bucket in **SSE-KMS** mode.
 
 * `kms_key_id` - (Optional, String) Specifies the ID of a KMS key. If omitted, the default master key will be used.
 
@@ -198,30 +232,34 @@ The following arguments are supported:
   only when `kms_key_id` is specified.
 
 * `enterprise_project_id` - (Optional, String, ForceNew) Specifies the enterprise project id of the OBS bucket.
-  Defaults to `0`. Changing this will create a new bucket.
+
+  Changing this will create a new bucket.
 
 * `user_domain_names` - (Optional, List) Specifies the user domain names. The restriction requirements for this field
   are as follows:
   + Each value must meet the domain name rules.
-  + The maximum length of a domain name is 256 characters.
-  + A maximum of 100 custom domain names can be set for a bucket.
+  + The maximum length of a domain name is `256` characters.
+  + A maximum of `100` custom domain names can be set for a bucket.
   + A custom domain name can only be used by one bucket.
   + Ensure the domain name has been licensed by the Ministry of Industry and Information Technology.
   + The bound user domain names only support access over HTTP now.
 
-  -> When creating or updating the OBS bucket user domain names, the original user domain names will be overwritten.
+  ->**Note** When creating or updating the OBS bucket user domain names, the original user domain names
+  will be overwritten.
 
 * `bucket_redundancy` - (Optional, String) Specify the type of OBS bucket. It is **Required** when create fusion bucket.
-  If change a **CLASSIC** bucket to **FUSION** bucket, `fusion_allow_upgrade` must be **true**.
-  Valid value are as follows.
+  If change a **CLASSIC** bucket to **FUSION** bucket, `fusion_allow_upgrade` must be **true**.  
+  The valid values are as follows:
   + **CLASSIC**. Create a CLASSIC bucket.
   + **FUSION**. Create a FUSION bucket.
 
-  The API only support change a **CLASSIC** bucket to **FUSION** bucket. On the contrary, if change a **FUSION** bucket
-  to **CLASSIC** bucket, it's not supported and will not return any error message. Default to **CLASSIC**.
+  ->**Note** The API only support change a **CLASSIC** bucket to **FUSION** bucket. On the contrary, if change a
+  **FUSION** bucket to **CLASSIC** bucket, it's not supported and will not return any error message.
+  Default to **CLASSIC**.
 
 * `fusion_allow_upgrade` - (Optional, Bool) Specify when the bucket already existing, whether upgrade it to
-  fusion bucket. Valid value are as follows.
+  fusion bucket.  
+  The valid values are as follows:
   + **true**. Allow upgrade existing bucket to fusion bucket.
   + **false**. Deny upgrade existing bucket to fusion bucket.
 
@@ -234,8 +272,8 @@ The following arguments are supported:
 + A bucket with cross-region replication configured cannot be upgraded to a converged bucket.
 
 * `fusion_allow_alternative` - (Optional, Bool) If the environment does not support fusion bucket, but you send a
-  request for creating a fusion bucket, whether allow the system automatically create a bucket of the classic bucket.
-  Valid value are as follows.
+  request for creating a fusion bucket, whether allow the system automatically create a bucket of the classic bucket.  
+  The valid values are as follows:
   + **true**. Allow system to create CLASSIC bucket.
   + **false**. Deny system to create CLASSIC bucket.
 
@@ -255,14 +293,14 @@ The `website` object supports the following:
 * `index_document` - (Optional, String)  Unless using `redirect_all_requests_to`. Specifies the default homepage of the
   static website, only HTML web pages are supported. OBS only allows files such as `index.html` in the root directory of
   a bucket to function as the default homepage. That is to say, do not set the default homepage with a multi-level
-  directory structure (for example, /page/index.html).
+  directory structure (for example, `/page/index.html`).
 
 * `error_document` - (Optional, String) Specifies the error page returned when an error occurs during static website
-  access. Only HTML, JPG, PNG, BMP, and WEBP files under the root directory are supported.
+  access. Only `HTML`, `JPG`, `PNG`, `BMP`, and `WEBP` files under the root directory are supported.
 
-* `redirect_all_requests_to` - (Optional, String) A hostname to redirect all website requests for this bucket to.
-  Hostname can optionally be prefixed with a protocol (`http://` or `https://`) to use when redirecting requests. The
-  default is the protocol that is used in the original request.
+* `redirect_all_requests_to` - (Optional, String) Specifies the hostname to redirect all website requests for this
+  bucket to. Hostname can optionally be prefixed with a protocol (`http://` or `https://`) to use when redirecting
+  requests. The default is the protocol that is used in the original request.
 
 * `routing_rules` - (Optional, String) A JSON or XML format containing routing rules describing redirect behavior and
   when redirects are applied. Each rule contains a `Condition` and a `Redirect` as shown in the following table:
@@ -288,20 +326,22 @@ The `cors_rule` object supports the following:
   for clients.
 
 * `max_age_seconds` - (Optional, Int) Specifies the duration that your browser can cache CORS responses, expressed in
-  seconds. The default value is 100.
+  seconds. The default value is `100`.
 
 <a name="bucket_lifecycle_rule_args"></a>
 The `lifecycle_rule` object supports the following:
 
-* `name` - (Required, String) Unique identifier for lifecycle rules. The Rule Name contains a maximum of 255 characters.
+* `name` - (Required, String) Specifies The unique identifier for lifecycle rules. The Rule Name contains a
+  maximum of `255` characters.
 
 * `enabled` - (Required, Bool) Specifies lifecycle rule status.
 
-* `prefix` - (Optional, String) Object key prefix identifying one or more objects to which the rule applies. If omitted,
-  all objects in the bucket will be managed by the lifecycle rule. The prefix cannot start or end with a slash (/),
-  cannot have consecutive slashes (/), and cannot contain the following special characters: \:*?"<>|.
+* `prefix` - (Optional, String) Specifies the object key prefix identifying one or more objects to which the rule
+  applies. If omitted, all objects in the bucket will be managed by the lifecycle rule. The prefix cannot start or end
+  with a slash (/), cannot have consecutive slashes (/), and cannot contain the following special characters: \:*?"<>|.
 
 * `expiration` - (Required, List) Specifies a period when objects that have been last updated are automatically deleted.
+
   The [expiration](#bucket_expiration_args) structure is documented below.
 
 <a name="bucket_expiration_args"></a>
@@ -323,7 +363,7 @@ In addition to all arguments above, the following attributes are exported:
 * `region` - The region where this bucket resides in.
 
 * `storage_info` - The OBS storage info of the bucket.
-  The [object](#bucket_storage_info_attr) structure is documented below.
+  The [storage_info](#bucket_storage_info_attr) structure is documented below.
 
 <a name="bucket_storage_info_attr"></a>
 The `storage_info` block supports:

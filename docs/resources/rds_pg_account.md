@@ -7,6 +7,8 @@ description: ""
 
 # hcs_rds_pg_account
 
+-> **NOTE:** This resource can only be used in HCS **8.5.0** and **later** version.
+
 Manages RDS PostgreSQL account resource within HuaweiCloudStack.
 
 ## Example Usage
@@ -46,6 +48,8 @@ The following arguments are supported:
 
 * `description` - (Optional, String) Specifies the remarks of the DB account. The parameter must be 1 to 512 characters.
 
+~> **WARNING:** The `description` will be **deprecated** in later version.
+
 ## Attribute Reference
 
 In addition to all arguments above, the following attributes are exported:
@@ -53,9 +57,10 @@ In addition to all arguments above, the following attributes are exported:
 * `id` - The resource ID of account which is formatted `<instance_id>/<name>`.
 
 * `attributes` - Indicates the permission attributes of a user.
-  The [attributes](#PgAccount_Attributes) structure is documented below.
 
-<a name="PgAccount_Attributes"></a>
+  The [attributes](#rds_pg_account_attributes) structure is documented below.
+
+<a name="rds_pg_account_attributes"></a>
 The `attributes` block supports:
 
 * `rol_super` - Indicates whether a user has the super-user permission.
@@ -79,7 +84,9 @@ The `attributes` block supports:
 This resource provides the following timeouts configuration options:
 
 * `create` - Default is 30 minutes.
+
 * `update` - Default is 30 minutes.
+
 * `delete` - Default is 30 minutes.
 
 ## Import

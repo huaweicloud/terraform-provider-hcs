@@ -297,18 +297,18 @@ func buildClientByAKSK(c *HcsConfig) error {
 			AgencyDomainName: c.AgencyDomainName,
 		}
 	} else {
-		if c.AssumeRoleAgency == "" || (c.AssumeRoleAgency != "" && c.SecurityToken != "") {
-			projectAuthOptions = golangsdk.AKSKAuthOptions{
-				ProjectName:    c.TenantName,
-				ProjectId:      c.TenantID,
-				AssumeRoleUsed: true,
-			}
-			domainAuthOptions.AssumeRoleUsed = true
-		}
-
 		domainAuthOptions = golangsdk.AKSKAuthOptions{
 			DomainID: c.DomainID,
 			Domain:   c.DomainName,
+		}
+		projectAuthOptions = golangsdk.AKSKAuthOptions{
+			ProjectName: c.TenantName,
+			ProjectId:   c.TenantID,
+		}
+
+		if c.AssumeRoleAgency == "" || (c.AssumeRoleAgency != "" && c.SecurityToken != "") {
+			projectAuthOptions.AssumeRoleUsed = true
+			domainAuthOptions.AssumeRoleUsed = true
 		}
 	}
 

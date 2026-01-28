@@ -1,5 +1,9 @@
 ---
 subcategory: "MapReduce Service (MRS)"
+layout: "huaweicloudstack"
+page_title: "HuaweiCloudStack: hcs_mrs_versions"
+description: |-
+  Use this data source to get available cluster versions of MapReduce.
 ---
 
 # hcs_mrs_versions

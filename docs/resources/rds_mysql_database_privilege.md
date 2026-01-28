@@ -68,6 +68,7 @@ The following arguments are supported:
   Changing this will create a new resource.
 
 * `users` - (Required, List) Specifies the account that associated with the database.
+
   The [users](#rds_mysql_users) structure is documented below.
 
 <a name="rds_mysql_users"></a>
@@ -92,7 +93,9 @@ In addition to all arguments above, the following attributes are exported:
 This resource provides the following timeouts configuration options:
 
 * `create` - Default is 30 minutes.
+
 * `update` - Default is 30 minutes.
+
 * `delete` - Default is 30 minutes.
 
 ## Import

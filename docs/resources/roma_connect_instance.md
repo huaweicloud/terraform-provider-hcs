@@ -2,14 +2,15 @@
 subcategory: "ROMA Connect"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_roma_connect_instance"
-description: ""
+description: |-
+  Manage a ROMA Connect instance resource within HuaweiCloudStack.
 ---
 
 # hcs_roma_connect_instance
 
 Manage a ROMA Connect instance resource within HuaweiCloudStack.
 
-> :warning: To use this resource, you need to manually register the ROMA Connect API in your environment.
+~> **WARNING:** To use this resource, you need to manually register the ROMA Connect API in your environment.
 
 ## Example Usage
 
@@ -80,7 +81,9 @@ resource "hcs_roma_connect_instance" "test2" {
 The following arguments are supported:
 
 * `region` - (Optional, String, ForceNew) Specifies the region in which to create the instance. If omitted,
-  the provider-level region will be used. Changing this will create a new instance.
+  the provider-level region will be used.
+
+  Changing this will create a new instance.
 
 * `name` - (Required, String, ForceNew) Specifies the name of instance.
 
@@ -115,10 +118,11 @@ The following arguments are supported:
 
   Changing this will create a new instance.
 
-* `ipv6_enable` - (Required, Bool, ForceNew) Specifies whether using IPv6 to create instance. If true, the subnet must
-  supports IPV6.
+* `ipv6_enable` - (Required, Bool, ForceNew) Specifies whether using IPv6 to create instance. 
 
   Changing this will create a new instance.
+
+  -> **NOTE:** If `ipv6_enable` is set to **true**, the subnet must support **IPV6**.
 
 * `enable_all` - (Required, Bool, ForceNew) Specifies whether a bucket instance is a family bucket instance.
   - **true**. Create a Family Bucket instance.
@@ -133,34 +137,35 @@ The following arguments are supported:
 
   Changing this will create a new instance.
 
-* `mqs` - (Required, Map, ForceNew) Specifies MQS service parameters. The [mqs](#roma_mqs) structure is documented
-  below.
+* `mqs` - (Required, Map, ForceNew) Specifies MQS service parameters.
+
+  The [mqs](#roma_instance_mqs_arg) structure is documented below.
 
   Changing this will create a new instance.
 
-* `maintain_begin` - (Optional, String, ForceNew) Maintain start time. Example **22:00:00**. In the future, this
-  parameter will be **deprecated** by ROMA Connect Service, it is not recommended to continue using.
+* `maintain_begin` - (Optional, String, ForceNew) Maintain start time. Example **22:00:00**.
 
   Changing this will create a new instance.
 
-* `maintain_end` - (Optional, String, ForceNew) Maintain end time. Example **02:00:00**. In the future, this
-  parameter will be **deprecated** by ROMA Connect Service, it is not recommended to continue using.
+* `maintain_end` - (Optional, String, ForceNew) Maintain end time. Example **02:00:00**.
 
   Changing this will create a new instance.
 
 -> **NOTE:** Parameters `maintain_begin` and `maintain_end` must be set in pairs.
+
+~> **WARNING:** The `maintain_begin` and `maintain_end` will be **Deprecated** in later version.
 
 * `enterprise_project_id` - (Optional, String, ForceNew) Specifies the enterprise project ID.
 
   Changing this will create a new instance.
 
 * `entrance_bandwidth_size` - (Optional, Int, ForceNew) Specifies the ingress bandwidth. This parameter is **Required**
-  when `enable_publicip` is true.
+  when `enable_publicip` is **true**.
 
   Changing this will create a new instance.
 
-<a name="roma_mqs"></a>
-The `mqs` object supports the following:
+<a name="roma_instance_mqs_arg"></a>
+The `mqs` block supports:
 
 * `enable_publicip` - (Optional, Bool, ForceNew) Specifies whether public network access is supported.
   Default to **false**.
@@ -172,18 +177,22 @@ The `mqs` object supports the following:
 
   Changing this will create a new instance.
 
-* `engine_version` - (Optional, String, ForceNew) Specifies the **Kafka** engine version. This parameter is conflicted
-  with `rocketmq_enable`. Valid version are **2.7**, **2.3.0**, **1.1.0**.
+* `engine_version` - (Optional, String, ForceNew) Specifies the **Kafka** engine version. This parameter is
+  **conflicted** with `rocketmq_enable`.  
+  The valid values are as follows:
+  + **2.7**
+  + **2.3.0**
+  + **1.1.0**
 
   Changing this will create a new instance.
 
-* `rocketmq_enable` - (Optional, Bool, ForceNew) Specifies create a **RocketMQ** instance. This parameter is conflicted
-  with `engine_version`. Default to **false**.
+* `rocketmq_enable` - (Optional, Bool, ForceNew) Specifies create a **RocketMQ** instance. This parameter is
+  **conflicted** with `engine_version`. Default to **false**.
 
   Changing this will create a new instance.
 
 * `enable_acl` - (Optional, Bool, ForceNew) Specifies whether to enable acl. This parameter is valid only when the
-  `rocketmq_enable` is true.
+  `rocketmq_enable` is **true**.
 
   Changing this will create a new instance.
 
@@ -219,14 +228,14 @@ In addition to all arguments above, the following attributes are exported:
 
 * `flavor_id` - The instance flavor ID.
 
-* `flavor_type` - The instance flavor type.
+* `flavor_type` - The instance flavor type. The valid values are as follows:
   + **basic**
   + **professional**
   + **enterprise** 
   + **platinum**
   + **platinumXB**
 
-* `cpu_arch` - The CPU architecture type. The options are as follows.
+* `cpu_arch` - The CPU architecture type. The valid values are as follows:
   - **x86_64**: x86 architecture. 
   - **aarch64**: ARM architecture.
 
@@ -235,7 +244,7 @@ In addition to all arguments above, the following attributes are exported:
 * `publicip_address` -The EIP address bound to the instance.
 
 * `publicip_enable` - Whether to enable public network access. When public network access is enabled,
-  **publicip_id** is mandatory.
+  `publicip_id` is **Required**.
 
 * `connect_address` - The ROMA Connect connection address.
 
@@ -262,15 +271,17 @@ In addition to all arguments above, the following attributes are exported:
 
 * `update_time` - The last update time.
 
-* `resources` - The description of resource information. The [resources](#attr_resources) structure is documented below.
+* `resources` - The description of resource information.
 
-* <a name="attr_resources"></a>
-The `resources` object supports the following:
+  The [resources](#roma_instance_resources_attr) structure is documented below.
 
-* `mqs` - The MQS service parameters. The [mqs](#attr_mqs) structure is documented below.
+* <a name="roma_instance_resources_attr"></a>
+The `resources` block supports:
 
-<a name="attr_mqs"></a>
-The `mqs` object supports the following:
+* `mqs` - The MQS service parameters. The [mqs](#roma_instance_mqs_attr) structure is documented below.
+
+<a name="roma_instance_mqs_attr"></a>
+The `mqs` block supports:
 
 * `id` - The instance ID of ROMA Connect.
 

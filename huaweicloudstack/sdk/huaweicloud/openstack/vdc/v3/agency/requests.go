@@ -20,11 +20,6 @@ type Agency struct {
 	CreateTime      string `json:"create_time"`
 }
 
-var reqOpt = &golangsdk.RequestOpts{
-	OkCodes:     []int{200, 201, 204},
-	MoreHeaders: golangsdk.MoreHeaders,
-}
-
 func CreateAgency(httpClient *golangsdk.ServiceClient, opts CreateAgencyOpts) (*Agency, error) {
 	url := createAgencyURL(httpClient)
 	b, err := golangsdk.BuildRequestBody(opts, "")
@@ -33,7 +28,10 @@ func CreateAgency(httpClient *golangsdk.ServiceClient, opts CreateAgencyOpts) (*
 	}
 	var r CreateAgencyResponse
 
-	_, err = httpClient.Post(url, b, &r, reqOpt)
+	_, err = httpClient.Post(url, b, &r, &golangsdk.RequestOpts{
+		OkCodes:     []int{200, 201, 204},
+		MoreHeaders: golangsdk.MoreHeaders,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +54,10 @@ func GetAgency(c *golangsdk.ServiceClient, opts GetAgencyOpts) (*AgencyDetail, e
 
 	var r AgencyDetail
 
-	_, err = c.Get(url, &r, reqOpt)
+	_, err = c.Get(url, &r, &golangsdk.RequestOpts{
+		OkCodes:     []int{200, 201, 204},
+		MoreHeaders: golangsdk.MoreHeaders,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +80,10 @@ func ListAgency(c *golangsdk.ServiceClient, opts ListAgencyOpts) ([]AgencyDetail
 		IamAgencies []AgencyDetail `json:"iam_agencies"`
 	}
 
-	_, err = c.Get(url, &r, reqOpt)
+	_, err = c.Get(url, &r, &golangsdk.RequestOpts{
+		OkCodes:     []int{200, 201, 204},
+		MoreHeaders: golangsdk.MoreHeaders,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +96,10 @@ func GetAgencyRole(c *golangsdk.ServiceClient, id string) ([]AgencyRole, error) 
 	url := getAgencyRoleURL(c, id)
 	var r AgencyRoleResponse
 
-	_, err := c.Get(url, &r, reqOpt)
+	_, err := c.Get(url, &r, &golangsdk.RequestOpts{
+		OkCodes:     []int{200, 201, 204},
+		MoreHeaders: golangsdk.MoreHeaders,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -103,43 +110,64 @@ func GetAgencyRole(c *golangsdk.ServiceClient, id string) ([]AgencyRole, error) 
 func DeleteAgency(c *golangsdk.ServiceClient, id string) *golangsdk.ErrResult {
 	var r golangsdk.ErrResult
 
-	_, r.Err = c.Delete(deleteAgencyURL(c, id), reqOpt)
+	_, r.Err = c.Delete(deleteAgencyURL(c, id), &golangsdk.RequestOpts{
+		OkCodes:     []int{200, 201, 204},
+		MoreHeaders: golangsdk.MoreHeaders,
+	})
 
 	return &r
 }
 
 func CreateAgencyProjectRole(c *golangsdk.ServiceClient, agencyId, projectId, roleId string) error {
-	_, err := c.Put(createAgencyProjectRoleURL(c, agencyId, projectId, roleId), nil, nil, reqOpt)
+	_, err := c.Put(createAgencyProjectRoleURL(c, agencyId, projectId, roleId), nil, nil, &golangsdk.RequestOpts{
+		OkCodes:     []int{200, 201, 204},
+		MoreHeaders: golangsdk.MoreHeaders,
+	})
 
 	return err
 }
 
 func DeleteAgencyProjectRole(c *golangsdk.ServiceClient, agencyId, projectId, roleId string) error {
-	_, err := c.Delete(createAgencyProjectRoleURL(c, agencyId, projectId, roleId), reqOpt)
+	_, err := c.Delete(createAgencyProjectRoleURL(c, agencyId, projectId, roleId), &golangsdk.RequestOpts{
+		OkCodes:     []int{200, 201, 204},
+		MoreHeaders: golangsdk.MoreHeaders,
+	})
 
 	return err
 }
 
 func CreateAgencyDomainRole(c *golangsdk.ServiceClient, agencyId, domainId, roleId string) error {
-	_, err := c.Put(createAgencyDomainRoleURL(c, agencyId, domainId, roleId), nil, nil, reqOpt)
+	_, err := c.Put(createAgencyDomainRoleURL(c, agencyId, domainId, roleId), nil, nil, &golangsdk.RequestOpts{
+		OkCodes:     []int{200, 201, 204},
+		MoreHeaders: golangsdk.MoreHeaders,
+	})
 
 	return err
 }
 
 func DeleteAgencyDomainRole(c *golangsdk.ServiceClient, agencyId, domainId, roleId string) error {
-	_, err := c.Delete(createAgencyDomainRoleURL(c, agencyId, domainId, roleId), reqOpt)
+	_, err := c.Delete(createAgencyDomainRoleURL(c, agencyId, domainId, roleId), &golangsdk.RequestOpts{
+		OkCodes:     []int{200, 201, 204},
+		MoreHeaders: golangsdk.MoreHeaders,
+	})
 
 	return err
 }
 
 func CreateAgencyDomainInheritedRole(c *golangsdk.ServiceClient, agencyId, domainId, roleId string) error {
-	_, err := c.Put(createAgencyDomainRoleInheritedURL(c, agencyId, domainId, roleId), nil, nil, reqOpt)
+	_, err := c.Put(createAgencyDomainRoleInheritedURL(c, agencyId, domainId, roleId), nil, nil, &golangsdk.RequestOpts{
+		OkCodes:     []int{200, 201, 204},
+		MoreHeaders: golangsdk.MoreHeaders,
+	})
 
 	return err
 }
 
 func DeleteAgencyDomainInheritedRole(c *golangsdk.ServiceClient, agencyId, domainId, roleId string) error {
-	_, err := c.Delete(createAgencyDomainRoleInheritedURL(c, agencyId, domainId, roleId), reqOpt)
+	_, err := c.Delete(createAgencyDomainRoleInheritedURL(c, agencyId, domainId, roleId), &golangsdk.RequestOpts{
+		OkCodes:     []int{200, 201, 204},
+		MoreHeaders: golangsdk.MoreHeaders,
+	})
 
 	return err
 }

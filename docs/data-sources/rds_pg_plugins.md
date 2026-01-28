@@ -2,10 +2,13 @@
 subcategory: "Relational Database Service (RDS)"
 layout: "huaweicloudstack"
 page_title: "HuaweiCloudStack: hcs_rds_pg_plugins"
-description: ""
+description: |-
+  Use this data source to get the list of RDS PostgreSQL plugins.
 ---
 
 # hcs_rds_pg_plugins
+
+-> **NOTE:** This data source can only be used in HCS **8.5.0** and **later** version.
 
 Use this data source to get the list of RDS PostgreSQL plugins.
 
@@ -38,6 +41,8 @@ The following arguments are supported:
 
 * `created` - (Optional, Bool) Specifies whether the plugin has been created. Defaults to: **false**.
 
+~> **WARNING:** The `version` and `created` will be **Deprecated** in later version.
+
 ## Attribute Reference
 
 In addition to all arguments above, the following attributes are exported:
@@ -45,9 +50,9 @@ In addition to all arguments above, the following attributes are exported:
 * `id` - The data source ID.
 
 * `plugins` - Indicates the plugin list.
-  The [plugins](#PgPlugins_Plugin) structure is documented below.
+  The [plugins](#rds_pg_plugins_attr) structure is documented below.
 
-<a name="PgPlugins_Plugin"></a>
+<a name="rds_pg_plugins_attr"></a>
 The `plugins` block supports:
 
 * `name` - Indicates the plugin name.

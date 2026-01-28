@@ -37,9 +37,9 @@ In addition to all arguments above, the following attributes are exported:
 
 * `cluster` - The detail of cluster.
 
-  The [cluster](#cluster_struct) structure is documented below.
+  The [cluster](#mrs_cluster_cluster_attr) structure is documented below.
 
-<a name="cluster_struct"></a>
+<a name="mrs_cluster_cluster_attr"></a>
 The `cluster` block supports:
 
 * `id` - The cluster ID.
@@ -166,8 +166,8 @@ The `cluster` block supports:
   + false: MRS Manager installation is not complete.
 
 * `safe_mode` - The running mode of an MRS cluster.
-  + 0: Normal cluster.
-  + 1: Security cluster.
+  + **0**: Normal cluster.
+  + **1**: Security cluster.
 
 * `cluster_version` - The cluster version.
 
@@ -186,8 +186,8 @@ The `cluster` block supports:
 * `cluster_type` - The cluster type.
 
 * `log_collection` - Whether to collect logs when cluster installation fails.
-  + 0: Do not collect.
-  + 1: Collect.
+  + **0**: Do not collect.
+  + **1**: Collect.
 
 * `task_node_groups` - The list of task nodes of cluster.
 
@@ -197,21 +197,23 @@ The `cluster` block supports:
 
   The [node_groups](#cluster_node_groups_struct) structure is documented below.
 
-* `master_data_volume_type` - The data disk storage type of the master node. Currently, SATA, SAS, and SSD are supported.
+* `master_data_volume_type` - The data disk storage type of the master node.
+  Currently, **SATA**, **SAS** and **SSD** are supported.
 
 * `master_data_volume_size` - The data disk storage space of the master node.
 
 * `master_data_volume_count` - The number of data disks of the master node.
 
-* `core_data_volume_type` - The data disk storage type of the core node. Currently, SATA, SAS, and SSD are supported.
+* `core_data_volume_type` - The data disk storage type of the core node.
+  Currently, **SATA**, **SAS** and **SSD** are supported.
 
 * `core_data_volume_size` - The data disk storage space of the core node.
 
 * `core_data_volume_count` - The number of data disks of the core node.
 
 * `period_type` - Whether the subscription type is yearly or monthly.
-  + 0: monthly subscription.
-  + 1: yearly subscription.
+  + `0`: monthly subscription.
+  + `1`: yearly subscription.
 
 * `scale` - The node change status. If this parameter is left blank, the cluster nodes are not changed.
   + **scaling-out**: The cluster is being scaled out.
