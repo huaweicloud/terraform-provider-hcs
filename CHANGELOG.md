@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2.4.23 (January 28, 2026)
+
+* **New Resource Source:**
+  + `hcs_ddm_account`
+  + `hcs_ddm_instance_read_strategy`
+  + `hcs_ddm_instance`
+  + `hcs_ddm_schema`
+
 ## 2.4.22 (December 29, 2025)
 
 * **New Resource Source:**
