@@ -4,6 +4,7 @@ package acceptance
 import (
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
@@ -211,6 +212,9 @@ var (
 	// DDM
 	HCS_DDM_FLAVOR_ID = os.Getenv("HCS_DDM_FLAVOR_ID")
 	HCS_DDM_ENGINE_ID = os.Getenv("HCS_DDM_ENGINE_ID")
+
+	HCS_CSE_MICROSERVICE_ENGINE_ID        = os.Getenv("HCS_CSE_MICROSERVICE_ENGINE_ID")
+	HCS_SERVICESTAGE_JAR_PKG_STORAGE_URLS = os.Getenv("HCS_SERVICESTAGE_JAR_PKG_STORAGE_URLS")
 )
 
 // TestAccProviders is a static map containing only the main provider instance.
@@ -989,5 +993,19 @@ func TestAccPreCheckDdmFlavorId(t *testing.T) {
 func TestAccPreCheckDdmEngineId(t *testing.T) {
 	if HCS_DDM_ENGINE_ID == "" {
 		t.Skip("HCS_DDM_ENGINE_ID must be set for DDM acceptance tests")
+	}
+}
+
+// lintignore:AT003
+func TestAccPreCheckCSEMicroserviceEngineID(t *testing.T) {
+	if HCS_CSE_MICROSERVICE_ENGINE_ID == "" {
+		t.Skip("HCS_CSE_MICROSERVICE_ENGINE_ID must be set for the acceptance test")
+	}
+}
+
+// lintignore:AT003
+func TestAccPreCheckServiceStageJarPkgStorageURLs(t *testing.T, n int) {
+	if len(strings.Split(HCS_SERVICESTAGE_JAR_PKG_STORAGE_URLS, ",")) < n {
+		t.Skipf("at least %d URLs for HCS_SERVICESTAGE_JAR_PKG_STORAGE_URLS must be set, separated by a comma (,)", n)
 	}
 }
