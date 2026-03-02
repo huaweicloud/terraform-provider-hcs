@@ -614,6 +614,8 @@ func Provider() *schema.Provider {
 			"hcs_servicestage_application": servicestage.ResourceApplication(),
 			"hcs_servicestage_environment": hcsServicestage.ResourceEnvironment(),
 
+			"hcs_servicestagev3_component": hcsServicestage.ResourceV3Component(),
+
 			"hcs_sfs_access_rule": hcsSfs.ResourceSFSAccessRuleV2(),
 			"hcs_sfs_file_system": sfs.ResourceSFSFileSystemV2(),
 
