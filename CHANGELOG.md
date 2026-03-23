@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2.4.24 (March 23, 2026)
+
+* **New Resource Source:**
+  + `hcs_cse_microservice_engine_configuration`
+  + `hcs_servicestagev3_component`
+  + `hcs_vdc_agency`
+
 ## 2.4.23 (January 28, 2026)
 
 * **New Resource Source:**
