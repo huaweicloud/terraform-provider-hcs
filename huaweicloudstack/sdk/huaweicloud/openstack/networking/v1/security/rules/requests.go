@@ -25,11 +25,11 @@ type CreateOpts struct {
 	// Specifies the start port number.
 	// The value ranges from 1 to 65535.
 	// The value cannot be greater than the port_range_max value. An empty value indicates all ports.
-	PortRangeMin int `json:"port_range_min,omitempty"`
+	PortRangeMin int `json:"port_range_min"`
 	// Specifies the end port number.
 	// The value ranges from 1 to 65535.
 	// The value cannot be smaller than the port_range_min value. An empty value indicates all ports.
-	PortRangeMax int `json:"port_range_max,omitempty"`
+	PortRangeMax int `json:"port_range_max"`
 	// Specifies the remote IP address.
 	// If the access control direction is set to egress, the parameter specifies the source IP address.
 	// If the access control direction is set to ingress, the parameter specifies the destination IP address.
