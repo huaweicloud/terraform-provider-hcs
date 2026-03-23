@@ -36,6 +36,7 @@ import (
 	hcsCfw "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/cfw"
 	hcsCodearts "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/codearts"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/codeartspipeline"
+	hcsCse "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/cse"
 	hcsCsms "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/csms"
 	hcsDcs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dcs"
 	hcsDdm "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ddm"
@@ -493,6 +494,8 @@ func Provider() *schema.Provider {
 
 			"hcs_codearts_pipeline_group": codeartspipeline.ResourceCodeArtsPipelineGroup(),
 
+			"hcs_cse_microservice_engine_configuration": hcsCse.ResourceMicroserviceEngineConfiguration(),
+
 			"hcs_dcs_instance": hcsDcs.ResourceDcsInstance(),
 			"hcs_dcs_account":  hcsDcs.ResourceDcsAccount(),
 			"hcs_dcs_backup":   dcs.ResourceDcsBackup(),
@@ -614,6 +617,8 @@ func Provider() *schema.Provider {
 			"hcs_servicestage_application": servicestage.ResourceApplication(),
 			"hcs_servicestage_environment": hcsServicestage.ResourceEnvironment(),
 
+			"hcs_servicestagev3_component": hcsServicestage.ResourceV3Component(),
+
 			"hcs_sfs_access_rule": hcsSfs.ResourceSFSAccessRuleV2(),
 			"hcs_sfs_file_system": sfs.ResourceSFSFileSystemV2(),
 
@@ -632,6 +637,7 @@ func Provider() *schema.Provider {
 			"hcs_ucs_fleet":   ucs.ResourceFleet(),
 			"hcs_ucs_policy":  ucs.ResourcePolicy(),
 
+			"hcs_vdc_agency":                vdc.ResourceVdcAgency(),
 			"hcs_vdc_group":                 vdc.ResourceVdcUserGroup(),
 			"hcs_vdc_group_membership":      vdc.ResourceVdcGroupMembership(),
 			"hcs_vdc_user":                  vdc.ResourceVdcUser(),
