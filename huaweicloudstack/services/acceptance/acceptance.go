@@ -213,7 +213,11 @@ var (
 	HCS_DDM_FLAVOR_ID = os.Getenv("HCS_DDM_FLAVOR_ID")
 	HCS_DDM_ENGINE_ID = os.Getenv("HCS_DDM_ENGINE_ID")
 
-	HCS_CSE_MICROSERVICE_ENGINE_ID        = os.Getenv("HCS_CSE_MICROSERVICE_ENGINE_ID")
+	// CSE
+	HCS_CSE_MICROSERVICE_ENGINE_ID             = os.Getenv("HCS_CSE_MICROSERVICE_ENGINE_ID")
+	HCS_CSE_MICROSERVICE_ENGINE_ADMIN_PASSWORD = os.Getenv("HCS_CSE_MICROSERVICE_ENGINE_ADMIN_PASSWORD")
+
+	// ServiceStage
 	HCS_SERVICESTAGE_JAR_PKG_STORAGE_URLS = os.Getenv("HCS_SERVICESTAGE_JAR_PKG_STORAGE_URLS")
 )
 
@@ -1000,6 +1004,13 @@ func TestAccPreCheckDdmEngineId(t *testing.T) {
 func TestAccPreCheckCSEMicroserviceEngineID(t *testing.T) {
 	if HCS_CSE_MICROSERVICE_ENGINE_ID == "" {
 		t.Skip("HCS_CSE_MICROSERVICE_ENGINE_ID must be set for the acceptance test")
+	}
+}
+
+// lintignore:AT003
+func TestAccPreCheckCSEMicroserviceEngineAdminPassword(t *testing.T) {
+	if HCS_CSE_MICROSERVICE_ENGINE_ADMIN_PASSWORD == "" {
+		t.Skip("HCS_CSE_MICROSERVICE_ENGINE_ADMIN_PASSWORD must be set for the acceptance test")
 	}
 }
 

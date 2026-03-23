@@ -36,6 +36,7 @@ import (
 	hcsCfw "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/cfw"
 	hcsCodearts "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/codearts"
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/codeartspipeline"
+	hcsCse "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/cse"
 	hcsCsms "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/csms"
 	hcsDcs "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/dcs"
 	hcsDdm "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/services/ddm"
@@ -492,6 +493,8 @@ func Provider() *schema.Provider {
 			"hcs_codearts_repository": hcsCodearts.ResourceRepository(),
 
 			"hcs_codearts_pipeline_group": codeartspipeline.ResourceCodeArtsPipelineGroup(),
+
+			"hcs_cse_microservice_engine_configuration": hcsCse.ResourceMicroserviceEngineConfiguration(),
 
 			"hcs_dcs_instance": hcsDcs.ResourceDcsInstance(),
 			"hcs_dcs_account":  hcsDcs.ResourceDcsAccount(),
