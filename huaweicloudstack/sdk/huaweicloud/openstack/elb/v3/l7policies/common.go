@@ -1,10 +1,10 @@
 package l7policies
 
 type RedirectUrlConfig struct {
-	StatusCode string `json:"status_code,omitempty"`
-	Protocol   string `json:"protocol,omitempty"`
-	Host       string `json:"host,omitempty"`
-	Port       string `json:"port,omitempty"`
-	Path       string `json:"path,omitempty"`
-	Query      string `json:"query,omitempty"`
+	StatusCode string `json:"status_code"`
+	Protocol   string `json:"protocol"`
+	Host       string `json:"host"`
+	Port       string `json:"port"`
+	Path       string `json:"path"`
+	Query      string `json:"query"`
 }
