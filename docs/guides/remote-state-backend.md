@@ -32,13 +32,15 @@ There are some important limitations on backend configuration:
 
 ## Configuration Backend for HuaweiCloudStack
 
-As HuaweiCloudStack OBS (Object Storage Service) can be compatible with the AWS S3 interface, and
-[Amazon S3](https://www.terraform.io/docs/language/settings/backends/s3.html) backend supports custom endpoints, we can
-use S3 backend to store state files in OBS.
+As HuaweiCloudStack OBS (Object Storage Service) supports a subset of AWS s3 operations, and
+[Amazon S3](https://www.terraform.io/docs/language/settings/backends/s3.html) backend supports custom endpoints, we can use S3 backend to store state files in OBS.
 
 Although the terraform block does not accept variables or locals and all backend configuration values must be hardcoded,
 you can provide the credentials via the **AWS_ACCESS_KEY_ID** and **AWS_SECRET_ACCESS_KEY** environment variables to
 access OBS, respectively.
+
+-> **NOTE:** OBS supports a subset of S3 operations, and the S3 backend is provided and maintained by the Terraform community. 
+  When using OBS, only the basic functionalities of the S3 backend are supported, while some advanced features may be not available.
 
 ```bash
 export AWS_ACCESS_KEY_ID="your accesskey"
