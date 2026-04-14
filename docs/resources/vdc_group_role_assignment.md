@@ -101,8 +101,8 @@ The following arguments are supported:
     * `project_id` - (Optional, String, ForceNew) Resource space ID.
     * `enterprise_project_id` - (Optional, String, ForceNew) Enterprise project ID.
 
--> **NOTE:** domain_id, project_id and enterprise_project_id, only one of the values can be set and cannot be empty. When
-project_id is set to all, domain_id is mandatory.
+-> **NOTE:** `domain_id`, `project_id`, and `enterprise_project_id`, only one of the values can be set and cannot be empty. When
+`project_id` is set to `all`, `domain_id` is mandatory. XA‑type roles cannot be granted by tenant. AX‑type roles cannot be granted by resource space. Check whether roles are granted.
 
 ## Attributes Reference
 
