@@ -172,9 +172,9 @@ type UpdateOptsBuilder interface {
 // UpdateOpts contains all the values needed to update a new node pool
 type UpdateOpts struct {
 	// API type, fixed value Node
-	Kind string `json:"kind" required:"true"`
+	Kind string `json:"kind,omitempty"`
 	// API version, fixed value v3
-	ApiVersion string `json:"apiversion" required:"true"`
+	ApiVersion string `json:"apiversion,omitempty"`
 	// Metadata required to update a Node Pool
 	Metadata UpdateMetaData `json:"metadata" required:"true"`
 	// specifications to update a Node Pool
@@ -240,7 +240,9 @@ type UpdateSpec struct {
 	// Node template
 	NodeTemplate UpdateNodeTemplate `json:"nodeTemplate"`
 	// Initial number of expected nodes
-	InitialNodeCount *int `json:"initialNodeCount" required:"true"`
+	InitialNodeCount *int `json:"initialNodeCount,omitempty"`
+	// Whether to ignore the changes of IgnoreInitialNodeCount
+	IgnoreInitialNodeCount bool `json:"ignoreInitialNodeCount"`
 	// Auto scaling parameters
 	Autoscaling AutoscalingSpec `json:"autoscaling"`
 }
