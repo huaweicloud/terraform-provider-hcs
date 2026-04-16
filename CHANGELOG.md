@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2.4.25 (April 16, 2026)
+
+- fix(serivcestage): fix is_system_logging type and command type.
+- feat(ecs): fixed VM query and volume list display issues.
+- fix(elb): fix issue where the query parameter cannot be updated to an empty string.
+
 ## 2.4.24 (March 23, 2026)
 
 * **New Resource Source:**
