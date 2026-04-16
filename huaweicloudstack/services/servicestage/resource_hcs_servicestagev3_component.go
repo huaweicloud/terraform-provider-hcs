@@ -674,7 +674,7 @@ func componentLifecycleSchema() *schema.Resource {
 				Description: `The request path of the lifecycle configuration.`,
 			},
 			"command": {
-				Type:        schema.TypeSet,
+				Type:        schema.TypeList,
 				Optional:    true,
 				Computed:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
@@ -776,7 +776,7 @@ func componentProbeSchema() *schema.Resource {
 				Description: `The path of the probe.`,
 			},
 			"command": {
-				Type:        schema.TypeSet,
+				Type:        schema.TypeList,
 				Optional:    true,
 				Computed:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
@@ -872,13 +872,12 @@ func buildV3ComponentLifecycle(lifecycles []interface{}) map[string]interface{} 
 
 	lifecycle := lifecycles[0]
 	return map[string]interface{}{
-		"type":   utils.PathSearch("type", lifecycle, nil),
-		"scheme": utils.ValueIgnoreEmpty(utils.PathSearch("scheme", lifecycle, nil)),
-		"host":   utils.ValueIgnoreEmpty(utils.PathSearch("host", lifecycle, nil)),
-		"port":   utils.ValueIgnoreEmpty(utils.PathSearch("port", lifecycle, nil)),
-		"path":   utils.ValueIgnoreEmpty(utils.PathSearch("path", lifecycle, nil)),
-		"command": utils.ValueIgnoreEmpty(utils.ExpandToStringListBySet(utils.PathSearch("command", lifecycle,
-			schema.NewSet(schema.HashString, nil)).(*schema.Set))),
+		"type":    utils.PathSearch("type", lifecycle, nil),
+		"scheme":  utils.ValueIgnoreEmpty(utils.PathSearch("scheme", lifecycle, nil)),
+		"host":    utils.ValueIgnoreEmpty(utils.PathSearch("host", lifecycle, nil)),
+		"port":    utils.ValueIgnoreEmpty(utils.PathSearch("port", lifecycle, nil)),
+		"path":    utils.ValueIgnoreEmpty(utils.PathSearch("path", lifecycle, nil)),
+		"command": utils.ValueIgnoreEmpty(utils.PathSearch("command", lifecycle, make([]interface{}, 0)).([]interface{})),
 	}
 }
 
@@ -974,8 +973,7 @@ func buildV3ComponentProbeConfiguration(probeConfigs []interface{}) map[string]i
 		"host":    utils.ValueIgnoreEmpty(utils.PathSearch("host", probeConfig, nil)),
 		"port":    utils.ValueIgnoreEmpty(utils.PathSearch("port", probeConfig, nil)),
 		"path":    utils.ValueIgnoreEmpty(utils.PathSearch("path", probeConfig, nil)),
-		"command": utils.ValueIgnoreEmpty(utils.ExpandToStringListBySet(utils.PathSearch("command",
-			probeConfig, schema.NewSet(schema.HashString, nil)).(*schema.Set))),
+		"command": utils.ValueIgnoreEmpty(utils.PathSearch("command", probeConfig, make([]interface{}, 0)).([]interface{})),
 	}
 }
 
@@ -1563,7 +1561,7 @@ func buildV3ComponentUpdateBodyParams(d *schema.ResourceData) map[string]interfa
 		"mesher":            utils.ValueIgnoreEmpty(buildV3ComponentMesher(d.Get("mesher").([]interface{}))),
 		"timezone":          utils.ValueIgnoreEmpty(d.Get("timezone").(string)),
 		"jvm_opts":          utils.ValueIgnoreEmpty(d.Get("jvm_opts").(string)),
-		"is_system_logging": utils.ValueIgnoreEmpty(d.Get("is_system_logging").(string)),
+		"is_system_logging": utils.ValueIgnoreEmpty(d.Get("is_system_logging").(bool)),
 		"tomcat_opts":       utils.StringToJson(d.Get("tomcat_opts").(string)),
 		"logs":              utils.ValueIgnoreEmpty(buildV3ComponentLogs(d.Get("logs").(*schema.Set))),
 		"custom_metric":     utils.ValueIgnoreEmpty(buildV3ComponentCustomMetric(d.Get("custom_metric").([]interface{}))),

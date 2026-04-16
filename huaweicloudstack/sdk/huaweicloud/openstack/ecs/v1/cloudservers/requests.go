@@ -54,6 +54,8 @@ type CreateOpts struct {
 	Description string `json:"description,omitempty"`
 
 	PowerOn *bool `json:"power_on,omitempty"`
+
+	ConfigDrive bool `json:"config_drive,omitempty"`
 }
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
