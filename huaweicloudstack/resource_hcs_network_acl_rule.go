@@ -5,6 +5,7 @@
 package huaweicloudstack
 
 import (
+	"context"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
@@ -27,7 +28,18 @@ func ResourceNetworkACLRule() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
-
+		CustomizeDiff: func(ctx context.Context, d *schema.ResourceDiff, meta interface{}) error {
+			if d.HasChange("protocol") {
+				oldProto, newProto := d.GetChange("protocol")
+				if newProto.(string) == "any" || oldProto.(string) == "any" {
+					err := d.ForceNew("protocol")
+					if err != nil {
+						return err
+					}
+				}
+			}
+			return nil
+		},
 		Schema: map[string]*schema.Schema{
 			"region": {
 				Type:     schema.TypeString,
@@ -135,6 +147,10 @@ func resourceNetworkACLRuleCreate(d *schema.ResourceData, meta interface{}) erro
 		DestinationPort:      d.Get("destination_port").(string),
 		Enabled:              &enabled,
 	}
+	if protocol != rules.ProtocolAny {
+		ruleConfiguration.SourcePort = d.Get("source_port").(string)
+		ruleConfiguration.DestinationPort = d.Get("destination_port").(string)
+	}
 	sourceIPAddresses := d.Get("source_ip_addresses").(*schema.Set).List()
 	if len(sourceIPAddresses) > 0 {
 		ruleConfiguration.SourceIPAddresses = make([]string, len(sourceIPAddresses))
@@ -150,14 +166,14 @@ func resourceNetworkACLRuleCreate(d *schema.ResourceData, meta interface{}) erro
 		}
 	}
 	sourcePorts := d.Get("source_ports").(*schema.Set).List()
-	if len(sourcePorts) > 0 {
+	if len(sourcePorts) > 0 && protocol != rules.ProtocolAny {
 		ruleConfiguration.SourcePorts = make([]string, len(sourcePorts))
 		for i, r := range sourcePorts {
 			ruleConfiguration.SourcePorts[i] = r.(string)
 		}
 	}
 	destinationPorts := d.Get("destination_ports").(*schema.Set).List()
-	if len(destinationPorts) > 0 {
+	if len(destinationPorts) > 0 && protocol != rules.ProtocolAny {
 		ruleConfiguration.DestinationPorts = make([]string, len(destinationPorts))
 		for i, r := range destinationPorts {
 			ruleConfiguration.DestinationPorts[i] = r.(string)
@@ -231,11 +247,7 @@ func resourceNetworkACLRuleUpdate(d *schema.ResourceData, meta interface{}) erro
 	}
 	if d.HasChange("protocol") {
 		protocol := d.Get("protocol").(string)
-		if protocol == "any" {
-			updateOpts.Protocol = nil
-		} else {
-			updateOpts.Protocol = &protocol
-		}
+		updateOpts.Protocol = &protocol
 	}
 	if d.HasChange("action") {
 		action := d.Get("action").(string)
