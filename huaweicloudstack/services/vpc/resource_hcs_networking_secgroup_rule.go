@@ -71,14 +71,14 @@ func ResourceNetworkingSecGroupRule() *schema.Resource {
 				Type:         schema.TypeInt,
 				Optional:     true,
 				ForceNew:     true,
-				Computed:     true,
+				Default:      -1,
 				RequiredWith: []string{"protocol"},
 			},
 			"port_range_max": {
 				Type:         schema.TypeInt,
 				Optional:     true,
 				ForceNew:     true,
-				Computed:     true,
+				Default:      -1,
 				RequiredWith: []string{"port_range_min"},
 			},
 			"ports": {
@@ -160,10 +160,13 @@ func resourceNetworkingSecGroupRuleCreateV1(ctx context.Context, d *schema.Resou
 		Protocol:        d.Get("protocol").(string),
 		Ethertype:       d.Get("ethertype").(string),
 		Direction:       d.Get("direction").(string),
-		PortRangeMin:    d.Get("port_range_min").(int),
-		PortRangeMax:    d.Get("port_range_max").(int),
 	}
-
+	if v := d.Get("port_range_min").(int); v != -1 {
+		opt.PortRangeMin = &v
+	}
+	if v := d.Get("port_range_max").(int); v != -1 {
+		opt.PortRangeMax = &v
+	}
 	logp.Printf("[DEBUG] The createOpts of the Security Group rule is: %#v", opt)
 	resp, err := v1Rules.Create(v1Client, opt)
 	if err != nil {
@@ -208,9 +211,13 @@ func resourceNetworkingSecGroupRuleRead(_ context.Context, d *schema.ResourceDat
 		d.Set("remote_group_id", resp.RemoteGroupId),
 		d.Set("remote_ip_prefix", resp.RemoteIpPrefix),
 		d.Set("security_group_id", resp.SecurityGroupId),
-		d.Set("port_range_min", resp.PortRangeMin),
-		d.Set("port_range_max", resp.PortRangeMax),
 	)
+	if resp.PortRangeMin != nil {
+		d.Set("port_range_min", resp.PortRangeMin)
+	}
+	if resp.PortRangeMax != nil {
+		d.Set("port_range_max", resp.PortRangeMax)
+	}
 
 	rule, err := v3Rules.Get(v3Client, d.Id())
 	if err == nil {
