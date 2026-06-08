@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2.4.26 (June 8, 2026)
+
+- fix(vpc): allow ACL rule protocol to be changed from `TCP` to `any`.
+- fix(vpc): allow creating security group rules with any protocol.
+- feat(dms): add `dr_enable` argument for Kafka DR instance creation.
+- feat(ecs): add `with_cd_drive` argument for ECS instance creation (defaults to `true`).
+- fix(cce): resolve "kind is required" error during CCE node pool updates.
+
 ## 2.4.25 (April 16, 2026)
 
 - fix(serivcestage): fix is_system_logging type and command type.
