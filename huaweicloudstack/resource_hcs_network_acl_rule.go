@@ -236,6 +236,11 @@ func resourceNetworkACLRuleUpdate(d *schema.ResourceData, meta interface{}) erro
 		} else {
 			updateOpts.Protocol = &protocol
 		}
+	} else {
+		protocol := d.Get("protocol").(string)
+		if len(protocol) != 0 {
+			updateOpts.Protocol = &protocol
+		}
 	}
 	if d.HasChange("action") {
 		action := d.Get("action").(string)
@@ -245,8 +250,8 @@ func resourceNetworkACLRuleUpdate(d *schema.ResourceData, meta interface{}) erro
 		ipVersion := normalizeNetworkACLRuleIPVersion(d.Get("ip_version").(int))
 		updateOpts.IPVersion = &ipVersion
 	}
-	if d.HasChange("source_ip_address") {
-		sourceIPAddress := d.Get("source_ip_address").(string)
+	sourceIPAddress := d.Get("source_ip_address").(string)
+	if len(sourceIPAddress) != 0 {
 		updateOpts.SourceIPAddress = &sourceIPAddress
 	}
 	if d.HasChange("source_ip_addresses") {
@@ -260,8 +265,8 @@ func resourceNetworkACLRuleUpdate(d *schema.ResourceData, meta interface{}) erro
 		}
 		updateOpts.SourceIPAddresses = &addresses
 	}
-	if d.HasChange("source_port") {
-		sourcePort := d.Get("source_port").(string)
+	sourcePort := d.Get("source_port").(string)
+	if len(sourcePort) != 0 {
 		updateOpts.SourcePort = &sourcePort
 	}
 	if d.HasChange("source_ports") {
@@ -274,8 +279,9 @@ func resourceNetworkACLRuleUpdate(d *schema.ResourceData, meta interface{}) erro
 		}
 		updateOpts.SourcePorts = &ports
 	}
-	if d.HasChange("destination_ip_address") {
-		destinationIPAddress := d.Get("destination_ip_address").(string)
+
+	destinationIPAddress := d.Get("source_ip_address").(string)
+	if len(destinationIPAddress) != 0 {
 		updateOpts.DestinationIPAddress = &destinationIPAddress
 	}
 	if d.HasChange("destination_ip_addresses") {
@@ -289,8 +295,8 @@ func resourceNetworkACLRuleUpdate(d *schema.ResourceData, meta interface{}) erro
 		}
 		updateOpts.DestinationIPAddresses = &addresses
 	}
-	if d.HasChange("destination_port") {
-		destinationPort := d.Get("destination_port").(string)
+	destinationPort := d.Get("destination_port").(string)
+	if len(destinationPort) != 0 {
 		updateOpts.DestinationPort = &destinationPort
 	}
 	if d.HasChange("destination_ports") {

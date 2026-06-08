@@ -207,6 +207,15 @@ func ResourceDmsKafkaInstance() *schema.Resource {
 			},
 			"tags": common.TagsSchema(),
 
+			// HCS unique
+			"dr_enable": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
+				ForceNew:    true,
+				Description: `Whether to create a dual-AZ instance.`,
+			},
+
 			// Attributes
 			"engine": {
 				Type:     schema.TypeString,
@@ -531,6 +540,12 @@ func createKafkaInstanceWithFlavor(ctx context.Context, d *schema.ResourceData, 
 	}
 	createOpts.AvailableZones = availableZones
 
+	// set `dr_enable`
+	if drEnable, ok := d.GetOk("dr_enable"); ok {
+		enable := drEnable.(bool)
+		createOpts.DrEnable = &enable
+	}
+
 	// set tags
 	if tagRaw := d.Get("tags").(map[string]interface{}); len(tagRaw) > 0 {
 		createOpts.Tags = utils.ExpandResourceTags(tagRaw)
@@ -655,6 +670,12 @@ func createKafkaInstanceWithProductID(ctx context.Context, d *schema.ResourceDat
 	createOpts.Password = d.Get("password").(string)
 	createOpts.KafkaManagerPassword = d.Get("manager_password").(string)
 
+	// set `dr_enable`
+	if drEnable, ok := d.GetOk("dr_enable"); ok {
+		enable := drEnable.(bool)
+		createOpts.DrEnable = &enable
+	}
+
 	kafkaInstance, err := instances.Create(client, createOpts).Extract()
 	if err != nil {
 		return diag.Errorf("error creating DMS kafka instance: %s", err)
@@ -772,6 +793,7 @@ func resourceDmsKafkaInstanceRead(_ context.Context, d *schema.ResourceData, met
 		d.Set("access_user", v.AccessUser),
 		d.Set("cross_vpc_accesses", crossVpcAccess),
 		d.Set("charging_mode", chargingMode),
+		d.Set("dr_enable", v.DrEnable),
 	)
 
 	// set tags

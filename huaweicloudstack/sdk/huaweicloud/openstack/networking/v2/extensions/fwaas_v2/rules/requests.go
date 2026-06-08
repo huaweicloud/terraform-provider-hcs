@@ -158,17 +158,17 @@ type UpdateOptsBuilder interface {
 
 // UpdateOpts contains the values used when updating a firewall rule.
 type UpdateOpts struct {
-	Protocol               *string              `json:"protocol,omitempty"`
+	Protocol               *string              `json:"protocol"`
 	Action                 *string              `json:"action,omitempty"`
 	Name                   *string              `json:"name,omitempty"`
 	Description            *string              `json:"description,omitempty"`
 	IPVersion              *golangsdk.IPVersion `json:"ip_version,omitempty"`
-	SourceIPAddress        *string              `json:"source_ip_address,omitempty"`
+	SourceIPAddress        *string              `json:"source_ip_address"`
 	SourceIPAddresses      *[]string            `json:"source_ip_addresses,omitempty"`
-	DestinationIPAddress   *string              `json:"destination_ip_address,omitempty"`
+	DestinationIPAddress   *string              `json:"destination_ip_address"`
 	DestinationIPAddresses *[]string            `json:"destination_ip_addresses,omitempty"`
-	SourcePort             *string              `json:"source_port,omitempty"`
-	DestinationPort        *string              `json:"destination_port,omitempty"`
+	SourcePort             *string              `json:"source_port"`
+	DestinationPort        *string              `json:"destination_port"`
 	SourcePorts            *[]string            `json:"source_ports,omitempty"`
 	DestinationPorts       *[]string            `json:"destination_ports,omitempty"`
 	Shared                 *bool                `json:"shared,omitempty"`
