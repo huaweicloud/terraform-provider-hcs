@@ -457,6 +457,7 @@ func buildNodePoolUpdateOpts(d *schema.ResourceData) (*nodepools.UpdateOpts, err
 				K8sTags:               buildResourceNodeK8sTags(d),
 				Taints:                buildResourceNodeTaint(d),
 				InitializedConditions: utils.ExpandToStringList(d.Get("initialized_conditions").([]interface{})),
+				NodeNicSpecUpdate:     buildResourceNodePoolNicSpec(d),
 			},
 		},
 	}
@@ -611,6 +612,16 @@ func buildResourceNodeLoginSpec(d *schema.ResourceData) (nodes.LoginSpec, error)
 	}
 
 	return loginSpec, nil
+}
+
+func buildResourceNodePoolNicSpec(d *schema.ResourceData) nodes.NodeNicSpec {
+	res := nodes.NodeNicSpec{
+		PrimaryNic: nodes.PrimaryNic{
+			SubnetId: d.Get("subnet_id").(string),
+		},
+	}
+
+	return res
 }
 
 func clusterStateRefreshFunc(cceClient *golangsdk.ServiceClient, clusterId string,

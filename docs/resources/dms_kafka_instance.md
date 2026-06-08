@@ -57,6 +57,52 @@ resource "hcs_dms_kafka_instance" "test" {
 }
 ```
 
+### Create a kafka instance with dual-AZ DR enabled
+
+```hcl
+variable "vpc_id" {}
+variable "subnet_id" {}
+variable "security_group_id" {}
+variable "access_password" {}
+variable "flavor_id" {}
+variable "storage_spec_code" {}
+
+# The list contains 2 different AZs
+variable "availability_zones" {
+  type = list(string)
+  
+  default = ["availability_zone_A", "availability_zone_B"]
+}
+
+# Query flavor information based on flavorID and storage I/O specification.
+# Make sure the flavors are available in the availability zone.
+data "hcs_dms_kafka_flavors" "test" {
+  type               = "cluster"
+  flavor_id          = var.flavor_id
+  availability_zones = var.availability_zones
+  storage_spec_code  = var.storage_spec_code
+}
+
+resource "hcs_dms_kafka_instance" "test" {
+  name              = "kafka_test"
+  vpc_id            = var.vpc_id
+  network_id        = var.subnet_id
+  security_group_id = var.security_group_id
+
+  flavor_id          = data.hcs_dms_kafka_flavors.test.flavor_id
+  storage_spec_code  = data.hcs_dms_kafka_flavors.test.flavors[0].ios[0].storage_spec_code
+  engine_version    = "3.x"
+  storage_space     = 400
+  access_user       = "root"
+  arch_type         = "ARM"
+  password          = var.access_password
+
+  availability_zones = var.availability_zones
+  dr_enable          = true
+  broker_num         = 4
+}
+```
+
 ## Argument Reference
 
 The following arguments are supported:
@@ -117,6 +163,9 @@ The following arguments are supported:
   -> **NOTE:** Deploy one availability zone or at least three availability zones. Do not select two availability zones.
   Deploy to more availability zones, the better the reliability and SLA coverage.
 
+  -> **NOTE:** If `availability_zones` are two different availability zones (AZs), the `dr_enable` must be set to **true**. And the
+  `broker_num` must be greater than or equal to `4`.
+
   ~> The parameter behavior of `availability_zones` has been changed from `list` to `set`.
 
 * `manager_user` - (Optional, String, ForceNew) Specifies the username for logging in to the Kafka Manager. The username
@@ -164,6 +213,10 @@ The following arguments are supported:
   Changing this creates a new instance resource.
 
   ->**Note** The default `arch_type` depends on the HCS environment.
+
+* `dr_enable` - (Optional, Bool, ForceNew) Whether to create a dual-AZ instance. Defaults to **false**.
+
+  -> **NOTE:** This parameter can only be used in HCS **8.5.1** and **later** version.
 
 * `security_protocol` - (Optional, String, ForceNew) Specifies the protocol to use after SASL is enabled. Value options:
   + **SASL_SSL**: Data is encrypted with SSL certificates for high-security transmission.

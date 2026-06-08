@@ -56,6 +56,16 @@ type CreateOpts struct {
 	PowerOn *bool `json:"power_on,omitempty"`
 
 	ConfigDrive bool `json:"config_drive,omitempty"`
+
+	Extra *Extra `json:"extra,omitempty"`
+}
+
+type Extra struct {
+	Devices []Device `json:"devices,omitempty"`
+}
+
+type Device struct {
+	DeviceType string `json:"device_type,omitempty"`
 }
 
 // CreateOptsBuilder allows extensions to add additional parameters to the

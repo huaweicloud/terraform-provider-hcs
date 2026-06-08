@@ -102,6 +102,7 @@ type Instance struct {
 	KafkaPrivateConnectAddress string             `json:"kafka_private_connect_address"`
 	CesVersion                 string             `json:"ces_version"`
 	AccessUser                 string             `json:"access_user"`
+	DrEnable                   bool               `json:"dr_enable"`
 	Tags                       []tags.ResourceTag `json:"tags"`
 }
 

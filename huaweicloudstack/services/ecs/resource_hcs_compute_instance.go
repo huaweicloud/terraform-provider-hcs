@@ -308,6 +308,13 @@ func ResourceComputeInstance() *schema.Resource {
 				Type:     schema.TypeBool,
 				Optional: true,
 			},
+			"with_cd_drive": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				ForceNew:    true,
+				Default:     true,
+				Description: "Whether to attach a CD drive when creating the instance",
+			},
 			"enterprise_project_id": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -524,6 +531,16 @@ func resourceComputeInstanceCreate(ctx context.Context, d *schema.ResourceData, 
 		PublicIp:         buildInstancePublicIPRequest(d),
 		UserData:         []byte(d.Get("user_data").(string)),
 		ConfigDrive:      d.Get("config_drive").(bool),
+	}
+
+	if d.Get("with_cd_drive").(bool) {
+		createOpts.Extra = &cloudservers.Extra{
+			Devices: []cloudservers.Device{
+				{
+					DeviceType: "cdrom",
+				},
+			},
+		}
 	}
 
 	if tags, ok := d.GetOk("tags"); ok {

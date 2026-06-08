@@ -144,6 +144,9 @@ type CreateOps struct {
 
 	// Indicates the parameter related to the yearly/monthly billing mode.
 	BssParam BssParam `json:"bss_param,omitempty"`
+
+	// Whether to create a dual-AZ instance
+	DrEnable *bool `json:"dr_enable,omitempty"`
 }
 
 type BssParam struct {
