@@ -311,7 +311,6 @@ func ResourceComputeInstance() *schema.Resource {
 			"with_cd_drive": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				ForceNew:    true,
 				Default:     true,
 				Description: "Whether to attach a CD drive when creating the instance",
 			},
