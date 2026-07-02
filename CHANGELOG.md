@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.4.27 (July 2, 2026)
+
+- feat(ecs): To prevent accidental instance deletion, the ForceNew parameter of `with_cd_drive` was removed, but changes are still not supported.
+
 ## 2.4.26 (June 8, 2026)
 
 - fix(vpc): allow ACL rule protocol to be changed from `TCP` to `any`.
