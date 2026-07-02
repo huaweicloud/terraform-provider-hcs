@@ -611,7 +611,7 @@ The following arguments are supported:
 * `delete_eip_on_termination` - (Optional, Bool) Specifies whether the EIP is released when the instance is terminated.
   Defaults to *true*.
 
-* `with_cd_drive` - (Optional, Bool, ForceNew) Specifies whether to attach a CD drive when creating the instance.
+* `with_cd_drive` - (Optional, Bool) Specifies whether to attach a CD drive when creating the instance.
   Defaults to *true*. 
 
 * `power_action` - (Optional, String) Specifies the power status of the instance. The value must be one of the following: *ON*, *OFF*, *REBOOT*, *FORCE-OFF* and *FORCE-REBOOT*.
