@@ -66,8 +66,6 @@ In addition to all arguments above, the following attributes are exported:
 
 * `id` - The resource ID in UUID format.
 
-* `status` - The status of the subnet. The value can be ACTIVE, DOWN, UNKNOWN, or ERROR.
-
 * `ipv4_subnet_id` - The ID of the IPv4 subnet (Native OpenStack API).
 
 * `ipv6_subnet_id` - The ID of the IPv6 subnet (Native OpenStack API).
