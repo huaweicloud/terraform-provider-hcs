@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2.4.28 (Sep 4, 2026)
+- fix(vpc): hcs_vpc_subnet don't have status.
+- fix(cce): fix JSON unmarshalling error for cluster conditions.
+
+
 ## 2.4.27 (July 2, 2026)
 
 - feat(ecs): To prevent accidental instance deletion, the ForceNew parameter of `with_cd_drive` was removed, but changes are still not supported.
