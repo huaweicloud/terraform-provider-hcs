@@ -589,7 +589,7 @@ func Provider() *schema.Provider {
 			"hcs_obs_bucket_policy":     obs.ResourceObsBucketPolicy(),
 
 			// rds common
-			"hcs_rds_instance":  rds.ResourceRdsInstance(),
+			"hcs_rds_instance":  hcsRds.ResourceRdsInstance(),
 			"hcs_rds_sql_audit": rds.ResourceSQLAudit(),
 
 			// rds PostgreSQL
@@ -602,6 +602,7 @@ func Provider() *schema.Provider {
 			"hcs_rds_mysql_account":            rds.ResourceMysqlAccount(),
 			"hcs_rds_mysql_database":           rds.ResourceMysqlDatabase(),
 			"hcs_rds_mysql_database_privilege": rds.ResourceMysqlDatabasePrivilege(),
+			"hcs_rds_read_replica_instance": rds.ResourceRdsReadReplicaInstance(),
 
 			"hcs_roma_connect_instance": hcsRomaConnect.ResourceRomaConnectInstance(),
 
