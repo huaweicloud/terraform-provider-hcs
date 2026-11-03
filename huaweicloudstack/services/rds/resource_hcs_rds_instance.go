@@ -3,12 +3,15 @@ package rds
 import (
 	"context"
 	"fmt"
+	"strings"
 
+	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/config"
 	golangsdk "github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/sdk/huaweicloud"
+	"github.com/huaweicloud/terraform-provider-hcs/huaweicloudstack/utils"
 
 	upstreamRds "github.com/huaweicloud/terraform-provider-huaweicloud/huaweicloud/services/rds"
 )
@@ -85,6 +88,44 @@ func ResourceRdsInstance() *schema.Resource {
 			return diag.FromErr(err)
 		}
 		return diags
+	}
+
+	// Wrap the upstream ReadContext to backfill the three new fields.
+	//
+	// The locked upstream version (commit 51169dadfcdb, 2023-12-13) never sets these fields in
+	// Read, which causes state drift: when an update fails, Terraform has already written the
+	// desired value into state, while the real instance keeps its previous value. Backfilling
+	// here makes the next refresh correct the state, matching the upstream provider's behavior.
+	upstreamRead := r.ReadContext
+	r.ReadContext = func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+		diags := upstreamRead(ctx, d, meta)
+		if diags.HasError() || d.Id() == "" {
+			return diags
+		}
+
+		client, err := getRdsV3Client(meta, d)
+		if err != nil {
+			return diag.Errorf("error creating RDS client: %s", err)
+		}
+		instance, err := GetRdsInstanceByID(client, d.Id())
+		if err != nil {
+			return diag.Errorf("error getting RDS instance: %s", err)
+		}
+
+		var mErr *multierror.Error
+		if v := utils.PathSearch("switch_strategy", instance, "").(string); v != "" {
+			mErr = multierror.Append(mErr, d.Set("switch_strategy", v))
+		}
+		// The API returns the maintain window as a single string, e.g. "06:00-07:00".
+		if v := utils.PathSearch("maintenance_window", instance, "").(string); v != "" {
+			maintainWindow := strings.Split(v, "-")
+			if len(maintainWindow) == 2 {
+				mErr = multierror.Append(mErr,
+					d.Set("maintain_begin", maintainWindow[0]),
+					d.Set("maintain_end", maintainWindow[1]))
+			}
+		}
+		return diag.FromErr(mErr.ErrorOrNil())
 	}
 
 	return r
