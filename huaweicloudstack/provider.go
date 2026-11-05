@@ -602,7 +602,7 @@ func Provider() *schema.Provider {
 			"hcs_rds_mysql_account":            rds.ResourceMysqlAccount(),
 			"hcs_rds_mysql_database":           rds.ResourceMysqlDatabase(),
 			"hcs_rds_mysql_database_privilege": rds.ResourceMysqlDatabasePrivilege(),
-			"hcs_rds_read_replica_instance": rds.ResourceRdsReadReplicaInstance(),
+			"hcs_rds_read_replica_instance":    hcsRds.ResourceRdsReadReplicaInstance(),
 
 			"hcs_roma_connect_instance": hcsRomaConnect.ResourceRomaConnectInstance(),
 
