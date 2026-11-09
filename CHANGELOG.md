@@ -1,6 +1,13 @@
 # CHANGELOG
 
+## 2.4.29 (Nov 9, 2026)
+
+- feat(RDS): support maintain window on read replica instance
+- fix(RDS): backfill switch_strategy and maintain window in Read to avoid state drift
+- feat(RDS): add support to create read replica instance, hcs_rds_instance add new parameter "switch_strategy","maintain_begin", "maintain_end"
+
 ## 2.4.28 (Sep 4, 2026)
+
 - fix(vpc): hcs_vpc_subnet don't have status.
 - fix(cce): fix JSON unmarshalling error for cluster conditions.
 
